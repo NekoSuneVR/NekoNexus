@@ -12,7 +12,8 @@ namespace Paradise.Realtime.Server.Comm {
 		public class OperationHandler : BaseOperationHandler<CommPeer, ICommPeerOperationsType> {
 			protected static readonly ILog Log = LogManager.GetLogger(nameof(CommPeer.OperationHandler));
 
-			public override int Id => (int)OperationHandlerId.CommPeer;
+			public override OperationHandlerId Id => OperationHandlerId.CommPeer;
+			public override string HandlerName => "CommPeer.OperationHandler";
 
 			public override void OnOperationRequest(CommPeer peer, byte opCode, MemoryStream bytes) {
 #if DEBUG
@@ -20,7 +21,7 @@ namespace Paradise.Realtime.Server.Comm {
 					case ICommPeerOperationsType.SendHeartbeatResponse:
 						break;
 					default:
-						Log.Debug($"CommPeer.OperationHandler::OnOperationRequest -> peer: {peer}, opCode: {(ICommPeerOperationsType)opCode}({opCode})");
+						Log.Debug($"{HandlerName}::OnOperationRequest peer:{peer}, OpCode:{(ICommPeerOperationsType)opCode}({opCode})");
 						break;
 				}
 #endif
@@ -94,7 +95,7 @@ namespace Paradise.Realtime.Server.Comm {
 
 			private void DebugOperation(params object[] data) {
 #if DEBUG
-				Log.Debug($"{GetType().Name}:{new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().Name} -> {string.Join(", ", data)}");
+				Log.Debug($"{HandlerName}:{new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().Name} -> {string.Join(", ", data)}");
 #endif
 			}
 		}

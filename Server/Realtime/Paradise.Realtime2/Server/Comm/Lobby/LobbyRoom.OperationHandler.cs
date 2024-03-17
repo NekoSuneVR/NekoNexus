@@ -16,13 +16,14 @@ namespace Paradise.Realtime.Server.Comm {
 			protected static readonly ILog Log = LogManager.GetLogger(nameof(LobbyRoom.OperationHandler));
 			protected static readonly ILog ChatLog = LogManager.GetLogger("ChatLog");
 
-			public override int Id => (int)OperationHandlerId.LobbyRoom;
+			public override OperationHandlerId Id => OperationHandlerId.LobbyRoom;
+			public override string HandlerName => "LobbyRoom.OperationHandler";
 
 			protected object Lock { get; } = new object();
 			private static readonly ProfanityFilter.ProfanityFilter ProfanityFilter = new ProfanityFilter.ProfanityFilter();
 
 			public override void OnOperationRequest(CommPeer peer, byte opCode, MemoryStream bytes) {
-				Log.Debug($"LobbyRoom.OperationHandler::OnOperationRequest -> peer: {peer}, opCode: {(ILobbyRoomOperationsType)opCode}({opCode})");
+				Log.Debug($"{HandlerName}::OnOperationRequest peer: {peer}, OpCode: {(ILobbyRoomOperationsType)opCode}({opCode})");
 
 				switch ((ILobbyRoomOperationsType)opCode) {
 					case ILobbyRoomOperationsType.FullPlayerListUpdate:
@@ -535,7 +536,7 @@ namespace Paradise.Realtime.Server.Comm {
 
 			private void DebugOperation(params object[] data) {
 #if DEBUG
-				Log.Debug($"{GetType().Name}:{new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().Name} -> {string.Join(", ", data)}");
+				Log.Debug($"{HandlerName}:{new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().Name} -> {string.Join(", ", data)}");
 #endif
 			}
 		}

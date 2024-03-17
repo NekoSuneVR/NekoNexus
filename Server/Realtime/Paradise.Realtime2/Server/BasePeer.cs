@@ -1,4 +1,4 @@
-﻿using Cmune.DataCenter.Common.Entities;
+using Cmune.DataCenter.Common.Entities;
 using log4net;
 using Photon.SocketServer;
 using PhotonHostRuntimeInterfaces;
@@ -22,7 +22,7 @@ namespace Paradise.Realtime.Server {
 	public abstract class BasePeer : ClientPeer {
 		protected static readonly ILog Log = LogManager.GetLogger(nameof(BasePeer));
 
-		private readonly ConcurrentDictionary<int, BaseOperationHandler> OperationHandlers = new ConcurrentDictionary<int, BaseOperationHandler>();
+		private readonly ConcurrentDictionary<OperationHandlerId, BaseOperationHandler> OperationHandlers = new ConcurrentDictionary<OperationHandlerId, BaseOperationHandler>();
 
 		private static readonly string[] SupportedApplications = new[] { ApiVersion.Current };
 
@@ -73,7 +73,7 @@ namespace Paradise.Realtime.Server {
 			}
 		}
 
-		public void RemoveOperationHandler(int handlerId) {
+		public void RemoveOperationHandler(OperationHandlerId handlerId) {
 			if (!OperationHandlers.TryRemove(handlerId, out _)) {
 				Log.Error($"Failed to remove handler with ID {handlerId}");
 			}
@@ -90,7 +90,7 @@ namespace Paradise.Realtime.Server {
 				return false;
 			}
 
-			if (!Configuration.HashVerificationEnabled) return true;
+			if (!Configuration.EnableHashVerification) return true;
 
 			//if (magicHash == null) {
 			//	throw new ArgumentNullException(nameof(magicHash));
@@ -140,7 +140,7 @@ namespace Paradise.Realtime.Server {
 
 			var handlerId = operationRequest.Parameters.Keys.First();
 
-			if (OperationHandlers.TryGetValue(handlerId, out var handler)) {
+			if (OperationHandlers.TryGetValue((OperationHandlerId)handlerId, out var handler)) {
 				var data = (byte[])operationRequest.Parameters[handlerId];
 
 				using (var bytes = new MemoryStream(data)) {
@@ -148,13 +148,13 @@ namespace Paradise.Realtime.Server {
 						handler.OnOperationRequest(this, operationRequest.OperationCode, bytes);
 					} catch (NotImplementedException ex) {
 						var stackTrace = new System.Diagnostics.StackTrace(ex);
-						Log.Debug($"Not Implemented: {handler.GetType().Name}:{stackTrace.GetFrame(0).GetMethod().Name}");
+						Log.Debug($"Not Implemented: {handler.HandlerName}, OpCode:{operationRequest.OperationCode}, MethodName:{stackTrace.GetFrame(0).GetMethod().Name}");
 					} catch (NotSupportedException ex) {
 						var stackTrace = new System.Diagnostics.StackTrace(ex);
-						Log.Debug($"Not Supported: {handler.GetType().Name}:{stackTrace.GetFrame(0).GetMethod().Name}");
+						Log.Debug($"Not Supported: {handler.HandlerName}, OpCode:{operationRequest.OperationCode}");
 					} catch (Exception ex) {
 						BaseRealtimeApplication.Instance.HandleException(ex);
-						Log.Error($"Error while handling request {handler.GetType().Name}:{handlerId} -> OpCode: {operationRequest.OperationCode}", ex);
+						Log.Error($"Error while handling request {handler.HandlerName}, OpCode:{operationRequest.OperationCode}", ex);
 					}
 				}
 			} else {
@@ -192,7 +192,7 @@ namespace Paradise.Realtime.Server {
 		protected abstract void SendHeartbeat(string hash);
 
 		public bool CheckHeartbeat(string responseHash) {
-			if (!Configuration.HashVerificationEnabled) {
+			if (!Configuration.EnableHashVerification) {
 				heartbeat = null;
 				nextHeartbeatTime = DateTime.UtcNow.AddSeconds(HeartbeatInterval);
 				heartbeatState = HeartbeatState.Ok;

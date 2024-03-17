@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Paradise.Realtime.Server {
 	public class PeerConfiguration {
-		public bool HashVerificationEnabled;
+		public bool EnableHashVerification;
 
 		public int HeartbeatInterval;
 		public int HeartbeatTimeout;

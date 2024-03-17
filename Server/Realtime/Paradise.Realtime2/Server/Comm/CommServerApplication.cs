@@ -12,7 +12,7 @@ namespace Paradise.Realtime.Server.Comm {
 		protected static readonly ILog Log = LogManager.GetLogger(nameof(CommServerApplication));
 
 		public static new CommServerApplication Instance => (CommServerApplication)ApplicationBase.Instance;
-		public static new ServerType ServerType = ServerType.Comm;
+		public override ServerType ServerType => ServerType.Comm;
 
 		protected System.Timers.Timer MonitoringTimer;
 

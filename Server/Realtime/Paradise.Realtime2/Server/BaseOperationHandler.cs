@@ -15,7 +15,8 @@ namespace Paradise.Realtime.Server {
 	public abstract class BaseOperationHandler {
 		protected static readonly ILog Log = LogManager.GetLogger(nameof(BaseOperationHandler));
 
-		public abstract int Id { get; }
+		public abstract OperationHandlerId Id { get; }
+		public abstract string HandlerName { get; }
 
 		public abstract void OnOperationRequest(BasePeer peer, byte opCode, MemoryStream bytes);
 		public virtual void OnDisconnect(BasePeer peer, DisconnectReason reasonCode, string reasonDetail) { }

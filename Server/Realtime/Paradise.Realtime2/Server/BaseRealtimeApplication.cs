@@ -1,4 +1,4 @@
-using Cmune.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using log4net;
 using log4net.Config;
 using Photon.SocketServer;
@@ -16,7 +16,7 @@ namespace Paradise.Realtime.Server {
 		protected static readonly ILog Log = LogManager.GetLogger(typeof(BaseRealtimeApplication));
 
 		public static new BaseRealtimeApplication Instance => (BaseRealtimeApplication)ApplicationBase.Instance;
-		public static WebSocket.ServerType ServerType;
+		public virtual WebSocket.ServerType ServerType { get; }
 
 		public string EncryptionPassPhrase { get; private set; }
 		public string EncryptionInitVector { get; private set; }
@@ -27,6 +27,8 @@ namespace Paradise.Realtime.Server {
 
 		public ApplicationConfiguration Configuration { get; private set; }
 		private PeerConfiguration PeerConfiguration;
+
+		public abstract int Peers { get; }
 
 		protected virtual void OnBeforeSetup() { }
 		protected virtual void OnSetup() { }
@@ -77,11 +79,11 @@ namespace Paradise.Realtime.Server {
 				compositeHashes: Configuration.CompositeHashBytes.AsReadOnly(),
 				junkHashes: Configuration.JunkHashBytes.AsReadOnly()
 			) {
-				HashVerificationEnabled = Configuration.EnableHashVerification
+				EnableHashVerification = Configuration.EnableHashVerification
 			};
 
 			try {
-				if (ApplicationWebServiceClient.Instance.AuthenticateApplication("4.7.1", ChannelType.Steam, "paradiserealtime") is var data) {
+				if (ApplicationWebServiceClient.Instance.AuthenticateApplication("4.7.1", ChannelType.Steam, $"ParadiseRealtime{ServerType}") is var data) {
 					EncryptionInitVector = data.EncryptionInitVector;
 					EncryptionPassPhrase = data.EncryptionPassPhrase;
 				}
