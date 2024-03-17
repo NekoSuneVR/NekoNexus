@@ -21,10 +21,19 @@ namespace Paradise.Realtime.Server.Comm {
 		}
 
 		protected override void OnBeforeSetup() {
-			if (Configuration.CommApplicationSettings.ApplicationIdentifier == null)
+			if (Configuration.CommApplicationSettings.ApplicationIdentifier == null) {
+				Log.Fatal("ApplicationIdentifier is null!");
 				throw new ArgumentNullException(nameof(Configuration.CommApplicationSettings.ApplicationIdentifier));
+			}
 
 			Identifier = Configuration.CommApplicationSettings.ApplicationIdentifier;
+
+			if (Configuration.CommApplicationSettings.PhotonId == 0) {
+				Log.Fatal("PhotonId is null!");
+				throw new ArgumentNullException(nameof(Configuration.CommApplicationSettings.PhotonId));
+			}
+
+			PhotonId = Configuration.CommApplicationSettings.PhotonId;
 
 			Log.Info($"Starting CommServer[{Identifier}]...");
 		}
@@ -35,7 +44,7 @@ namespace Paradise.Realtime.Server.Comm {
 				PublishMonitoringData();
 			};
 
-			SocketClient = new SocketClient(Identifier, ServerType.Comm, Configuration.CommApplicationSettings.EncryptionPassPhrase);
+			SocketClient = new SocketClient(Identifier, ServerType.Comm, PhotonId, Configuration.CommApplicationSettings.EncryptionPassPhrase);
 
 			SocketClient.Connected += (sender, e) => {
 				Log.Info("Comm: CONNECTED TO SOCKET");

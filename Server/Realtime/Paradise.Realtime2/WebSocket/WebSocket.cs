@@ -13,6 +13,7 @@ namespace Paradise {
 		public struct SocketInfo {
 			public Guid SocketId;
 			public ServerType Type;
+			public int PhotonId;
 			public bool IsClient;
 		}
 

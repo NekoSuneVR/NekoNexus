@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -125,6 +125,9 @@ namespace Paradise.Realtime.Server {
 	public class RealtimeApplicationSettings {
 		[YamlMember]
 		public Guid ApplicationIdentifier;
+
+		[YamlMember]
+		public int PhotonId;
 
 		[YamlMember]
 		public string EncryptionPassPhrase;

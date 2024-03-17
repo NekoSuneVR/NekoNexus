@@ -1,4 +1,4 @@
-﻿MasterHostname: localhost
+MasterHostname: localhost
 
 WebServicePort: 8080
 FileServerPort: 8081
@@ -7,13 +7,16 @@ SocketPort: 8082
 WebServiceEndpoint: '/2.0'
 WebServicePrefix: 'UberStrike.DataCenter.WebService.CWS.'
 WebServiceSuffix: 'Contract.svc'
+WebServiceUseTLS: false
 
 CommApplicationSettings:
   ApplicationIdentifier: '<Add GUID here>'
+  PhotonId: 0
   EncryptionPassPhrase: '<Add passphrase here>'
 
 GameApplicationSettings:
   ApplicationIdentifier: '<Add GUID here>'
+  PhotonId: 1
   EncryptionPassPhrase: '<Add passphrase here>'
 
 EnableChatLog: true

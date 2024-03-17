@@ -1,4 +1,4 @@
-﻿using Cmune.DataCenter.Common.Entities;
+using Cmune.DataCenter.Common.Entities;
 using log4net;
 using log4net.Config;
 using Photon.SocketServer;
@@ -22,6 +22,7 @@ namespace Paradise.Realtime.Server {
 		public string EncryptionInitVector { get; private set; }
 
 		public Guid Identifier;
+		public int PhotonId;
 		public WebSocket.SocketClient SocketClient;
 
 		public ApplicationConfiguration Configuration { get; private set; }

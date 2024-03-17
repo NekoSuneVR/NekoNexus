@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using System;
 using System.IO;
 using System.Net;
@@ -35,10 +35,11 @@ namespace Paradise {
 			public event EventHandler<SocketDataReceivedEventArgs> DataReceived;
 			public event EventHandler<SocketConnectionRejectedEventArgs> ConnectionRejected;
 
-			public SocketClient(Guid serverId, ServerType serverType, string encryptionPassphrase) {
+			public SocketClient(Guid serverId, ServerType serverType, int photonId, string encryptionPassphrase) {
 				try {
 					ClientInfo = new SocketInfo {
 						SocketId = serverId,
+						PhotonId = photonId,
 						Type = serverType
 					};
 
@@ -118,12 +119,16 @@ namespace Paradise {
 										Connected?.Invoke(this, new SocketConnectedEventArgs {
 											Socket = SocketConnection
 										});
-									} else {
+									} else if (status.Rejected) {
+										ConnectionRejectedHandle.Set();
+
 										ConnectionRejected?.Invoke(this, new SocketConnectionRejectedEventArgs {
 											Info = ClientInfo,
 											Socket = SocketConnection,
 											Reason = status.DisconnectReason
 										});
+
+										SocketConnection.Close();
 									}
 									break;
 								default:
