@@ -1,4 +1,4 @@
-using Cmune.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using log4net;
 using Photon.SocketServer;
 using PhotonHostRuntimeInterfaces;
@@ -92,26 +92,26 @@ namespace Paradise.Realtime.Server {
 
 			if (!Configuration.EnableHashVerification) return true;
 
-			//if (magicHash == null) {
-			//	throw new ArgumentNullException(nameof(magicHash));
-			//}
+			if (magicHash == null) {
+				throw new ArgumentNullException(nameof(magicHash));
+			}
 
-			//if (Configuration.CompositeHashes.Count > 0) {
-			//	var bytes = Encoding.ASCII.GetBytes(authToken);
+			if (Configuration.CompositeHashes.Count > 0) {
+				var bytes = Encoding.ASCII.GetBytes(authToken);
 
-			//	foreach (var hash in Configuration.CompositeHashes) {
-			//		var text = HashBytes(hash, bytes);
+				foreach (var hash in Configuration.CompositeHashes) {
+					var text = HashBytes(hash, bytes);
 
-			//		if (text.Equals(magicHash)) {
-			//			Log.Debug($"MagicHash: {text} == {magicHash}");
-			//			return true;
-			//		}
+					if (text.Equals(magicHash)) {
+						Log.Debug($"MagicHash: {text} == {magicHash}");
+						return true;
+					}
 
-			//		Log.Debug($"MagicHash: {text} != {magicHash}");
-			//	}
+					Log.Debug($"MagicHash: {text} != {magicHash}");
+				}
 
-			//	return false;
-			//}
+				return false;
+			}
 
 			return true;
 		}
