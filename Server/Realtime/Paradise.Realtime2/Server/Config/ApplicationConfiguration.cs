@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -131,5 +131,8 @@ namespace Paradise.Realtime.Server {
 
 		[YamlMember]
 		public string EncryptionPassPhrase;
+
+		[YamlMember]
+		public int MaxPlayerCount;
 	}
 }

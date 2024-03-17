@@ -16,6 +16,12 @@ namespace Paradise.Realtime.Server.Comm {
 
 		protected System.Timers.Timer MonitoringTimer;
 
+		public override int Peers {
+			get {
+				return LobbyManager.Instance.Peers.Count;
+			}
+		}
+
 		protected override PeerBase OnCreatePeer(InitRequest initRequest) {
 			return new CommPeer(initRequest);
 		}
