@@ -60,6 +60,10 @@ namespace Paradise.Realtime.Server.Comm {
 				SocketClient.Reconnect(25);
 			};
 
+			SocketClient.ConnectionRejected += (sender, e) => {
+				Log.Info($"Comm: Rejected connection by socket server (Reason: {e.Reason})");
+			};
+			
 			SocketClient.DataReceived += (sender, e) => { };
 
 			var tcpAddress = Dns.GetHostAddresses(Configuration.MasterHostname).Where(_ => _.AddressFamily == AddressFamily.InterNetwork).First();

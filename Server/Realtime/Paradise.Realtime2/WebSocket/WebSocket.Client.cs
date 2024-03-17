@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using System;
 using System.IO;
 using System.Net;
@@ -25,6 +25,7 @@ namespace Paradise {
 			private IPEndPoint RemoteEndPoint;
 			private WebSocketSharp.WebSocket SocketConnection;
 			private readonly ManualResetEvent ConnectionWaitHandle = new ManualResetEvent(false);
+			private readonly ManualResetEvent ConnectionRejectedHandle = new ManualResetEvent(false);
 			public DateTime LastResponseTime;
 
 			private SocketInfo ClientInfo;
@@ -145,7 +146,7 @@ namespace Paradise {
 
 				int connectionAttempts = 0;
 
-				while (maxAttempts == 0 || connectionAttempts < maxAttempts) {
+				while ((maxAttempts == 0 || connectionAttempts < maxAttempts) && !ConnectionRejectedHandle.WaitOne(0)) {
 					try {
 						connectionAttempts++;
 
