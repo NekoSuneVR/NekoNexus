@@ -88,30 +88,37 @@ export default class ParadiseService {
         case WebSocketPacketType.Monitoring:
           break;
         case WebSocketPacketType.Error:
-          await this.discordClient.LogError(e.Data);
+          await this.discordClient?.LogError(e.Data);
           break;
         case WebSocketPacketType.ChatMessage:
-          await this.discordClient.SendLobbyChatMessage(e.Data);
+          await this.discordClient?.SendLobbyChatMessage(e.Data);
+          break;
+        case WebSocketPacketType.RoomChatMessage:
+          console.log(e.Data);
           break;
         case WebSocketPacketType.Command:
           break;
         case WebSocketPacketType.PlayerJoined:
-          await this.discordClient.SendPlayerJoinMessage(e.Data);
+          await this.discordClient?.SendPlayerJoinMessage(e.Data);
           break;
         case WebSocketPacketType.PlayerLeft:
-          await this.discordClient.SendPlayerLeftMessage(e.Data);
+          await this.discordClient?.SendPlayerLeftMessage(e.Data);
           break;
         case WebSocketPacketType.RoomOpened:
-          await this.discordClient.SendGameRoomCreatedMessage(e.Data);
+          await this.discordClient?.SendGameRoomCreatedMessage(e.Data);
           break;
         case WebSocketPacketType.RoomClosed:
-          await this.discordClient.SendGameRoomDestroyedMessage(e.Data);
+          await this.discordClient?.SendGameRoomDestroyedMessage(e.Data);
+          break;
+        case WebSocketPacketType.PlayerJoinedRoom:
+        case WebSocketPacketType.PlayerLeftRoom:
+          // console.log(e.Data);
           break;
         case WebSocketPacketType.RoundStarted:
-          await this.discordClient.SendRoundStartedMessage(e.Data);
+          await this.discordClient?.SendRoundStartedMessage(e.Data);
           break;
         case WebSocketPacketType.RoundEnded:
-          await this.discordClient.SendRoundEndedMessage(e.Data[0], e.Data[1]);
+          await this.discordClient?.SendRoundEndedMessage(e.Data[0], e.Data[1]);
           break;
         default:
           Log.debug(PacketType[e.Type]);
