@@ -1,6 +1,6 @@
 import { Log } from '@/utils';
 import {
-  ArrayProxy, ByteProxy, CommActorInfoProxy, DictionaryProxy, EndOfMatchDataProxy, GameRoomDataProxy, Int32Proxy, StringProxy,
+  ArrayProxy, ByteProxy, CommActorInfoProxy, DictionaryProxy, EndOfMatchDataProxy, GameActorInfoProxy, GameRoomDataProxy, Int32Proxy, StringProxy,
 } from 'uberstrike-js/dist/UberStrike/Core/Serialization';
 import { v4 as uuid } from 'uuid';
 import WebSocketPacketType from './PacketType';
@@ -89,6 +89,14 @@ export default class WebSocketPayload {
 
         StringProxy.Serialize(bytes, JSON.stringify(data));
         break;
+      case WebSocketPacketType.RoomChatMessage: {
+        payloadObj.IsEncrypted = true;
+
+        const list = data as any[];
+        StringProxy.Serialize(bytes, JSON.stringify(data));
+        GameRoomDataProxy.Serialize(bytes, list[0]);
+        break;
+      }
       case WebSocketPacketType.CommandOutput:
         payloadObj.IsEncrypted = true;
 
@@ -117,6 +125,15 @@ export default class WebSocketPayload {
 
         GameRoomDataProxy.Serialize(bytes, data);
         break;
+      case WebSocketPacketType.PlayerJoinedRoom:
+      case WebSocketPacketType.PlayerLeftRoom: {
+        payloadObj.IsEncrypted = true;
+
+        const list = data as any[];
+        GameActorInfoProxy.Serialize(bytes, list[0]);
+        GameRoomDataProxy.Serialize(bytes, list[1]);
+        break;
+      }
       case WebSocketPacketType.RoundStarted: {
         payloadObj.IsEncrypted = true;
 
@@ -191,6 +208,13 @@ export default class WebSocketPayload {
       case WebSocketPacketType.ChatMessage:
         result = JSON.parse(StringProxy.Deserialize(bytes));
         break;
+      case WebSocketPacketType.RoomChatMessage:
+        result = [
+          JSON.parse(StringProxy.Deserialize(bytes)),
+          GameRoomDataProxy.Deserialize(bytes),
+        ];
+
+        break;
       case WebSocketPacketType.Monitoring:
       case WebSocketPacketType.BanPlayer:
         result = DictionaryProxy.Deserialize<string, object>(bytes, StringProxy.Deserialize, (stream) => JSON.parse(StringProxy.Deserialize(stream)));
@@ -205,6 +229,13 @@ export default class WebSocketPayload {
       case WebSocketPacketType.RoomOpened:
       case WebSocketPacketType.RoomClosed:
         result = GameRoomDataProxy.Deserialize(bytes);
+        break;
+      case WebSocketPacketType.PlayerJoinedRoom:
+      case WebSocketPacketType.PlayerLeftRoom:
+        result = [
+          GameActorInfoProxy.Deserialize(bytes),
+          GameRoomDataProxy.Deserialize(bytes),
+        ];
         break;
       case WebSocketPacketType.RoundStarted:
         result = [

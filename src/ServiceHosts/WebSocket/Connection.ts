@@ -70,7 +70,7 @@ export default class WebSocketConnection {
   }
 
   public async SendBytes(bytes: Buffer | byte[] | Uint8Array) {
-    if (!this.IsConnected) throw new Error('SocketException');
+    if (!this.IsConnected) return;
 
     if (this.sendTask) await this.sendTask;
     if (this.receiveTask) await this.receiveTask;
