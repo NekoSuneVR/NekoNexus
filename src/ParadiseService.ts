@@ -8,7 +8,7 @@ import {
 import PacketType from '@/ServiceHosts/WebSocket/PacketType';
 import { CommandHandler, Commands, ConsoleHelper } from '@/console';
 import DiscordClient from '@/discord/DiscordClient';
-import models, { PhotonServer } from '@/models';
+import models from '@/models';
 import { GameSessionManager, Log, XpPointsUtil } from '@/utils';
 import readline, { Interface } from 'readline';
 import {
@@ -63,6 +63,7 @@ export default class ParadiseService {
     });
 
     this.socketHost.on('PacketReceived', async (e: WebSocketPacketReceivedEventArgs) => {
+      const { PhotonServer } = models;
       switch (e.PacketType) {
         case WebSocketPacketType.Pong:
           try {

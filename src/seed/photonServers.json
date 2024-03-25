@@ -1,0 +1,15 @@
+[{
+  "PhotonId": 0,
+  "IP": "127.0.0.1",
+  "Name": "[VA] Paradise Comm Server",
+  "Region": 1,
+  "Port": 5055,
+  "UsageType": 6
+}, {
+  "PhotonId": 1,
+  "IP": "127.0.0.1",
+  "Name": "[VA] Paradise Game Server",
+  "Region": 1,
+  "Port": 5155,
+  "UsageType": 1
+}]
