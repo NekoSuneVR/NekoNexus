@@ -46,9 +46,7 @@ namespace Paradise.Realtime.Server.Comm {
 
 			Log.Info($"{peer} joined the lobby");
 
-			if (CommServerApplication.Instance.Configuration.DiscordPlayerAnnouncements) {
-				CommServerApplication.Instance.SocketClient?.SendSync(PacketType.PlayerJoined, peer.Actor.ActorInfo, serverType: ServerType.Comm);
-			}
+			CommServerApplication.Instance.SocketClient?.SendSync(PacketType.PlayerJoined, peer.Actor.ActorInfo, serverType: ServerType.Comm);
 		}
 
 		public void Leave(CommPeer peer) {
@@ -66,9 +64,7 @@ namespace Paradise.Realtime.Server.Comm {
 
 			Log.Info($"{peer} left the lobby");
 
-			if (CommServerApplication.Instance.Configuration.DiscordPlayerAnnouncements) {
-				CommServerApplication.Instance.SocketClient?.SendSync(PacketType.PlayerLeft, peer.Actor.ActorInfo, serverType: ServerType.Comm);
-			}
+			CommServerApplication.Instance.SocketClient?.SendSync(PacketType.PlayerLeft, peer.Actor.ActorInfo, serverType: ServerType.Comm);
 
 			peer.RemoveOperationHandler(OpHandler.Id);
 			peer.Lobby = null;

@@ -10,7 +10,7 @@ using UberStrike.Realtime.Client;
 namespace Paradise.Realtime.Server.Comm {
 	public partial class CommPeer {
 		public class OperationHandler : BaseOperationHandler<CommPeer, ICommPeerOperationsType> {
-			protected static readonly ILog Log = LogManager.GetLogger(nameof(CommPeer.OperationHandler));
+			protected static readonly new ILog Log = LogManager.GetLogger(nameof(CommPeer.OperationHandler));
 
 			public override OperationHandlerId Id => OperationHandlerId.CommPeer;
 			public override string HandlerName => "CommPeer.OperationHandler";

@@ -59,20 +59,6 @@ namespace Paradise.Realtime.Server {
 		public List<string> JunkHashes = new List<string>();
 		#endregion
 
-		#region Discord Settings
-		[YamlMember]
-		public bool DiscordChatIntegration = false;
-
-		[YamlMember]
-		public bool DiscordPlayerAnnouncements = false;
-
-		[YamlMember]
-		public bool DiscordGameAnnouncements = false;
-
-		[YamlMember]
-		public bool DiscordErrorLog = false;
-		#endregion
-
 
 
 		[YamlIgnore]

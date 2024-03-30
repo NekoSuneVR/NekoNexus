@@ -13,7 +13,7 @@ using static Paradise.WebSocket;
 namespace Paradise.Realtime.Server.Comm {
 	public partial class LobbyRoom {
 		public class OperationHandler : BaseOperationHandler<CommPeer, ILobbyRoomOperationsType> {
-			protected static readonly ILog Log = LogManager.GetLogger(nameof(LobbyRoom.OperationHandler));
+			protected static readonly new ILog Log = LogManager.GetLogger(nameof(LobbyRoom.OperationHandler));
 			protected static readonly ILog ChatLog = LogManager.GetLogger("ChatLog");
 
 			public override OperationHandlerId Id => OperationHandlerId.LobbyRoom;
@@ -281,13 +281,11 @@ namespace Paradise.Realtime.Server.Comm {
 						ChatLog.Info($"[Lobby] {peer.Actor.Name}: {trimmed}");
 					}
 
-					if (CommServerApplication.Instance.Configuration.DiscordChatIntegration) {
-						CommServerApplication.Instance.SocketClient?.SendSync(PacketType.ChatMessage, new SocketChatMessage {
-							Cmid = peer.Actor.Cmid,
-							Name = peer.Actor.Name,
-							Message = trimmed
-						}, serverType: ServerType.Comm);
-					}
+					CommServerApplication.Instance.SocketClient?.SendSync(PacketType.ChatMessage, new SocketChatMessage {
+						Cmid = peer.Actor.Cmid,
+						Name = peer.Actor.Name,
+						Message = trimmed
+					}, serverType: ServerType.Comm);
 
 					foreach (var otherPeer in LobbyManager.Instance.GlobalLobby.Peers) {
 						if (otherPeer.Actor.Cmid != peer.Actor.Cmid) {

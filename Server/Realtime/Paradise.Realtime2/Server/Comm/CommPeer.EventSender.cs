@@ -9,7 +9,7 @@ using UberStrike.Realtime.Client;
 namespace Paradise.Realtime.Server.Comm {
 	public partial class CommPeer {
 		public class EventSender : BaseEventSender {
-			protected static readonly ILog Log = LogManager.GetLogger(nameof(CommPeer.EventSender));
+			protected static readonly new ILog Log = LogManager.GetLogger(nameof(CommPeer.EventSender));
 
 			public LobbyRoom.EventSender LobbyEventSender { get; private set; }
 

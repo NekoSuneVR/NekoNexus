@@ -11,7 +11,7 @@ using UberStrike.Realtime.Client;
 namespace Paradise.Realtime.Server.Comm {
 	public partial class LobbyRoom {
 		public class EventSender : BaseEventSender {
-			private static readonly ILog Log = LogManager.GetLogger(nameof(LobbyRoom.EventSender));
+			protected static readonly new ILog Log = LogManager.GetLogger(nameof(LobbyRoom.EventSender));
 
 			public EventSender(BasePeer peer) : base(peer) { }
 
