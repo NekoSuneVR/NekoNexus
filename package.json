@@ -4,10 +4,11 @@
   "homepage": "https://github.com/festivaldev/paradise-js",
   "main": "dist/index.js",
   "scripts": {
+	"seed": "tsx src/seed.ts",
+	"start": "tsx src/index.ts",
     "build:pre": "cd uberstrike-js && npm run build",
-    "start": "tsx src/index.ts",
-    "build": "ncc build -m -e wwwroot src/index.ts",
     "postbuild": "rimraf dist/wwwroot dist/Paradise.Settings.WebServices.yml",
+    "build": "ncc build -m -e wwwroot src/index.ts",
     "package:win64": "pkg -t latest-win-x64 dist/index.js -o build/Paradise.WebServices.exe"
   },
   "author": "Team FESTIVAL <weare@festival.tf>",

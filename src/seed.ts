@@ -1,13 +1,10 @@
 // eslint-disable-next-line import/no-named-default
-import { ParadiseServiceSettings } from '@/ParadiseServiceSettings';
+import { default as ServiceSettings } from '@/ParadiseServiceSettings';
 import models from '@/models';
 import { Log } from '@/utils';
-import path from 'path';
 import { Dialect, Sequelize } from 'sequelize';
 
 (async () => {
-  const ServiceSettings: ParadiseServiceSettings = new ParadiseServiceSettings(path.join(process.cwd(), '../../Paradise.Settings.WebServices.yml'));
-
   const sequelize = new Sequelize(ServiceSettings.DatabaseSettings.DatabaseName!, ServiceSettings.DatabaseSettings.Username!, ServiceSettings.DatabaseSettings.Password, {
     host: ServiceSettings.DatabaseSettings.Server,
     port: Number(ServiceSettings.DatabaseSettings.Port),
@@ -31,19 +28,19 @@ import { Dialect, Sequelize } from 'sequelize';
   } catch { }
 
   // #region Users
-  const users = require('./users.json');
+  const users = require('./seed/users.json');
   await models.PublicProfile.destroy({ where: {} });
   await models.PublicProfile.bulkCreate(users);
   // #endregion
 
   // #region Photon Servers
-  const photonServers = require('./photonServers.json');
+  const photonServers = require('./seed/photonServers.json');
   await models.PhotonServer.destroy({ where: {} });
   await models.PhotonServer.bulkCreate(photonServers);
   // #endregion
 
   // #region Shop
-  const shop = require('./shop.json');
+  const shop = require('./seed/shop.json');
   await models.ShopFunctionalItem.destroy({ where: {} });
   await models.ShopGearItem.destroy({ where: {} });
   await models.ShopQuickItem.destroy({ where: {} });
@@ -78,7 +75,7 @@ import { Dialect, Sequelize } from 'sequelize';
   // #endregion
 
   // #region Maps
-  const maps = require('./maps.json');
+  const maps = require('./seed/maps.json');
   await models.Map.destroy({ where: {} });
 
   await models.Map.bulkCreate(maps);
