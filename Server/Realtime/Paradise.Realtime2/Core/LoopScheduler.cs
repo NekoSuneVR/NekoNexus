@@ -18,11 +18,11 @@ namespace Paradise.Realtime.Core {
 		private bool started;
 		public bool IsPaused => !pauseHandle.IsSet;
 
+		public float TickRate { get; private set; }
 		public float TickInterval {
 			get { return 1000 / TickRate; }
 		}
 
-		public float TickRate { get; private set; }
 		public IReadOnlyCollection<ILoop> Loops => loops.AsReadOnly();
 
 		public LoopScheduler(float tickRate) {

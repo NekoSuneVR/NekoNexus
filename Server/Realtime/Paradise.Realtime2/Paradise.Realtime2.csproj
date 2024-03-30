@@ -79,23 +79,19 @@
     <Compile Include="..\..\Web Services\Paradise.WebServices\Database\ModerationFlag.cs">
       <Link>ModerationFlag.cs</Link>
     </Compile>
-    <Compile Include="..\..\Web Services\Plugins\Paradise.WebServices.Services\Contracts\IApplicationWebServiceContract.cs">
-      <Link>ServiceClients\Contracts\IApplicationWebServiceContract.cs</Link>
-    </Compile>
-    <Compile Include="..\..\Web Services\Plugins\Paradise.WebServices.Services\Contracts\IAuthenticationWebServiceContract.cs">
-      <Link>ServiceClients\Contracts\IAuthenticationWebServiceContract.cs</Link>
-    </Compile>
-    <Compile Include="..\..\Web Services\Plugins\Paradise.WebServices.Services\Contracts\IModerationWebServiceContract.cs">
-      <Link>ServiceClients\Contracts\IModerationWebServiceContract.cs</Link>
-    </Compile>
-    <Compile Include="..\..\Web Services\Plugins\Paradise.WebServices.Services\Contracts\IUserWebServiceContract.cs">
-      <Link>ServiceClients\Contracts\IUserWebServiceContract.cs</Link>
-    </Compile>
+    <Compile Include="Core\BalancingLoopScheduler.cs" />
+    <Compile Include="Core\BaseTimer.cs" />
+    <Compile Include="Core\Countdown.cs" />
+    <Compile Include="Core\EventHandler.cs" />
+    <Compile Include="Core\FixedTimer.cs" />
     <Compile Include="Core\Interfaces\ILoop.cs" />
     <Compile Include="Core\Interfaces\ILoopScheduler.cs" />
+    <Compile Include="Core\Interfaces\IState.cs" />
     <Compile Include="Core\Interfaces\ITimer.cs" />
     <Compile Include="Core\Loop.cs" />
     <Compile Include="Core\LoopScheduler.cs" />
+    <Compile Include="Core\StateMachine.cs" />
+    <Compile Include="Core\Timer.cs" />
     <Compile Include="ProfanityFilter\AllowList.cs" />
     <Compile Include="ProfanityFilter\Interfaces\IAllowList.cs" />
     <Compile Include="ProfanityFilter\Interfaces\IProfanityFilter.cs" />
@@ -118,11 +114,51 @@
     <Compile Include="Server\Comm\Lobby\LobbyRoom.OperationHandler.cs" />
     <Compile Include="Server\Config\ApplicationConfiguration.cs" />
     <Compile Include="Server\Config\PeerConfiguration.cs" />
+    <Compile Include="Server\Game\GameActor.cs" />
+    <Compile Include="Server\Game\GameActorInfo.Delta.cs" />
+    <Compile Include="Server\Game\GameActorStatistics.cs" />
+    <Compile Include="Server\Game\GamePeer.cs" />
+    <Compile Include="Server\Game\GamePeer.EventSender.cs" />
+    <Compile Include="Server\Game\GamePeer.OperationHandler.cs" />
+    <Compile Include="Server\Game\GameServerApplication.cs" />
+    <Compile Include="Server\Game\Managers\AchievementManager.cs" />
+    <Compile Include="Server\Game\Managers\GameRoomManager.cs" />
+    <Compile Include="Server\Game\Managers\PowerUpManager.cs" />
+    <Compile Include="Server\Game\Managers\ShopManager.cs" />
+    <Compile Include="Server\Game\Managers\SpawnPointManager.cs" />
+    <Compile Include="Server\Game\Managers\StatisticsManager.cs" />
+    <Compile Include="Server\Game\Rooms\BaseGameRoom.cs" />
+    <Compile Include="Server\Game\Rooms\BaseGameRoom.EventArgs.cs" />
+    <Compile Include="Server\Game\Rooms\BaseGameRoom.EventSender.cs" />
+    <Compile Include="Server\Game\Rooms\BaseGameRoom.OperationHandler.cs" />
+    <Compile Include="Server\Game\Rooms\TestRoom.cs" />
+    <Compile Include="Server\Game\States\Match\AfterRoundState.cs" />
+    <Compile Include="Server\Game\States\Match\BaseMatchState.cs" />
+    <Compile Include="Server\Game\States\Match\EndOfMatchState.cs" />
+    <Compile Include="Server\Game\States\Match\MatchRunningState.cs" />
+    <Compile Include="Server\Game\States\Match\PrepareNextRoundState.cs" />
+    <Compile Include="Server\Game\States\Match\WaitingForPlayersState.cs" />
+    <Compile Include="Server\Game\States\Player\BasePlayerState.cs" />
+    <Compile Include="Server\Game\States\Player\PlayerKilledState.cs" />
+    <Compile Include="Server\Game\States\Player\PlayerOverviewState.cs" />
+    <Compile Include="Server\Game\States\Player\PlayerPlayingState.cs" />
+    <Compile Include="Server\Game\States\Player\PlayerPrepareState.cs" />
+    <Compile Include="Server\Game\States\Player\PlayerSpectatingState.cs" />
+    <Compile Include="Server\Game\XpPointsUtil.cs" />
     <Compile Include="Server\Interfaces\IRoom.cs" />
     <Compile Include="ServiceClients\ApplicationWebServiceClient.cs" />
     <Compile Include="ServiceClients\AuthenticationWebServiceClient.cs" />
     <Compile Include="ServiceClients\BaseWebServiceClient.cs" />
+    <Compile Include="ServiceClients\Contracts\IApplicationWebServiceContract.cs" />
+    <Compile Include="ServiceClients\Contracts\IAuthenticationWebServiceContract.cs" />
+    <Compile Include="ServiceClients\Contracts\IClanWebServiceContract.cs" />
+    <Compile Include="ServiceClients\Contracts\IModerationWebServiceContract.cs" />
+    <Compile Include="ServiceClients\Contracts\IPrivateMessageWebServiceContract.cs" />
+    <Compile Include="ServiceClients\Contracts\IRelationshipWebServiceContract.cs" />
+    <Compile Include="ServiceClients\Contracts\IShopWebServiceContract.cs" />
+    <Compile Include="ServiceClients\Contracts\IUserWebServiceContract.cs" />
     <Compile Include="ServiceClients\ModerationWebServiceClient.cs" />
+    <Compile Include="ServiceClients\ShopWebServiceClient.cs" />
     <Compile Include="ServiceClients\UserWebServiceClient.cs" />
     <Compile Include="WebSocket\WebSocket.cs" />
     <Compile Include="WebSocket\WebSocket.EventArgs.cs" />
@@ -166,4 +202,8 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>del "$(SolutionDir)build\server\photon\log\*.log"
+exit 0</PreBuildEvent>
+  </PropertyGroup>
 </Project>

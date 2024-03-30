@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using Cmune.DataCenter.Common.Entities;
 using UberStrike.Core.Models;
 using UberStrike.Core.Serialization;
 
@@ -102,6 +103,14 @@ namespace Paradise {
 
 							StringProxy.Serialize(bytes, JsonConvert.SerializeObject(data));
 							break;
+						case PacketType.RoomChatMessage: {
+							payloadObj.IsEncrypted = true;
+
+							var list = data as object[];
+							StringProxy.Serialize(bytes, JsonConvert.SerializeObject(list[0]));
+							GameRoomDataProxy.Serialize(bytes, (GameRoomData)list[1]);
+							break;
+						}
 						case PacketType.CommandOutput:
 							payloadObj.IsEncrypted = true;
 
@@ -115,9 +124,6 @@ namespace Paradise {
 								StringProxy.Serialize(stream, JsonConvert.SerializeObject(instance));
 							});
 							break;
-						case PacketType.PlayerList:
-							/// TODO
-							break;
 						case PacketType.PlayerJoined:
 						case PacketType.PlayerLeft:
 							payloadObj.IsEncrypted = true;
@@ -130,11 +136,19 @@ namespace Paradise {
 
 							GameRoomDataProxy.Serialize(bytes, (GameRoomData)data);
 							break;
-						case PacketType.RoundStarted: {
+						case PacketType.PlayerJoinedRoom:
+						case PacketType.PlayerLeftRoom: {
 							payloadObj.IsEncrypted = true;
 
 							var list = data as object[];
-							GameRoomDataProxy.Serialize(bytes, (GameRoomData)list[0]);
+							GameActorInfoProxy.Serialize(bytes, (GameActorInfo)list[0]);
+							GameRoomDataProxy.Serialize(bytes, (GameRoomData)list[1]);
+							break;
+						}
+						case PacketType.RoundStarted: {
+							payloadObj.IsEncrypted = true;
+
+							GameRoomDataProxy.Serialize(bytes, (GameRoomData)data);
 							break;
 						}
 						case PacketType.RoundEnded: {
@@ -222,7 +236,13 @@ namespace Paradise {
 							break;
 						case PacketType.CommandOutput:
 						case PacketType.ChatMessage:
-							result = StringProxy.Deserialize(bytes);
+							result = JsonConvert.DeserializeObject<SocketChatMessage>(StringProxy.Deserialize(bytes));
+							break;
+						case PacketType.RoomChatMessage:
+							result = new object[] {
+								JsonConvert.DeserializeObject<SocketChatMessage>(StringProxy.Deserialize(bytes)),
+								GameRoomDataProxy.Deserialize(bytes),
+							};
 							break;
 						case PacketType.Error:
 							result = JsonConvert.DeserializeObject<RealtimeError>(StringProxy.Deserialize(bytes));
@@ -233,9 +253,6 @@ namespace Paradise {
 								return JsonConvert.DeserializeObject<object>(StringProxy.Deserialize(stream));
 							});
 							break;
-						case PacketType.PlayerList:
-							/// TODO;
-							break;
 						case PacketType.PlayerJoined:
 						case PacketType.PlayerLeft:
 							result = CommActorInfoProxy.Deserialize(bytes);
@@ -244,10 +261,15 @@ namespace Paradise {
 						case PacketType.RoomClosed:
 							result = GameRoomDataProxy.Deserialize(bytes);
 							break;
-						case PacketType.RoundStarted:
-							result = new[] {
-								GameRoomDataProxy.Deserialize(bytes)
+						case PacketType.PlayerJoinedRoom:
+						case PacketType.PlayerLeftRoom:
+							result = new object[] {
+								GameActorInfoProxy.Deserialize(bytes),
+								GameRoomDataProxy.Deserialize(bytes),
 							};
+							break;
+						case PacketType.RoundStarted:
+							result = GameRoomDataProxy.Deserialize(bytes);
 							break;
 						case PacketType.RoundEnded:
 							result = new object[] {

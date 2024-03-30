@@ -14,11 +14,14 @@
 			Error,
 
 			ChatMessage = 1 << 10,
+			RoomChatMessage,
 			PlayerList,
 			PlayerJoined,
 			PlayerLeft,
 			RoomOpened,
 			RoomClosed,
+			PlayerJoinedRoom,
+			PlayerLeftRoom,
 			RoundStarted,
 			RoundEnded,
 

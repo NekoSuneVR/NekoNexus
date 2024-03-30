@@ -10,6 +10,7 @@ using System.ServiceModel;
 using System.Xml;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
+using static Paradise.WebSocket;
 
 namespace Paradise.Realtime.Server {
 	public abstract class BaseRealtimeApplication : ApplicationBase {
@@ -110,14 +111,12 @@ namespace Paradise.Realtime.Server {
 		}
 
 		public void HandleException(Exception exception) {
-			if (Configuration.DiscordErrorLog) {
-				//Socket?.SendSync(PacketType.Error, new RealtimeError {
-				//	Type = ServerType,
-				//	ExceptionType = exception.GetType(),
-				//	Message = exception.Message,
-				//	StackTrace = exception.StackTrace
-				//});
-			}
+			SocketClient?.SendSync(PacketType.Error, new RealtimeError {
+				Type = ServerType,
+				ExceptionType = exception.GetType(),
+				Message = exception.Message,
+				StackTrace = exception.StackTrace
+			});
 		}
 	}
 }
