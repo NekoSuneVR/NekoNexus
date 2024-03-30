@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using Photon.SocketServer;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using static Paradise.WebSocket;
 
 namespace Paradise.Realtime.Server.Comm {
 	public class CommServerApplication : BaseRealtimeApplication {
-		protected static readonly ILog Log = LogManager.GetLogger(nameof(CommServerApplication));
+		protected static readonly new ILog Log = LogManager.GetLogger(nameof(CommServerApplication));
 
 		public static new CommServerApplication Instance => (CommServerApplication)ApplicationBase.Instance;
 		public override ServerType ServerType => ServerType.Comm;
@@ -45,7 +45,7 @@ namespace Paradise.Realtime.Server.Comm {
 		}
 
 		protected override void OnSetup() {
-			MonitoringTimer = new System.Timers.Timer(TimeSpan.FromMinutes(1).TotalMilliseconds);
+			MonitoringTimer = new System.Timers.Timer(TimeSpan.FromSeconds(5).TotalMilliseconds);
 			MonitoringTimer.Elapsed += delegate {
 				PublishMonitoringData();
 			};
@@ -69,8 +69,33 @@ namespace Paradise.Realtime.Server.Comm {
 			SocketClient.ConnectionRejected += (sender, e) => {
 				Log.Info($"Comm: Rejected connection by socket server (Reason: {e.Reason})");
 			};
-			
-			SocketClient.DataReceived += (sender, e) => { };
+
+			SocketClient.DataReceived += (sender, e) => {
+				switch (e.Type) {
+					case PacketType.ChatMessage:
+						var message = (SocketChatMessage)e.Data;
+
+						foreach (var peer in LobbyManager.Instance.Peers) {
+							peer.LobbyEventSender.SendLobbyChatMessage(message.Cmid, message.Name, message.Message);
+						}
+						break;
+					case PacketType.BanPlayer: {
+						var data = (Dictionary<string, object>)e.Data;
+						var targetPeer = LobbyManager.Instance.Peers.FirstOrDefault(_ => _.Actor.Cmid == (long)data["TargetCmid"]);
+
+						if (targetPeer != null) {
+							if ((long)data["Duration"] == 0) {
+								targetPeer.SendError($"You have been banned permanently.\n\nReason: {data["Reason"]}");
+							} else {
+								var expireTime = ((DateTime)data["ExpireTime"]).ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss \"GMT\"zzz");
+								targetPeer.SendError($"You have been banned for {data["Duration"]} minute(s).\nYour ban will expire at {expireTime}\n\nReason: {data["Reason"]}");
+							}
+						}
+
+						break;
+					}
+				}
+			};
 
 			var tcpAddress = Dns.GetHostAddresses(Configuration.MasterHostname).Where(_ => _.AddressFamily == AddressFamily.InterNetwork).First();
 
