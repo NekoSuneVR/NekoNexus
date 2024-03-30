@@ -16,6 +16,7 @@ import ModerationAction from './ModerationAction';
 import PhotonServer from './PhotonServer';
 import PlayerInventoryItem from './PlayerInventoryItem';
 import PlayerLoadout from './PlayerLoadout';
+import PlayerMachine from './PlayerMachine';
 import PlayerStatistics from './PlayerStatistics';
 import PointDeposit from './PointDeposit';
 import PrivateMessage from './PrivateMessage';
@@ -47,6 +48,7 @@ export { default as ModerationAction } from './ModerationAction';
 export { default as PhotonServer } from './PhotonServer';
 export { default as PlayerInventoryItem } from './PlayerInventoryItem';
 export { default as PlayerLoadout } from './PlayerLoadout';
+export { default as PlayerMachine } from './PlayerMachine';
 export { default as PlayerStatistics } from './PlayerStatistics';
 export { default as PointDeposit } from './PointDeposit';
 export { default as PrivateMessage } from './PrivateMessage';
@@ -79,6 +81,7 @@ export default {
   PhotonServer,
   PlayerInventoryItem,
   PlayerLoadout,
+  PlayerMachine,
   PlayerStatistics,
   PointDeposit,
   PrivateMessage,
