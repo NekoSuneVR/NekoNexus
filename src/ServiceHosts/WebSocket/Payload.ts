@@ -137,8 +137,7 @@ export default class WebSocketPayload {
       case WebSocketPacketType.RoundStarted: {
         payloadObj.IsEncrypted = true;
 
-        const list = data as any[];
-        GameRoomDataProxy.Serialize(bytes, list[0]);
+        GameRoomDataProxy.Serialize(bytes, data);
         break;
       }
       case WebSocketPacketType.RoundEnded: {
@@ -238,9 +237,7 @@ export default class WebSocketPayload {
         ];
         break;
       case WebSocketPacketType.RoundStarted:
-        result = [
-          GameRoomDataProxy.Deserialize(bytes),
-        ];
+        result = GameRoomDataProxy.Deserialize(bytes);
         break;
       case WebSocketPacketType.RoundEnded:
         result = [
