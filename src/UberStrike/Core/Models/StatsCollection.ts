@@ -11,6 +11,10 @@ export default class StatsCollection {
   public MeleeShotsFired: int;
   public MeleeShotsHit: int;
   public MeleeDamageDone: int;
+  public HandgunKills: int;
+  public HandgunShotsFired: int;
+  public HandgunShotsHit: int;
+  public HandgunDamageDone: int;
   public MachineGunKills: int;
   public MachineGunShotsFired: int;
   public MachineGunShotsHit: int;
@@ -43,26 +47,26 @@ export default class StatsCollection {
   }
 
   public GetKills(): int {
-    return (this.MeleeKills + this.MachineGunKills + this.ShotgunSplats
-      + this.SniperKills + this.SplattergunKills + this.CannonKills
-      + this.LauncherKills) - this.Suicides;
+    return (this.MeleeKills + this.HandgunKills + this.MachineGunKills
+      + this.ShotgunSplats + this.SniperKills + this.SplattergunKills
+      + this.CannonKills + this.LauncherKills) - this.Suicides;
   }
 
   public GetShots(): int {
-    return this.MeleeShotsFired + this.MachineGunShotsFired + this.ShotgunShotsFired
-      + this.SniperShotsFired + this.SplattergunShotsFired + this.CannonShotsFired
-      + this.LauncherShotsFired;
+    return this.MeleeShotsFired + this.HandgunShotsFired + this.MachineGunShotsFired
+      + this.ShotgunShotsFired + this.SniperShotsFired + this.SplattergunShotsFired
+      + this.CannonShotsFired + this.LauncherShotsFired;
   }
 
   public GetHits(): int {
-    return this.MeleeShotsHit + this.MachineGunShotsHit + this.ShotgunShotsHit
-      + this.SniperShotsHit + this.SplattergunShotsHit + this.CannonShotsHit
-      + this.LauncherShotsHit;
+    return this.MeleeShotsHit + this.HandgunShotsHit + this.MachineGunShotsHit
+      + this.ShotgunShotsHit + this.SniperShotsHit + this.SplattergunShotsHit
+      + this.CannonShotsHit + this.LauncherShotsHit;
   }
 
   public GetDamageDealt(): int {
-    return this.MeleeDamageDone + this.MachineGunDamageDone + this.ShotgunDamageDone
-      + this.SniperDamageDone + this.SplattergunDamageDone + this.CannonDamageDone
-      + this.LauncherDamageDone;
+    return this.MeleeDamageDone + this.HandgunDamageDone + this.MachineGunDamageDone
+      + this.ShotgunDamageDone + this.SniperDamageDone + this.SplattergunDamageDone
+      + this.CannonDamageDone + this.LauncherDamageDone;
   }
 }

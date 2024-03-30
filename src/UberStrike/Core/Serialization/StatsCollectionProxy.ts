@@ -18,6 +18,10 @@ export default class StatsCollectionProxy {
     Int32Proxy.Serialize(memoryStream, instance.LauncherKills);
     Int32Proxy.Serialize(memoryStream, instance.LauncherShotsFired);
     Int32Proxy.Serialize(memoryStream, instance.LauncherShotsHit);
+    Int32Proxy.Serialize(memoryStream, instance.HandgunDamageDone);
+    Int32Proxy.Serialize(memoryStream, instance.HandgunKills);
+    Int32Proxy.Serialize(memoryStream, instance.HandgunShotsFired);
+    Int32Proxy.Serialize(memoryStream, instance.HandgunShotsHit);
     Int32Proxy.Serialize(memoryStream, instance.MachineGunDamageDone);
     Int32Proxy.Serialize(memoryStream, instance.MachineGunKills);
     Int32Proxy.Serialize(memoryStream, instance.MachineGunShotsFired);
@@ -61,6 +65,10 @@ export default class StatsCollectionProxy {
       LauncherKills: Int32Proxy.Deserialize(bytes),
       LauncherShotsFired: Int32Proxy.Deserialize(bytes),
       LauncherShotsHit: Int32Proxy.Deserialize(bytes),
+      HandgunDamageDone: Int32Proxy.Deserialize(bytes),
+      HandgunKills: Int32Proxy.Deserialize(bytes),
+      HandgunShotsFired: Int32Proxy.Deserialize(bytes),
+      HandgunShotsHit: Int32Proxy.Deserialize(bytes),
       MachineGunDamageDone: Int32Proxy.Deserialize(bytes),
       MachineGunKills: Int32Proxy.Deserialize(bytes),
       MachineGunShotsFired: Int32Proxy.Deserialize(bytes),
