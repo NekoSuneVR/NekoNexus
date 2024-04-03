@@ -20,6 +20,8 @@ export default class PlayerPersonalRecordStatisticsViewProxy {
     Int32Proxy.Serialize(memoryStream, instance.MostSplats);
     Int32Proxy.Serialize(memoryStream, instance.MostSplattergunSplats);
     Int32Proxy.Serialize(memoryStream, instance.MostXPEarned);
+
+    Int32Proxy.Serialize(memoryStream, instance.MostHandgunSplats);
     memoryStream.WriteTo(stream);
   }
 
@@ -41,6 +43,8 @@ export default class PlayerPersonalRecordStatisticsViewProxy {
       MostSplats: Int32Proxy.Deserialize(bytes),
       MostSplattergunSplats: Int32Proxy.Deserialize(bytes),
       MostXPEarned: Int32Proxy.Deserialize(bytes),
+
+      MostHandgunSplats: Int32Proxy.Deserialize(bytes),
     });
   }
 }
