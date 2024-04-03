@@ -11,7 +11,7 @@ export default class ClearCommand extends ParadiseCommand {
   public override UsageText: string[] = [];
 
   public override async Run(args: string[]): Promise<any> {
-    console.clear();
+    process.stdout.write('\x1bc');
 
     ConsoleHelper.PrintConsoleHeader();
     ConsoleHelper.PrintConsoleHeaderSubtitle();

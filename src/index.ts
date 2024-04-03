@@ -19,5 +19,6 @@ Math.randomInt = function (min = 1, max = 2147483647) {
 };
 
 (async () => {
+  process.stdout.write('\x1bc');
   ParadiseService.Instance.Run();
 })();
