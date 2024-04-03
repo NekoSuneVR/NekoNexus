@@ -125,55 +125,6 @@ export default class ApplicationWebService extends BaseWebService {
     return null;
   }
 
-  static async GetCustomMaps(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
-    const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
-
-    try {
-      const clientVersion = StringProxy.Deserialize(bytes);
-      const clientType = EnumProxy.Deserialize(bytes);
-
-      this.debugEndpoint('GetMaps', clientVersion, clientType);
-
-      if (ApplicationWebService.supportedClientVersions.includes(clientVersion)) {
-        const maps = await Map.findAll({
-          where: { IsParadiseMap: true },
-          raw: true,
-        });
-        const mapSettings = await MapSettings.findAll({
-          raw: true,
-        });
-
-        const mapData = maps.reduce((acc: any[], cur: any) => {
-          acc.push({
-            ...cur,
-            Settings: mapSettings.filter((_) => _.MapId === cur.MapId).reduce((acc, cur) => {
-              acc[cur.GameModeType!] = {
-                ...cur,
-                MapId: undefined,
-                GameModeType: undefined,
-              };
-
-              return acc;
-            }, {}),
-          });
-
-          return acc;
-        }, []);
-
-        ListProxy.Serialize(outputStream, mapData, MapViewProxy.Serialize);
-      }
-
-      return isEncrypted
-        ? this.CryptoPolicy.RijndaelEncrypt(outputStream, this.EncryptionPassPhrase, this.EncryptionInitVector)
-        : outputStream;
-    } catch (e) {
-      this.handleEndpointError('GetCustomMaps', e);
-    }
-
-    return null;
-  }
-
   static async SetMatchScore(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;

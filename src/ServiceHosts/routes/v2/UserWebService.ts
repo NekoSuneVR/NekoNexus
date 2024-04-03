@@ -4,7 +4,7 @@ import {
 } from '@/models';
 import { ApiVersion, UberstrikeInventoryItem } from '@/utils';
 import {
-  BuyItemResult, ItemInventoryView, MemberAccessLevel, MemberOperationResult, MemberView, MemberWalletView,
+  ItemInventoryView, MemberAccessLevel, MemberOperationResult, MemberView, MemberWalletView,
 } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
   BooleanProxy, CurrencyDepositViewProxy, CurrencyDepositsViewModelProxy, EnumProxy, Int32Proxy, ItemInventoryViewProxy,
@@ -717,72 +717,6 @@ export default class UserWebService extends BaseWebService {
         : outputStream;
     } catch (error) {
       this.handleEndpointError('UpdatePlayerStatistics', error);
-    }
-
-    return null;
-  }
-
-  static async RemoveItemFromInventory(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
-    const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
-
-    try {
-      const itemId = Int32Proxy.Deserialize(bytes);
-      const authToken = StringProxy.Deserialize(bytes);
-
-      this.debugEndpoint('RemoveItemFromInventory', itemId, authToken);
-
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
-      if (session) {
-        const steamMember = await session.SteamMember;
-
-        if (!steamMember) {
-          Int32Proxy.Serialize(outputStream, BuyItemResult.InvalidMember);
-        } else {
-          const publicProfile = await PublicProfile.findOne({ where: { Cmid: steamMember.Cmid } });
-
-          if (!publicProfile) {
-            Int32Proxy.Serialize(outputStream, BuyItemResult.InvalidMember);
-          } else {
-            const transaction = await ItemTransaction.findOne({ where: { Cmid: publicProfile.Cmid, ItemId: itemId } });
-            const item = await PlayerInventoryItem.findOne({ where: { Cmid: publicProfile.Cmid, ItemId: itemId } });
-
-            if (!transaction && !item) {
-              Int32Proxy.Serialize(outputStream, BuyItemResult.InvalidData);
-              // eslint-disable-next-line no-else-return
-            } else if (item) {
-              // Allow removing items added by the "inventory" command
-              await PlayerInventoryItem.destroy({
-                where: {
-                  Cmid: publicProfile.Cmid,
-                  ItemId: itemId,
-                },
-              });
-
-              Int32Proxy.Serialize(outputStream, BuyItemResult.OK);
-            } else {
-              const memberWallet = await MemberWallet.findOne({ where: { Cmid: publicProfile.Cmid } });
-              if (memberWallet) {
-                await memberWallet.update({
-                  Credits: memberWallet.Credits! + Math.round(transaction!.Credits! * 0.75),
-                  Points: memberWallet.Points! + Math.round(transaction!.Points! * 0.75),
-                });
-              }
-
-              await transaction!.destroy();
-              await item!.destroy();
-
-              Int32Proxy.Serialize(outputStream, BuyItemResult.OK);
-            }
-          }
-        }
-      }
-
-      return isEncrypted
-        ? this.CryptoPolicy.RijndaelEncrypt(outputStream, this.EncryptionPassPhrase, this.EncryptionInitVector)
-        : outputStream;
-    } catch (error) {
-      this.handleEndpointError('RemoveItemFromInventory', error);
     }
 
     return null;

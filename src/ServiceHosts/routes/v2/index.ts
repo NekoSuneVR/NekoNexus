@@ -6,6 +6,7 @@ import ApplicationWebService from './ApplicationWebService';
 import AuthenticationWebService from './AuthenticationWebService';
 import ClanWebService from './ClanWebService';
 import ModerationWebService from './ModerationWebService';
+import ParadiseWebService from './ParadiseWebService';
 import PrivateMessageWebService from './PrivateMessageWebService';
 import RelationshipWebService from './RelationshipWebService';
 import ShopWebService from './ShopWebService';
@@ -20,6 +21,7 @@ export const Services = {
   RelationshipWebService,
   ShopWebService,
   UserWebService,
+  ParadiseWebService,
 };
 
 const router = Router();
