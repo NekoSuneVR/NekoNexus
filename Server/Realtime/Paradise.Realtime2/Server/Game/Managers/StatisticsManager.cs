@@ -85,6 +85,12 @@ namespace Paradise.Realtime.Server.Game {
 			statistics.TimeSpentInGame += matchData.TimeInGameMinutes;
 			statistics.Level = XpPointsUtil.GetLevelForXp(statistics.Xp);
 
+			// Handgun
+			statistics.WeaponStatistics.HandgunTotalDamageDone += matchData.PlayerStatsTotal.HandgunDamageDone;
+			statistics.WeaponStatistics.HandgunTotalSplats += matchData.PlayerStatsTotal.HandgunKills;
+			statistics.WeaponStatistics.HandgunTotalShotsFired += matchData.PlayerStatsTotal.HandgunShotsFired;
+			statistics.WeaponStatistics.HandgunTotalShotsHit += matchData.PlayerStatsTotal.HandgunShotsHit;
+
 			// Machine Gun
 			statistics.WeaponStatistics.MachineGunTotalDamageDone += matchData.PlayerStatsTotal.MachineGunDamageDone;
 			statistics.WeaponStatistics.MachineGunTotalSplats += matchData.PlayerStatsTotal.MachineGunKills;
@@ -136,6 +142,7 @@ namespace Paradise.Realtime.Server.Game {
 			statistics.PersonalRecord.MostHealthPickedUp = Math.Max(statistics.PersonalRecord.MostHealthPickedUp, bestPerLifeStatistics.HealthPickedUp);
 			statistics.PersonalRecord.MostLauncherSplats = Math.Max(statistics.PersonalRecord.MostLauncherSplats, bestPerLifeStatistics.LauncherKills);
 			statistics.PersonalRecord.MostMachinegunSplats = Math.Max(statistics.PersonalRecord.MostMachinegunSplats, bestPerLifeStatistics.MachineGunKills);
+			statistics.PersonalRecord.MostHandgunSplats = Math.Max(statistics.PersonalRecord.MostHandgunSplats, bestPerLifeStatistics.HandgunKills);
 			statistics.PersonalRecord.MostMeleeSplats = Math.Max(statistics.PersonalRecord.MostMeleeSplats, bestPerLifeStatistics.MeleeKills);
 			statistics.PersonalRecord.MostNutshots = Math.Max(statistics.PersonalRecord.MostNutshots, bestPerLifeStatistics.Nutshots);
 			statistics.PersonalRecord.MostShotgunSplats = Math.Max(statistics.PersonalRecord.MostShotgunSplats, bestPerLifeStatistics.ShotgunSplats);
