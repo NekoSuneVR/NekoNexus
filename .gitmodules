@@ -1,0 +1,8 @@
+[submodule "Core/UberStrike-Reverse-Engineered"]
+	path = Core/UberStrike-Reverse-Engineered
+	url = https://github.com/festivaldev/UberStrike-Reverse-Engineered
+	branch = master
+[submodule "Misc/wiki"]
+	path = Misc/wiki
+	url = https://github.com/festivaldev/Paradise.wiki.git
+	branch = master
