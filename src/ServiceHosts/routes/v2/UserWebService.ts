@@ -392,7 +392,7 @@ export default class UserWebService extends BaseWebService {
                 MemberItems: memberItems,
               }),
               UberstrikeMemberView: new UberstrikeMemberView({
-                PlayerStatisticsView: playerStatistics,
+                PlayerStatisticsView: playerStatistics.get({ plain: true }),
               }),
             }));
           }

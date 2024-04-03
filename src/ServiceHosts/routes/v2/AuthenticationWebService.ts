@@ -355,7 +355,7 @@ export default class AuthenticationWebService extends BaseWebService {
             }));
           } else {
             const memberWallet = await MemberWallet.findOne({ where: { Cmid: steamMember.Cmid } });
-            const playerStatistics = await MemberWallet.findOne({ where: { Cmid: steamMember.Cmid } });
+            const playerStatistics = await PlayerStatistics.findOne({ where: { Cmid: steamMember.Cmid } });
 
             const session = await global.SessionManager.findOrCreateSessionForSteamUser(publicProfile as PublicProfileView, machineId, steamMember);
 
