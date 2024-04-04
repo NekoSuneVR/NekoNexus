@@ -67,13 +67,11 @@ export default class ShopWebService extends BaseWebService {
           const publicProfile = await PublicProfile.findOne({ where: { Cmid: steamMember.Cmid } });
 
           if (publicProfile) {
+            // TODO: Still need to check availability for ChannelType.Steam
             const bundle = await ShopBundle.findOne({
-              where: { Id: bundleId },
-              include: [{
-                model: ShopBundleItem,
-                as: 'BundleItemViews',
-                required: false,
-              }],
+              where: {
+                Id: bundleId,
+              },
             });
 
             if (bundle) {
@@ -97,8 +95,12 @@ export default class ShopWebService extends BaseWebService {
                   UsdAmount: bundle.USDPrice,
                 });
 
-                if (bundle.BundleItemViews?.length) {
-                  for (const bundleItem of bundle.BundleItemViews) {
+                const bundleItems = await ShopBundleItem.findAll({
+                  where: { BundleId: bundleId },
+                });
+
+                if (bundleItems?.length) {
+                  for (const bundleItem of bundleItems) {
                     let expirationDate: Date | null = null;
 
                     switch (bundleItem.Duration) {
