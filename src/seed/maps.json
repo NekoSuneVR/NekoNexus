@@ -499,6 +499,7 @@
 		"MapId": 64,
 		"IsBlueBox": false,
 		"MaxPlayer": 20,
+		"FileName": "SpaceCity.unity3d",
 		"Settings": {
 			"1": {
 				"KillsMin": 1,
@@ -542,6 +543,7 @@
 		"MapId": 65,
 		"IsBlueBox": false,
 		"MaxPlayer": 20,
+		"FileName": "SpacePortAlpha.unity3d",
 		"Settings": {
 			"1": {
 				"KillsMin": 1,
@@ -730,6 +732,7 @@
 		"SceneName": "UberZone",
 		"MapId": 66,
 		"IsBlueBox": false,
+		"FileName": "UberZone.unity3d",
 		"Settings": {
 			"1": {
 				"KillsMin": 1,
