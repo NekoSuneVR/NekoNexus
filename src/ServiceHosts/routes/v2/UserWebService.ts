@@ -534,7 +534,7 @@ export default class UserWebService extends BaseWebService {
 
       this.debugEndpoint('IsDuplicateMemberName', username);
 
-      BooleanProxy.Serialize(outputStream, (await PublicProfile.findOne({ where: { Name: username } })) !== undefined);
+      BooleanProxy.Serialize(outputStream, !!(await PublicProfile.findOne({ where: { Name: username } })));
 
       return isEncrypted
         ? this.CryptoPolicy.RijndaelEncrypt(outputStream, this.EncryptionPassPhrase, this.EncryptionInitVector)
