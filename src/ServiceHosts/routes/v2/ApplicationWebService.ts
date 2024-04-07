@@ -88,7 +88,7 @@ export default class ApplicationWebService extends BaseWebService {
 
       if (ApplicationWebService.supportedClientVersions.includes(clientVersion)) {
         const maps = await Map.findAll({
-          where: { IsParadiseMap: false },
+          where: { FileName: null },
           raw: true,
         });
         const mapSettings = await MapSettings.findAll({

@@ -6,6 +6,7 @@ import { BuyItemResult } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Commo
 import {
   EnumProxy, Int32Proxy, ListProxy, ParadiseMapViewProxy, StringProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
+import { Op } from 'sequelize';
 import ApplicationWebService from './ApplicationWebService';
 import BaseWebService from './BaseWebService';
 
@@ -26,7 +27,7 @@ export default class ParadiseWebService extends BaseWebService {
 
       if (ApplicationWebService.supportedClientVersions.includes(clientVersion)) {
         const maps = await Map.findAll({
-          where: { IsParadiseMap: true },
+          where: { FileName: { [Op.ne]: null } },
           raw: true,
         });
         const mapSettings = await MapSettings.findAll({

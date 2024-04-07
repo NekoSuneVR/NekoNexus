@@ -10,8 +10,7 @@ export interface MapAttributes {
   SupportedGameModes?: number;
   SupportedItemClass?: number;
   MaxPlayers?: number;
-  FileName?: string;
-  IsParadiseMap?: boolean;
+  FileName?: string | null;
 }
 
 export default class Map extends Model<MapAttributes> {
@@ -25,7 +24,6 @@ export default class Map extends Model<MapAttributes> {
   declare SupportedItemClass: number;
   declare MaxPlayers: number;
   declare FileName: string;
-  declare IsParadiseMap: boolean;
 
   public static initialize(sequelize: Sequelize) {
     Map.init({
@@ -42,10 +40,6 @@ export default class Map extends Model<MapAttributes> {
       SupportedItemClass: DataTypes.INTEGER,
       MaxPlayers: DataTypes.INTEGER,
       FileName: DataTypes.STRING,
-      IsParadiseMap: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
     }, {
       sequelize,
       tableName: 'Maps',
