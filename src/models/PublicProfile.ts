@@ -69,6 +69,7 @@ export default class PublicProfile extends Model<PublicProfileAttributes> {
           new Utils.Where(new Utils.Col('Cmid'), 'LIKE', `%${search.toLocaleLowerCase()}%`),
         ],
       },
+      order: [['Name', 'ASC']],
     });
   }
 
@@ -87,6 +88,7 @@ export default class PublicProfile extends Model<PublicProfileAttributes> {
           new Utils.Where(new Utils.Col('Cmid'), 'LIKE', `%${search.toLocaleLowerCase()}%`),
         ],
       },
+      order: [['Name', 'ASC']],
     });
   }
 }
