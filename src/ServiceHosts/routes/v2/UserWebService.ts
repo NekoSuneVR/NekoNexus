@@ -646,6 +646,12 @@ export default class UserWebService extends BaseWebService {
 
               WeaponStatistics: {
                 // Machine Gun
+                HandgunTotalDamageDone: playerStatistics.WeaponStatistics.HandgunTotalDamageDone,
+                HandgunTotalSplats: playerStatistics.WeaponStatistics.HandgunTotalSplats,
+                HandgunTotalShotsFired: playerStatistics.WeaponStatistics.HandgunTotalShotsFired,
+                HandgunTotalShotsHit: playerStatistics.WeaponStatistics.HandgunTotalShotsHit,
+
+                // Machine Gun
                 MachineGunTotalDamageDone: playerStatistics.WeaponStatistics.MachineGunTotalDamageDone,
                 MachineGunTotalSplats: playerStatistics.WeaponStatistics.MachineGunTotalSplats,
                 MachineGunTotalShotsFired: playerStatistics.WeaponStatistics.MachineGunTotalShotsFired,
@@ -697,6 +703,7 @@ export default class UserWebService extends BaseWebService {
                 MostHealthPickedUp: playerStatistics.PersonalRecord.MostHealthPickedUp,
                 MostLauncherSplats: playerStatistics.PersonalRecord.MostLauncherSplats,
                 MostMachinegunSplats: playerStatistics.PersonalRecord.MostMachinegunSplats,
+                MostHandgunSplats: playerStatistics.PersonalRecord.MostHandgunSplats,
                 MostMeleeSplats: playerStatistics.PersonalRecord.MostMeleeSplats,
                 MostNutshots: playerStatistics.PersonalRecord.MostNutshots,
                 MostShotgunSplats: playerStatistics.PersonalRecord.MostShotgunSplats,
