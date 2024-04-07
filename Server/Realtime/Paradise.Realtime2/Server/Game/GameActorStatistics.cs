@@ -39,48 +39,48 @@ namespace Paradise.Realtime.Server.Game {
 
 		public StatsCollection GetBestPerLifeStatistics() {
 			return new StatsCollection {
-				Headshots = PerLifeStatistics.Max(_ => _.Headshots),
-				Nutshots = PerLifeStatistics.Max(_ => _.Nutshots),
-				ConsecutiveSnipes = PerLifeStatistics.Max(_ => _.ConsecutiveSnipes),
-				Xp = PerLifeStatistics.Max(_ => _.Xp),
-				DamageReceived = PerLifeStatistics.Max(_ => _.DamageReceived),
-				ArmorPickedUp = PerLifeStatistics.Max(_ => _.ArmorPickedUp),
-				HealthPickedUp = PerLifeStatistics.Max(_ => _.HealthPickedUp),
-				MeleeKills = PerLifeStatistics.Max(_ => _.MeleeKills),
-				MeleeShotsFired = PerLifeStatistics.Max(_ => _.MeleeShotsFired),
-				MeleeShotsHit = PerLifeStatistics.Max(_ => _.MeleeShotsHit),
-				MeleeDamageDone = PerLifeStatistics.Max(_ => _.MeleeDamageDone),
-				HandgunKills = PerLifeStatistics.Max(_ => _.HandgunKills),
-				HandgunShotsFired = PerLifeStatistics.Max(_ => _.HandgunShotsFired),
-				HandgunShotsHit = PerLifeStatistics.Max(_ => _.HandgunShotsHit),
-				HandgunDamageDone = PerLifeStatistics.Max(_ => _.HandgunDamageDone),
-				MachineGunKills = PerLifeStatistics.Max(_ => _.MachineGunKills),
-				MachineGunShotsFired = PerLifeStatistics.Max(_ => _.MachineGunShotsFired),
-				MachineGunShotsHit = PerLifeStatistics.Max(_ => _.MachineGunShotsHit),
-				MachineGunDamageDone = PerLifeStatistics.Max(_ => _.MachineGunDamageDone),
-				ShotgunSplats = PerLifeStatistics.Max(_ => _.ShotgunSplats),
-				ShotgunShotsFired = PerLifeStatistics.Max(_ => _.ShotgunShotsFired),
-				ShotgunShotsHit = PerLifeStatistics.Max(_ => _.ShotgunShotsHit),
-				ShotgunDamageDone = PerLifeStatistics.Max(_ => _.ShotgunDamageDone),
-				SniperKills = PerLifeStatistics.Max(_ => _.SniperKills),
-				SniperShotsFired = PerLifeStatistics.Max(_ => _.SniperShotsFired),
-				SniperShotsHit = PerLifeStatistics.Max(_ => _.SniperShotsHit),
-				SniperDamageDone = PerLifeStatistics.Max(_ => _.SniperDamageDone),
-				SplattergunKills = PerLifeStatistics.Max(_ => _.SplattergunKills),
-				SplattergunShotsFired = PerLifeStatistics.Max(_ => _.SplattergunShotsFired),
-				SplattergunShotsHit = PerLifeStatistics.Max(_ => _.SplattergunShotsHit),
-				SplattergunDamageDone = PerLifeStatistics.Max(_ => _.SplattergunDamageDone),
-				CannonKills = PerLifeStatistics.Max(_ => _.CannonKills),
-				CannonShotsFired = PerLifeStatistics.Max(_ => _.CannonShotsFired),
-				CannonShotsHit = PerLifeStatistics.Max(_ => _.CannonShotsHit),
-				CannonDamageDone = PerLifeStatistics.Max(_ => _.CannonDamageDone),
-				LauncherKills = PerLifeStatistics.Max(_ => _.LauncherKills),
-				LauncherShotsFired = PerLifeStatistics.Max(_ => _.LauncherShotsFired),
-				LauncherShotsHit = PerLifeStatistics.Max(_ => _.LauncherShotsHit),
-				LauncherDamageDone = PerLifeStatistics.Max(_ => _.LauncherDamageDone),
+				Headshots = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.Headshots) : 0,
+				Nutshots = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.Nutshots) : 0,
+				ConsecutiveSnipes = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.ConsecutiveSnipes) : 0,
+				Xp = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.Xp) : 0,
+				DamageReceived = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.DamageReceived) : 0,
+				ArmorPickedUp = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.ArmorPickedUp) : 0,
+				HealthPickedUp = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.HealthPickedUp) : 0,
+				MeleeKills = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.MeleeKills) : 0,
+				MeleeShotsFired = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.MeleeShotsFired) : 0,
+				MeleeShotsHit = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.MeleeShotsHit) : 0,
+				MeleeDamageDone = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.MeleeDamageDone) : 0,
+				HandgunKills = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.HandgunKills) : 0,
+				HandgunShotsFired = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.HandgunShotsFired) : 0,
+				HandgunShotsHit = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.HandgunShotsHit) : 0,
+				HandgunDamageDone = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.HandgunDamageDone) : 0,
+				MachineGunKills = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.MachineGunKills) : 0,
+				MachineGunShotsFired = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.MachineGunShotsFired) : 0,
+				MachineGunShotsHit = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.MachineGunShotsHit) : 0,
+				MachineGunDamageDone = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.MachineGunDamageDone) : 0,
+				ShotgunSplats = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.ShotgunSplats) : 0,
+				ShotgunShotsFired = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.ShotgunShotsFired) : 0,
+				ShotgunShotsHit = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.ShotgunShotsHit) : 0,
+				ShotgunDamageDone = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.ShotgunDamageDone) : 0,
+				SniperKills = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.SniperKills) : 0,
+				SniperShotsFired = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.SniperShotsFired) : 0,
+				SniperShotsHit = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.SniperShotsHit) : 0,
+				SniperDamageDone = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.SniperDamageDone) : 0,
+				SplattergunKills = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.SplattergunKills) : 0,
+				SplattergunShotsFired = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.SplattergunShotsFired) : 0,
+				SplattergunShotsHit = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.SplattergunShotsHit) : 0,
+				SplattergunDamageDone = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.SplattergunDamageDone) : 0,
+				CannonKills = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.CannonKills) : 0,
+				CannonShotsFired = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.CannonShotsFired) : 0,
+				CannonShotsHit = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.CannonShotsHit) : 0,
+				CannonDamageDone = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.CannonDamageDone) : 0,
+				LauncherKills = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.LauncherKills) : 0,
+				LauncherShotsFired = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.LauncherShotsFired) : 0,
+				LauncherShotsHit = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.LauncherShotsHit) : 0,
+				LauncherDamageDone = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.LauncherDamageDone) : 0,
 
-				Deaths = PerLifeStatistics.Max(_ => _.Deaths),
-				Suicides = PerLifeStatistics.Max(_ => _.Suicides)
+				Deaths = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.Deaths) : 0,
+				Suicides = PerLifeStatistics.Any() ? PerLifeStatistics.Max(_ => _.Suicides) : 0
 			};
 		}
 
@@ -252,6 +252,10 @@ namespace Paradise.Realtime.Server.Game {
 				case UberstrikeItemClass.WeaponMelee:
 					MatchStatistics.MeleeDamageDone += damage;
 					CurrentLifeStatistics.MeleeDamageDone += damage;
+					break;
+				case UberstrikeItemClass.WeaponHandgun:
+					MatchStatistics.HandgunDamageDone += damage;
+					CurrentLifeStatistics.HandgunDamageDone += damage;
 					break;
 				case UberstrikeItemClass.WeaponMachinegun:
 					MatchStatistics.MachineGunDamageDone += damage;

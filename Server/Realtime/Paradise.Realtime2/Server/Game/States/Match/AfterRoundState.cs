@@ -5,9 +5,7 @@ using UberStrike.Core.Models;
 
 namespace Paradise.Realtime.Server.Game {
 	internal class AfterRoundState : BaseMatchState {
-		public AfterRoundState(BaseGameRoom room) : base(room) {
-			
-		}
+		public AfterRoundState(BaseGameRoom room) : base(room) { }
 
 		public override void OnEnter() {
 			var matchData = new EndOfMatchData() {
@@ -25,33 +23,33 @@ namespace Paradise.Realtime.Server.Game {
 					PlayerStatsTotal = Room.StatisticsManager.GetMatchStatistics(player),
 					PlayerStatsBestPerLife = Room.StatisticsManager.GetBestPerLifeStatistics(player),
 					MostEffecientWeaponId = 0,
-					PlayerXpEarned = null,
 					MostValuablePlayers = matchData.MostValuablePlayers,
 					MatchGuid = matchData.MatchGuid,
 					HasWonMatch = Room.IsTeamGame ? player.Actor.Team == Room.WinningTeam : player.Actor.Cmid == Room.WinningCmid,
 					TimeInGameMinutes = matchData.TimeInGameMinutes
 				};
 
-				Room.StatisticsManager.CalculateXp(matchData);
-				Room.StatisticsManager.CalculatePoints(matchData);
+				Room.StatisticsManager.CalculateXp(playerMatchData);
+				Room.StatisticsManager.CalculatePoints(playerMatchData);
 
 				UserWebServiceClient.Instance.DepositPoints(new PointDepositView {
 					Cmid = player.Actor.Cmid,
 					DepositDate = DateTime.UtcNow,
 					DepositType = PointsDepositType.Game,
 					PointDepositId = new Random((int)DateTime.UtcNow.Ticks).Next(1, int.MaxValue),
-					Points = matchData.PlayerStatsTotal.Points,
+					Points = playerMatchData.PlayerStatsTotal.Points,
 				}, player.AuthToken);
 
-				Room.StatisticsManager.SaveStatistics(player, matchData);
+				Room.StatisticsManager.SaveStatistics(player, playerMatchData);
 
-				player.GameEventSender.SendMatchEnd(matchData);
+				player.GameEventSender.SendMatchEnd(playerMatchData);
 				player.State.SetState(PlayerStateId.Overview);
 			}
 
 			foreach (var peer in Room.Peers) {
 				foreach (var player in Room.Players) {
-					if (player.Actor.Cmid.CompareTo(peer.Actor.Cmid) == 0) continue;
+					if (player.Actor.Cmid.CompareTo(peer.Actor.Cmid) == 0)
+						continue;
 
 					player.GameEventSender.SendPlayerLeftGame(peer.Actor.Cmid);
 				}
