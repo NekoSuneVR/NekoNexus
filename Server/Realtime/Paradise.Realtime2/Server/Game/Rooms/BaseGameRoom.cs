@@ -103,8 +103,8 @@ namespace Paradise.Realtime.Server.Game {
 
 			Loop = new Loop(OnTick, OnTickError);
 
-			/* 
-			 * * Expected interval between ticks by the client is 100ms 
+			/*
+			 * * Expected interval between ticks by the client is 100ms
 			 * (10 tick/s).
 			 *
 			 * * Lag extrapolation starts when the packets arrive at around
@@ -112,7 +112,7 @@ namespace Paradise.Realtime.Server.Game {
 			 * packets of 100ms intervals. The threshold of 150ms is not
 			 * constant and varies according to the measurements done by the
 			 * client.
-			 * 
+			 *
 			 * * We're actually updating at 9.5 tick/s, because it seems the
 			 * client can not truely handle packets at 10 tick/s. This is
 			 * likely because sometimes packets gets "clogged" in the client's
@@ -121,13 +121,13 @@ namespace Paradise.Realtime.Server.Game {
 			 * 10 tick/s. This therefore causes the client to update the
 			 * position of the players with little to no interpolation in an
 			 * attempt to catch up.
-			 * 
+			 *
 			 * So we use a tick rate lower than that expected by the client to
 			 * give it some breathing room and reduce the chance of packets
 			 * building up in its packet queue to the point where it does hard
 			 * position updates.
-			 * 
-			 * * TLDR; 
+			 *
+			 * * TLDR;
 			 * A lower tick rate gives a smoother motion but more inaccurate
 			 * positions.
 			 * A higher tick rate gives a choppier motion but more accurate
@@ -658,7 +658,10 @@ namespace Paradise.Realtime.Server.Game {
 								StatisticsManager.IncreaseDeaths(player);
 
 								StatisticsManager.IncreaseWeaponKills(peer, weapon.ItemClass, (BodyPart)bodyPart);
-								StatisticsManager.IncreaseConsecutiveSnipes(peer);
+
+								if (weapon.ItemClass == UberstrikeItemClass.WeaponSniperRifle) {
+									StatisticsManager.IncreaseConsecutiveSnipes(peer);
+								}
 
 								var deltas = new List<GameActorInfoDelta> {
 									player.Actor.Delta,
@@ -753,7 +756,6 @@ namespace Paradise.Realtime.Server.Game {
 								StatisticsManager.IncreaseDeaths(player);
 
 								StatisticsManager.IncreaseWeaponKills(peer, weapon.ItemClass, BodyPart.Body);
-								StatisticsManager.IncreaseConsecutiveSnipes(peer);
 
 								var deltas = new List<GameActorInfoDelta> {
 									player.Actor.Delta,
