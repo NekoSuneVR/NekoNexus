@@ -67,7 +67,8 @@ export default class GameActorInfoProxy {
     }
 
     ByteProxy.Serialize(memoryStream, instance.Rank);
-    ColorProxy.Serialize(memoryStream, instance.SkinColor);
+    // Not trying to be racist here, that's what UberStrike wants ¯\_(ツ)_/¯
+    ColorProxy.Serialize(memoryStream, { r: 255, g: 255, b: 255 });
     EnumProxy.Serialize<SurfaceType>(memoryStream, instance.StepSound);
     EnumProxy.Serialize<TeamID>(memoryStream, instance.TeamID);
 
