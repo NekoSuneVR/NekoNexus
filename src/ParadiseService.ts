@@ -8,11 +8,13 @@ import {
 import PacketType from '@/ServiceHosts/WebSocket/PacketType';
 import { CommandHandler, Commands, ConsoleHelper } from '@/console';
 import DiscordClient from '@/discord/DiscordClient';
-import models from '@/models';
+import models, { PublicProfile } from '@/models';
 import { GameSessionManager, Log, XpPointsUtil } from '@/utils';
 import readline, { Interface } from 'readline';
 import {
-  Dialect, QueryOptions, QueryOptionsWithType, QueryTypes, Sequelize,
+  Dialect,
+  Op,
+  QueryOptions, QueryOptionsWithType, QueryTypes, Sequelize
 } from 'sequelize';
 
 export default class ParadiseService {
@@ -160,6 +162,15 @@ export default class ParadiseService {
     try {
       await sequelize.sync();
       Log.info('Database opened.');
+
+      await PublicProfile.destroy({
+        where: {
+          Name: '',
+          Cmid: {
+            [Op.gt]: 0,
+          },
+        },
+      });
     } catch { }
     // #endregion
 
