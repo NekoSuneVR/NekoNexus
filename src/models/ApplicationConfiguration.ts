@@ -51,7 +51,15 @@ export default class ApplicationConfiguration extends Model<ApplicationConfigura
         type: DataTypes.INTEGER,
         primaryKey: true,
       },
-      XpRequiredPerLevel: DataTypes.JSON,
+      XpRequiredPerLevel: {
+        type: DataTypes.JSON,
+        get(this: ApplicationConfiguration): any {
+          return JSON.parse(this.getDataValue('XpRequiredPerLevel') as any);
+        },
+        set(this: ApplicationConfiguration, value: any): any {
+          this.setDataValue('XpRequiredPerLevel', JSON.stringify(value) as any);
+        },
+      },
       MaxLevel: DataTypes.INTEGER,
       MaxXp: DataTypes.INTEGER,
       XpKill: DataTypes.INTEGER,

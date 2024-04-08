@@ -54,10 +54,22 @@ export default class ShopQuickItem extends Model<ShopGearItemAttributes> {
       CustomProperties: {
         type: DataTypes.JSON,
         defaultValue: {},
+        get(this: ShopQuickItem): any {
+          return JSON.parse(this.getDataValue('CustomProperties') as any);
+        },
+        set(this: ShopQuickItem, value: any): any {
+          this.setDataValue('CustomProperties', JSON.stringify(value) as any);
+        },
       },
       ItemProperties: {
         type: DataTypes.JSON,
         defaultValue: {},
+        get(this: ShopQuickItem): any {
+          return JSON.parse(this.getDataValue('ItemProperties') as any);
+        },
+        set(this: ShopQuickItem, value: any): any {
+          this.setDataValue('ItemProperties', JSON.stringify(value) as any);
+        },
       },
 
       // QuickItem Specific

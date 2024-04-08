@@ -47,8 +47,24 @@ export default class PlayerStatistics extends Model<PlayerStatisticsAttributes> 
       Points: DataTypes.INTEGER,
       Level: DataTypes.INTEGER,
       TimeSpentInGame: DataTypes.INTEGER,
-      PersonalRecord: DataTypes.JSON,
-      WeaponStatistics: DataTypes.JSON,
+      PersonalRecord: {
+        type: DataTypes.JSON,
+        get(this: PlayerStatistics): any {
+          return JSON.parse(this.getDataValue('PersonalRecord') as any);
+        },
+        set(this: PlayerStatistics, value: any): any {
+          this.setDataValue('PersonalRecord', JSON.stringify(value) as any);
+        },
+      },
+      WeaponStatistics: {
+        type: DataTypes.JSON,
+        get(this: PlayerStatistics): any {
+          return JSON.parse(this.getDataValue('WeaponStatistics') as any);
+        },
+        set(this: PlayerStatistics, value: any): any {
+          this.setDataValue('WeaponStatistics', JSON.stringify(value) as any);
+        },
+      },
     }, {
       sequelize,
       tableName: 'PlayerStatistics',

@@ -68,7 +68,15 @@ export default class ShopBundle extends Model<ShopBundleAttributes> {
       Points: DataTypes.INTEGER,
       // BundleItemViews
       Category: DataTypes.INTEGER,
-      Availability: DataTypes.JSON,
+      Availability: {
+        type: DataTypes.JSON,
+        get(this: ShopBundle): any {
+          return JSON.parse(this.getDataValue('Availability') as any);
+        },
+        set(this: ShopBundle, value: any): any {
+          this.setDataValue('Availability', JSON.stringify(value) as any);
+        },
+      },
       PromotionTag: DataTypes.STRING,
       MacAppStoreUniqueId: DataTypes.STRING,
       IosAppStoreUniqueId: DataTypes.STRING,

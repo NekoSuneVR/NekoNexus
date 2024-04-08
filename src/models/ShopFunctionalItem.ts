@@ -37,10 +37,22 @@ export default class ShopFunctionalItem extends Model<ShopFunctionalItemAttribut
       CustomProperties: {
         type: DataTypes.JSON,
         defaultValue: {},
+        get(this: ShopFunctionalItem): any {
+          return JSON.parse(this.getDataValue('CustomProperties') as any);
+        },
+        set(this: ShopFunctionalItem, value: any): any {
+          this.setDataValue('CustomProperties', JSON.stringify(value) as any);
+        },
       },
       ItemProperties: {
         type: DataTypes.JSON,
         defaultValue: {},
+        get(this: ShopFunctionalItem): any {
+          return JSON.parse(this.getDataValue('ItemProperties') as any);
+        },
+        set(this: ShopFunctionalItem, value: any): any {
+          this.setDataValue('ItemProperties', JSON.stringify(value) as any);
+        },
       },
     }, {
       sequelize,
