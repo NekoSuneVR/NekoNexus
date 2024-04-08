@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UberStrike.Core.Models;
 using UberStrike.Core.Types;
 using static Paradise.Realtime.Server.Game.BaseGameRoom;
@@ -18,6 +18,8 @@ namespace Paradise.Realtime.Server.Game {
 
 			if (Room.MetaData.TimeLimit > 0) {
 				Room.RoundEndTime = Room.RoundStartTime + (Room.MetaData.TimeLimit * 1000);
+			} else {
+				Room.RoundEndTime = Room.RoundStartTime;
 			}
 
 			foreach (var player in Room.Players) {
@@ -45,7 +47,7 @@ namespace Paradise.Realtime.Server.Game {
 		public override void OnUpdate() {
 			Room.PowerUpManager.Update();
 
-			if (Room.RoundEndTime > 0 && Environment.TickCount > Room.RoundEndTime) {
+			if (Room.MetaData.TimeLimit > 0 && Room.RoundEndTime > 0 && Environment.TickCount > Room.RoundEndTime) {
 				Room.HasRoundEnded = true;
 			}
 		}
