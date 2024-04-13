@@ -311,6 +311,7 @@ export default class AuthenticationWebService extends BaseWebService {
 
         const playerStatistics = await PlayerStatistics.create({
           Cmid,
+          Level: 1,
           PersonalRecord: new PlayerPersonalRecordStatisticsView(),
           WeaponStatistics: new PlayerWeaponStatisticsView(),
         });
