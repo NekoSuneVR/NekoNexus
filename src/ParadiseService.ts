@@ -212,29 +212,25 @@ export default class ParadiseService {
     this.stdin.question('> ', async (cmd) => {
       const cmdArgs = cmd.match(/[a-zA-Z0-9-]+|"(?:\\"|[^"])+"/g)?.map((_) => (_.match(/".+"/g) ? _.slice(1, -1) : _)) ?? [];
 
-      switch (cmdArgs[0]?.toLocaleLowerCase()) {
-        default:
-          await CommandHandler.HandleCommand(
-            cmdArgs[0],
-            cmdArgs.slice(1),
-            undefined,
-            (output: string, inline: boolean) => {
-              if (!inline) {
-                console.log(output);
-              } else {
-                process.stdout.write(output);
-              }
-            },
-            (invoker: any, success: boolean, error?: string | undefined | null) => {
-              if (success && !error?.trim().length) {
-                // console.log(invoker.Output);
-              } else {
-                console.error(error);
-              }
-            },
-          );
-          break;
-      }
+      await CommandHandler.HandleCommand(
+        cmdArgs[0].toLocaleLowerCase(),
+        cmdArgs.slice(1),
+        undefined,
+        (output: string, inline: boolean) => {
+          if (!inline) {
+            console.log(output);
+          } else {
+            process.stdout.write(output);
+          }
+        },
+        (invoker: any, success: boolean, error?: string | undefined | null) => {
+          if (success && !error?.trim().length) {
+            // console.log(invoker.Output);
+          } else {
+            console.error(error);
+          }
+        },
+      );
 
       if (this.runApp) this.Prompt();
     });
