@@ -6,7 +6,7 @@ export default class XpPointsUtil {
 
   static async _initialize() {
     this.Config = new ApplicationConfigurationView({
-      ...await ApplicationConfiguration.findOne({ raw: true }),
+      ...(await ApplicationConfiguration.findOne())!.get({ plain: true }),
     });
   }
 
