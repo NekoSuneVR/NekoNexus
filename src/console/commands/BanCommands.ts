@@ -1,3 +1,5 @@
+import ParadiseService from '@/ParadiseService';
+import { WebSocketPacketType } from '@/ServiceHosts/WebSocket';
 import { ModerationAction, PublicProfile } from '@/models';
 import { ModerationFlag } from '@/utils';
 import { MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
@@ -67,7 +69,12 @@ export class BanCommand extends ParadiseCommand {
       Reason: reason,
     });
 
-    /// TODO: Send ban event to Realtime servers
+    await ParadiseService.Instance.SocketHost.SendToCommServer(WebSocketPacketType.BanPlayer, {
+      TargetCmid: publicProfile.Cmid,
+      Duration: duration,
+      ExpireTime: duration > 0 ? moment(new Date()).add(duration, 'minutes') : undefined,
+      Reason: reason,
+    });
 
     if (duration === 0) {
       this.WriteLine(`Player has been banned permanently. (reason: ${reason})`);
