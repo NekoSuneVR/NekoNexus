@@ -81,6 +81,7 @@
     </Compile>
     <Compile Include="Core\BalancingLoopScheduler.cs" />
     <Compile Include="Core\BaseTimer.cs" />
+    <Compile Include="Core\ChatContext.cs" />
     <Compile Include="Core\Countdown.cs" />
     <Compile Include="Core\EventHandler.cs" />
     <Compile Include="Core\FixedTimer.cs" />
@@ -131,6 +132,9 @@
     <Compile Include="Server\Game\Rooms\BaseGameRoom.EventArgs.cs" />
     <Compile Include="Server\Game\Rooms\BaseGameRoom.EventSender.cs" />
     <Compile Include="Server\Game\Rooms\BaseGameRoom.OperationHandler.cs" />
+    <Compile Include="Server\Game\Rooms\DeathMatchRoom.cs" />
+    <Compile Include="Server\Game\Rooms\TeamDeatchMatchRoom.cs" />
+    <Compile Include="Server\Game\Rooms\TeamEliminationRoom.cs" />
     <Compile Include="Server\Game\Rooms\TestRoom.cs" />
     <Compile Include="Server\Game\States\Match\AfterRoundState.cs" />
     <Compile Include="Server\Game\States\Match\BaseMatchState.cs" />

@@ -1,6 +1,7 @@
 ﻿using log4net;
 using Photon.SocketServer;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -9,12 +10,13 @@ using static Paradise.WebSocket;
 namespace Paradise.Realtime.Server.Game {
 	public class GameServerApplication : BaseRealtimeApplication {
 		protected static readonly new ILog Log = LogManager.GetLogger(nameof(GameServerApplication));
+		protected static readonly ILog ChatLog = LogManager.GetLogger("ChatLog");
 
 		public static new GameServerApplication Instance => (GameServerApplication)ApplicationBase.Instance;
 		public override ServerType ServerType => ServerType.Game;
 		public GameRoomManager RoomManager { get; private set; } = new GameRoomManager();
 
-		protected System.Timers.Timer MonitoringTimer;
+		private static readonly ProfanityFilter.ProfanityFilter ProfanityFilter = new ProfanityFilter.ProfanityFilter();
 
 		public override int Peers {
 			get {
@@ -26,15 +28,15 @@ namespace Paradise.Realtime.Server.Game {
 			}
 		}
 
-		//public int Players {
-		//	get {
-		//		var count = 0;
-		//		foreach (var room in RoomManager.Rooms.Values) {
-		//			count += room.Players.Count;
-		//		}
-		//		return count;
-		//	}
-		//}
+		public int Players {
+			get {
+				var count = 0;
+				foreach (var room in RoomManager.Rooms.Values) {
+					count += room.Players.Count;
+				}
+				return count;
+			}
+		}
 
 		protected override PeerBase OnCreatePeer(InitRequest initRequest) {
 			return new GamePeer(initRequest);
@@ -59,24 +61,16 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnSetup() {
-			MonitoringTimer = new System.Timers.Timer(TimeSpan.FromSeconds(5).TotalMilliseconds);
-			MonitoringTimer.Elapsed += delegate {
-				//PublishMonitoringData();
-			};
-
 			SocketClient = new SocketClient(Identifier, ServerType.Game, PhotonId, Configuration.GameApplicationSettings.EncryptionPassPhrase);
 
 			SocketClient.Connected += (sender, e) => {
 				Log.Info("Game: CONNECTED TO SOCKET");
 
-				//PublishMonitoringData();
-				MonitoringTimer.Start();
+				PublishMonitoringData();
 			};
 
 			SocketClient.Disconnected += (sender, e) => {
 				Log.Info("Game: DISCONNECTED FROM SOCKET");
-
-				MonitoringTimer.Stop();
 				SocketClient.Reconnect(25);
 			};
 
@@ -84,7 +78,31 @@ namespace Paradise.Realtime.Server.Game {
 				Log.Info($"Game: Rejected connection by socket server (Reason: {e.Reason})");
 			};
 
-			SocketClient.DataReceived += (sender, e) => { };
+			SocketClient.DataReceived += (sender, e) => {
+				switch (e.Type) {
+					case PacketType.ChatMessage:
+						var message = (SocketChatMessage)e.Data;
+
+						if (RoomManager.TryGetRoom(message.RoomNumber, out var room) && room != null) {
+							var senderPeer = room.Peers.FirstOrDefault(_ => _.Actor.Cmid == message.Cmid);
+
+							if (senderPeer != null) {
+								var censored = ProfanityFilter.CensorString(message.Message);
+								var trimmed = censored.Substring(0, Math.Min(censored.Length, 140));
+
+								if (Configuration.EnableChatLog) {
+									ChatLog.Info($"[{room.RoomId}] {message.Name}: {message.Message}");
+								}
+
+								foreach (var peer in room.Peers) {
+									peer.GameEventSender.SendChatMessage(message.Cmid, message.Name, trimmed, senderPeer.Actor.AccessLevel, (byte)ChatContext.None);
+								}
+							}
+						}
+
+						break;
+				}
+			};
 
 			var tcpAddress = Dns.GetHostAddresses(Configuration.MasterHostname).Where(_ => _.AddressFamily == AddressFamily.InterNetwork).First();
 
@@ -97,12 +115,41 @@ namespace Paradise.Realtime.Server.Game {
 
 		protected override void OnBeforeTearDown() {
 			Log.Info($"Stopping GameServer[{Identifier}]...");
-
-			MonitoringTimer?.Stop();
 		}
 
 		protected override void OnTearDown() {
 			Log.Info($"Stopped GameServer[{Identifier}].");
+		}
+
+		private void PublishMonitoringData() {
+			SocketClient?.SendSync(PacketType.Monitoring, GetStatus(), serverType: ServerType.Game);
+		}
+
+		private Dictionary<string, object> GetStatus() {
+			try {
+				return new Dictionary<string, object> {
+					["ConnectedPeers"] = Peers,
+					["Players"] = Players,
+					["Rooms"] = RoomManager.Rooms.Values.Select(room => {
+						return new Dictionary<string, object> {
+							["RoomId"] = room.RoomId,
+							["IsTeamGame"] = room.IsTeamGame,
+							["MetaData"] = room.MetaData,
+							["Peers"] = room.Peers.Select(_ => _.Actor.Cmid),
+							["Players"] = room.Players.Select(_ => _.Actor.Cmid),
+							["RoundNumber"] = room.RoundNumber,
+							["RoundStartTime"] = room.RoundStartTime,
+							["RoundEndTime"] = room.RoundEndTime,
+							["HasRoundEnded"] = room.HasRoundEnded,
+							["State"] = room.State.CurrentStateId
+						};
+					})
+				};
+			} catch (Exception e) {
+				Log.Error(e);
+
+				return new Dictionary<string, object> { ["Error"] = e.Message };
+			}
 		}
 	}
 }

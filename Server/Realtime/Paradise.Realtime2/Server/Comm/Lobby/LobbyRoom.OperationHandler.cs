@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using UberStrike.Core.Models;
 using UberStrike.Core.Serialization;
 using UberStrike.Realtime.Client;
@@ -255,21 +256,21 @@ namespace Paradise.Realtime.Server.Comm {
 						var cmd = message.Substring(1);
 						var cmdArgs = cmd.Split(' ').ToList();
 
-						//Task.Run(async () => {
-						//	if (CommServerApplication.Instance.Socket == null) {
-						//		peer.LobbyEventSender.SendLobbyChatMessage(0, "System", "Failed to execute command: Socket not connected");
-						//	} else {
-						//		var response = await CommServerApplication.Instance.Socket.Send(TcpSocket.PacketType.Command, new TcpSocket.SocketCommand {
-						//			Command = cmdArgs.First(),
-						//			Arguments = cmdArgs.Skip(1).Take(cmdArgs.Count - 1).ToArray(),
-						//			Invoker = peer.Member.CmuneMemberView.PublicProfile
-						//		}, false);
+						Task.Run(async () => {
+							if (CommServerApplication.Instance.SocketClient == null) {
+								peer.LobbyEventSender.SendLobbyChatMessage(0, "System", "Failed to execute command: Socket not connected");
+							} else {
+								var response = await CommServerApplication.Instance.SocketClient.Send(PacketType.Command, new SocketCommand {
+									Command = cmdArgs.First(),
+									Arguments = cmdArgs.Skip(1).Take(cmdArgs.Count - 1).ToArray(),
+									Invoker = peer.Member.CmuneMemberView.PublicProfile
+								}, false);
 
-						//		if (!string.IsNullOrWhiteSpace((string)response)) {
-						//			peer.LobbyEventSender.SendLobbyChatMessage(0, "System", (string)response);
-						//		}
-						//	}
-						//});
+								if (!string.IsNullOrWhiteSpace((string)response)) {
+									peer.LobbyEventSender.SendLobbyChatMessage(0, "System", (string)response);
+								}
+							}
+						});
 
 						return;
 					}
@@ -278,7 +279,7 @@ namespace Paradise.Realtime.Server.Comm {
 					var trimmed = censored.Substring(0, Math.Min(censored.Length, 140));
 
 					if (CommServerApplication.Instance.Configuration.EnableChatLog) {
-						ChatLog.Info($"[Lobby] {peer.Actor.Name}: {trimmed}");
+						ChatLog.Info($"[Lobby] {peer.Actor.Name}: {message}");
 					}
 
 					CommServerApplication.Instance.SocketClient?.SendSync(PacketType.ChatMessage, new SocketChatMessage {
@@ -312,7 +313,7 @@ namespace Paradise.Realtime.Server.Comm {
 					var trimmed = censored.Substring(0, Math.Min(censored.Length, 140));
 
 					if (CommServerApplication.Instance.Configuration.EnableChatLog) {
-						ChatLog.Info($"{peer.Actor.Name} → {otherPeer.Actor.Name}: {trimmed}");
+						ChatLog.Info($"{peer.Actor.Name} → {otherPeer.Actor.Name}: {message}");
 					}
 
 					otherPeer.LobbyEventSender.SendPrivateChatMessage(peer.Actor.Cmid, peer.Actor.Name, trimmed);
@@ -333,7 +334,7 @@ namespace Paradise.Realtime.Server.Comm {
 				var trimmed = censored.Substring(0, Math.Min(censored.Length, 140));
 
 				if (CommServerApplication.Instance.Configuration.EnableChatLog) {
-					ChatLog.Info($"{peer.Actor.Name} → Clan: {trimmed}");
+					ChatLog.Info($"{peer.Actor.Name} → Clan: {message}");
 				}
 
 				foreach (var cmid in clanMembers) {

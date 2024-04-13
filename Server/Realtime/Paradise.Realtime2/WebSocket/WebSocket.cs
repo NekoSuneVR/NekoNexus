@@ -27,6 +27,7 @@ namespace Paradise {
 			public int Cmid;
 			public string Name;
 			public string Message;
+			public int RoomNumber;
 		}
 
 		public struct SocketCommand {

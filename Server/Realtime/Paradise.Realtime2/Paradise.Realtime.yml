@@ -30,8 +30,3 @@ CompositeHashes:
 
 JunkHashes:
   -
-
-DiscordChatIntegration: false
-DiscordPlayerAnnouncements: true
-DiscordGameAnnouncements: true
-DiscordErrorLog: true

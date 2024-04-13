@@ -1,5 +1,6 @@
 ﻿using log4net;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;
@@ -27,6 +28,10 @@ namespace Paradise {
 			private readonly ManualResetEvent ConnectionWaitHandle = new ManualResetEvent(false);
 			private readonly ManualResetEvent ConnectionRejectedHandle = new ManualResetEvent(false);
 			public DateTime LastResponseTime;
+
+			private Task<int> sendTask;
+			private Task<object> receiveTask;
+			private readonly Dictionary<Guid, TaskCompletionSource<object>> receiveTasks = new Dictionary<Guid, TaskCompletionSource<object>>();
 
 			private SocketInfo ClientInfo;
 			private readonly RijndaelManaged CryptoProvider;
@@ -109,7 +114,8 @@ namespace Paradise {
 									break;
 							}
 						} else { // JSON Object
-							var payload = Payload.Decode<object>(Encoding.UTF8.GetString(e.RawData), CryptoProvider, out var payloadObj);
+							var bytes = ArrayProxy<byte>.Deserialize(inputStream, ByteProxy.Deserialize);
+							var payload = Payload.Decode<object>(Encoding.UTF8.GetString(bytes), CryptoProvider, out var payloadObj);
 
 							switch (payloadObj.Type) {
 								case PacketType.ConnectionStatus:
@@ -138,6 +144,12 @@ namespace Paradise {
 										Payload = payloadObj,
 										Data = payload
 									});
+
+									if (receiveTasks.ContainsKey(payloadObj.ConversationId)) {
+										receiveTasks[payloadObj.ConversationId].SetResult(payload);
+										receiveTasks.Remove(payloadObj.ConversationId);
+									}
+
 									break;
 							}
 						}
@@ -209,18 +221,37 @@ namespace Paradise {
 			}
 
 			public async Task<object> Send(PacketType type, object payload, bool oneWay = true, Guid conversationId = default, ServerType serverType = ServerType.None) {
-				//return await SocketConnection.Send(type, payload, oneWay, conversationId, serverType);
-
+				Payload payloadObj = default;
 				await Task.Run(() => {
-					SocketConnection.Send(Payload.Encode(type, payload, CryptoProvider, out _, oneWay, conversationId, serverType));
+					SocketConnection.Send(Payload.Encode(type, payload, CryptoProvider, out payloadObj, oneWay, conversationId, serverType));
 				});
 
-				return null;
+				if (oneWay)
+					return null;
+
+				receiveTasks[payloadObj.ConversationId] = new TaskCompletionSource<object>();
+				receiveTask = receiveTasks[payloadObj.ConversationId].Task;
+
+				var timeout = Task.Delay(TimeSpan.FromSeconds(RECEIVE_TIMEOUT));
+
+				//Console.WriteLine("awaiting receive or timeout");
+				if (await Task.WhenAny(receiveTask, timeout) == timeout) {
+					Log.Error($"Failed to receive data within {RECEIVE_TIMEOUT} second(s).");
+					receiveTask = null;
+					return null;
+				}
+
+				var taskData = await receiveTask;
+				//Console.WriteLine("awaited response");
+				receiveTask = null;
+
+				return taskData;
 			}
 
 			public object SendSync(PacketType type, object payload, bool oneWay = true, Guid conversationId = default, ServerType serverType = ServerType.None) {
-				SocketConnection.Send(Payload.Encode(type, payload, CryptoProvider, out _, oneWay, conversationId, serverType));
-				return null;
+				return Task.Run(async () => {
+					return await Send(type, payload, oneWay, conversationId, serverType);
+				}).Result;
 			}
 			#endregion
 		}

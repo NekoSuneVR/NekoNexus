@@ -10,11 +10,12 @@ using static Paradise.WebSocket;
 namespace Paradise.Realtime.Server.Comm {
 	public class CommServerApplication : BaseRealtimeApplication {
 		protected static readonly new ILog Log = LogManager.GetLogger(nameof(CommServerApplication));
+		protected static readonly ILog ChatLog = LogManager.GetLogger("ChatLog");
 
 		public static new CommServerApplication Instance => (CommServerApplication)ApplicationBase.Instance;
 		public override ServerType ServerType => ServerType.Comm;
 
-		protected System.Timers.Timer MonitoringTimer;
+		private static readonly ProfanityFilter.ProfanityFilter ProfanityFilter = new ProfanityFilter.ProfanityFilter();
 
 		public override int Peers {
 			get {
@@ -45,24 +46,17 @@ namespace Paradise.Realtime.Server.Comm {
 		}
 
 		protected override void OnSetup() {
-			MonitoringTimer = new System.Timers.Timer(TimeSpan.FromSeconds(5).TotalMilliseconds);
-			MonitoringTimer.Elapsed += delegate {
-				PublishMonitoringData();
-			};
-
 			SocketClient = new SocketClient(Identifier, ServerType.Comm, PhotonId, Configuration.CommApplicationSettings.EncryptionPassPhrase);
 
 			SocketClient.Connected += (sender, e) => {
 				Log.Info("Comm: CONNECTED TO SOCKET");
 
 				PublishMonitoringData();
-				MonitoringTimer.Start();
 			};
 
 			SocketClient.Disconnected += (sender, e) => {
 				Log.Info("Comm: DISCONNECTED FROM SOCKET");
 
-				MonitoringTimer.Stop();
 				SocketClient.Reconnect(25);
 			};
 
@@ -75,8 +69,15 @@ namespace Paradise.Realtime.Server.Comm {
 					case PacketType.ChatMessage:
 						var message = (SocketChatMessage)e.Data;
 
+						var censored = ProfanityFilter.CensorString(message.Message);
+						var trimmed = censored.Substring(0, Math.Min(censored.Length, 140));
+
+						if (Configuration.EnableChatLog) {
+							ChatLog.Info($"[Lobby] {message.Name}: {message.Message}");
+						}
+
 						foreach (var peer in LobbyManager.Instance.Peers) {
-							peer.LobbyEventSender.SendLobbyChatMessage(message.Cmid, message.Name, message.Message);
+							peer.LobbyEventSender.SendLobbyChatMessage(message.Cmid, message.Name, trimmed);
 						}
 						break;
 					case PacketType.BanPlayer: {
@@ -108,8 +109,6 @@ namespace Paradise.Realtime.Server.Comm {
 
 		protected override void OnBeforeTearDown() {
 			Log.Info($"Stopping CommServer[{Identifier}]...");
-
-			MonitoringTimer?.Stop();
 		}
 
 		protected override void OnTearDown() {
@@ -117,19 +116,27 @@ namespace Paradise.Realtime.Server.Comm {
 		}
 
 		private void PublishMonitoringData() {
-			SocketClient?.Send(PacketType.Monitoring, GetStatus());
+			SocketClient?.SendSync(PacketType.Monitoring, GetStatus(), serverType: ServerType.Comm);
 		}
 
 		private Dictionary<string, object> GetStatus() {
 			try {
 				return new Dictionary<string, object> {
-					["peers"] = LobbyManager.Instance.Peers.Select(peer => peer.Actor.ActorInfo),
-					["updated_at"] = DateTime.UtcNow.ToString("o")
+					["Peers"] = LobbyManager.Instance.Peers.Select(peer => new Dictionary<string, object> {
+						["Cmid"] = peer.Actor.Cmid,
+						["RemoteIP"] = peer.RemoteIPAddress.ToString(),
+						["RemotePort"] = peer.RemotePort,
+						["Channel"] = peer.Actor.ActorInfo.Channel,
+						["LocalIP"] = peer.LocalIPAddress.ToString(),
+						["LocalPort"] = peer.LocalPort
+					})
 				};
 			} catch (Exception e) {
 				Log.Error(e);
 
-				return new Dictionary<string, object> { ["error"] = e.Message };
+				return new Dictionary<string, object> {
+					["Error"] = e.Message
+				};
 			}
 		}
 	}

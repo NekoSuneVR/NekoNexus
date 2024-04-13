@@ -1,5 +1,6 @@
 ﻿using log4net;
 using Newtonsoft.Json;
+using Paradise.Realtime.Server.Comm;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -45,7 +46,6 @@ namespace Paradise {
 			[JsonIgnore]
 			public bool IsEncrypted {
 				get {
-					//return false;
 					return Flags.HasFlag(PayloadFlags.IsEncrypted);
 				}
 
@@ -128,7 +128,13 @@ namespace Paradise {
 						case PacketType.PlayerLeft:
 							payloadObj.IsEncrypted = true;
 
-							CommActorInfoProxy.Serialize(bytes, (CommActorInfo)data);
+							var peer = (CommPeer)data;
+							Int32Proxy.Serialize(bytes, peer.Actor.Cmid);
+							StringProxy.Serialize(bytes, peer.RemoteIPAddress.ToString());
+							Int32Proxy.Serialize(bytes, peer.RemotePort);
+							EnumProxy<ChannelType>.Serialize(bytes, peer.Actor.ActorInfo.Channel);
+							StringProxy.Serialize(bytes, peer.LocalIPAddress.ToString());
+							Int32Proxy.Serialize(bytes, peer.LocalPort);
 							break;
 						case PacketType.RoomOpened:
 						case PacketType.RoomClosed:
@@ -208,6 +214,7 @@ namespace Paradise {
 				var data = Convert.FromBase64String(payloadObj.Data);
 
 				if (crypto != null && payloadObj.IsEncrypted) {
+
 					using (var memoryStream = new MemoryStream()) {
 						using (var cryptoStream = new CryptoStream(memoryStream, crypto.CreateDecryptor(), CryptoStreamMode.Write)) {
 							cryptoStream.Write(data, 0, data.Length);
@@ -215,6 +222,7 @@ namespace Paradise {
 
 						data = memoryStream.ToArray();
 					}
+
 				}
 
 				using (var bytes = new MemoryStream(data)) {
@@ -235,6 +243,8 @@ namespace Paradise {
 							result = JsonConvert.DeserializeObject<SocketCommand>(StringProxy.Deserialize(bytes));
 							break;
 						case PacketType.CommandOutput:
+							result = StringProxy.Deserialize(bytes);
+							break;
 						case PacketType.ChatMessage:
 							result = JsonConvert.DeserializeObject<SocketChatMessage>(StringProxy.Deserialize(bytes));
 							break;
@@ -290,6 +300,7 @@ namespace Paradise {
 
 					return (T)result;
 				}
+
 			}
 		}
 	}

@@ -1000,7 +1000,7 @@ namespace Paradise.Realtime.Server.Game {
 			var trimmed = censored.Substring(0, Math.Min(censored.Length, 140));
 
 			if (GameServerApplication.Instance.Configuration.EnableChatLog) {
-				ChatLog.Info($"[{MetaData.Number}] {playerName}: {trimmed}");
+				ChatLog.Info($"[{MetaData.Number}] {playerName}: {message}");
 			}
 
 			GameServerApplication.Instance.SocketClient?.SendSync(PacketType.RoomChatMessage, new object[] {
