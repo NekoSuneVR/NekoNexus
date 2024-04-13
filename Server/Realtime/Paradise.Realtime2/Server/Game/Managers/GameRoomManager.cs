@@ -3,6 +3,7 @@ using Paradise.Realtime.Core;
 using System;
 using System.Collections.Generic;
 using UberStrike.Core.Models;
+using UberStrike.Core.Types;
 
 namespace Paradise.Realtime.Server.Game {
 	public class GameRoomManager : IDisposable {
@@ -40,19 +41,19 @@ namespace Paradise.Realtime.Server.Game {
 			BaseGameRoom room = null;
 			try {
 				switch (data.GameMode) {
-					//case GameModeType.DeathMatch:
-					//	room = new DeathMatchRoom(data, LoopScheduler);
-					//	break;
-					//case GameModeType.TeamDeathMatch:
-					//	room = new TeamDeathMatchRoom(data, LoopScheduler);
-					//	break;
-					//case GameModeType.EliminationMode:
-					//	room = new TeamEliminationRoom(data, LoopScheduler);
-					//	break;
-					default:
-						room = new TestRoom(data, LoopScheduler);
+					case GameModeType.DeathMatch:
+						room = new DeathMatchRoom(data, LoopScheduler);
 						break;
-						//throw new NotSupportedException();
+					case GameModeType.TeamDeathMatch:
+						room = new TeamDeathMatchRoom(data, LoopScheduler);
+						break;
+					case GameModeType.EliminationMode:
+						room = new TeamEliminationRoom(data, LoopScheduler);
+						break;
+					default:
+						//room = new TestRoom(data, LoopScheduler);
+						//break;
+						throw new NotSupportedException();
 				}
 			} catch {
 				room?.Dispose();

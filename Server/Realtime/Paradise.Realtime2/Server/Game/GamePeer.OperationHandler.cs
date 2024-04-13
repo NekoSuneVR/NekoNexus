@@ -1,4 +1,4 @@
-﻿using Cmune.Core.Models;
+using Cmune.Core.Models;
 using Cmune.DataCenter.Common.Entities;
 using log4net;
 using System;
@@ -60,37 +60,37 @@ namespace Paradise.Realtime.Server.Game {
 						LeaveRoom(peer, bytes);
 						break;
 
-					//case IGamePeerOperationsType.CloseRoom:
-					//	CloseRoom(peer, bytes);
-					//	break;
+					case IGamePeerOperationsType.CloseRoom:
+						CloseRoom(peer, bytes);
+						break;
 
-					//case IGamePeerOperationsType.InspectRoom:
-					//	InspectRoom(peer, bytes);
-					//	break;
+					case IGamePeerOperationsType.InspectRoom:
+						InspectRoom(peer, bytes);
+						break;
 
-					//case IGamePeerOperationsType.ReportPlayer:
-					//	ReportPlayer(peer, bytes);
-					//	break;
+					case IGamePeerOperationsType.ReportPlayer:
+						ReportPlayer(peer, bytes);
+						break;
 
-					//case IGamePeerOperationsType.KickPlayer:
-					//	KickPlayer(peer, bytes);
-					//	break;
+					case IGamePeerOperationsType.KickPlayer:
+						KickPlayer(peer, bytes);
+						break;
 
-					//case IGamePeerOperationsType.UpdateLoadout:
-					//	UpdateLoadout(peer, bytes);
-					//	break;
+					case IGamePeerOperationsType.UpdateLoadout:
+						UpdateLoadout(peer, bytes);
+						break;
 
 					case IGamePeerOperationsType.UpdatePing:
 						UpdatePing(peer, bytes);
 						break;
 
 					case IGamePeerOperationsType.UpdateKeyState:
-						//UpdateKeyState(peer, bytes);
+						UpdateKeyState(peer, bytes);
 						break;
 
-					//case IGamePeerOperationsType.RefreshBackendData:
-					//	RefreshBackendData(peer, bytes);
-					//	break;
+					case IGamePeerOperationsType.RefreshBackendData:
+						RefreshBackendData(peer, bytes);
+						break;
 
 					default:
 						throw new NotSupportedException();
@@ -201,7 +201,7 @@ namespace Paradise.Realtime.Server.Game {
 						room.Join(peer);
 					}
 				} else {
-					peer.PeerEventSender.SendRoomEnterFailed(string.Empty, roomId, "Game does not exist anymore.");
+					peer.PeerEventSender.SendRoomEnterFailed(string.Empty, roomId, "The game doesn't exist anymore.");
 				}
 
 				var rooms = GameServerApplication.Instance.RoomManager.Rooms.Select(_ => _.Value.MetaData).ToList<GameRoomData>();
