@@ -11,7 +11,7 @@ export default class ConnectionAddressProxy {
   }
 
   public static Deserialize(bytes: any): ConnectionAddress {
-    const connectionAddress = new ConnectionAddress();
+    const connectionAddress = new ConnectionAddress('');
     connectionAddress.Ipv4 = Int32Proxy.Deserialize(bytes);
     connectionAddress.Port = UInt16Proxy.Deserialize(bytes);
 
