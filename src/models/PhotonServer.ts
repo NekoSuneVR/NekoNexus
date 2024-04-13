@@ -10,6 +10,7 @@ export interface PhotonServerAttributes {
   UsageType?: PhotonUsageType;
   MinLatency?: number;
   LastResponseTime?: Date;
+  Guid?: string;
 }
 
 export default class PhotonServer extends Model<PhotonServerAttributes> {
@@ -21,6 +22,7 @@ export default class PhotonServer extends Model<PhotonServerAttributes> {
   declare UsageType: PhotonUsageType;
   declare MinLatency: number;
   declare LastReponseTime: Date;
+  declare Guid: string;
 
   public static initialize(sequelize: Sequelize) {
     PhotonServer.init({
@@ -35,6 +37,7 @@ export default class PhotonServer extends Model<PhotonServerAttributes> {
       UsageType: DataTypes.INTEGER,
       MinLatency: DataTypes.INTEGER,
       LastResponseTime: DataTypes.DATE,
+      Guid: DataTypes.STRING(36),
     }, {
       sequelize,
       timestamps: false,
