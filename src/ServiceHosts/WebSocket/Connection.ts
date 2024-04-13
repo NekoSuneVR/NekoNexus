@@ -1,4 +1,4 @@
-import { EnumProxy, Int32Proxy } from 'uberstrike-js/dist/UberStrike/Core/Serialization';
+import { EnumProxy, Int32Proxy } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import { WebSocket } from 'ws';
 import PacketType from './PacketType';
 import WebSocketPayload from './Payload';
@@ -17,7 +17,6 @@ export default class WebSocketConnection {
   public Socket: WebSocket;
   public Info: WebSocketInfo;
   public CryptoProvider: RijndaelCryptoProvider;
-  // public byte[] MessageBuffer;
   public DisconnectReason: string;
   public LastResponseTime: Date;
 
@@ -29,14 +28,6 @@ export default class WebSocketConnection {
 
   constructor(params: any = {}) {
     Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
-
-    // if (this.Socket) {
-    //   this.Socket.on('message', (data) => {
-    //     Log.debug("GOT TEST DATA");
-    //     Log.debug([...data as Buffer].toString());
-    //     Log.debug("DONE WITH TEST DATA");
-    //   });
-    // }
   }
 
   private connectionState: WebSocketState = WebSocketState.Disconnected;
@@ -46,11 +37,6 @@ export default class WebSocketConnection {
 
   private set ConnectionState(value: WebSocketState) {
     this.connectionState = value;
-
-    // StateChanged?.Invoke(this, new SocketStateChangedEventArgs {
-    //   Socket = this,
-    //   State = value
-    // });
   }
 
   public get RemoteAddress(): string | undefined {
@@ -109,7 +95,7 @@ export default class WebSocketConnection {
   }
 
   public async Send(type: PacketType, payload: any, oneWay: boolean = true, conversationId: string | null = null, serverType: ServerType = ServerType.None) {
-    const [bytes, payloadObj] = WebSocketPayload.Encode(type, payload, null, oneWay, conversationId, serverType);
+    const [bytes, payloadObj] = WebSocketPayload.Encode(type, payload, this.CryptoProvider, oneWay, conversationId, serverType);
     await this.SendBytes(bytes!);
 
     if (oneWay) return null;

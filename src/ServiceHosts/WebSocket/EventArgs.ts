@@ -2,7 +2,7 @@ import { type WebSocket } from 'ws';
 import WebSocketConnection from './Connection';
 import WebSocketPacketType from './PacketType';
 import WebSocketPayload from './Payload';
-import { WebSocketInfo } from './WebSocket';
+import { ServerType, WebSocketInfo } from './WebSocket';
 
 export class WebSocketConnectedEventArgs {
   public Socket: WebSocket;
@@ -29,6 +29,7 @@ export class WebSocketDataReceivedEventArgs {
 
   public Payload: WebSocketPayload;
   public Data: any;
+  public ServerType: ServerType;
 
   constructor(params: any = {}) {
     Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });

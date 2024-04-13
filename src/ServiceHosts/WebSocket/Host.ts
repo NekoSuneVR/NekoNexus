@@ -1,9 +1,9 @@
 import ParadiseService from '@/ParadiseService';
 import { Log } from '@/utils';
-import { EventEmitter } from 'stream';
 import {
   ArrayProxy, ByteProxy, EnumProxy, Int32Proxy,
-} from 'uberstrike-js/dist/UberStrike/Core/Serialization';
+} from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
+import { EventEmitter } from 'stream';
 import { v4 as uuid } from 'uuid';
 import { WebSocketServer } from 'ws';
 import WebSocketConnection from './Connection';
@@ -42,7 +42,6 @@ export default class WebSocketHost extends EventEmitter {
         }),
       });
 
-      // this.sendToClient(client, PacketType.MagicBytes);
       socketClient.SendPacket(PacketType.MagicBytes);
 
       client.on('close', () => {
@@ -236,6 +235,7 @@ export default class WebSocketHost extends EventEmitter {
             Socket: socketClient,
             Payload: payloadObj,
             Data: payload,
+            ServerType: socketClient.Info.Type,
           }));
         }
       });
@@ -245,4 +245,28 @@ export default class WebSocketHost extends EventEmitter {
       console.log('close');
     });
   }
+
+  // #region Send
+  public async SendToCommServer(type: PacketType, payload: any, oneWay: boolean = true, conversationId?: string): Promise<any> {
+    if (!this.CommServer) return null;
+
+    const r = await this.CommServer.Send(type, payload, oneWay, conversationId, ServerType.MasterServer);
+    return r;
+  }
+
+  public async SendToGameServer(guid: string, type: PacketType, payload: any, oneWay: boolean = true, conversationId?: string): Promise<any> {
+    if (!this.GameServers.find((_) => _.Identifier === guid)) return null;
+
+    const r = await this.GameServers.find((_) => _.Identifier === guid)?.Send(type, payload, oneWay, conversationId, ServerType.MasterServer);
+    return r;
+  }
+
+  public SendToGameServers(type: PacketType, payload: any): void {
+    // Sending to game servers is one-way only
+
+    for (const server of this.GameServers) {
+      server.Send(type, payload, true);
+    }
+  }
+  // #endregion
 }

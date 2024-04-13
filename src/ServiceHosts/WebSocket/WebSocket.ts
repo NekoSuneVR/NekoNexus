@@ -1,4 +1,4 @@
-import { PublicProfileView } from 'uberstrike-js/dist/Cmune/DataCenter/Common/Entities';
+import { PublicProfileView } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 
 export enum ServerType {
   None,
@@ -41,6 +41,11 @@ export class WebSocketChatMessage {
   public Cmid: int;
   public Name: string;
   public Message: string;
+  public RoomNumber: number;
+
+  constructor(params: any = {}) {
+    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+  }
 }
 
 export class WebSocketCommand {
