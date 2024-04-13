@@ -1,5 +1,6 @@
 export class DiscordIntegrationSettings {
   public LobbyChat: boolean;
+  public RoomChats: boolean;
   public Commands: boolean;
   public PlayerJoinAnnouncements: boolean;
   public PlayerLeaveAnnouncements: boolean;
@@ -25,6 +26,7 @@ export class DiscordSettings {
   public GuildId: string;
   public ChatChannelId: string;
   public CommandChannelId: string;
+  public RoomChatCategory: string;
   WebHooks: DiscordWebHookSettings = new DiscordWebHookSettings();
   AnnouncementBlacklist: string[];
 }

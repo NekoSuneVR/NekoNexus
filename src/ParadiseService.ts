@@ -3,19 +3,20 @@ import { default as DefaultSettings, type ParadiseServiceSettings } from '@/Para
 import FileServerHost from '@/ServiceHosts/FileServerHost';
 import WebServiceHost from '@/ServiceHosts/WebServiceHost';
 import {
-  ServerType, WebSocketDataReceivedEventArgs, WebSocketHost, WebSocketPacketReceivedEventArgs, WebSocketPacketType,
+  ServerType, WebSocketCommand, WebSocketDataReceivedEventArgs, WebSocketHost, WebSocketPacketReceivedEventArgs, WebSocketPacketType,
 } from '@/ServiceHosts/WebSocket';
-import PacketType from '@/ServiceHosts/WebSocket/PacketType';
 import { CommandHandler, Commands, ConsoleHelper } from '@/console';
 import DiscordClient from '@/discord/DiscordClient';
-import models, { PublicProfile } from '@/models';
+import models from '@/models';
 import { GameSessionManager, Log, XpPointsUtil } from '@/utils';
 import readline, { Interface } from 'readline';
 import {
   Dialect,
   Op,
-  QueryOptions, QueryOptionsWithType, QueryTypes, Sequelize
+  QueryOptions, QueryOptionsWithType, QueryTypes, Sequelize,
 } from 'sequelize';
+
+const intToIPv4 = (ip: number): string => `${ip >>> 24}.${(ip >> 16) & 255}.${(ip >> 8) & 255}.${ip & 255}`;
 
 export default class ParadiseService {
   // eslint-disable-next-line no-use-before-define
@@ -33,100 +34,12 @@ export default class ParadiseService {
   private fileServer: FileServerHost;
   private webServiceHost: WebServiceHost;
   private discordClient: DiscordClient;
-  private socketHost: WebSocketHost;
+  public SocketHost: WebSocketHost;
 
   private stdin: Interface;
 
   public async Run() {
     ConsoleHelper.PrintConsoleHeader();
-
-    this.fileServer = new FileServerHost(+this.ServiceSettings.FileServerPort!);
-    await this.fileServer.start();
-
-    this.webServiceHost = new WebServiceHost(+this.ServiceSettings.WebServicePort!);
-    await this.webServiceHost.start();
-
-    if (this.ServiceSettings.DiscordSettings.Enabled) {
-      this.discordClient = new DiscordClient();
-      await this.discordClient.Connect();
-    }
-
-    this.socketHost = new WebSocketHost(+this.ServiceSettings.SocketPort!);
-    this.socketHost.on('ConnectionRejected', (e) => {
-      Log.warn(`[Socket] Rejecting ${ServerType[e.Socket.Type]}Server(${e.Socket.Identifier}) from ${e.Socket.RemoteAddress}. Reason: ${e.Reason}`);
-    });
-
-    this.socketHost.on('ClientConnected', (e) => {
-      Log.info(`[Socket] ${ServerType[e.Socket.Type]}Server(${e.Socket.Identifier}) connected from ${e.Socket.RemoteAddress}.`);
-    });
-
-    this.socketHost.on('ClientDisconnected', (e) => {
-      Log.info(`[Socket] ${ServerType[e.Socket.Type]}Server(${e.Socket.Identifier}) disconnected. Reason: ${e.Reason ?? 'Connection closed'}`);
-    });
-
-    this.socketHost.on('PacketReceived', async (e: WebSocketPacketReceivedEventArgs) => {
-      const { PhotonServer } = models;
-      switch (e.PacketType) {
-        case WebSocketPacketType.Pong:
-          try {
-            await PhotonServer.update({
-              LastResponseTime: e.Socket.LastResponseTime,
-            }, {
-              where: {
-                PhotonId: e.Socket.Info.PhotonId,
-              },
-            });
-          } catch (error) {
-            Log.error(`Failed to update LastResponseTime for Photon server with id ${e.Socket.Info.PhotonId}: No database entry`);
-          }
-
-          break;
-        default: break;
-      }
-    });
-
-    this.socketHost.on('DataReceived', async (e: WebSocketDataReceivedEventArgs) => {
-      switch (e.Type) {
-        case WebSocketPacketType.Monitoring:
-          break;
-        case WebSocketPacketType.Error:
-          await this.discordClient?.LogError(e.Data);
-          break;
-        case WebSocketPacketType.ChatMessage:
-          await this.discordClient?.SendLobbyChatMessage(e.Data);
-          break;
-        case WebSocketPacketType.RoomChatMessage:
-          console.log(e.Data);
-          break;
-        case WebSocketPacketType.Command:
-          break;
-        case WebSocketPacketType.PlayerJoined:
-          await this.discordClient?.SendPlayerJoinMessage(e.Data);
-          break;
-        case WebSocketPacketType.PlayerLeft:
-          await this.discordClient?.SendPlayerLeftMessage(e.Data);
-          break;
-        case WebSocketPacketType.RoomOpened:
-          await this.discordClient?.SendGameRoomCreatedMessage(e.Data);
-          break;
-        case WebSocketPacketType.RoomClosed:
-          await this.discordClient?.SendGameRoomDestroyedMessage(e.Data);
-          break;
-        case WebSocketPacketType.PlayerJoinedRoom:
-        case WebSocketPacketType.PlayerLeftRoom:
-          // console.log(e.Data);
-          break;
-        case WebSocketPacketType.RoundStarted:
-          await this.discordClient?.SendRoundStartedMessage(e.Data);
-          break;
-        case WebSocketPacketType.RoundEnded:
-          await this.discordClient?.SendRoundEndedMessage(e.Data[0], e.Data[1]);
-          break;
-        default:
-          Log.debug(PacketType[e.Type]);
-          break;
-      }
-    });
 
     // #region Database Configuration
     const sequelize = new Sequelize(this.ServiceSettings.DatabaseSettings.DatabaseName!, this.ServiceSettings.DatabaseSettings.Username!, this.ServiceSettings.DatabaseSettings.Password, {
@@ -163,6 +76,8 @@ export default class ParadiseService {
       await sequelize.sync();
       Log.info('Database opened.');
 
+      const { ActivePlayer, GameRoom, PublicProfile } = models;
+
       await PublicProfile.destroy({
         where: {
           Name: '',
@@ -171,8 +86,196 @@ export default class ParadiseService {
           },
         },
       });
+
+      await ActivePlayer.destroy({
+        truncate: true,
+      });
+
+      await GameRoom.destroy({
+        truncate: true,
+      });
     } catch { }
     // #endregion
+
+    this.fileServer = new FileServerHost(+this.ServiceSettings.FileServerPort!);
+    await this.fileServer.start();
+
+    this.webServiceHost = new WebServiceHost(+this.ServiceSettings.WebServicePort!);
+    await this.webServiceHost.start();
+
+    if (this.ServiceSettings.DiscordSettings.Enabled) {
+      this.discordClient = new DiscordClient();
+      await this.discordClient.Connect();
+    }
+
+    this.SocketHost = new WebSocketHost(+this.ServiceSettings.SocketPort!);
+    this.SocketHost.on('ConnectionRejected', (e) => {
+      Log.warn(`[Socket] Rejecting ${ServerType[e.Socket.Type]}Server(${e.Socket.Identifier}) from ${e.Socket.RemoteAddress}. Reason: ${e.Reason}`);
+    });
+
+    this.SocketHost.on('ClientConnected', (e) => {
+      Log.info(`[Socket] ${ServerType[e.Socket.Type]}Server(${e.Socket.Identifier}) connected from ${e.Socket.RemoteAddress}.`);
+    });
+
+    this.SocketHost.on('ClientDisconnected', (e) => {
+      Log.info(`[Socket] ${ServerType[e.Socket.Type]}Server(${e.Socket.Identifier}) disconnected. Reason: ${e.Reason ?? 'Connection closed'}`);
+    });
+
+    this.SocketHost.on('PacketReceived', async (e: WebSocketPacketReceivedEventArgs) => {
+      const { PhotonServer } = models;
+      switch (e.PacketType) {
+        case WebSocketPacketType.Pong:
+          try {
+            await PhotonServer.update({
+              LastResponseTime: e.Socket.LastResponseTime,
+            }, {
+              where: {
+                PhotonId: e.Socket.Info.PhotonId,
+              },
+            });
+          } catch (error) {
+            Log.error(`Failed to update LastResponseTime for Photon server with id ${e.Socket.Info.PhotonId}: No database entry`);
+          }
+
+          break;
+        default: break;
+      }
+    });
+
+    this.SocketHost.on('DataReceived', async (e: WebSocketDataReceivedEventArgs) => {
+      const { ActivePlayer, GameRoom, PhotonServer } = models;
+
+      switch (e.Type) {
+        case WebSocketPacketType.Monitoring:
+          if (e.ServerType === ServerType.Comm) {
+            for (const peer of e.Data.Peers) {
+              await ActivePlayer.upsert({
+                Cmid: peer.Cmid,
+                IPAddress: peer.RemoteIP,
+                Channel: peer.Channel,
+                CommServerId: (await PhotonServer.findOne({ where: { IP: peer.LocalIP, Port: peer.LocalPort } }))?.PhotonId,
+              });
+            }
+          } else if (e.ServerType === ServerType.Game) {
+            for (const room of e.Data.Rooms) {
+              const [channelId, webhookUrl] = await this.discordClient?.CreateGameRoom(room.MetaData) || [null, null];
+
+              await GameRoom.create({
+                ...room.MetaData,
+                ServerIp: intToIPv4(room.MetaData.Server.Ipv4),
+                ServerPort: room.MetaData.Server.Port,
+                ChannelId: channelId,
+                WebhookUrl: webhookUrl,
+              });
+
+              await ActivePlayer.update({
+                GameServerId: (await PhotonServer.findOne({ where: { IP: room.MetaData.Server.IpAddress, Port: room.MetaData.Server.Port } }))?.PhotonId,
+                GameRoomId: room.RoomId,
+              }, {
+                where: {
+                  Cmid: room.Peers,
+                },
+              });
+            }
+          }
+          break;
+        case WebSocketPacketType.Error:
+          await this.discordClient?.LogError(e.Data);
+          break;
+        case WebSocketPacketType.ChatMessage:
+          await this.discordClient?.SendLobbyChatMessage(e.Data);
+          break;
+        case WebSocketPacketType.RoomChatMessage: {
+          const [message, roomInfo] = e.Data;
+
+          this.discordClient?.SendGameRoomMessage(message, roomInfo);
+
+          break;
+        }
+        case WebSocketPacketType.Command: {
+          const cmd = e.Data as WebSocketCommand;
+
+          switch (cmd.Command) {
+            case 'link': {
+              if (await this.discordClient?.IsMemberLinked(cmd.Invoker.Cmid)) {
+                e.Socket.Send(WebSocketPacketType.CommandOutput, 'Your profile has already been linked to Discord.', true, e.Payload.ConversationId);
+                return;
+              }
+
+              const nonce = await this.discordClient?.BeginLinkMember(cmd.Invoker.Cmid);
+              e.Socket.Send(WebSocketPacketType.CommandOutput, `Your Discord link code is: ${nonce}.\nPlease send a DM to the Paradise Discord bot containing this code to complete the process.`, true, e.Payload.ConversationId);
+              break;
+            }
+            default: break;
+          }
+
+          break;
+        }
+        case WebSocketPacketType.PlayerJoined:
+          await this.discordClient?.SendPlayerJoinMessage(e.Data);
+
+          await ActivePlayer.upsert({
+            Cmid: e.Data.Cmid,
+            IPAddress: e.Data.RemoteIP,
+            Channel: e.Data.Channel,
+            CommServerId: e.ServerType === ServerType.Comm ? (await PhotonServer.findOne({ where: { IP: e.Data.LocalIP, Port: e.Data.LocalPort } }))?.PhotonId : undefined,
+            GameServerId: e.ServerType === ServerType.Game ? (await PhotonServer.findOne({ where: { IP: e.Data.LocalIP, Port: e.Data.LocalPort } }))?.PhotonId : undefined,
+          });
+          break;
+        case WebSocketPacketType.PlayerLeft:
+          await this.discordClient?.SendPlayerLeftMessage(e.Data);
+
+          if (e.ServerType === ServerType.Comm) {
+            await ActivePlayer.destroy({ where: { Cmid: e.Data.Cmid } });
+          } else if (e.ServerType === ServerType.Game) {
+            await ActivePlayer.update({ GameServerId: null }, { where: { Cmid: e.Data.Cmid } });
+          }
+
+          break;
+        case WebSocketPacketType.RoomOpened: {
+          await this.discordClient?.SendGameRoomCreatedMessage(e.Data);
+          const [channelId, webhookUrl] = await this.discordClient?.CreateGameRoom(e.Data) || [null, null];
+
+          await GameRoom.create({
+            ...e.Data,
+            ServerIp: intToIPv4(e.Data.Server.Ipv4),
+            ServerPort: e.Data.Server.Port,
+            ChannelId: channelId,
+            WebhookUrl: webhookUrl,
+          });
+          break;
+        }
+        case WebSocketPacketType.RoomClosed:
+          await this.discordClient?.SendGameRoomDestroyedMessage(e.Data);
+          await this.discordClient?.DestroyGameRoom(e.Data);
+
+          await GameRoom.destroy({ where: { Number: e.Data.Number } });
+          break;
+        case WebSocketPacketType.PlayerJoinedRoom: {
+          const [playerInfo, roomInfo] = e.Data;
+
+          await this.discordClient?.GrantRoomPermissions(playerInfo, roomInfo);
+          break;
+        }
+        case WebSocketPacketType.PlayerLeftRoom: {
+          const [playerInfo, roomInfo] = e.Data;
+
+          await this.discordClient?.RevokeRoomPermissions(playerInfo, roomInfo);
+          break;
+        }
+        case WebSocketPacketType.RoundStarted:
+          await this.discordClient?.SendRoundStartedMessage(e.Data);
+          break;
+        case WebSocketPacketType.RoundEnded: {
+          const [roomInfo, matchEndData] = e.Data;
+
+          await this.discordClient?.SendRoundEndedMessage(roomInfo, matchEndData);
+          break;
+        }
+        default:
+          break;
+      }
+    });
 
     CommandHandler.Commands.push(...Commands);
     global.SessionManager = new GameSessionManager();

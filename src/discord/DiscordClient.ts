@@ -1,16 +1,24 @@
 import ParadiseService from '@/ParadiseService';
 import { RealtimeError, WebSocketChatMessage } from '@/ServiceHosts/WebSocket';
-import { DiscordUser, SteamMember } from '@/models';
+import PacketType from '@/ServiceHosts/WebSocket/PacketType';
+import { CommandHandler } from '@/console';
+import models, { DiscordUser } from '@/models';
 import { Log } from '@/utils';
+import { MemberAccessLevel, PhotonUsageType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
+import {
+  CommActorInfo, EndOfMatchData, GameActorInfo, GameRoomData,
+} from '@festivaldev/uberstrike-js/UberStrike/Core/Models';
+import { GameModeType } from '@festivaldev/uberstrike-js/UberStrike/Core/Types';
 import crypto from 'crypto';
 import {
   ActivityType,
-  Client, Colors, EmbedBuilder, Events, GatewayIntentBits, Message, Partials, WebhookClient,
+  CategoryChannel,
+  ChannelType,
+  Client, Colors, EmbedBuilder, Events, GatewayIntentBits,
+  Message, Partials, TextChannel,
+  WebhookClient,
 } from 'discord.js';
 import { Op } from 'sequelize';
-import { MemberAccessLevel } from 'uberstrike-js/dist/Cmune/DataCenter/Common/Entities';
-import { CommActorInfo, EndOfMatchData, GameRoomData } from 'uberstrike-js/dist/UberStrike/Core/Models';
-import { GameModeType } from 'uberstrike-js/dist/UberStrike/Core/Types';
 import { DiscordSettings } from './DiscordSettings';
 
 enum GAME_FLAGS {
@@ -30,6 +38,11 @@ export default class DiscordClient {
   private gameRoomAnnouncementClient?: WebhookClient;
   private gameRoundAnnouncementClient?: WebhookClient;
   private errorLogClient?: WebhookClient;
+
+  private roomChatChannels: { [key: string]: TextChannel } = {};
+  private roomChatClients: { [key: string]: WebhookClient } = {};
+  private roomChatCreationPromises: { [key: string]: any } = {};
+  private roomChatMap: { [key: string]: number } = {};
 
   public async Connect(): Promise<void> {
     if (this.discordClient) return;
@@ -66,10 +79,17 @@ export default class DiscordClient {
       ],
     });
 
-    this.discordClient.once(Events.ClientReady, this.OnReady.bind(this));
+    const loginPromise = new Promise<void>((resolve, reject) => {
+      this.discordClient.once(Events.ClientReady, (e) => {
+        this.OnReady(e);
+        resolve();
+      });
+    });
+
     this.discordClient.on(Events.MessageCreate, this.OnMessageCreate.bind(this));
 
     this.discordClient.login(this.discordSettings.BotToken);
+    await loginPromise;
 
     if (this.discordSettings.Integrations.LobbyChat && this.discordSettings.WebHooks.LobbyChat?.trim().length) {
       this.lobbyChatClient = new WebhookClient({ url: this.discordSettings.WebHooks.LobbyChat });
@@ -107,13 +127,13 @@ export default class DiscordClient {
     let username: string | null = null;
     let avatarUrl: string | null = null;
 
-    if (discordUser) {
+    if (discordUser && discordUser.DiscordUserId) {
       const guild = await this.discordClient.guilds.fetch(this.discordSettings.GuildId);
-      const user = guild.members.cache.get(discordUser.DiscordUserId!);
+      const user = await guild.members.fetch(discordUser.DiscordUserId);
 
       if (user) {
-        username = user.nickname;
-        avatarUrl = user.avatarURL();
+        username = user.nickname || user.user.globalName || user.user.username;
+        avatarUrl = user.displayAvatarURL();
       }
     }
 
@@ -133,47 +153,190 @@ export default class DiscordClient {
   }
 
   public async SendPlayerJoinMessage(player: CommActorInfo): Promise<void> {
+    const { PublicProfile, SteamMember } = models;
+
     if (!this.discordSettings.Integrations.PlayerJoinAnnouncements) return;
     if (this.discordSettings.AnnouncementBlacklist.includes(player.Cmid.toString())) return;
 
-    const discordUser = await this.GetDiscordUserFromCmid(player.Cmid);
+    const publicProfile = await PublicProfile.findOne({
+      where: {
+        Cmid: player.Cmid,
+      },
+    });
+
     const steamMember = await SteamMember.findOne({
       where: {
         Cmid: player.Cmid,
       },
     });
 
+    if (!publicProfile || !steamMember) return;
+
     const embed = new EmbedBuilder({
       title: 'Player connected',
-      description: `${player.PlayerName} has joined the server.`,
+      description: `${publicProfile.Name} has joined the game.`,
       color: Colors.Green,
     });
 
     embed.addFields(
       { name: 'CMID', value: player.Cmid.toString() },
-      { name: 'SteamID64', value: steamMember!.SteamId.toString(), inline: true },
-      { name: 'Machine ID', value: steamMember!.MachineId },
-      { name: 'Rank', value: MemberAccessLevel[player.AccessLevel] },
+      { name: 'SteamID64', value: steamMember.SteamId.toString(), inline: true },
+      { name: 'Machine ID', value: steamMember.MachineId },
+      { name: 'Rank', value: MemberAccessLevel[publicProfile.AccessLevel] },
     );
 
     await this.playerAnnouncementClient?.send({
+      avatarURL: this.discordClient.user!.avatarURL() ?? undefined,
       username: 'UberStrike',
       embeds: [embed],
     });
   }
 
   public async SendPlayerLeftMessage(player: CommActorInfo): Promise<void> {
+    const { PublicProfile } = models;
+
     if (!this.discordSettings.Integrations.PlayerLeaveAnnouncements) return;
     if (this.discordSettings.AnnouncementBlacklist.includes(player.Cmid.toString())) return;
 
+    const publicProfile = await PublicProfile.findOne({
+      where: {
+        Cmid: player.Cmid,
+      },
+    });
+
+    if (!publicProfile) return;
+
     const embed = new EmbedBuilder({
       title: 'Player disconnected',
-      description: `${player.PlayerName} has left the server.`,
+      description: `${publicProfile.Name} has left the game.`,
       color: Colors.Red,
     });
 
     await this.playerAnnouncementClient?.send({
+      avatarURL: this.discordClient.user!.avatarURL() ?? undefined,
       username: 'UberStrike',
+      embeds: [embed],
+    });
+  }
+
+  public async CreateGameRoom(metadata: GameRoomData): Promise<[string | null, string | null]> {
+    if (!this.discordSettings.Integrations.RoomChats) return [null, null];
+
+    let _resolve;
+    this.roomChatCreationPromises[metadata.Number] = new Promise<void>((resolve, reject) => {
+      _resolve = resolve;
+    });
+
+    const category: CategoryChannel = await this.discordClient.channels.fetch(this.discordSettings.RoomChatCategory) as CategoryChannel;
+
+    if (!category) {
+      Log.error(`Failed to create a channel for room ${metadata.Number}: No category for id ${this.discordSettings.RoomChatCategory}`);
+      return [null, null];
+    }
+    let channel: TextChannel = category.children.cache.find((_) => _.name === `${metadata.Name}-${metadata.Number}`) as TextChannel;
+
+    if (!channel) {
+      channel = await category.children.create({
+        name: `${metadata.Name}-${metadata.Number}`,
+        type: ChannelType.GuildText,
+      }) as TextChannel;
+
+      channel.permissionOverwrites.create(channel.guild.roles.cache.find((_) => _.name === 'Bot')!, { ViewChannel: true });
+      channel.permissionOverwrites.create(channel.guild.roles.everyone, { ViewChannel: false });
+    }
+
+    this.roomChatChannels[metadata.Number] = channel;
+    this.roomChatMap[channel.id] = metadata.Number;
+
+    let webhook = (await channel.fetchWebhooks())?.first();
+
+    if (!webhook) {
+      webhook = await channel.createWebhook({
+        name: 'UberStrike',
+        avatar: this.discordClient.user!.avatarURL(),
+      });
+    }
+
+    this.roomChatClients[metadata.Number] = new WebhookClient({ id: webhook.id, token: webhook.token! });
+
+    _resolve();
+    delete this.roomChatCreationPromises[metadata.Number];
+
+    return [channel.id, this.roomChatClients[metadata.Number].url];
+  }
+
+  public async DestroyGameRoom(metadata: GameRoomData): Promise<void> {
+    if (!this.discordSettings.Integrations.RoomChats) return;
+
+    await this.roomChatChannels[metadata.Number]?.delete();
+    delete this.roomChatChannels[metadata.Number];
+    delete this.roomChatClients[metadata.Number];
+  }
+
+  public async GrantRoomPermissions(playerInfo: GameActorInfo, metadata: GameRoomData): Promise<void> {
+    if (!this.discordSettings.Integrations.RoomChats) return;
+
+    if (this.roomChatCreationPromises[metadata.Number]) {
+      await this.roomChatCreationPromises[metadata.Number];
+    }
+
+    const discordUser = await this.GetDiscordUserFromCmid(playerInfo.Cmid);
+    if (!discordUser || !discordUser.DiscordUserId) return;
+
+    const discordMember = await this.roomChatChannels[metadata.Number]?.guild.members.fetch(discordUser.DiscordUserId);
+    if (!discordMember) return;
+
+    this.roomChatChannels[metadata.Number]?.permissionOverwrites.create(discordMember, { ViewChannel: true });
+  }
+
+  public async RevokeRoomPermissions(playerInfo: GameActorInfo, metadata: GameRoomData): Promise<void> {
+    if (!this.discordSettings.Integrations.RoomChats) return;
+
+    if (this.roomChatCreationPromises[metadata.Number]) {
+      await this.roomChatCreationPromises[metadata.Number];
+    }
+
+    const discordUser = await DiscordUser.findOne({ where: { Cmid: playerInfo.Cmid } });
+    if (!discordUser || !discordUser.DiscordUserId) return;
+
+    const discordMember = await this.roomChatChannels[metadata.Number]?.guild.members.fetch(discordUser.DiscordUserId);
+    if (!discordMember) return;
+
+    this.roomChatChannels[metadata.Number]?.permissionOverwrites.delete(discordMember);
+  }
+
+  public async SendGameRoomMessage(message: WebSocketChatMessage, metadata: GameRoomData): Promise<void> {
+    if (!this.discordSettings.Integrations.RoomChats) return;
+
+    if (this.roomChatCreationPromises[metadata.Number]) {
+      await this.roomChatCreationPromises[metadata.Number];
+    }
+    if (!this.roomChatChannels[metadata.Number] || !this.roomChatClients[metadata.Number]) return;
+
+    const discordUser = await this.GetDiscordUserFromCmid(message.Cmid);
+    let username: string | null = null;
+    let avatarUrl: string | null = null;
+
+    if (discordUser && discordUser.DiscordUserId) {
+      const user = await this.roomChatChannels[metadata.Number]?.guild.members.fetch(discordUser.DiscordUserId);
+
+      if (user) {
+        username = user.nickname || user.user.globalName || user.user.username;
+        avatarUrl = user.displayAvatarURL();
+      }
+    }
+
+    const embed = new EmbedBuilder({
+      description: message.Message.replace(/(_|\*|~|`|\||\\)/g, '\\$1'),
+      footer: {
+        text: 'UberStrike Game Chat',
+        icon_url: this.discordClient.user?.avatarURL()!,
+      },
+    });
+
+    await this.roomChatClients[metadata.Number]?.send({
+      username: username ?? message.Name,
+      avatarURL: avatarUrl ?? undefined,
       embeds: [embed],
     });
   }
@@ -206,6 +369,7 @@ export default class DiscordClient {
       );
 
       await this.gameRoomAnnouncementClient?.send({
+        avatarURL: this.discordClient.user!.avatarURL() ?? undefined,
         username: 'UberStrike',
         embeds: [embed],
       });
@@ -237,6 +401,7 @@ export default class DiscordClient {
       );
 
       await this.gameRoomAnnouncementClient?.send({
+        avatarURL: this.discordClient.user!.avatarURL() ?? undefined,
         username: 'UberStrike',
         embeds: [embed],
       });
@@ -274,14 +439,17 @@ export default class DiscordClient {
   }
 
   public async IsMemberLinked(cmid: number): Promise<bool> {
-    return (await DiscordUser.findOne({
+    const link = await DiscordUser.findOne({
       where: {
         Cmid: cmid,
         DiscordUserId: {
           [Op.ne]: null,
         },
+        Completed: true,
       },
-    })) != null;
+    });
+
+    return !!link;
   }
 
   public async BeginLinkMember(cmid: number): Promise<string | null> {
@@ -290,23 +458,22 @@ export default class DiscordClient {
     let link = await DiscordUser.findOne({
       where: {
         Cmid: cmid,
-        DiscordUserId: {
-          [Op.ne]: null,
-        },
         Nonce: {
           [Op.ne]: null,
         },
+        Completed: false,
       },
     });
+
     if (link) return link.Nonce;
 
-    const nonce = crypto.randomBytes(16).toString('hex');
+    const nonce = crypto.randomBytes(4).toString('hex');
     link = await DiscordUser.create({
       Cmid: cmid,
       Nonce: nonce,
     });
 
-    return nonce;
+    return link.Nonce;
   }
 
   public async GetDiscordUserFromCmid(cmid: number): Promise<DiscordUser | null> {
@@ -314,9 +481,6 @@ export default class DiscordClient {
       where: {
         Cmid: cmid,
         DiscordUserId: {
-          [Op.ne]: null,
-        },
-        Nonce: {
           [Op.ne]: null,
         },
       },
@@ -330,9 +494,6 @@ export default class DiscordClient {
           [Op.gt]: 0,
         },
         DiscordUserId: discordUserId,
-        Nonce: {
-          [Op.ne]: null,
-        },
       },
     });
   }
@@ -350,18 +511,144 @@ export default class DiscordClient {
   }
 
   private async OnMessageCreate(message: Message): Promise<void> {
+    const { GameRoom, PhotonServer, PublicProfile } = models;
+
     if (message.author.bot || message.webhookId) return;
 
     if (message.channel.isDMBased()) {
-      Log.debug("got dm");
-      message.channel.send(`echo: ${message.content}`);
-    } else if (message.channelId === this.discordSettings.ChatChannelId) {
-      Log.debug("message from chat channel");
+      let discordUser = await this.GetDiscordUserFromDiscordId(message.author.id);
+
+      if (discordUser) {
+        await message.reply('Your Discord profile has already been linked to UberStrike.');
+        return;
+      }
+
+      discordUser = await DiscordUser.findOne({ where: { Nonce: message.cleanContent } });
+
+      if (!discordUser) {
+        await message.reply('Your Discord profile could not be linked to UberStrike.\nPlease make sure to enter a valid link code.');
+        return;
+      }
+
+      discordUser.update({
+        DiscordUserId: message.author.id,
+        Nonce: null,
+        Completed: true,
+      });
+
+      await message.reply('Your Discord profile has been successfully linked to UberStrike!');
     } else if (message.channel.isTextBased()) {
-      Log.debug("got regular message");
+      if (message.channel.id === this.discordSettings.CommandChannelId && message.cleanContent.startsWith('?') && message.cleanContent.length > 1) {
+        const discordUser = await this.GetDiscordUserFromDiscordId(message.author.id);
+
+        if (!discordUser) {
+          await message.reply('Please link your Discord profile to UberStrike using `?link` in the ingame Lobby chat in order to execute commands.');
+          return;
+        }
+
+        const publicProfile = await PublicProfile.findOne({ where: { Cmid: discordUser.Cmid } });
+
+        if (!publicProfile || publicProfile.AccessLevel === MemberAccessLevel.Default) {
+          // await message.reply('You're not allowed to run commands.');
+          return;
+        }
+
+        const cmd = message.cleanContent.substring(1);
+        const cmdArgs = cmd.match(/[a-zA-Z0-9-]+|"(?:\\"|[^"])+"/g)?.map((_) => (_.match(/".+"/g) ? _.slice(1, -1) : _)) ?? [];
+
+        switch (cmdArgs[0]?.toLocaleLowerCase()) {
+          case 'clear': {
+            let messages = await message.channel.bulkDelete(100);
+
+            while (messages.size > 0) {
+              messages = await message.channel.bulkDelete(100);
+            }
+            break;
+          }
+          case 'help':
+            this.PrintDiscordHelp(message);
+            break;
+          case 'quit': break;
+          default:
+            await CommandHandler.HandleCommand(
+              cmdArgs[0].toLocaleLowerCase(),
+              cmdArgs.slice(1),
+              undefined,
+              undefined,
+              async (invoker: any, success: boolean, error?: string | undefined | null) => {
+                if (success && !error?.trim().length) {
+                  await message.reply(`\`\`\`${invoker.Output}\`\`\``);
+                } else {
+                  await message.reply(`\`\`\`${error}\`\`\``);
+                }
+              },
+            );
+            break;
+        }
+      } else if (message.channel.id === this.discordSettings.ChatChannelId) {
+        const discordUser = await this.GetDiscordUserFromDiscordId(message.author.id);
+
+        if (!discordUser) {
+          await message.reply('Your message could not be delivered to the Lobby chat.\nPlease link your Discord profile to UberStrike using `?link` in the ingame Lobby chat.');
+          return;
+        }
+
+        const publicProfile = await PublicProfile.findOne({ where: { Cmid: discordUser.Cmid } });
+
+        await ParadiseService.Instance.SocketHost.SendToCommServer(PacketType.ChatMessage, new WebSocketChatMessage({
+          Cmid: discordUser.Cmid,
+          Name: `[Discord] ${publicProfile?.Name || message.author.displayName}`,
+          Message: message.cleanContent,
+        }));
+      } else if (this.roomChatMap[message.channel.id]) {
+        const discordUser = await this.GetDiscordUserFromDiscordId(message.author.id);
+
+        if (!discordUser) {
+          await message.reply('Your message could not be delivered to the game chat.\nPlease link your Discord profile to UberStrike using `?link` in the ingame Lobby chat.');
+          return;
+        }
+
+        const publicProfile = await PublicProfile.findOne({ where: { Cmid: discordUser.Cmid } });
+
+        const room = await GameRoom.findOne({ where: { Number: this.roomChatMap[message.channel.id] } });
+        if (!room) {
+          await message.reply('Your message could not be delivered to the game chat.\nThis room does not exist anymore.');
+          return;
+        }
+
+        const server = await PhotonServer.findOne({ where: { IP: room.ServerIp, Port: room.ServerPort, UsageType: PhotonUsageType.All } });
+        if (!server) return;
+
+        await ParadiseService.Instance.SocketHost.SendToGameServer(server.Guid, PacketType.ChatMessage, new WebSocketChatMessage({
+          Cmid: discordUser.Cmid,
+          Name: `[Discord] ${publicProfile?.Name || message.author.displayName}`,
+          Message: message.cleanContent,
+          RoomNumber: room.Number,
+        }));
+      }
     }
   }
   // #endregion
+
+  private async PrintDiscordHelp(message: Message): Promise<void> {
+    const lines = [
+      'Available commands:\n',
+    ];
+
+    for (const commandObj of CommandHandler.Commands.toSorted((a, b) => a.Command.localeCompare(b.Command, undefined, { sensitivity: 'base' }))) {
+      if (commandObj.Command.toLocaleLowerCase() === 'clear') {
+        lines.push('clear\t\tClears the messages in the Command channel.');
+      } else if (commandObj.Command.toLocaleLowerCase() === 'help') {
+        lines.push('help\t\tShows this help text. (Alias: h)');
+      } else {
+        /* eslint-disable new-cap */
+        const cmd = new commandObj('');
+        lines.push(cmd.HelpString);
+      }
+    }
+
+    await message.reply(`\`\`\`${lines.join('\r\n')}\`\`\``);
+  }
 
   private GetNameForMapID(mapID: number): string {
     switch (mapID) {

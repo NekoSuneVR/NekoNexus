@@ -20,10 +20,11 @@ DatabaseSettings:
 WebServicePrefix: 'UberStrike.DataCenter.WebService.CWS.'
 WebServiceSuffix: 'Contract.svc'
 EncryptionInitVector: 'aaaaBBBBccccDDDD' # Must be 16 characters
-EncryptionPassPhrase: 'mysupersecretpassphrase'
-ServerPassPhrases:
-  - Id: '00000000-0000-0000-0000-000000000000'
-    PassPhrase: 'mysupersecretpassphrase'
+ServerCredentials:
+  - Name: 'Example Server'
+    Type: 2 # 2 = Comm, 3 = Game
+    Id: '00000000-0000-0000-0000-000000000000'
+    Passphrase: 'mysupersecretpassphrase'
 PluginBlacklist:
   - MyBlacklistedPlugin.plugin
 
@@ -40,6 +41,7 @@ DiscordSettings:
   BotToken: ''
   Integrations:
     LobbyChat: true
+    RoomChats: true
     Commands: true
     PlayerJoinAnnouncements: true
     PlayerLeaveAnnouncements: true
@@ -51,6 +53,7 @@ DiscordSettings:
   GuildId: ''
   ChatChannelId: ''
   CommandChannelId: ''
+  RoomChatCagetory: ''
   WebHooks:
     LobbyChat: ''
     PlayerAnnouncements: ''
