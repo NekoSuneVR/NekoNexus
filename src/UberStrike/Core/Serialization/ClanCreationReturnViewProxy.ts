@@ -3,9 +3,9 @@ import ClanViewProxy from './ClanViewProxy';
 import Int32Proxy from './Int32Proxy';
 
 export default class ClanCreationReturnViewProxy {
-  public static Serialize(stream: byte[], instance: ClanCreationReturnView): void {
+  public static Serialize(stream: Stream, instance: ClanCreationReturnView): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.ClanView) {
       ClanViewProxy.Serialize(memoryStream, instance.ClanView);
     } else {
@@ -17,7 +17,7 @@ export default class ClanCreationReturnViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): ClanCreationReturnView {
+  public static Deserialize(bytes: Stream): ClanCreationReturnView {
     const num = Int32Proxy.Deserialize(bytes);
     const clanCreationReturnView = new ClanCreationReturnView();
 

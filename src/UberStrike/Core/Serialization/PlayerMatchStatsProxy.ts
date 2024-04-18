@@ -6,10 +6,10 @@ import PlayerPersonalRecordStatisticsViewProxy from './PlayerPersonalRecordStati
 import PlayerWeaponStatisticsViewProxy from './PlayerWeaponStatisticsViewProxy';
 
 export default class PlayerMatchStatsProxy {
-  public static Serialize(stream: byte[], instance: PlayerMatchStats): void {
+  public static Serialize(stream: Stream, instance: PlayerMatchStats): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.Cmid);
     Int32Proxy.Serialize(memoryStream, instance.Death);
     BooleanProxy.Serialize(memoryStream, instance.HasFinishedMatch);
@@ -39,7 +39,7 @@ export default class PlayerMatchStatsProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): PlayerMatchStats {
+  public static Deserialize(bytes: Stream): PlayerMatchStats {
     const num = Int32Proxy.Deserialize(bytes);
     const playerMatchStats = new PlayerMatchStats();
     playerMatchStats.Cmid = Int32Proxy.Deserialize(bytes);

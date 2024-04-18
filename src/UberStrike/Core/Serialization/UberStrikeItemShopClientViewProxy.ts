@@ -1,5 +1,5 @@
 import {
-  UberStrikeItemFunctionalView, UberStrikeItemGearView, UberStrikeItemQuickView, UberStrikeItemShopClientView, UberStrikeItemWeaponView,
+    UberStrikeItemFunctionalView, UberStrikeItemGearView, UberStrikeItemQuickView, UberStrikeItemShopClientView, UberStrikeItemWeaponView,
 } from '@/UberStrike/Core/Models/Views';
 import Int32Proxy from './Int32Proxy';
 import ListProxy from './ListProxy';
@@ -9,10 +9,10 @@ import UberStrikeItemQuickViewProxy from './UberStrikeItemQuickViewProxy';
 import UberStrikeItemWeaponViewProxy from './UberStrikeItemWeaponViewProxy';
 
 export default class UberStrikeItemShopClientViewProxy {
-  public static Serialize(stream: byte[], instance: UberStrikeItemShopClientView) {
+  public static Serialize(stream: Stream, instance: UberStrikeItemShopClientView) {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.FunctionalItems) {
       ListProxy.Serialize<UberStrikeItemFunctionalView>(memoryStream, instance.FunctionalItems, UberStrikeItemFunctionalViewProxy.Serialize);
     } else {
@@ -41,7 +41,7 @@ export default class UberStrikeItemShopClientViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): UberStrikeItemShopClientView {
+  public static Deserialize(bytes: Stream): UberStrikeItemShopClientView {
     const num = Int32Proxy.Deserialize(bytes);
     const uberStrikeItemShopClientView = new UberStrikeItemShopClientView();
 

@@ -5,9 +5,9 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class ClanMemberViewProxy {
-  public static Serialize(stream: byte[], instance: ClanMemberView): void {
+  public static Serialize(stream: Stream, instance: ClanMemberView): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.Cmid);
     DateTimeProxy.Serialize(memoryStream, instance.JoiningDate);
     DateTimeProxy.Serialize(memoryStream, instance.Lastlogin);
@@ -23,7 +23,7 @@ export default class ClanMemberViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): ClanMemberView {
+  public static Deserialize(bytes: Stream): ClanMemberView {
     const num = Int32Proxy.Deserialize(bytes);
     const clanMemberView = new ClanMemberView();
     clanMemberView.Cmid = Int32Proxy.Deserialize(bytes);

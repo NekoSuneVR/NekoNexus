@@ -5,10 +5,10 @@ import ListProxy from './ListProxy';
 import MapViewProxy from './MapViewProxy';
 
 export default class UberstrikeLevelViewModelProxy {
-  public static Serialize(stream: byte[], instance: UberstrikeLevelViewModel): void {
+  public static Serialize(stream: Stream, instance: UberstrikeLevelViewModel): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.Maps) {
       ListProxy.Serialize<MapView>(memoryStream, instance.Maps, MapViewProxy.Serialize);
     } else {
@@ -19,7 +19,7 @@ export default class UberstrikeLevelViewModelProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): UberstrikeLevelViewModel {
+  public static Deserialize(bytes: Stream): UberstrikeLevelViewModel {
     const num = Int32Proxy.Deserialize(bytes);
     const uberstrikeLevelViewModel = new UberstrikeLevelViewModel();
 

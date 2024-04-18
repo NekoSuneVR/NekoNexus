@@ -1,5 +1,5 @@
 import {
-  BasicClanView, GroupColor, GroupFontStyle, GroupType,
+    BasicClanView, GroupColor, GroupFontStyle, GroupType,
 } from '@/Cmune/DataCenter/Common/Entities';
 import DateTimeProxy from './DateTimeProxy';
 import EnumProxy from './EnumProxy';
@@ -7,9 +7,9 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class BasicClanViewProxy {
-  public static Serialize(stream: byte[], instance: BasicClanView): void {
+  public static Serialize(stream: Stream, instance: BasicClanView): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
 
     if (instance.Address) {
       StringProxy.Serialize(memoryStream, instance.Address);
@@ -70,7 +70,7 @@ export default class BasicClanViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): BasicClanView {
+  public static Deserialize(bytes: Stream): BasicClanView {
     const num = Int32Proxy.Deserialize(bytes);
     const basicClanView = new BasicClanView();
 

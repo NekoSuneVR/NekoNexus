@@ -8,10 +8,10 @@ import MapSettingsProxy from './MapSettingsProxy';
 import StringProxy from './StringProxy';
 
 export default class MapViewProxy {
-  public static Serialize(stream: byte[], instance: MapView): void {
+  public static Serialize(stream: Stream, instance: MapView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.Description) {
       StringProxy.Serialize(memoryStream, instance.Description);
     } else {
@@ -47,7 +47,7 @@ export default class MapViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): MapView {
+  public static Deserialize(bytes: Stream): MapView {
     const num = Int32Proxy.Deserialize(bytes);
     const mapView = new MapView();
 

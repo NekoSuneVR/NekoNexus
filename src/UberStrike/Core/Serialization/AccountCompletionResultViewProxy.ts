@@ -5,9 +5,9 @@ import ListProxy from './ListProxy';
 import StringProxy from './StringProxy';
 
 export default class AccountCompletionResultViewProxy {
-  public static Serialize(stream: byte[], instance: AccountCompletionResultView): void {
+  public static Serialize(stream: Stream, instance: AccountCompletionResultView): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
 
     if (instance.ItemsAttributed) {
       DictionaryProxy.Serialize<int, int>(memoryStream, instance.ItemsAttributed, Int32Proxy.Serialize, Int32Proxy.Serialize);
@@ -26,7 +26,7 @@ export default class AccountCompletionResultViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): AccountCompletionResultView {
+  public static Deserialize(bytes: Stream): AccountCompletionResultView {
     const num = Int32Proxy.Deserialize(bytes);
     const accountCompletionResultView = new AccountCompletionResultView();
 

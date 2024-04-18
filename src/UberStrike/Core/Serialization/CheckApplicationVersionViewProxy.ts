@@ -3,9 +3,9 @@ import ApplicationViewProxy from './ApplicationViewProxy';
 import Int32Proxy from './Int32Proxy';
 
 export default class CheckApplicationVersionViewProxy {
-  public static Serialize(stream: byte[], instance: CheckApplicationVersionView): void {
+  public static Serialize(stream: Stream, instance: CheckApplicationVersionView): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
 
     if (instance.ClientVersion) {
       ApplicationViewProxy.Serialize(memoryStream, instance.ClientVersion);
@@ -23,7 +23,7 @@ export default class CheckApplicationVersionViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): CheckApplicationVersionView {
+  public static Deserialize(bytes: Stream): CheckApplicationVersionView {
     const num = Int32Proxy.Deserialize(bytes);
     const checkApplicationVersionView = new CheckApplicationVersionView();
 

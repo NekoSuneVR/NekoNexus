@@ -5,8 +5,8 @@ import EnumProxy from './EnumProxy';
 import Int32Proxy from './Int32Proxy';
 
 export default class ItemTransactionViewProxy {
-  public static Serialize(stream: byte[], instance: ItemTransactionView): void {
-    const memoryStream: byte[] = [];
+  public static Serialize(stream: Stream, instance: ItemTransactionView): void {
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.Cmid);
     Int32Proxy.Serialize(memoryStream, instance.Credits);
     EnumProxy.Serialize<BuyingDurationType>(memoryStream, instance.Duration);
@@ -18,7 +18,7 @@ export default class ItemTransactionViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): ItemTransactionView {
+  public static Deserialize(bytes: Stream): ItemTransactionView {
     return new ItemTransactionView({
       Cmid: Int32Proxy.Deserialize(bytes),
       Credits: Int32Proxy.Deserialize(bytes),

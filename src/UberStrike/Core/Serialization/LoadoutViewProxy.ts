@@ -5,10 +5,10 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class LoadoutViewProxy {
-  public static Serialize(stream: byte[], instance: LoadoutView): void {
+  public static Serialize(stream: Stream, instance: LoadoutView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.Backpack);
     Int32Proxy.Serialize(memoryStream, instance.Boots);
     Int32Proxy.Serialize(memoryStream, instance.Cmid);
@@ -50,7 +50,7 @@ export default class LoadoutViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): LoadoutView {
+  public static Deserialize(bytes: Stream): LoadoutView {
     const num = Int32Proxy.Deserialize(bytes);
     const loadoutView = new LoadoutView();
     loadoutView.Backpack = Int32Proxy.Deserialize(bytes);

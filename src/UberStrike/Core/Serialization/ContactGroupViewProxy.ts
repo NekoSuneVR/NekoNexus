@@ -5,9 +5,9 @@ import PublicProfileViewProxy from './PublicProfileViewProxy';
 import StringProxy from './StringProxy';
 
 export default class ContactGroupViewProxy {
-  public static Serialize(stream: byte[], instance: ContactGroupView): void {
+  public static Serialize(stream: Stream, instance: ContactGroupView): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.Contacts) {
       ListProxy.Serialize<PublicProfileView>(memoryStream, instance.Contacts, PublicProfileViewProxy.Serialize);
     } else {
@@ -26,7 +26,7 @@ export default class ContactGroupViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): ContactGroupView {
+  public static Deserialize(bytes: Stream): ContactGroupView {
     const num = Int32Proxy.Deserialize(bytes);
     const contactGroupView = new ContactGroupView();
 

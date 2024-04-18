@@ -7,9 +7,9 @@ import PhotonViewProxy from './PhotonViewProxy';
 import StringProxy from './StringProxy';
 
 export default class AuthenticateApplicationViewProxy {
-  public static Serialize(stream: byte[], instance: AuthenticateApplicationView) {
+  public static Serialize(stream: Stream, instance: AuthenticateApplicationView) {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
 
     if (instance.CommServer) {
       PhotonViewProxy.Serialize(memoryStream, instance.CommServer);
@@ -41,7 +41,7 @@ export default class AuthenticateApplicationViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): AuthenticateApplicationView {
+  public static Deserialize(bytes: Stream): AuthenticateApplicationView {
     const num = Int32Proxy.Deserialize(bytes);
     const authenticateApplicationView = new AuthenticateApplicationView();
 

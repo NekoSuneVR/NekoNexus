@@ -6,9 +6,9 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class PublicProfileViewProxy {
-  public static Serialize(stream: byte[], instance: PublicProfileView) {
+  public static Serialize(stream: Stream, instance: PublicProfileView) {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     EnumProxy.Serialize<MemberAccessLevel>(memoryStream, instance.AccessLevel);
     Int32Proxy.Serialize(memoryStream, instance.Cmid);
     EnumProxy.Serialize<EmailAddressStatus>(memoryStream, instance.EmailAddressStatus);
@@ -38,7 +38,7 @@ export default class PublicProfileViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): PublicProfileView {
+  public static Deserialize(bytes: Stream): PublicProfileView {
     const num = Int32Proxy.Deserialize(bytes);
     const publicProfileView = new PublicProfileView();
     publicProfileView.AccessLevel = EnumProxy.Deserialize<MemberAccessLevel>(bytes);

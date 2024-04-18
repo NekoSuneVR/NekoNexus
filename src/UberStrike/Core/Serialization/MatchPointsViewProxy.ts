@@ -2,8 +2,8 @@ import { MatchPointsView } from '@/UberStrike/Core/Models/Views';
 import Int32Proxy from './Int32Proxy';
 
 export default class MatchPointsViewProxy {
-  public static Serialize(stream: byte[], instance: MatchPointsView) {
-    const memoryStream: byte[] = [];
+  public static Serialize(stream: Stream, instance: MatchPointsView) {
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.LoserPointsBase);
     Int32Proxy.Serialize(memoryStream, instance.LoserPointsPerMinute);
     Int32Proxy.Serialize(memoryStream, instance.MaxTimeInGame);
@@ -12,7 +12,7 @@ export default class MatchPointsViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): MatchPointsView {
+  public static Deserialize(bytes: Stream): MatchPointsView {
     return new MatchPointsView({
       LoserPointsBase: Int32Proxy.Deserialize(bytes),
       LoserPointsPerMinute: Int32Proxy.Deserialize(bytes),

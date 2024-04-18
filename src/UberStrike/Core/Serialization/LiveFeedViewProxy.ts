@@ -4,10 +4,10 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class LiveFeedViewProxy {
-  public static Serialize(stream: byte[], instance: LiveFeedView): void {
+  public static Serialize(stream: Stream, instance: LiveFeedView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     DateTimeProxy.Serialize(memoryStream, instance.Date);
 
     if (instance.Description) {
@@ -29,7 +29,7 @@ export default class LiveFeedViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): LiveFeedView {
+  public static Deserialize(bytes: Stream): LiveFeedView {
     const num = Int32Proxy.Deserialize(bytes);
     const liveFeedView = new LiveFeedView();
     liveFeedView.Date = DateTimeProxy.Deserialize(bytes);

@@ -10,10 +10,10 @@ import PlayerStatisticsViewProxy from './PlayerStatisticsViewProxy';
 import StringProxy from './StringProxy';
 
 export default class MemberAuthenticationResultViewProxy {
-  public static Serialize(stream: byte[], instance: MemberAuthenticationResultView): void {
+  public static Serialize(stream: Stream, instance: MemberAuthenticationResultView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.AuthToken) {
       StringProxy.Serialize(memoryStream, instance.AuthToken);
     } else {
@@ -47,7 +47,7 @@ export default class MemberAuthenticationResultViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): MemberAuthenticationResultView {
+  public static Deserialize(bytes: Stream): MemberAuthenticationResultView {
     const num = Int32Proxy.Deserialize(bytes);
     const memberAuthenticationResultView = new MemberAuthenticationResultView();
 

@@ -5,10 +5,10 @@ import ListProxy from './ListProxy';
 import StringProxy from './StringProxy';
 
 export default class PackageViewProxy {
-  public static Serialize(stream: byte[], instance: PackageView): void {
+  public static Serialize(stream: Stream, instance: PackageView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.Bonus);
 
     if (instance.Items) {
@@ -28,7 +28,7 @@ export default class PackageViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): PackageView {
+  public static Deserialize(bytes: Stream): PackageView {
     const num = Int32Proxy.Deserialize(bytes);
     const packageView = new PackageView();
     packageView.Bonus = Int32Proxy.Deserialize(bytes);

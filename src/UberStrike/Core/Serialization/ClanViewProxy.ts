@@ -1,5 +1,5 @@
 import {
-  ClanMemberView, ClanView, GroupColor, GroupFontStyle, GroupType,
+    ClanMemberView, ClanView, GroupColor, GroupFontStyle, GroupType,
 } from '@/Cmune/DataCenter/Common/Entities';
 import ClanMemberViewProxy from './ClanMemberViewProxy';
 import DateTimeProxy from './DateTimeProxy';
@@ -9,7 +9,7 @@ import ListProxy from './ListProxy';
 import StringProxy from './StringProxy';
 
 export default class ClanViewProxy {
-  public static Serialize(stream: byte[], instance: ClanView): void {
+  public static Serialize(stream: Stream, instance: ClanView): void {
     let num = 0;
     const memoryStream: any[] = [];
 
@@ -79,7 +79,7 @@ export default class ClanViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): ClanView {
+  public static Deserialize(bytes: Stream): ClanView {
     const num = Int32Proxy.Deserialize(bytes);
     const clanView = new ClanView();
 

@@ -5,10 +5,10 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class ServerConnectionViewProxy {
-  public static Serialize(stream: byte[], instance: ServerConnectionView): void {
+  public static Serialize(stream: Stream, instance: ServerConnectionView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     EnumProxy.Serialize<MemberAccessLevel>(memoryStream, instance.AccessLevel);
 
     if (instance.ApiVersion) {
@@ -23,7 +23,7 @@ export default class ServerConnectionViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): ServerConnectionView {
+  public static Deserialize(bytes: Stream): ServerConnectionView {
     const num = Int32Proxy.Deserialize(bytes);
     const serverConnectionView = new ServerConnectionView();
     serverConnectionView.AccessLevel = EnumProxy.Deserialize<MemberAccessLevel>(bytes);

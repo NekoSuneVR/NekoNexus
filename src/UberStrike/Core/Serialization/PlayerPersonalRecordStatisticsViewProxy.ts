@@ -2,8 +2,8 @@ import { PlayerPersonalRecordStatisticsView } from '@/UberStrike/DataCenter/Comm
 import Int32Proxy from './Int32Proxy';
 
 export default class PlayerPersonalRecordStatisticsViewProxy {
-  public static Serialize(stream: byte[], instance: PlayerPersonalRecordStatisticsView): void {
-    const memoryStream: byte[] = [];
+  public static Serialize(stream: Stream, instance: PlayerPersonalRecordStatisticsView): void {
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.MostArmorPickedUp);
     Int32Proxy.Serialize(memoryStream, instance.MostCannonSplats);
     Int32Proxy.Serialize(memoryStream, instance.MostConsecutiveSnipes);
@@ -25,7 +25,7 @@ export default class PlayerPersonalRecordStatisticsViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): PlayerPersonalRecordStatisticsView {
+  public static Deserialize(bytes: Stream): PlayerPersonalRecordStatisticsView {
     return new PlayerPersonalRecordStatisticsView({
       MostArmorPickedUp: Int32Proxy.Deserialize(bytes),
       MostCannonSplats: Int32Proxy.Deserialize(bytes),

@@ -7,9 +7,9 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class CurrencyDepositViewProxy {
-  public static Serialize(stream: byte[], instance: CurrencyDepositView): void {
+  public static Serialize(stream: Stream, instance: CurrencyDepositView): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.ApplicationId);
 
     if (instance.BundleId) {
@@ -54,7 +54,7 @@ export default class CurrencyDepositViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): CurrencyDepositView {
+  public static Deserialize(bytes: Stream): CurrencyDepositView {
     const num = Int32Proxy.Deserialize(bytes);
     const currencyDepositView = new CurrencyDepositView();
     currencyDepositView.ApplicationId = Int32Proxy.Deserialize(bytes);

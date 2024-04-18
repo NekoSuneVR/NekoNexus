@@ -7,9 +7,9 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class CommActorInfoProxy {
-  public static Serialize(stream: byte[], instance: CommActorInfo): void {
+  public static Serialize(stream: Stream, instance: CommActorInfo): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     EnumProxy.Serialize<MemberAccessLevel>(memoryStream, instance.AccessLevel);
     EnumProxy.Serialize<ChannelType>(memoryStream, instance.Channel);
 
@@ -45,7 +45,7 @@ export default class CommActorInfoProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): CommActorInfo {
+  public static Deserialize(bytes: Stream): CommActorInfo {
     const num = Int32Proxy.Deserialize(bytes);
     const commActorInfo = new CommActorInfo();
     commActorInfo.AccessLevel = EnumProxy.Deserialize<MemberAccessLevel>(bytes);

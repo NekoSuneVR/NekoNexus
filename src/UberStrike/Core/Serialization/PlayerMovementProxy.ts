@@ -3,8 +3,8 @@ import ByteProxy from './ByteProxy';
 import ShortVector3Proxy from './ShortVector3Proxy';
 
 export default class PlayerMovementProxy {
-  public static Serialize(stream: byte[], instance: PlayerMovement): void {
-    const memoryStream: byte[] = [];
+  public static Serialize(stream: Stream, instance: PlayerMovement): void {
+    const memoryStream: MemoryStream = [];
     ByteProxy.Serialize(memoryStream, instance.HorizontalRotation);
     ByteProxy.Serialize(memoryStream, instance.KeyState);
     ByteProxy.Serialize(memoryStream, instance.MovementState);
@@ -15,7 +15,7 @@ export default class PlayerMovementProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): PlayerMovement {
+  public static Deserialize(bytes: Stream): PlayerMovement {
     return new PlayerMovement({
       HorizontalRotation: ByteProxy.Deserialize(bytes),
       KeyState: ByteProxy.Deserialize(bytes),

@@ -1,8 +1,8 @@
 import {
-  ChannelType, MemberAccessLevel,
+    ChannelType, MemberAccessLevel,
 } from '@/Cmune/DataCenter/Common/Entities';
 import {
-  FireMode, GameActorInfoDelta, PlayerStates, SurfaceType, TeamID,
+    FireMode, GameActorInfoDelta, PlayerStates, SurfaceType, TeamID,
 } from '@/UberStrike/Core/Models';
 import { Keys } from '@/UberStrike/Core/Models/GameActorInfoDelta';
 import ByteProxy from './ByteProxy';
@@ -15,7 +15,7 @@ import StringProxy from './StringProxy';
 import UInt16Proxy from './UInt16Proxy';
 
 export default class GameActorInfoDeltaProxy {
-  public static Serialize(stream: byte[], instance: GameActorInfoDelta): void {
+  public static Serialize(stream: Stream, instance: GameActorInfoDelta): void {
     if (instance) {
       Int32Proxy.Serialize(stream, instance.DeltaMask);
       ByteProxy.Serialize(stream, instance.Id);
@@ -120,7 +120,7 @@ export default class GameActorInfoDeltaProxy {
     }
   }
 
-  public static Deserialize(bytes: byte[]): GameActorInfoDelta {
+  public static Deserialize(bytes: Stream): GameActorInfoDelta {
     const num = Int32Proxy.Deserialize(bytes);
     const b = ByteProxy.Deserialize(bytes);
     const gameActorInfoDelta = new GameActorInfoDelta();

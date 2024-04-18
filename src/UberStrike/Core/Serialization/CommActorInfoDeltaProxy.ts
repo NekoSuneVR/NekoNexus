@@ -8,7 +8,7 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class CommActorInfoDeltaProxy {
-  public static Serialize(stream: byte[], instance: CommActorInfoDelta): void {
+  public static Serialize(stream: Stream, instance: CommActorInfoDelta): void {
     if (instance) {
       Int32Proxy.Serialize(stream, instance.DeltaMask);
       ByteProxy.Serialize(stream, instance.Id);
@@ -49,7 +49,7 @@ export default class CommActorInfoDeltaProxy {
     }
   }
 
-  public static Deserialize(bytes: byte[]): CommActorInfoDelta {
+  public static Deserialize(bytes: Stream): CommActorInfoDelta {
     const num = Int32Proxy.Deserialize(bytes);
     const b = ByteProxy.Deserialize(bytes);
     const commActorInfoDelta = new CommActorInfoDelta();

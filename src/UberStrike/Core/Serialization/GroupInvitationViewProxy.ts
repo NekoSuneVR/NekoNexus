@@ -3,9 +3,9 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class GroupInvitationViewProxy {
-  public static Serialize(stream: byte[], instance: GroupInvitationView): void {
+  public static Serialize(stream: Stream, instance: GroupInvitationView): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
 
     Int32Proxy.Serialize(memoryStream, instance.GroupId);
     Int32Proxy.Serialize(memoryStream, instance.GroupInvitationId);
@@ -48,7 +48,7 @@ export default class GroupInvitationViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): GroupInvitationView {
+  public static Deserialize(bytes: Stream): GroupInvitationView {
     const num = Int32Proxy.Deserialize(bytes);
     const groupInvitationView = new GroupInvitationView();
     groupInvitationView.GroupId = Int32Proxy.Deserialize(bytes);

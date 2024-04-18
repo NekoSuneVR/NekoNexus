@@ -1,8 +1,8 @@
 import {
-  ChannelType, MemberAccessLevel,
+    ChannelType, MemberAccessLevel,
 } from '@/Cmune/DataCenter/Common/Entities';
 import {
-  FireMode, GameActorInfo, PlayerStates, SurfaceType, TeamID,
+    FireMode, GameActorInfo, PlayerStates, SurfaceType, TeamID,
 } from '@/UberStrike/Core/Models';
 import ByteProxy from './ByteProxy';
 import ColorProxy from './ColorProxy';
@@ -14,9 +14,9 @@ import StringProxy from './StringProxy';
 import UInt16Proxy from './UInt16Proxy';
 
 export default class GameActorInfoProxy {
-  public static Serialize(stream: byte[], instance: GameActorInfo): void {
+  public static Serialize(stream: Stream, instance: GameActorInfo): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
 
     EnumProxy.Serialize<MemberAccessLevel>(memoryStream, instance.AccessLevel);
     ByteProxy.Serialize(memoryStream, instance.ArmorPointCapacity);
@@ -82,7 +82,7 @@ export default class GameActorInfoProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): GameActorInfo {
+  public static Deserialize(bytes: Stream): GameActorInfo {
     const num = Int32Proxy.Deserialize(bytes);
     const gameActorInfo = new GameActorInfo();
     gameActorInfo.AccessLevel = EnumProxy.Deserialize<MemberAccessLevel>(bytes);

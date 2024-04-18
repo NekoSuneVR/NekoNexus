@@ -2,8 +2,8 @@ import { MapSettings } from '@/UberStrike/Core/Models/Views';
 import Int32Proxy from './Int32Proxy';
 
 export default class MapSettingsProxy {
-  public static Serialize(stream: byte[], instance: MapSettings): void {
-    const memoryStream: byte[] = [];
+  public static Serialize(stream: Stream, instance: MapSettings): void {
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.KillsCurrent);
     Int32Proxy.Serialize(memoryStream, instance.KillsMax);
     Int32Proxy.Serialize(memoryStream, instance.KillsMin);
@@ -16,7 +16,7 @@ export default class MapSettingsProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): MapSettings {
+  public static Deserialize(bytes: Stream): MapSettings {
     return new MapSettings({
       KillsCurrent: Int32Proxy.Deserialize(bytes),
       KillsMax: Int32Proxy.Deserialize(bytes),

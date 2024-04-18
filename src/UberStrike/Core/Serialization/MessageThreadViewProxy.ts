@@ -5,10 +5,10 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class MessageThreadViewProxy {
-  public static Serialize(stream: byte[], instance: MessageThreadView): void {
+  public static Serialize(stream: Stream, instance: MessageThreadView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     BooleanProxy.Serialize(memoryStream, instance.HasNewMessages);
 
     if (instance.LastMessagePreview) {
@@ -31,7 +31,7 @@ export default class MessageThreadViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): MessageThreadView {
+  public static Deserialize(bytes: Stream): MessageThreadView {
     const num = Int32Proxy.Deserialize(bytes);
     const messageThreadView = new MessageThreadView();
     messageThreadView.HasNewMessages = BooleanProxy.Deserialize(bytes);

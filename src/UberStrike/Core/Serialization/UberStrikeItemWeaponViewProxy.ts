@@ -10,10 +10,10 @@ import ListProxy from './ListProxy';
 import StringProxy from './StringProxy';
 
 export default class UberStrikeItemWeaponViewProxy {
-  public static Serialize(stream: byte[], instance: UberStrikeItemWeaponView): void {
+  public static Serialize(stream: Stream, instance: UberStrikeItemWeaponView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.AccuracySpread);
     Int32Proxy.Serialize(memoryStream, instance.CombatRange);
     Int32Proxy.Serialize(memoryStream, instance.CriticalStrikeBonus);
@@ -87,7 +87,7 @@ export default class UberStrikeItemWeaponViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): UberStrikeItemWeaponView {
+  public static Deserialize(bytes: Stream): UberStrikeItemWeaponView {
     const num = Int32Proxy.Deserialize(bytes);
     const uberStrikeItemWeaponView = new UberStrikeItemWeaponView();
     uberStrikeItemWeaponView.AccuracySpread = Int32Proxy.Deserialize(bytes);

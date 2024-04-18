@@ -4,8 +4,8 @@ import EnumProxy from './EnumProxy';
 import Int32Proxy from './Int32Proxy';
 
 export default class ItemPriceProxy {
-  public static Serialize(stream: byte[], instance: ItemPrice): void {
-    const memoryStream: byte[] = [];
+  public static Serialize(stream: Stream, instance: ItemPrice): void {
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.Amount);
     EnumProxy.Serialize<UberStrikeCurrencyType>(memoryStream, instance.Currency);
     Int32Proxy.Serialize(memoryStream, instance.Discount);
@@ -15,7 +15,7 @@ export default class ItemPriceProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): ItemPrice {
+  public static Deserialize(bytes: Stream): ItemPrice {
     return new ItemPrice({
       Amount: Int32Proxy.Deserialize(bytes),
       Currency: EnumProxy.Deserialize<UberStrikeCurrencyType>(bytes),

@@ -2,8 +2,8 @@ import { StatsCollection } from '@/UberStrike/Core/Models';
 import Int32Proxy from './Int32Proxy';
 
 export default class StatsCollectionProxy {
-  public static Serialize(stream: byte[], instance: StatsCollection): void {
-    const memoryStream: byte[] = [];
+  public static Serialize(stream: Stream, instance: StatsCollection): void {
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.ArmorPickedUp);
     Int32Proxy.Serialize(memoryStream, instance.CannonDamageDone);
     Int32Proxy.Serialize(memoryStream, instance.CannonKills);
@@ -50,7 +50,7 @@ export default class StatsCollectionProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): StatsCollection {
+  public static Deserialize(bytes: Stream): StatsCollection {
     return new StatsCollection({
       ArmorPickedUp: Int32Proxy.Deserialize(bytes),
       CannonDamageDone: Int32Proxy.Deserialize(bytes),

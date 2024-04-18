@@ -5,10 +5,10 @@ import ListProxy from './ListProxy';
 import PointDepositViewProxy from './PointDepositViewProxy';
 
 export default class PointDepositsViewModelProxy {
-  public static Serialize(stream: byte[], instance: PointDepositsViewModel): void {
+  public static Serialize(stream: Stream, instance: PointDepositsViewModel): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.PointDeposits) {
       ListProxy.Serialize<PointDepositView>(memoryStream, instance.PointDeposits, PointDepositViewProxy.Serialize);
     } else {
@@ -20,7 +20,7 @@ export default class PointDepositsViewModelProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): PointDepositsViewModel {
+  public static Deserialize(bytes: Stream): PointDepositsViewModel {
     const num = Int32Proxy.Deserialize(bytes);
     const pointDepositsViewModel = new PointDepositsViewModel();
 

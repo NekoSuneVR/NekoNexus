@@ -4,10 +4,10 @@ import Int64Proxy from './Int64Proxy';
 import StringProxy from './StringProxy';
 
 export default class PlayerCardViewProxy {
-  public static Serialize(stream: byte[], instance: PlayerCardView): void {
+  public static Serialize(stream: Stream, instance: PlayerCardView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.Cmid);
     Int64Proxy.Serialize(memoryStream, instance.Hits);
 
@@ -38,7 +38,7 @@ export default class PlayerCardViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): PlayerCardView {
+  public static Deserialize(bytes: Stream): PlayerCardView {
     const num = Int32Proxy.Deserialize(bytes);
     const playerCardView = new PlayerCardView();
     playerCardView.Cmid = Int32Proxy.Deserialize(bytes);

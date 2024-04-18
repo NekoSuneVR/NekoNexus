@@ -5,10 +5,10 @@ import PlayerPersonalRecordStatisticsViewProxy from './PlayerPersonalRecordStati
 import PlayerWeaponStatisticsViewProxy from './PlayerWeaponStatisticsViewProxy';
 
 export default class PlayerStatisticsViewProxy {
-  public static Serialize(stream: byte[], instance: PlayerStatisticsView): void {
+  public static Serialize(stream: Stream, instance: PlayerStatisticsView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.Cmid);
     Int32Proxy.Serialize(memoryStream, instance.Headshots);
     Int64Proxy.Serialize(memoryStream, instance.Hits);
@@ -37,7 +37,7 @@ export default class PlayerStatisticsViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): PlayerStatisticsView {
+  public static Deserialize(bytes: Stream): PlayerStatisticsView {
     const num = Int32Proxy.Deserialize(bytes);
     const playerStatisticsView = new PlayerStatisticsView();
     playerStatisticsView.Cmid = Int32Proxy.Deserialize(bytes);

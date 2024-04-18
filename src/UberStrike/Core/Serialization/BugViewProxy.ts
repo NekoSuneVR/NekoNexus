@@ -3,9 +3,9 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class BugViewProxy {
-  public static Serialize(stream: byte[], instance: BugView): void {
+  public static Serialize(stream: Stream, instance: BugView): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
 
     if (instance.Content) {
       StringProxy.Serialize(memoryStream, instance.Content);
@@ -23,7 +23,7 @@ export default class BugViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): BugView {
+  public static Deserialize(bytes: Stream): BugView {
     const num = Int32Proxy.Deserialize(bytes);
     const bugView = new BugView();
 

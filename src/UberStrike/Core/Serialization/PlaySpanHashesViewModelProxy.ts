@@ -5,10 +5,10 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class PlaySpanHashesViewModelProxy {
-  public static Serialize(stream: byte[], instance: PlaySpanHashesViewModel): void {
+  public static Serialize(stream: Stream, instance: PlaySpanHashesViewModel): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.Hashes) {
       DictionaryProxy.Serialize<decimal, string>(memoryStream, instance.Hashes, DecimalProxy.Serialize, StringProxy.Serialize);
     } else {
@@ -25,7 +25,7 @@ export default class PlaySpanHashesViewModelProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): PlaySpanHashesViewModel {
+  public static Deserialize(bytes: Stream): PlaySpanHashesViewModel {
     const num = Int32Proxy.Deserialize(bytes);
     const playSpanHashesViewModel = new PlaySpanHashesViewModel();
 

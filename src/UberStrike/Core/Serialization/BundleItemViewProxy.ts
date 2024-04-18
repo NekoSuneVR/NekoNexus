@@ -3,8 +3,8 @@ import EnumProxy from './EnumProxy';
 import Int32Proxy from './Int32Proxy';
 
 export default class BundleItemViewProxy {
-  public static Serialize(stream: byte[], instance: BundleItemView): void {
-    const memoryStream: byte[] = [];
+  public static Serialize(stream: Stream, instance: BundleItemView): void {
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.Amount);
     Int32Proxy.Serialize(memoryStream, instance.BundleId);
     EnumProxy.Serialize<BuyingDurationType>(memoryStream, instance.Duration);
@@ -12,7 +12,7 @@ export default class BundleItemViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): BundleItemView {
+  public static Deserialize(bytes: Stream): BundleItemView {
     return new BundleItemView({
       Amount: Int32Proxy.Deserialize(bytes),
       BundleId: Int32Proxy.Deserialize(bytes),

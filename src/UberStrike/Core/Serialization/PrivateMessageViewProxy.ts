@@ -5,10 +5,10 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class PrivateMessageViewProxy {
-  public static Serialize(stream: byte[], instance: PrivateMessageView): void {
+  public static Serialize(stream: Stream, instance: PrivateMessageView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.ContentText) {
       StringProxy.Serialize(memoryStream, instance.ContentText);
     } else {
@@ -34,7 +34,7 @@ export default class PrivateMessageViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): PrivateMessageView {
+  public static Deserialize(bytes: Stream): PrivateMessageView {
     const num = Int32Proxy.Deserialize(bytes);
     const privateMessageView = new PrivateMessageView();
 

@@ -2,8 +2,8 @@ import { PlayerWeaponStatisticsView } from '@/UberStrike/DataCenter/Common/Entit
 import Int32Proxy from './Int32Proxy';
 
 export default class PlayerWeaponStatisticsViewProxy {
-  public static Serialize(stream: byte[], instance: PlayerWeaponStatisticsView): void {
-    const memoryStream: byte[] = [];
+  public static Serialize(stream: Stream, instance: PlayerWeaponStatisticsView): void {
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.CannonTotalDamageDone);
     Int32Proxy.Serialize(memoryStream, instance.CannonTotalShotsFired);
     Int32Proxy.Serialize(memoryStream, instance.CannonTotalShotsHit);
@@ -40,7 +40,7 @@ export default class PlayerWeaponStatisticsViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): PlayerWeaponStatisticsView {
+  public static Deserialize(bytes: Stream): PlayerWeaponStatisticsView {
     return new PlayerWeaponStatisticsView({
       CannonTotalDamageDone: Int32Proxy.Deserialize(bytes),
       CannonTotalShotsFired: Int32Proxy.Deserialize(bytes),

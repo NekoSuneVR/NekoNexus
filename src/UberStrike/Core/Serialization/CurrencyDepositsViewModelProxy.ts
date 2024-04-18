@@ -5,9 +5,9 @@ import Int32Proxy from './Int32Proxy';
 import ListProxy from './ListProxy';
 
 export default class CurrencyDepositsViewModelProxy {
-  public static Serialize(stream: byte[], instance: CurrencyDepositsViewModel): void {
+  public static Serialize(stream: Stream, instance: CurrencyDepositsViewModel): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.CurrencyDeposits) {
       ListProxy.Serialize<CurrencyDepositView>(memoryStream, instance.CurrencyDeposits, CurrencyDepositViewProxy.Serialize);
     } else {
@@ -19,7 +19,7 @@ export default class CurrencyDepositsViewModelProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): CurrencyDepositsViewModel {
+  public static Deserialize(bytes: Stream): CurrencyDepositsViewModel {
     const num = Int32Proxy.Deserialize(bytes);
     const currencyDepositsViewModel = new CurrencyDepositsViewModel();
 

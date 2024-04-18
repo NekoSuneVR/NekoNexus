@@ -3,10 +3,10 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class ItemAssetBundleViewProxy {
-  public static Serialize(stream: byte[], instance: ItemAssetBundleView): void {
+  public static Serialize(stream: Stream, instance: ItemAssetBundleView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.Url) {
       StringProxy.Serialize(memoryStream, instance.Url);
     } else {
@@ -17,7 +17,7 @@ export default class ItemAssetBundleViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): ItemAssetBundleView {
+  public static Deserialize(bytes: Stream): ItemAssetBundleView {
     const num = Int32Proxy.Deserialize(bytes);
     const itemAssetBundleView = new ItemAssetBundleView();
 

@@ -6,10 +6,10 @@ import ListProxy from './ListProxy';
 import StringProxy from './StringProxy';
 
 export default class LuckyDrawSetUnityViewProxy {
-  public static Serialize(stream: byte[], instance: LuckyDrawSetUnityView): void {
+  public static Serialize(stream: Stream, instance: LuckyDrawSetUnityView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.CreditsAttributed);
     BooleanProxy.Serialize(memoryStream, instance.ExposeItemsToPlayers);
     Int32Proxy.Serialize(memoryStream, instance.Id);
@@ -34,7 +34,7 @@ export default class LuckyDrawSetUnityViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): LuckyDrawSetUnityView {
+  public static Deserialize(bytes: Stream): LuckyDrawSetUnityView {
     const num = Int32Proxy.Deserialize(bytes);
     const luckyDrawSetUnityView = new LuckyDrawSetUnityView();
     luckyDrawSetUnityView.CreditsAttributed = Int32Proxy.Deserialize(bytes);

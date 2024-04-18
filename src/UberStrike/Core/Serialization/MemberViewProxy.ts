@@ -5,10 +5,10 @@ import MemberWalletViewProxy from './MemberWalletViewProxy';
 import PublicProfileViewProxy from './PublicProfileViewProxy';
 
 export default class MemberViewProxy {
-  public static Serialize(stream: byte[], instance: MemberView): void {
+  public static Serialize(stream: Stream, instance: MemberView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.MemberItems) {
       ListProxy.Serialize<int>(memoryStream, instance.MemberItems, Int32Proxy.Serialize);
     } else {
@@ -31,7 +31,7 @@ export default class MemberViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): MemberView {
+  public static Deserialize(bytes: Stream): MemberView {
     const num = Int32Proxy.Deserialize(bytes);
     const memberView = new MemberView();
 

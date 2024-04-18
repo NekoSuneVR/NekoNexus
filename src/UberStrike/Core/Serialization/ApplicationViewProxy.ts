@@ -9,9 +9,9 @@ import PhotonViewProxy from './PhotonViewProxy';
 import StringProxy from './StringProxy';
 
 export default class ApplicationViewProxy {
-  public static Serialize(stream: byte[], instance: ApplicationView): void {
+  public static Serialize(stream: Stream, instance: ApplicationView): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
 
     Int32Proxy.Serialize(memoryStream, instance.ApplicationVersionId);
     EnumProxy.Serialize<BuildType>(memoryStream, instance.Build);
@@ -63,7 +63,7 @@ export default class ApplicationViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): ApplicationView {
+  public static Deserialize(bytes: Stream): ApplicationView {
     const num = Int32Proxy.Deserialize(bytes);
     const applicationView = new ApplicationView();
     applicationView.ApplicationVersionId = Int32Proxy.Deserialize(bytes);

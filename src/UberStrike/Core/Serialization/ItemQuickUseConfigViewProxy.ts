@@ -4,8 +4,8 @@ import EnumProxy from './EnumProxy';
 import Int32Proxy from './Int32Proxy';
 
 export default class ItemQuickUseConfigViewProxy {
-  public static Serialize(stream: byte[], instance: ItemQuickUseConfigView): void {
-    const memoryStream: byte[] = [];
+  public static Serialize(stream: Stream, instance: ItemQuickUseConfigView): void {
+    const memoryStream: MemoryStream = [];
     EnumProxy.Serialize<QuickItemLogic>(memoryStream, instance.BehaviourType);
     Int32Proxy.Serialize(memoryStream, instance.CoolDownTime);
     Int32Proxy.Serialize(memoryStream, instance.ItemId);
@@ -17,7 +17,7 @@ export default class ItemQuickUseConfigViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): ItemQuickUseConfigView {
+  public static Deserialize(bytes: Stream): ItemQuickUseConfigView {
     return new ItemQuickUseConfigView({
       BehaviourType: EnumProxy.Deserialize(bytes),
       CoolDownTime: Int32Proxy.Deserialize(bytes),

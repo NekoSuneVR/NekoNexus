@@ -10,10 +10,10 @@ import ListProxy from './ListProxy';
 import StringProxy from './StringProxy';
 
 export default class UberStrikeItemQuickViewProxy {
-  public static Serialize(stream: byte[], instance: UberStrikeItemQuickView): void {
+  public static Serialize(stream: Stream, instance: UberStrikeItemQuickView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     EnumProxy.Serialize<QuickItemLogic>(memoryStream, instance.BehaviourType);
     Int32Proxy.Serialize(memoryStream, instance.CoolDownTime);
 
@@ -70,7 +70,7 @@ export default class UberStrikeItemQuickViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): UberStrikeItemQuickView {
+  public static Deserialize(bytes: Stream): UberStrikeItemQuickView {
     const num = Int32Proxy.Deserialize(bytes);
     const uberStrikeItemQuickView = new UberStrikeItemQuickView();
     uberStrikeItemQuickView.BehaviourType = EnumProxy.Deserialize<QuickItemLogic>(bytes);

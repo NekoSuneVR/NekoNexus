@@ -3,9 +3,9 @@ import ConnectionAddressProxy from './ConnectionAddressProxy';
 import Int32Proxy from './Int32Proxy';
 
 export default class GameRoomProxy {
-  public static Serialize(stream: byte[], instance: GameRoom): void {
+  public static Serialize(stream: Stream, instance: GameRoom): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.MapId);
     Int32Proxy.Serialize(memoryStream, instance.Number);
 
@@ -19,7 +19,7 @@ export default class GameRoomProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): GameRoom {
+  public static Deserialize(bytes: Stream): GameRoom {
     const num = Int32Proxy.Deserialize(bytes);
     const gameRoom = new GameRoom();
     gameRoom.MapId = Int32Proxy.Deserialize(bytes);

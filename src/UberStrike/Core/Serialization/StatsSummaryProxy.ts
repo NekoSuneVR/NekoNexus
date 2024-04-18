@@ -7,9 +7,9 @@ import StringProxy from './StringProxy';
 import UInt16Proxy from './UInt16Proxy';
 
 export default class StatsSummaryProxy {
-  public static Serialize(stream: byte[], instance: StatsSummary): void {
+  public static Serialize(stream: Stream, instance: StatsSummary): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
 
     if (instance.Achievements) {
       DictionaryProxy.Serialize<byte, ushort>(memoryStream, instance.Achievements, ByteProxy.Serialize, UInt16Proxy.Serialize);
@@ -33,7 +33,7 @@ export default class StatsSummaryProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): StatsSummary {
+  public static Deserialize(bytes: Stream): StatsSummary {
     const num = Int32Proxy.Deserialize(bytes);
     const statsSummary = new StatsSummary();
 

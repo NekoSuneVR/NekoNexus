@@ -3,10 +3,10 @@ import DateTimeProxy from './DateTimeProxy';
 import Int32Proxy from './Int32Proxy';
 
 export default class ItemInventoryViewProxy {
-  public static Serialize(stream: byte[], instance: ItemInventoryView): void {
+  public static Serialize(stream: Stream, instance: ItemInventoryView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.AmountRemaining);
     Int32Proxy.Serialize(memoryStream, instance.Cmid);
 
@@ -21,7 +21,7 @@ export default class ItemInventoryViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): ItemInventoryView {
+  public static Deserialize(bytes: Stream): ItemInventoryView {
     const num = Int32Proxy.Deserialize(bytes);
     const itemInventoryView = new ItemInventoryView();
     itemInventoryView.AmountRemaining = Int32Proxy.Deserialize(bytes);

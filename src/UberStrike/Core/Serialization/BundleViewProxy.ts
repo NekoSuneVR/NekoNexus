@@ -1,5 +1,5 @@
 import {
-  BundleCategoryType, BundleItemView, BundleView, ChannelType,
+    BundleCategoryType, BundleItemView, BundleView, ChannelType,
 } from '@/Cmune/DataCenter/Common/Entities';
 import BooleanProxy from './BooleanProxy';
 import BundleItemViewProxy from './BundleItemViewProxy';
@@ -10,9 +10,9 @@ import ListProxy from './ListProxy';
 import StringProxy from './StringProxy';
 
 export default class BundleViewProxy {
-  public static Serialize(stream: byte[], instance: BundleView): void {
+  public static Serialize(stream: Stream, instance: BundleView): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
 
     if (instance.AndroidStoreUniqueId) {
       StringProxy.Serialize(memoryStream, instance.AndroidStoreUniqueId);
@@ -93,7 +93,7 @@ export default class BundleViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): BundleView {
+  public static Deserialize(bytes: Stream): BundleView {
     const num = Int32Proxy.Deserialize(bytes);
     const bundleView = new BundleView();
 

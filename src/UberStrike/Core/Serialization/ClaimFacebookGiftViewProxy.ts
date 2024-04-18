@@ -3,9 +3,9 @@ import EnumProxy from './EnumProxy';
 import Int32Proxy from './Int32Proxy';
 
 export default class ClaimFacebookGiftViewProxy {
-  public static Serialize(stream: byte[], instance: ClaimFacebookGiftView): void {
+  public static Serialize(stream: Stream, instance: ClaimFacebookGiftView): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     EnumProxy.Serialize<ClaimFacebookGiftResult>(memoryStream, instance.ClaimResult);
 
     if (!Number.isNaN(instance.ItemId!)) {
@@ -20,7 +20,7 @@ export default class ClaimFacebookGiftViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): ClaimFacebookGiftView {
+  public static Deserialize(bytes: Stream): ClaimFacebookGiftView {
     const num = Int32Proxy.Deserialize(bytes);
     const claimFacebookGiftView = new ClaimFacebookGiftView();
     claimFacebookGiftView.ClaimResult = EnumProxy.Deserialize<ClaimFacebookGiftResult>(bytes);

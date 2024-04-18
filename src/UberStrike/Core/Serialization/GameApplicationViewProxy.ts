@@ -6,9 +6,9 @@ import PhotonViewProxy from './PhotonViewProxy';
 import StringProxy from './StringProxy';
 
 export default class GameApplicationViewProxy {
-  public static Serialize(stream: byte[], instance: GameApplicationView): void {
+  public static Serialize(stream: Stream, instance: GameApplicationView): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.CommServer) {
       PhotonViewProxy.Serialize(memoryStream, instance.CommServer);
     } else {
@@ -49,7 +49,7 @@ export default class GameApplicationViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): GameApplicationView {
+  public static Deserialize(bytes: Stream): GameApplicationView {
     const num = Int32Proxy.Deserialize(bytes);
     const gameApplicationView = new GameApplicationView();
 

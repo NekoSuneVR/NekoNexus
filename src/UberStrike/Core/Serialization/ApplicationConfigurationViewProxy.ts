@@ -3,9 +3,9 @@ import DictionaryProxy from './DictionaryProxy';
 import Int32Proxy from './Int32Proxy';
 
 export default class ApplicationConfigurationViewProxy {
-  public static Serialize(stream: byte[], instance: ApplicationConfigurationView): void {
+  public static Serialize(stream: Stream, instance: ApplicationConfigurationView): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
 
     Int32Proxy.Serialize(memoryStream, instance.MaxLevel);
     Int32Proxy.Serialize(memoryStream, instance.MaxXp);
@@ -36,7 +36,7 @@ export default class ApplicationConfigurationViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): ApplicationConfigurationView {
+  public static Deserialize(bytes: Stream): ApplicationConfigurationView {
     const num = Int32Proxy.Deserialize(bytes);
     const applicationConfigurationView = new ApplicationConfigurationView();
     applicationConfigurationView.MaxLevel = Int32Proxy.Deserialize(bytes);

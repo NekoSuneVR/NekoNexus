@@ -1,5 +1,5 @@
 import {
-  BundleCategoryType, BundleItemView, MysteryBoxUnityView, UberStrikeCurrencyType,
+    BundleCategoryType, BundleItemView, MysteryBoxUnityView, UberStrikeCurrencyType,
 } from '@/Cmune/DataCenter/Common/Entities';
 import BooleanProxy from './BooleanProxy';
 import BundleItemViewProxy from './BundleItemViewProxy';
@@ -9,10 +9,10 @@ import ListProxy from './ListProxy';
 import StringProxy from './StringProxy';
 
 export default class MysteryBoxUnityViewProxy {
-  public static Serialize(stream: byte[], instance: MysteryBoxUnityView): void {
+  public static Serialize(stream: Stream, instance: MysteryBoxUnityView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     EnumProxy.Serialize<BundleCategoryType>(memoryStream, instance.Category);
     Int32Proxy.Serialize(memoryStream, instance.CreditsAttributed);
     Int32Proxy.Serialize(memoryStream, instance.CreditsAttributedWeight);
@@ -62,7 +62,7 @@ export default class MysteryBoxUnityViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): MysteryBoxUnityView {
+  public static Deserialize(bytes: Stream): MysteryBoxUnityView {
     const num = Int32Proxy.Deserialize(bytes);
     const mysteryBoxUnityView = new MysteryBoxUnityView();
     mysteryBoxUnityView.Category = EnumProxy.Deserialize<BundleCategoryType>(bytes);

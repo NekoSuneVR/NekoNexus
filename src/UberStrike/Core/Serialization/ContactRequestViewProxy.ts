@@ -5,9 +5,9 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class ContactRequestViewProxy {
-  public static Serialize(stream: byte[], instance: ContactRequestView): void {
+  public static Serialize(stream: Stream, instance: ContactRequestView): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.InitiatorCmid);
 
     if (instance.InitiatorMessage) {
@@ -30,7 +30,7 @@ export default class ContactRequestViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): ContactRequestView {
+  public static Deserialize(bytes: Stream): ContactRequestView {
     const num = Int32Proxy.Deserialize(bytes);
     const contactRequestView = new ContactRequestView();
     contactRequestView.InitiatorCmid = Int32Proxy.Deserialize(bytes);

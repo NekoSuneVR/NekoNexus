@@ -6,10 +6,10 @@ import ListProxy from './ListProxy';
 import PlayerMatchStatsProxy from './PlayerMatchStatsProxy';
 
 export default class MatchStatsProxy {
-  public static Serialize(stream: byte[], instance: MatchStats): void {
+  public static Serialize(stream: Stream, instance: MatchStats): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     EnumProxy.Serialize<GameModeType>(memoryStream, instance.GameModeId);
     Int32Proxy.Serialize(memoryStream, instance.MapId);
 
@@ -25,7 +25,7 @@ export default class MatchStatsProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): MatchStats {
+  public static Deserialize(bytes: Stream): MatchStats {
     const num = Int32Proxy.Deserialize(bytes);
     const matchStats = new MatchStats();
     matchStats.GameModeId = EnumProxy.Deserialize<GameModeType>(bytes);

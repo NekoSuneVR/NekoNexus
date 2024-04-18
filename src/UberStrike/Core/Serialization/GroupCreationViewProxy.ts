@@ -4,9 +4,9 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class GroupCreationViewProxy {
-  public static Serialize(stream: byte[], instance: GroupCreationView): void {
+  public static Serialize(stream: Stream, instance: GroupCreationView): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.Address) {
       StringProxy.Serialize(memoryStream, instance.Address);
     } else {
@@ -57,7 +57,7 @@ export default class GroupCreationViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): GroupCreationView {
+  public static Deserialize(bytes: Stream): GroupCreationView {
     const num = Int32Proxy.Deserialize(bytes);
     const groupCreationView = new GroupCreationView();
 

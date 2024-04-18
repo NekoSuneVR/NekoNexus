@@ -5,10 +5,10 @@ import ItemTransactionViewProxy from './ItemTransactionViewProxy';
 import ListProxy from './ListProxy';
 
 export default class ItemTransactionsViewModelProxy {
-  public static Serialize(stream: byte[], instance: ItemTransactionsViewModel): void {
+  public static Serialize(stream: Stream, instance: ItemTransactionsViewModel): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.ItemTransactions) {
       ListProxy.Serialize<ItemTransactionView>(memoryStream, instance.ItemTransactions, ItemTransactionViewProxy.Serialize);
     } else {
@@ -20,7 +20,7 @@ export default class ItemTransactionsViewModelProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): ItemTransactionsViewModel {
+  public static Deserialize(bytes: Stream): ItemTransactionsViewModel {
     const num = Int32Proxy.Deserialize(bytes);
     const itemTransactionsViewModel = new ItemTransactionsViewModel();
 

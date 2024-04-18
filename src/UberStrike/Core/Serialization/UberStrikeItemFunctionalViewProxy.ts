@@ -10,10 +10,10 @@ import ListProxy from './ListProxy';
 import StringProxy from './StringProxy';
 
 export default class UberStrikeItemFunctionalViewProxy {
-  public static Serialize(stream: byte[], instance: UberStrikeItemFunctionalView): void {
+  public static Serialize(stream: Stream, instance: UberStrikeItemFunctionalView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.CustomProperties) {
       DictionaryProxy.Serialize<string, string>(memoryStream, instance.CustomProperties, StringProxy.Serialize, StringProxy.Serialize);
     } else {
@@ -62,7 +62,7 @@ export default class UberStrikeItemFunctionalViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): UberStrikeItemFunctionalView {
+  public static Deserialize(bytes: Stream): UberStrikeItemFunctionalView {
     const num = Int32Proxy.Deserialize(bytes);
     const uberStrikeItemFunctionalView = new UberStrikeItemFunctionalView();
 

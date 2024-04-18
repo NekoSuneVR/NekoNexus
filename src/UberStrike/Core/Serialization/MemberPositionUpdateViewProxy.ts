@@ -4,10 +4,10 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class MemberPositionUpdateViewProxy {
-  public static Serialize(stream: byte[], instance: MemberPositionUpdateView): void {
+  public static Serialize(stream: Stream, instance: MemberPositionUpdateView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.AuthToken) {
       StringProxy.Serialize(memoryStream, instance.AuthToken);
     } else {
@@ -21,7 +21,7 @@ export default class MemberPositionUpdateViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): MemberPositionUpdateView {
+  public static Deserialize(bytes: Stream): MemberPositionUpdateView {
     const num = Int32Proxy.Deserialize(bytes);
     const memberPositionUpdateView = new MemberPositionUpdateView();
 

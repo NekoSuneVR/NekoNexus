@@ -1,7 +1,7 @@
 import UShortProxy from './UShortProxy';
 
 export default class ArrayProxy {
-  public static Serialize<T>(bytes: byte[], instance: T[], serialization: (bytes: byte[], instance: T) => void): void {
+  public static Serialize<T>(bytes: Stream, instance: T[], serialization: (bytes: Stream, instance: T) => void): void {
     UShortProxy.Serialize(bytes, instance.length as ushort);
 
     for (const t of instance) {
@@ -9,7 +9,7 @@ export default class ArrayProxy {
     }
   }
 
-  public static Deserialize<T>(bytes: byte[], serialization: (bytes: byte[]) => T): T[] {
+  public static Deserialize<T>(bytes: Stream, serialization: (bytes: Stream) => T): T[] {
     const num = UShortProxy.Deserialize(bytes);
     const array = new Array(num);
 

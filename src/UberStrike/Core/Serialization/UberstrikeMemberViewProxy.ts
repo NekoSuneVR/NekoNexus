@@ -4,10 +4,10 @@ import PlayerCardViewProxy from './PlayerCardViewProxy';
 import PlayerStatisticsViewProxy from './PlayerStatisticsViewProxy';
 
 export default class UberstrikeMemberViewProxy {
-  public static Serialize(stream: byte[], instance: UberstrikeMemberView): void {
+  public static Serialize(stream: Stream, instance: UberstrikeMemberView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.PlayerCardView) {
       PlayerCardViewProxy.Serialize(memoryStream, instance.PlayerCardView);
     } else {
@@ -24,7 +24,7 @@ export default class UberstrikeMemberViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): UberstrikeMemberView {
+  public static Deserialize(bytes: Stream): UberstrikeMemberView {
     const num = Int32Proxy.Deserialize(bytes);
     const uberstrikeMemberView = new UberstrikeMemberView();
 

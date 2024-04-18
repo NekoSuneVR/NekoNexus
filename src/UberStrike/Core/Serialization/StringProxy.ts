@@ -1,7 +1,7 @@
 import UShortProxy from './UShortProxy';
 
 export default class StringProxy {
-  public static Serialize(bytes: byte[], instance: string): void {
+  public static Serialize(bytes: Stream, instance: string): void {
     if (!instance?.length) {
       UShortProxy.Serialize(bytes, 0);
     } else {
@@ -11,7 +11,7 @@ export default class StringProxy {
     }
   }
 
-  public static Deserialize(bytes: byte[]): string {
+  public static Deserialize(bytes: Stream): string {
     const num = UShortProxy.Deserialize(bytes);
 
     if (num > 0) {

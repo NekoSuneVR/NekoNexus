@@ -5,8 +5,8 @@ import EnumProxy from './EnumProxy';
 import Int32Proxy from './Int32Proxy';
 
 export default class PointDepositViewProxy {
-  public static Serialize(stream: byte[], instance: PointDepositView): void {
-    const memoryStream: byte[] = [];
+  public static Serialize(stream: Stream, instance: PointDepositView): void {
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.Cmid);
     DateTimeProxy.Serialize(memoryStream, instance.DepositDate);
     EnumProxy.Serialize<PointsDepositType>(memoryStream, instance.DepositType);
@@ -16,7 +16,7 @@ export default class PointDepositViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): PointDepositView {
+  public static Deserialize(bytes: Stream): PointDepositView {
     return new PointDepositView({
       Cmid: Int32Proxy.Deserialize(bytes),
       DepositDate: DateTimeProxy.Deserialize(bytes),

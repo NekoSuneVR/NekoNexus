@@ -5,10 +5,10 @@ import Int32Proxy from './Int32Proxy';
 import MemberViewProxy from './MemberViewProxy';
 
 export default class MemberAuthenticationViewModelProxy {
-  public static Serialize(stream: byte[], instance: MemberAuthenticationViewModel): void {
+  public static Serialize(stream: Stream, instance: MemberAuthenticationViewModel): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     EnumProxy.Serialize<MemberAuthenticationResult>(memoryStream, instance.MemberAuthenticationResult);
 
     if (instance.MemberView) {
@@ -21,7 +21,7 @@ export default class MemberAuthenticationViewModelProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): MemberAuthenticationViewModel {
+  public static Deserialize(bytes: Stream): MemberAuthenticationViewModel {
     const num = Int32Proxy.Deserialize(bytes);
     const memberAuthenticationViewModel = new MemberAuthenticationViewModel();
     memberAuthenticationViewModel.MemberAuthenticationResult = EnumProxy.Deserialize<MemberAuthenticationResult>(bytes);

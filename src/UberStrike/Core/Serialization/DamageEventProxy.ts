@@ -5,9 +5,9 @@ import Int32Proxy from './Int32Proxy';
 import SingleProxy from './SingleProxy';
 
 export default class DamageEventProxy {
-  public static Serialize(stream: byte[], instance: DamageEvent): void {
+  public static Serialize(stream: Stream, instance: DamageEvent): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     ByteProxy.Serialize(memoryStream, instance.BodyPartFlag);
 
     if (instance.Damage) {
@@ -22,7 +22,7 @@ export default class DamageEventProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): DamageEvent {
+  public static Deserialize(bytes: Stream): DamageEvent {
     const num = Int32Proxy.Deserialize(bytes);
     const damageEvent = new DamageEvent();
     damageEvent.BodyPartFlag = ByteProxy.Deserialize(bytes);

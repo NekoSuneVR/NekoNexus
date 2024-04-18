@@ -10,9 +10,9 @@ import StringProxy from './StringProxy';
 import UInt16Proxy from './UInt16Proxy';
 
 export default class EndOfMatchDataProxy {
-  public static Serialize(stream: byte[], instance: EndOfMatchData): void {
+  public static Serialize(stream: Stream, instance: EndOfMatchData): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
 
     BooleanProxy.Serialize(memoryStream, instance.HasWonMatch);
 
@@ -53,7 +53,7 @@ export default class EndOfMatchDataProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): EndOfMatchData {
+  public static Deserialize(bytes: Stream): EndOfMatchData {
     const num = Int32Proxy.Deserialize(bytes);
     const endOfMatchData = new EndOfMatchData();
     endOfMatchData.HasWonMatch = BooleanProxy.Deserialize(bytes);

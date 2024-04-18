@@ -3,8 +3,8 @@ import DateTimeProxy from './DateTimeProxy';
 import Int32Proxy from './Int32Proxy';
 
 export default class MemberWalletViewProxy {
-  public static Serialize(stream: byte[], instance: MemberWalletView): void {
-    const memoryStream: byte[] = [];
+  public static Serialize(stream: Stream, instance: MemberWalletView): void {
+    const memoryStream: MemoryStream = [];
     Int32Proxy.Serialize(memoryStream, instance.Cmid);
     Int32Proxy.Serialize(memoryStream, instance.Credits);
     DateTimeProxy.Serialize(memoryStream, instance.CreditsExpiration);
@@ -13,7 +13,7 @@ export default class MemberWalletViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): MemberWalletView {
+  public static Deserialize(bytes: Stream): MemberWalletView {
     return new MemberWalletView({
       Cmid: Int32Proxy.Deserialize(bytes),
       Credits: Int32Proxy.Deserialize(bytes),

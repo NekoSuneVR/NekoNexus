@@ -8,9 +8,9 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class GameRoomDataProxy {
-  public static Serialize(stream: byte[], instance: GameRoomData): void {
+  public static Serialize(stream: Stream, instance: GameRoomData): void {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
 
     Int32Proxy.Serialize(memoryStream, instance.ConnectedPlayers);
     Int32Proxy.Serialize(memoryStream, instance.GameFlags);
@@ -49,7 +49,7 @@ export default class GameRoomDataProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): GameRoomData {
+  public static Deserialize(bytes: Stream): GameRoomData {
     const num = Int32Proxy.Deserialize(bytes);
     const gameRoomData = new GameRoomData();
     gameRoomData.ConnectedPlayers = Int32Proxy.Deserialize(bytes);

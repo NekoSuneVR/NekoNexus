@@ -4,10 +4,10 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class PlayerXPEventViewProxy {
-  public static Serialize(stream: byte[], instance: PlayerXPEventView): void {
+  public static Serialize(stream: Stream, instance: PlayerXPEventView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.Name) {
       StringProxy.Serialize(memoryStream, instance.Name);
     } else {
@@ -20,7 +20,7 @@ export default class PlayerXPEventViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): PlayerXPEventView {
+  public static Deserialize(bytes: Stream): PlayerXPEventView {
     const num = Int32Proxy.Deserialize(bytes);
     const playerXPEventView = new PlayerXPEventView();
 

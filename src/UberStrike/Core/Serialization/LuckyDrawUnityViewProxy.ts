@@ -1,5 +1,6 @@
-import { BundleCategoryType, LuckyDrawSetUnityView, UberStrikeCurrencyType } from '@/Cmune/DataCenter/Common/Entities';
-import LuckyDrawUnityView from '@/Cmune/DataCenter/Common/Entities/LuckyDrawView';
+import {
+  BundleCategoryType, LuckyDrawSetUnityView, LuckyDrawUnityView, UberStrikeCurrencyType
+} from '@/Cmune/DataCenter/Common/Entities';
 import BooleanProxy from './BooleanProxy';
 import EnumProxy from './EnumProxy';
 import Int32Proxy from './Int32Proxy';
@@ -8,10 +9,10 @@ import LuckyDrawSetUnityViewProxy from './LuckyDrawSetUnityViewProxy';
 import StringProxy from './StringProxy';
 
 export default class LuckyDrawUnityViewProxy {
-  public static Serialize(stream: byte[], instance: LuckyDrawUnityView): void {
+  public static Serialize(stream: Stream, instance: LuckyDrawUnityView): void {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     EnumProxy.Serialize<BundleCategoryType>(memoryStream, instance.Category);
 
     if (instance.Description) {
@@ -47,7 +48,7 @@ export default class LuckyDrawUnityViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): LuckyDrawUnityView {
+  public static Deserialize(bytes: Stream): LuckyDrawUnityView {
     const num = Int32Proxy.Deserialize(bytes);
     const luckyDrawUnityView = new LuckyDrawUnityView();
     luckyDrawUnityView.Category = EnumProxy.Deserialize<BundleCategoryType>(bytes);

@@ -2,10 +2,10 @@ import { UberstrikeUserViewModel } from '@/UberStrike/Core/ViewModel';
 import { Int32Proxy, MemberViewProxy, UberstrikeMemberViewProxy } from '.';
 
 export default class UberstrikeUserViewModelProxy {
-  public static Serialize(stream: byte[], instance: UberstrikeUserViewModel) {
+  public static Serialize(stream: Stream, instance: UberstrikeUserViewModel) {
     let num = 0;
 
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.CmuneMemberView) {
       MemberViewProxy.Serialize(memoryStream, instance.CmuneMemberView);
     } else {
@@ -22,7 +22,7 @@ export default class UberstrikeUserViewModelProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): UberstrikeUserViewModel {
+  public static Deserialize(bytes: Stream): UberstrikeUserViewModel {
     const num = Int32Proxy.Deserialize(bytes);
     const uberstrikeUserViewModel = new UberstrikeUserViewModel();
 

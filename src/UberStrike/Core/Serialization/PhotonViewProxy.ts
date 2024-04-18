@@ -5,9 +5,9 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class PhotonViewProxy {
-  public static Serialize(stream: byte[], instance: PhotonView) {
+  public static Serialize(stream: Stream, instance: PhotonView) {
     let num = 0;
-    const memoryStream: byte[] = [];
+    const memoryStream: MemoryStream = [];
     if (instance.IP) {
       StringProxy.Serialize(memoryStream, instance.IP);
     } else {
@@ -30,7 +30,7 @@ export default class PhotonViewProxy {
     memoryStream.WriteTo(stream);
   }
 
-  public static Deserialize(bytes: byte[]): PhotonView {
+  public static Deserialize(bytes: Stream): PhotonView {
     const num = Int32Proxy.Deserialize(bytes);
     const photonView = new PhotonView();
 
