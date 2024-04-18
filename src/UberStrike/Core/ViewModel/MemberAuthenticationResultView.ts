@@ -1,5 +1,6 @@
-import { MemberAuthenticationResult, MemberView, WeeklySpecialView } from '@/Cmune/DataCenter/Common/Entities';
-import LuckyDrawUnityView from '@/Cmune/DataCenter/Common/Entities/LuckyDrawView';
+import {
+  LuckyDrawUnityView, MemberAuthenticationResult, MemberView, WeeklySpecialView,
+} from '@/Cmune/DataCenter/Common/Entities';
 import { PlayerStatisticsView } from '@/UberStrike/DataCenter/Common/Entities';
 
 export default class MemberAuthenticationResultView {

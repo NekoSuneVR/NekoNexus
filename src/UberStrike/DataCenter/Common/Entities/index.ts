@@ -1,5 +1,7 @@
 export { default as AccountCompletionResultView } from './AccountCompletionResultView';
 export { default as AuthenticateApplicationView } from './AuthenticateApplicationView';
+export { default as ContactRequestAcceptView } from './ContactRequestAcceptView';
+export { default as ContactRequestDeclineView } from './ContactRequestDeclineView';
 export { default as DailyPointsView } from './DailyPointsView';
 export { default as ItemQuickUseConfigView } from './ItemQuickUseConfigView';
 export { default as LiveFeedView } from './LiveFeedView';

@@ -10,6 +10,8 @@ type ushort = number;
 type bool = boolean;
 
 type DateTime = Date;
+type Stream = byte[];
+type MemoryStream = byte[];
 
 type List<T> = T[];
 type Dictionary<S extends string | number, T> = { [key: S]: T };

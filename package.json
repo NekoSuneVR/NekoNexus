@@ -14,6 +14,7 @@
     "./UberStrike/Core/Models/Views": "./dist/UberStrike/Core/Models/Views/index.js",
     "./UberStrike/Core/Models": "./dist/UberStrike/Core/Models/index.js",
     "./UberStrike/Core/Serialization": "./dist/UberStrike/Core/Serialization/index.js",
+    "./UberStrike/Core/Serialization/Legacy": "./dist/UberStrike/Core/Serialization/Legacy/index.js",
     "./UberStrike/Core/Types": "./dist/UberStrike/Core/Types/index.js",
     "./UberStrike/Core/ViewModel": "./dist/UberStrike/Core/ViewModel/index.js",
     "./UberStrike/DataCenter/Common/Entities": "./dist/UberStrike/DataCenter/Common/Entities/index.js"

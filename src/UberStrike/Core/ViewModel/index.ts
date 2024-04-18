@@ -1,3 +1,4 @@
+export { default as ClanInvitationAnswerViewModel } from './ClanInvitationAnswerViewModel';
 export { default as CurrencyDepositsViewModel } from './CurrencyDepositsViewModel';
 export { default as GameApplicationView } from './GameApplicationView';
 export { default as ItemTransactionsViewModel } from './ItemTransactionsViewModel';
