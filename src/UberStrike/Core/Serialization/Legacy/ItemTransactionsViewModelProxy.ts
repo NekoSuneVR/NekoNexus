@@ -1,8 +1,8 @@
 import { ItemTransactionView } from '@/Cmune/DataCenter/Common/Entities';
 import { ItemTransactionsViewModel } from '@/UberStrike/Core/ViewModel';
 import Int32Proxy from '../Int32Proxy';
-import ItemTransactionViewProxy from '../ItemTransactionViewProxy';
 import ListProxy from '../ListProxy';
+import ItemTransactionViewProxy from './ItemTransactionViewProxy';
 
 export default class ItemTransactionsViewModelProxy {
   public static Serialize(stream: Stream, instance: ItemTransactionsViewModel): void {

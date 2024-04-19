@@ -4,8 +4,8 @@ import BooleanProxy from '../BooleanProxy';
 import DictionaryProxy from '../DictionaryProxy';
 import EnumProxy from '../EnumProxy';
 import Int32Proxy from '../Int32Proxy';
-import MapSettingsProxy from '../MapSettingsProxy';
 import StringProxy from '../StringProxy';
+import MapSettingsProxy from './MapSettingsProxy';
 
 export default class MapViewProxy {
   public static Serialize(stream: Stream, instance: MapView): void {
@@ -71,7 +71,7 @@ export default class MapViewProxy {
         mapView.SceneName = StringProxy.Deserialize(bytes);
       }
       if ((num & 16) !== 0) {
-        mapView.Settings = DictionaryProxy.Deserialize<GameModeType, MapSettings>(bytes, EnumProxy.Deserialize<GameModeType>, MapSettingsProxy.Deserialize);
+        mapView.Settings = DictionaryProxy.Deserialize<GameModeType, MapSettings | null>(bytes, EnumProxy.Deserialize<GameModeType>, MapSettingsProxy.Deserialize);
       }
       mapView.SupportedGameModes = Int32Proxy.Deserialize(bytes);
     }

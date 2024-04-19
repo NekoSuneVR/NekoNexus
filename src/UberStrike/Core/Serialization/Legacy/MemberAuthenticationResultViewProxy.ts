@@ -4,8 +4,8 @@ import BooleanProxy from '../BooleanProxy';
 import DateTimeProxy from '../DateTimeProxy';
 import EnumProxy from '../EnumProxy';
 import Int32Proxy from '../Int32Proxy';
-import MemberViewProxy from '../MemberViewProxy';
 import LuckyDrawUnityViewProxy from './LuckyDrawUnityViewProxy';
+import MemberViewProxy from './MemberViewProxy';
 import PlayerStatisticsViewProxy from './PlayerStatisticsViewProxy';
 import WeeklySpecialViewProxy from './WeeklySpecialViewProxy';
 
@@ -57,7 +57,7 @@ export default class MemberAuthenticationResultViewProxy {
       }
       memberAuthenticationResultView.MemberAuthenticationResult = EnumProxy.Deserialize<MemberAuthenticationResult>(bytes);
       if ((num & 2) !== 0) {
-        memberAuthenticationResultView.MemberView = MemberViewProxy.Deserialize(bytes);
+        memberAuthenticationResultView.MemberView = (MemberViewProxy.Deserialize(bytes))!;
       }
       if ((num & 4) !== 0) {
         memberAuthenticationResultView.PlayerStatisticsView = (PlayerStatisticsViewProxy.Deserialize(bytes))!;

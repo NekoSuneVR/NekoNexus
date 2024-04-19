@@ -1,6 +1,6 @@
 import { ClanCreationReturnView } from '@/Cmune/DataCenter/Common/Entities';
-import ClanViewProxy from '../ClanViewProxy';
 import Int32Proxy from '../Int32Proxy';
+import ClanViewProxy from './ClanViewProxy';
 
 export default class ClanCreationReturnViewProxy {
   public static Serialize(stream: Stream, instance: ClanCreationReturnView): void {
@@ -26,7 +26,7 @@ export default class ClanCreationReturnViewProxy {
     if (num !== 0) {
       clanCreationReturnView = new ClanCreationReturnView();
       if ((num & 1) !== 0) {
-        clanCreationReturnView.ClanView = ClanViewProxy.Deserialize(bytes);
+        clanCreationReturnView.ClanView = (ClanViewProxy.Deserialize(bytes))!;
       }
       clanCreationReturnView.ResultCode = Int32Proxy.Deserialize(bytes);
     }
