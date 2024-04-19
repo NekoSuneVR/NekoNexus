@@ -11,7 +11,7 @@ import {
   ClanCreationReturnViewProxy, ClanRequestAcceptViewProxy, ClanRequestDeclineViewProxy, ClanViewProxy, GroupCreationViewProxy, GroupInvitationViewProxy, Int32Proxy, ListProxy, MemberPositionUpdateViewProxy, StringProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import { Op } from 'sequelize';
-import BaseWebService from './BaseWebService';
+import BaseWebService from '../BaseWebService';
 
 enum ClanCreationResultCode {
   Success,

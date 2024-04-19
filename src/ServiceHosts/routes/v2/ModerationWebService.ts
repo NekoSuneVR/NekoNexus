@@ -8,7 +8,7 @@ import {
   CommActorInfoProxy, DateTimeProxy, EnumProxy, Int32Proxy, ListProxy, StringProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import { Op } from 'sequelize';
-import BaseWebService from './BaseWebService';
+import BaseWebService from '../BaseWebService';
 
 export default class ModerationWebService extends BaseWebService {
   public static get ServiceName(): string { return 'ModerationWebService'; }

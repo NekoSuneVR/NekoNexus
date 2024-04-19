@@ -5,8 +5,7 @@ import bodyParserXml from 'body-parser-xml';
 import express, { type Express } from 'express';
 import * as http from 'http';
 import { AddressInfo } from 'net';
-// eslint-disable-next-line camelcase
-import WebServicesV2_0, { Services as ServicesV2_0 } from './routes/v2';
+import Routes, { ServiceVersions } from './routes';
 
 export default class WebServiceHost {
   public readonly port: number;
@@ -31,14 +30,32 @@ export default class WebServiceHost {
     this.expressApp.use(express.urlencoded({ extended: true }));
     this.expressApp.use(bodyParser.xml());
 
-    this.expressApp.use('/2.0', WebServicesV2_0);
+    this.expressApp.use(Routes);
+
+    this.expressApp.use((req, res, next) => res.status(httpStatus.NOT_FOUND).send(`<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN""http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+
+<HEAD>
+\t<TITLE>Not Found</TITLE>
+\t<META HTTP-EQUIV="Content-Type" Content="text/html; charset=us-ascii">
+</HEAD>
+
+<BODY>
+\t<h2>Not Found</h2>
+\t<hr>
+\t<p>HTTP Error 404. The requested resource is not found.</p>
+</BODY>
+
+</HTML>`));
   }
 
   public async start(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.listener = this.expressApp.listen(this.port, ParadiseService.Instance.ServiceSettings.Hostname ?? '0.0.0.0', () => {
-        for (const [serviceName, service] of Object.entries(ServicesV2_0)) {
-          Log.debug(`Initializing ${service.ServiceName} (${service.ServiceVersion})...`);
+        for (const services of Object.values(ServiceVersions)) {
+          for (const service of Object.values(services)) {
+            Log.debug(`Initializing ${service.ServiceName} (${service.ServiceVersion})...`);
+          }
         }
 
         const address: AddressInfo = (this.listener?.address() as AddressInfo);

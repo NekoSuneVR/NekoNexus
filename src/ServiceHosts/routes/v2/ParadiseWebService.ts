@@ -7,8 +7,8 @@ import {
   EnumProxy, Int32Proxy, ListProxy, ParadiseMapViewProxy, StringProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import { Op } from 'sequelize';
+import BaseWebService from '../BaseWebService';
 import ApplicationWebService from './ApplicationWebService';
-import BaseWebService from './BaseWebService';
 
 export default class ParadiseWebService extends BaseWebService {
   public static get ServiceName(): string { return 'ParadiseWebService'; }

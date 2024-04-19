@@ -18,7 +18,7 @@ import { UberstrikeItemType } from '@festivaldev/uberstrike-js/UberStrike/Core/T
 import crypto from 'crypto';
 import moment from 'moment';
 import { Op } from 'sequelize';
-import BaseWebService from './BaseWebService';
+import BaseWebService from '../BaseWebService';
 
 export default class ShopWebService extends BaseWebService {
   public static get ServiceName(): string { return 'ShopWebService'; }

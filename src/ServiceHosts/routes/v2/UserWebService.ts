@@ -16,7 +16,7 @@ import {
 } from '@festivaldev/uberstrike-js/UberStrike/Core/ViewModel';
 import { LoadoutView, UberstrikeMemberView } from '@festivaldev/uberstrike-js/UberStrike/DataCenter/Common/Entities';
 import { Op } from 'sequelize';
-import BaseWebService from './BaseWebService';
+import BaseWebService from '../BaseWebService';
 
 export default class UserWebService extends BaseWebService {
   public static get ServiceName(): string { return 'UserWebService'; }

@@ -8,7 +8,7 @@ import {
   ApplicationConfigurationViewProxy, AuthenticateApplicationViewProxy, EnumProxy, ListProxy, MapViewProxy, MatchStatsProxy, StringProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import { AuthenticateApplicationView } from '@festivaldev/uberstrike-js/UberStrike/DataCenter/Common/Entities';
-import BaseWebService from './BaseWebService';
+import BaseWebService from '../BaseWebService';
 
 export default class ApplicationWebService extends BaseWebService {
   public static get ServiceName(): string { return 'ApplicationWebService'; }

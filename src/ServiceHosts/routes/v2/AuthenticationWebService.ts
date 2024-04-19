@@ -17,7 +17,7 @@ import {
   AccountCompletionResultView, PlayerPersonalRecordStatisticsView, PlayerStatisticsView, PlayerWeaponStatisticsView,
 } from '@festivaldev/uberstrike-js/UberStrike/DataCenter/Common/Entities';
 import crypto from 'crypto';
-import BaseWebService from './BaseWebService';
+import BaseWebService from '../BaseWebService';
 
 export default class AuthenticationWebService extends BaseWebService {
   public static get ServiceName(): string { return 'AuthenticationWebService'; }
