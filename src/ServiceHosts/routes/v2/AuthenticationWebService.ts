@@ -131,6 +131,8 @@ export default class AuthenticationWebService extends BaseWebService {
         PlayerLoadout.update({
           MeleeWeapon: UberstrikeInventoryItem.TheSplatbat,
           Weapon1: UberstrikeInventoryItem.MachineGun,
+          Weapon2: UberstrikeInventoryItem.ShotGun,
+          Weapon3: UberstrikeInventoryItem.SniperRifle,
         }, {
           where: { Cmid: cmid },
         });
@@ -144,6 +146,8 @@ export default class AuthenticationWebService extends BaseWebService {
             [UberstrikeInventoryItem.SniperRifle]: 1,
           },
         }));
+
+        Log.info(`${publicProfile.Name}(${publicProfile.Cmid}) logged in.`);
       }
 
       return isEncrypted
