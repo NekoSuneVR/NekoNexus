@@ -1,0 +1,36 @@
+﻿using HarmonyLib;
+using System.Diagnostics;
+using UnityEngine;
+
+namespace Paradise.Client {
+	[HarmonyPatch(typeof(UberDaemon))]
+	public static class UberDaemonHook {
+		[HarmonyPatch("GetMagicHash"), HarmonyPrefix]
+		public static bool GetMagicHash_Prefix() {
+			return false;
+		}
+
+		[HarmonyPatch("GetMagicHash"), HarmonyPostfix]
+		public static void GetMagicHash_Postfix(string authToken, ref string __result) {
+			var processStartInfo = new ProcessStartInfo {
+				RedirectStandardError = true,
+				RedirectStandardOutput = true,
+				UseShellExecute = false,
+				WindowStyle = ProcessWindowStyle.Minimized,
+				CreateNoWindow = true
+			};
+
+			if (Application.platform == RuntimePlatform.WindowsPlayer) {
+				processStartInfo.FileName = "uberdaemon_paradise.exe";
+				processStartInfo.Arguments = authToken;
+			} else {
+				processStartInfo.FileName = "/usr/bin/bash";
+				processStartInfo.Arguments = $"uberdaemon_paradise.sh {authToken}";
+			}
+
+			var process = Process.Start(processStartInfo);
+
+			__result = process.StandardOutput.ReadToEnd().Trim();
+		}
+	}
+}

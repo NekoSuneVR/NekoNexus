@@ -40,7 +40,6 @@
   <ItemGroup>
     <Reference Include="0Harmony, Version=2.2.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Lib.Harmony.2.2.2\lib\net35\0Harmony.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -58,10 +57,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Paradise.Client\Paradise.Client.csproj">
-      <Project>{4481678e-f589-4d0a-8da1-7db8a5560a0b}</Project>
-      <Name>Paradise.Client</Name>
-      <Private>False</Private>
+    <ProjectReference Include="..\Paradise.Client2\Paradise.Client2.csproj">
+      <Project>{7b04631d-47d5-4a9e-bec2-823f017e33f7}</Project>
+      <Name>Paradise.Client2</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -69,7 +67,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>XCOPY /Y /R "$(TargetPath)" "K:\UberStrike Dev\Dev 1\UberStrike_Data\Managed\"
+    <PostBuildEvent>XCOPY /Y /R "$(TargetDir)\*.dll" "K:\UberStrike Dev\Dev 1\UberStrike_Data\Managed\"
+XCOPY /Y /R "$(TargetDir)\*.dll" "K:\UberStrike Dev\Dev 2\UberStrike_Data\Managed\"
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
