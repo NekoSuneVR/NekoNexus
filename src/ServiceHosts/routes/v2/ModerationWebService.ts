@@ -37,7 +37,6 @@ export default class ModerationWebService extends BaseWebService {
 
     return null;
   }
-}
 
   public static async SetModerationFlag(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);

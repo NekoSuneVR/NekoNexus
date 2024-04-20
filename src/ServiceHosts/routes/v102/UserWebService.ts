@@ -239,15 +239,12 @@ export default class UserWebService extends BaseWebService {
       this.debugEndpoint('GetMember', cmid);
 
         const userAccount = await UserAccount.findOne({ where: { Cmid: cmid } });
-        console.log(userAccount);
 
         if (userAccount) {
           const publicProfile = await PublicProfile.findOne({ where: { Cmid: userAccount.Cmid } });
           const memberWallet = await MemberWallet.findOne({ where: { Cmid: userAccount.Cmid } });
           const memberItems = (await PlayerInventoryItem.findAll({ where: { Cmid: userAccount.Cmid } })).map((_) => _.ItemId);
           const playerStatistics = await PlayerStatistics.findOne({ where: { Cmid: userAccount.Cmid } });
-
-          console.log(publicProfile, memberWallet, memberItems, playerStatistics);
 
           if (publicProfile && memberWallet && memberItems && playerStatistics) {
             UberstrikeUserViewModelProxy.Serialize(outputStream, new UberstrikeUserViewModel({

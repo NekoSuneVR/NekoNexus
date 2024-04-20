@@ -29,8 +29,8 @@ export default class AuthenticationWebService extends BaseWebService {
 
   private static readonly ProfanityFilter: ProfanityFilter = new ProfanityFilter();
 
-  private weeklySpecial: WeeklySpecialView = new WeeklySpecialView({
-    StartDate: new Date('0000-01-01T00:00:00.000Z'),
+  private static weeklySpecial: WeeklySpecialView = new WeeklySpecialView({
+    StartDate: new Date('1970-01-01T01:00:00.000Z'),
     EndDate: new Date('9999-12-31T23:59:59.999Z'),
     Id: 0,
     ImageUrl: 'http://via.placeholder.com/350x150',
@@ -259,7 +259,6 @@ export default class AuthenticationWebService extends BaseWebService {
               MemberAuthenticationResult: MemberAuthenticationResult.IsBanned,
             }));
           } else {
-            console.log('LoginMemberEmail', userAccount.Cmid);
             const publicProfile = await PublicProfile.findOne({ where: { Cmid: userAccount.Cmid } });
 
             if (!publicProfile) {
@@ -314,6 +313,7 @@ export default class AuthenticationWebService extends BaseWebService {
                 ServerTime: new Date(),
                 IsAccountComplete: false,
                 AuthToken: session.SessionId,
+                WeeklySpecial: this.weeklySpecial,
               });
 
               MemberAuthenticationResultViewProxy.Serialize(outputStream, memberAuth);
@@ -359,6 +359,7 @@ export default class AuthenticationWebService extends BaseWebService {
                 PlayerStatisticsView: new PlayerStatisticsView({ ...playerStatistics!.get({ plain: true }) }),
                 IsAccountComplete: publicProfile.Name.trim().length > 0,
                 AuthToken: session.SessionId,
+                WeeklySpecial: this.weeklySpecial,
               }));
             }
           }
