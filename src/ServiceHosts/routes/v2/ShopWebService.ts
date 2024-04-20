@@ -23,9 +23,9 @@ import BaseWebService from '../BaseWebService';
 export default class ShopWebService extends BaseWebService {
   public static get ServiceName(): string { return 'ShopWebService'; }
   public static get ServiceVersion(): string { return ApiVersion.Current; }
-  protected static get ServiceInterface(): string { return 'IShopWebServiceContract'; }
+  // protected static get ServiceInterface(): string { return 'IShopWebServiceContract'; }
 
-  static async BuyBundle(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async BuyBundle(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -48,7 +48,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  static async BuyBundleSteam(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async BuyBundleSteam(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -161,7 +161,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  static async BuyItem(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async BuyItem(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -352,7 +352,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  static async BuyPack(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async BuyPack(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -378,7 +378,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  static async FinishBuyBundleSteam(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async FinishBuyBundleSteam(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -399,7 +399,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  static async GetAllLuckyDraws_1(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetAllLuckyDraws_1(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -417,7 +417,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  static async GetAllLuckyDraws_2(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetAllLuckyDraws_2(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -437,7 +437,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  static async GetAllMysteryBoxs_1(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetAllMysteryBoxs_1(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -455,7 +455,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  static async GetAllMysteryBoxs_2(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetAllMysteryBoxs_2(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -475,7 +475,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  static async GetBundles(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetBundles(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -504,7 +504,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  static async GetLuckyDraw(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetLuckyDraw(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -524,7 +524,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  static async GetMysteryBox(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetMysteryBox(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -544,7 +544,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  static async GetShop(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetShop(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -568,7 +568,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  static async RollLuckyDraw(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async RollLuckyDraw(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -590,7 +590,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  static async RollMysteryBox(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async RollMysteryBox(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -612,7 +612,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  static async UseConsumableItem(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async UseConsumableItem(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -633,7 +633,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  static async VerifyReceipt(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async VerifyReceipt(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 

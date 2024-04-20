@@ -13,12 +13,12 @@ import BaseWebService from '../BaseWebService';
 export default class ApplicationWebService extends BaseWebService {
   public static get ServiceName(): string { return 'ApplicationWebService'; }
   public static get ServiceVersion(): string { return ApiVersion.Current; }
-  protected static get ServiceInterface(): string { return 'IApplicationWebServiceContract'; }
+  // protected static get ServiceInterface(): string { return 'IApplicationWebServiceContract'; }
 
   static supportedClientVersions: List<string> = ['4.7.1'];
   static supportedClientChannels: List<ChannelType> = [ChannelType.Steam];
 
-  static async AuthenticateApplication(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async AuthenticateApplication(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const bytes = data;
 
     try {
@@ -51,7 +51,7 @@ export default class ApplicationWebService extends BaseWebService {
     return null;
   }
 
-  static async GetConfigurationData(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetConfigurationData(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -76,7 +76,7 @@ export default class ApplicationWebService extends BaseWebService {
     return null;
   }
 
-  static async GetMaps(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetMaps(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -125,7 +125,7 @@ export default class ApplicationWebService extends BaseWebService {
     return null;
   }
 
-  static async SetMatchScore(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async SetMatchScore(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 

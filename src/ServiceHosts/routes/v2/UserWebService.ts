@@ -2,7 +2,7 @@ import { ProfanityFilter } from '@/ProfanityFilter';
 import {
   CurrencyDeposit, ItemTransaction, MemberWallet, PlayerInventoryItem, PlayerLoadout, PlayerStatistics, PointDeposit, PublicProfile,
 } from '@/models';
-import { ApiVersion, UberstrikeInventoryItem } from '@/utils';
+import { ApiVersion, LoadoutFilter, UberstrikeInventoryItem } from '@/utils';
 import {
   ItemInventoryView, MemberAccessLevel, MemberOperationResult, MemberView, MemberWalletView,
 } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
@@ -21,11 +21,11 @@ import BaseWebService from '../BaseWebService';
 export default class UserWebService extends BaseWebService {
   public static get ServiceName(): string { return 'UserWebService'; }
   public static get ServiceVersion(): string { return ApiVersion.Current; }
-  protected static get ServiceInterface(): string { return 'IUserWebServiceContract'; }
+  // protected static get ServiceInterface(): string { return 'IUserWebServiceContract'; }
 
   private static readonly ProfanityFilter: ProfanityFilter = new ProfanityFilter();
 
-  static async ChangeMemberName(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async ChangeMemberName(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -83,7 +83,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  static async DepositCredits(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async DepositCredits(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -126,7 +126,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  static async DepositPoints(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async DepositPoints(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -169,7 +169,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  static async GenerateNonDuplicatedMemberNames(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GenerateNonDuplicatedMemberNames(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -202,7 +202,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  static async GetCurrencyDeposits(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetCurrencyDeposits(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -242,7 +242,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  static async GetInventory(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetInventory(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -278,7 +278,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  static async GetItemTransactions(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetItemTransactions(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -318,7 +318,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  static async GetLoadout(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetLoadout(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -351,7 +351,7 @@ export default class UserWebService extends BaseWebService {
           }
 
           const playerInventory = await PlayerInventoryItem.findAll({ where: { Cmid: steamMember.Cmid } });
-          playerLoadout = this.filterLoadout<PlayerLoadout>(playerLoadout, playerInventory);
+          playerLoadout = LoadoutFilter.Filter<PlayerLoadout>(playerLoadout, playerInventory);
 
           LoadoutViewProxy.Serialize(outputStream, new LoadoutView({ ...playerLoadout.get({ plain: true }) }));
         }
@@ -367,12 +367,14 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  static async GetMember(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetMember(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
     try {
       const authToken = StringProxy.Deserialize(bytes);
+
+      this.debugEndpoint('GetMember', authToken);
 
       const session = await global.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
@@ -409,7 +411,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  static async GetMemberListSessionData(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetMemberListSessionData(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -429,7 +431,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  static async GetMemberSessionData(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetMemberSessionData(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -449,7 +451,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  static async GetMemberWallet(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetMemberWallet(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -485,7 +487,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  static async GetPointsDeposits(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetPointsDeposits(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -525,7 +527,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  static async IsDuplicateMemberName(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async IsDuplicateMemberName(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -546,7 +548,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  static async SetLoadout(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async SetLoadout(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -565,7 +567,7 @@ export default class UserWebService extends BaseWebService {
         } else {
           const playerInventory = await PlayerInventoryItem.findAll({ where: { Cmid: steamMember.Cmid } });
 
-          loadoutView = this.filterLoadout(loadoutView, playerInventory);
+          loadoutView = LoadoutFilter.Filter(loadoutView, playerInventory);
 
           const playerLoadout = await PlayerLoadout.findOne({ where: { Cmid: steamMember.Cmid } });
           if (!playerLoadout) {
@@ -611,7 +613,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  static async UpdatePlayerStatistics(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async UpdatePlayerStatistics(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -727,28 +729,5 @@ export default class UserWebService extends BaseWebService {
     }
 
     return null;
-  }
-
-  private static filterLoadout<T extends LoadoutView | PlayerLoadout>(loadoutView: T, playerInventory: PlayerInventoryItem[]): T {
-    if (loadoutView.UpperBody !== 0 && !playerInventory.find((_) => _.ItemId === loadoutView.UpperBody)) loadoutView.UpperBody = 0;
-    if (loadoutView.Weapon1 !== 0 && !playerInventory.find((_) => _.ItemId === loadoutView.Weapon1)) loadoutView.Weapon1 = 0;
-    if (loadoutView.Weapon2 !== 0 && !playerInventory.find((_) => _.ItemId === loadoutView.Weapon2)) loadoutView.Weapon2 = 0;
-    if (loadoutView.Weapon3 !== 0 && !playerInventory.find((_) => _.ItemId === loadoutView.Weapon3)) loadoutView.Weapon3 = 0;
-    if (loadoutView.QuickItem3 !== 0 && !playerInventory.find((_) => _.ItemId === loadoutView.QuickItem3)) loadoutView.QuickItem3 = 0;
-    if (loadoutView.QuickItem2 !== 0 && !playerInventory.find((_) => _.ItemId === loadoutView.QuickItem2)) loadoutView.QuickItem2 = 0;
-    if (loadoutView.QuickItem1 !== 0 && !playerInventory.find((_) => _.ItemId === loadoutView.QuickItem1)) loadoutView.QuickItem1 = 0;
-    if (loadoutView.MeleeWeapon !== 0 && !playerInventory.find((_) => _.ItemId === loadoutView.MeleeWeapon)) loadoutView.MeleeWeapon = 0;
-    if (loadoutView.LowerBody !== 0 && !playerInventory.find((_) => _.ItemId === loadoutView.LowerBody)) loadoutView.LowerBody = 0;
-    if (loadoutView.Head !== 0 && !playerInventory.find((_) => _.ItemId === loadoutView.Head)) loadoutView.Head = 0;
-    if (loadoutView.Gloves !== 0 && !playerInventory.find((_) => _.ItemId === loadoutView.Gloves)) loadoutView.Gloves = 0;
-    if (loadoutView.FunctionalItem3 !== 0 && !playerInventory.find((_) => _.ItemId === loadoutView.FunctionalItem3)) loadoutView.FunctionalItem3 = 0;
-    if (loadoutView.FunctionalItem2 !== 0 && !playerInventory.find((_) => _.ItemId === loadoutView.FunctionalItem2)) loadoutView.FunctionalItem2 = 0;
-    if (loadoutView.FunctionalItem1 !== 0 && !playerInventory.find((_) => _.ItemId === loadoutView.FunctionalItem1)) loadoutView.FunctionalItem1 = 0;
-    if (loadoutView.Face !== 0 && !playerInventory.find((_) => _.ItemId === loadoutView.Face)) loadoutView.Face = 0;
-    if (loadoutView.Boots !== 0 && !playerInventory.find((_) => _.ItemId === loadoutView.Boots)) loadoutView.Boots = 0;
-    if (loadoutView.Backpack !== 0 && !playerInventory.find((_) => _.ItemId === loadoutView.Backpack)) loadoutView.Backpack = 0;
-    if (loadoutView.Webbing !== 0 && !playerInventory.find((_) => _.ItemId === loadoutView.Webbing)) loadoutView.Webbing = 0;
-
-    return loadoutView;
   }
 }

@@ -22,11 +22,11 @@ import BaseWebService from '../BaseWebService';
 export default class AuthenticationWebService extends BaseWebService {
   public static get ServiceName(): string { return 'AuthenticationWebService'; }
   public static get ServiceVersion(): string { return ApiVersion.Current; }
-  protected static get ServiceInterface(): string { return 'IAuthenticationWebServiceContract'; }
+  // protected static get ServiceInterface(): string { return 'IAuthenticationWebServiceContract'; }
 
   private static readonly ProfanityFilter: ProfanityFilter = new ProfanityFilter();
 
-  static async CompleteAccount(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async CompleteAccount(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -160,7 +160,7 @@ export default class AuthenticationWebService extends BaseWebService {
     return null;
   }
 
-  static async CreateUser(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async CreateUser(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -184,7 +184,7 @@ export default class AuthenticationWebService extends BaseWebService {
     return null;
   }
 
-  static async LinkSteamMember(bytes: byte[], outputStream: byte[]) {
+  public static async LinkSteamMember(bytes: byte[], outputStream: MemoryStream) {
     try {
       const email = StringProxy.Deserialize(bytes);
       const password = StringProxy.Deserialize(bytes);
@@ -204,7 +204,7 @@ export default class AuthenticationWebService extends BaseWebService {
     return null;
   }
 
-  static async LoginMemberEmail(bytes: byte[], outputStream: byte[]) {
+  public static async LoginMemberEmail(bytes: byte[], outputStream: MemoryStream) {
     try {
       const email = StringProxy.Deserialize(bytes);
       const password = StringProxy.Deserialize(bytes);
@@ -224,7 +224,7 @@ export default class AuthenticationWebService extends BaseWebService {
     return null;
   }
 
-  static async LoginMemberFacebookUnitySdk(bytes: byte[], outputStream: byte[]) {
+  public static async LoginMemberFacebookUnitySdk(bytes: byte[], outputStream: MemoryStream) {
     try {
       const facebookPlayerAccessToken = StringProxy.Deserialize(bytes);
       const channel = EnumProxy.Deserialize<ChannelType>(bytes);
@@ -243,7 +243,7 @@ export default class AuthenticationWebService extends BaseWebService {
     return null;
   }
 
-  static async LoginMemberPortal(bytes: byte[], outputStream: byte[]) {
+  public static async LoginMemberPortal(bytes: byte[], outputStream: MemoryStream) {
     try {
       const cmid = Int32Proxy.Deserialize(bytes);
       const hash = StringProxy.Deserialize(bytes);
@@ -262,7 +262,7 @@ export default class AuthenticationWebService extends BaseWebService {
     return null;
   }
 
-  static async LoginSteam(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async LoginSteam(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -415,7 +415,7 @@ export default class AuthenticationWebService extends BaseWebService {
     return null;
   }
 
-  static async VerifyAuthToken(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async VerifyAuthToken(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 

@@ -10,9 +10,9 @@ import BaseWebService from '../BaseWebService';
 export default class PrivateMessageWebService extends BaseWebService {
   public static get ServiceName(): string { return 'PrivateMessageWebService'; }
   public static get ServiceVersion(): string { return ApiVersion.Current; }
-  protected static get ServiceInterface(): string { return 'IPrivateMessageWebServiceContract'; }
+  // protected static get ServiceInterface(): string { return 'IPrivateMessageWebServiceContract'; }
 
-  static async DeleteThread(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async DeleteThread(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -61,7 +61,7 @@ export default class PrivateMessageWebService extends BaseWebService {
     return null;
   }
 
-  static async GetAllMessageThreadsForUser(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetAllMessageThreadsForUser(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -83,7 +83,7 @@ export default class PrivateMessageWebService extends BaseWebService {
                 ToCmid: steamMember.Cmid,
               },
             },
-          })).reduce((acc, curr) => {
+          })).reduce((acc: any, curr: PrivateMessage) => {
             const threadId = [curr.FromCmid, curr.ToCmid].sort().join(',');
 
             if (!acc[threadId]) {
@@ -132,7 +132,7 @@ export default class PrivateMessageWebService extends BaseWebService {
     return null;
   }
 
-  static async GetMessageWithIdForCmid(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetMessageWithIdForCmid(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -176,7 +176,7 @@ export default class PrivateMessageWebService extends BaseWebService {
     return null;
   }
 
-  static async GetThreadMessages(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetThreadMessages(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -220,7 +220,7 @@ export default class PrivateMessageWebService extends BaseWebService {
     return null;
   }
 
-  static async MarkThreadAsRead(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async MarkThreadAsRead(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -263,7 +263,7 @@ export default class PrivateMessageWebService extends BaseWebService {
     return null;
   }
 
-  static async SendMessage(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async SendMessage(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 

@@ -13,9 +13,9 @@ import ApplicationWebService from './ApplicationWebService';
 export default class ParadiseWebService extends BaseWebService {
   public static get ServiceName(): string { return 'ParadiseWebService'; }
   public static get ServiceVersion(): string { return ApiVersion.Current; }
-  protected static get ServiceInterface(): string { return 'IParadiseWebServiceContract'; }
+  // protected static get ServiceInterface(): string { return 'IParadiseWebServiceContract'; }
 
-  static async GetCustomMaps(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetCustomMaps(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -64,7 +64,7 @@ export default class ParadiseWebService extends BaseWebService {
     return null;
   }
 
-  static async RecordPlayerMachineData(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async RecordPlayerMachineData(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -98,7 +98,7 @@ export default class ParadiseWebService extends BaseWebService {
     return null;
   }
 
-  static async RecordException(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async RecordException(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -122,7 +122,7 @@ export default class ParadiseWebService extends BaseWebService {
     return null;
   }
 
-  static async RemoveItemFromInventory(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async RemoveItemFromInventory(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 

@@ -29,6 +29,7 @@ import ShopItemPrice from './ShopItemPrice';
 import ShopQuickItem from './ShopQuickItem';
 import ShopWeaponItem from './ShopWeaponItem';
 import SteamMember from './SteamMember';
+import UserAccount from './UserAccount';
 
 export { default as ActivePlayer } from './ActivePlayer';
 export { default as ApplicationConfiguration } from './ApplicationConfiguration';
@@ -61,6 +62,7 @@ export { default as ShopItemPrice } from './ShopItemPrice';
 export { default as ShopQuickItem } from './ShopQuickItem';
 export { default as ShopWeaponItem } from './ShopWeaponItem';
 export { default as SteamMember } from './SteamMember';
+export { default as UserAccount } from './UserAccount';
 
 export default {
   ActivePlayer,
@@ -94,4 +96,5 @@ export default {
   ShopQuickItem,
   ShopWeaponItem,
   SteamMember,
+  UserAccount,
 };

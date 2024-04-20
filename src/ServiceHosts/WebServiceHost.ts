@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import bodyParserXml from 'body-parser-xml';
 import express, { type Express } from 'express';
 import * as http from 'http';
+import httpStatus from 'http-status';
 import { AddressInfo } from 'net';
 import Routes, { ServiceVersions } from './routes';
 
@@ -29,6 +30,13 @@ export default class WebServiceHost {
 
     this.expressApp.use(express.urlencoded({ extended: true }));
     this.expressApp.use(bodyParser.xml());
+
+    this.expressApp.use((req, res, next) => {
+      res.set('X-Powered-By', 'Hamsterwheel/1.0');
+      res.set('Server', 'Microsoft-HTTPAPI/2.0');
+
+      return next();
+    });
 
     this.expressApp.use(Routes);
 

@@ -12,28 +12,34 @@ import BaseWebService from '../BaseWebService';
 
 export default class ModerationWebService extends BaseWebService {
   public static get ServiceName(): string { return 'ModerationWebService'; }
-
   public static get ServiceVersion(): string { return ApiVersion.Current; }
+  // protected static get ServiceInterface(): string { return 'IModerationWebServiceContract'; }
 
-  protected static get ServiceInterface(): string { return 'IModerationWebServiceContract'; }
-
-  public static async BanPermanently(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async BanPermanently(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
     try {
-      const authToken = StringProxy.Deserialize(bytes);
+      const sourceCmid = Int32Proxy.Deserialize(bytes);
       const targetCmid = Int32Proxy.Deserialize(bytes);
+      const applicationId = Int32Proxy.Deserialize(bytes);
+      const ip = StringProxy.Deserialize(bytes);
 
-      this.debugEndpoint('BanPermanently', authToken, targetCmid);
+      this.debugEndpoint('BanPermanently', sourceCmid, targetCmid, applicationId, ip);
 
       throw new Error('Not Implemented');
-    } catch (error) {
-      this.handleEndpointError('BanPermanently', error);
+      // return isEncrypted
+      //   ? this.CryptoPolicy.RijndaelEncrypt(outputStream, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      //   : outputStream;
+    } catch (e) {
+      this.handleEndpointError('BanPermanently', e);
     }
-  }
 
-  public static async SetModerationFlag(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+    return null;
+  }
+}
+
+  public static async SetModerationFlag(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -102,7 +108,7 @@ export default class ModerationWebService extends BaseWebService {
     return null;
   }
 
-  public static async UnsetModerationFlag(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async UnsetModerationFlag(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -156,7 +162,7 @@ export default class ModerationWebService extends BaseWebService {
     return null;
   }
 
-  public static async ClearModerationFlags(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async ClearModerationFlags(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -211,7 +217,7 @@ export default class ModerationWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetNaughtyList(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetNaughtyList(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 

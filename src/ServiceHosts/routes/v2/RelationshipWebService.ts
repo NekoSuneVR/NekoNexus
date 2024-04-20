@@ -1,10 +1,10 @@
 import { ContactRequest, PublicProfile } from '@/models';
 import { ApiVersion } from '@/utils';
 import {
-  ContactGroupView, ContactRequestStatus, ContactRequestView, MemberOperationResult, PublicProfileView,
+    ContactGroupView, ContactRequestStatus, ContactRequestView, MemberOperationResult, PublicProfileView,
 } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
-  BooleanProxy, ContactGroupViewProxy, ContactRequestViewProxy, EnumProxy, Int32Proxy, ListProxy, PublicProfileViewProxy, StringProxy,
+    BooleanProxy, ContactGroupViewProxy, ContactRequestViewProxy, EnumProxy, Int32Proxy, ListProxy, PublicProfileViewProxy, StringProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import { Op } from 'sequelize';
 import BaseWebService from '../BaseWebService';
@@ -12,9 +12,9 @@ import BaseWebService from '../BaseWebService';
 export default class RelationshipWebService extends BaseWebService {
   public static get ServiceName(): string { return 'RelationshipWebService'; }
   public static get ServiceVersion(): string { return ApiVersion.Current; }
-  protected static get ServiceInterface(): string { return 'IRelationshipWebServiceContract'; }
+  // protected static get ServiceInterface(): string { return 'IRelationshipWebServiceContract'; }
 
-  public static async AcceptContactRequest(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async AcceptContactRequest(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -56,7 +56,7 @@ export default class RelationshipWebService extends BaseWebService {
     return null;
   }
 
-  public static async DeclineContactRequest(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async DeclineContactRequest(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -93,7 +93,7 @@ export default class RelationshipWebService extends BaseWebService {
     return null;
   }
 
-  public static async DeleteContact(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async DeleteContact(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -137,7 +137,7 @@ export default class RelationshipWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetContactRequests(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetContactRequests(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -172,7 +172,7 @@ export default class RelationshipWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetContactsByGroups(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async GetContactsByGroups(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 
@@ -202,12 +202,12 @@ export default class RelationshipWebService extends BaseWebService {
           for (const contactRequest of contactRequests) {
             contacts.push(new ContactGroupView({
               GroupId: steamMember.Cmid,
-              Contacts: await PublicProfile.findOne({
-                where: {
-                  Cmid: (contactRequest.InitiatorCmid !== steamMember.Cmid ? contactRequest.InitiatorCmid : contactRequest.ReceiverCmid),
-                },
-                raw: true,
-              }),
+              Contacts: [
+                await PublicProfile.findOne({
+                  where: { Cmid: (contactRequest.InitiatorCmid !== steamMember.Cmid ? contactRequest.InitiatorCmid : contactRequest.ReceiverCmid) },
+                  raw: true,
+                })
+              ],
             }));
           }
 
@@ -225,7 +225,7 @@ export default class RelationshipWebService extends BaseWebService {
     return null;
   }
 
-  public static async SendContactRequest(data: byte[], outputStream: byte[]): Promise<byte[] | null> {
+  public static async SendContactRequest(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
 

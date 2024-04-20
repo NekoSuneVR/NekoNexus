@@ -3,11 +3,11 @@ import ParadiseServiceSettings from '@/ParadiseServiceSettings';
 import { SOAPResponse } from '@/utils';
 import { Router } from 'express';
 import httpStatus from 'http-status';
-// import * as ServicesV1_0_2 from './v102';
+import * as ServicesV1_0_2 from './v102';
 import * as ServicesV2_0 from './v2';
 
 export const ServiceVersions = {
-  // '1.0.2': ServicesV1_0_2,
+  '1.0.2': ServicesV1_0_2,
   '2.0': ServicesV2_0,
 };
 
@@ -27,8 +27,11 @@ router.use(new RegExp(`^/(.+)/${ParadiseServiceSettings.WebServicePrefix}(.+)${P
   if (!req.body || !Object.keys(req.body).length) return res.status(httpStatus.BAD_REQUEST).send('');
 
   if (!req.headers.soapaction) return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(SOAPResponse.createFault());
-  const method = (req.headers.soapaction as string).split('/').slice(-1)[0].replace(/"/g, '');
+  const soapAction = new URL((req.headers.soapaction as string).replace(/"/g, '')).pathname.substring(1).split('/');
 
+  if (service.ServiceInterface !== soapAction[0]) return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(SOAPResponse.createFault(req.headers.soapaction));
+
+  const method = soapAction[1];
   const body = req.body['s:Envelope']['s:Body'][0];
   const bodyMethod = Object.keys(body)[0];
   const bodyData = body[bodyMethod][0].data[0];

@@ -5,7 +5,7 @@ import RijndaelCryptographyPolicy from '@/utils/RijndaelCryptographyPolicy';
 export default abstract class BaseWebService {
   public static get ServiceName(): string | null { return null; }
   public static get ServiceVersion(): string | null { return null; }
-  protected static get ServiceInterface(): string | null { return null; }
+  public static get ServiceInterface(): string | null { return `I${this.ServiceName}Contract`; }
 
   public static readonly CryptoPolicy = new RijndaelCryptographyPolicy();
 

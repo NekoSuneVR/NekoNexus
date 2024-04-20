@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import moment from 'moment';
+import util from 'util';
 
 export enum LogLevel {
   NONE,
@@ -61,5 +62,15 @@ export default class Log {
     console.log(`[${moment(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS')}] [${(this.levelColors[level] || chalk.reset)(tag ?? this.defaultTags[level])}] ${message}`);
 
     if (error) console.error(error);
+  }
+
+  static inspect(object: any): void {
+    console.log(util.inspect(object, {
+      showHidden: false,
+      depth: null,
+      colors: true,
+      sorted: true,
+      compact: false,
+    }));
   }
 }

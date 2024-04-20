@@ -4,7 +4,7 @@ import { DataTypes, Model, type Sequelize } from 'sequelize';
 export interface ActivePlayerAttributes {
   Cmid?: number;
   IPAddress?: string;
-  Channel?: ChannelType
+  Channel?: ChannelType;
   CommServerId?: number | null;
   GameServerId?: number | null;
   GameRoomId?: number | null;
@@ -35,7 +35,7 @@ export default class ActivePlayer extends Model<ActivePlayerAttributes> {
     });
   }
 
-  public static associate({ PublicProfile, PhotonServer, GameRoom }) {
+  public static associate({ PublicProfile }) {
     ActivePlayer.belongsTo(PublicProfile, {
       foreignKey: 'Cmid',
       targetKey: 'Cmid',

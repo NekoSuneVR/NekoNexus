@@ -1,0 +1,8 @@
+export { default as ApplicationWebService } from './ApplicationWebService';
+export { default as AuthenticationWebService } from './AuthenticationWebService';
+export { default as ClanWebService } from './ClanWebService';
+export { default as ModerationWebService } from './ModerationWebService';
+export { default as PrivateMessageWebService } from './PrivateMessageWebService';
+export { default as RelationshipWebService } from './RelationshipWebService';
+export { default as ShopWebService } from './ShopWebService';
+export { default as UserWebService } from './UserWebService';
