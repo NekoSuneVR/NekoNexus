@@ -43,6 +43,7 @@ export { default as MemberAccessLevel } from './MemberAccessLevel';
 export { default as MemberAuthenticationResult } from './MemberAuthenticationResult';
 export { default as MemberOperationResult } from './MemberOperationResult';
 export { default as MemberPositionUpdateView } from './MemberPositionUpdateView';
+export { default as MemberRegistrationResult } from './MemberRegistrationResult';
 export { default as MemberReportType } from './MemberReportType';
 export { default as MemberReportView } from './MemberReportView';
 export { default as MemberView } from './MemberView';
@@ -61,3 +62,4 @@ export { default as PublicProfileView } from './PublicProfileView';
 export { default as RegionType } from './RegionType';
 export { default as UberStrikeCurrencyType } from './UberStrikeCurrencyType';
 export { default as WeeklySpecialView } from './WeeklySpecialView';
+
