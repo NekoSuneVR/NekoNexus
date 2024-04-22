@@ -1,5 +1,6 @@
 module.exports = {
-  extends: 'airbnb-base',
+  root: true,
+  extends: ['airbnb-base', 'prettier'],
   rules: {
     'class-methods-use-this': 'off',
     'default-param-last': 'warn',
@@ -27,13 +28,12 @@ module.exports = {
     'no-undef': 'off',
     'no-underscore-dangle': 'off',
     'no-unused-vars': 'off',
+    'prettier/prettier': 'error',
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2020,
     tsconfigRootDir: __dirname,
   },
-  plugins: [
-    '@typescript-eslint',
-  ],
+  plugins: ['@typescript-eslint', 'prettier'],
 };
