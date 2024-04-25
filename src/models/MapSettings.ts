@@ -29,29 +29,32 @@ export default class MapSettings extends Model<MapSettingsAttributes> {
   declare TimeCurrent: number;
 
   public static initialize(sequelize: Sequelize) {
-    MapSettings.init({
-      MapId: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+    MapSettings.init(
+      {
+        MapId: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        GameModeType: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        KillsMin: DataTypes.INTEGER,
+        KillsMax: DataTypes.INTEGER,
+        KillsCurrent: DataTypes.INTEGER,
+        PlayersMin: DataTypes.INTEGER,
+        PlayersMax: DataTypes.INTEGER,
+        PlayersCurrent: DataTypes.INTEGER,
+        TimeMin: DataTypes.INTEGER,
+        TimeMax: DataTypes.INTEGER,
+        TimeCurrent: DataTypes.INTEGER,
       },
-      GameModeType: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+      {
+        sequelize,
+        tableName: 'MapSettings',
+        timestamps: false,
       },
-      KillsMin: DataTypes.INTEGER,
-      KillsMax: DataTypes.INTEGER,
-      KillsCurrent: DataTypes.INTEGER,
-      PlayersMin: DataTypes.INTEGER,
-      PlayersMax: DataTypes.INTEGER,
-      PlayersCurrent: DataTypes.INTEGER,
-      TimeMin: DataTypes.INTEGER,
-      TimeMax: DataTypes.INTEGER,
-      TimeCurrent: DataTypes.INTEGER,
-    }, {
-      sequelize,
-      tableName: 'MapSettings',
-      timestamps: false,
-    });
+    );
   }
 
   static associate(_) {}

@@ -19,20 +19,23 @@ export default class PointDeposit extends Model<PointDepositAttributes> {
   declare DepositType: PointsDepositType;
 
   public static initialize(sequelize: Sequelize) {
-    PointDeposit.init({
-      PointDepositId: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+    PointDeposit.init(
+      {
+        PointDepositId: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        DepositDate: DataTypes.DATE,
+        Points: DataTypes.INTEGER,
+        Cmid: DataTypes.INTEGER,
+        IsAdminAction: DataTypes.BOOLEAN,
+        DepositType: DataTypes.INTEGER,
       },
-      DepositDate: DataTypes.DATE,
-      Points: DataTypes.INTEGER,
-      Cmid: DataTypes.INTEGER,
-      IsAdminAction: DataTypes.BOOLEAN,
-      DepositType: DataTypes.INTEGER,
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+      {
+        sequelize,
+        timestamps: false,
+      },
+    );
   }
 
   public static associate({ PublicProfile }) {

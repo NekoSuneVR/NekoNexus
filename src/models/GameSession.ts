@@ -19,26 +19,29 @@ export default class GameSession extends Model<GameSessionAttributes> {
   declare ExpireTime: Date;
 
   public static initialize(sequelize: Sequelize) {
-    GameSession.init({
-      SessionId: {
-        type: DataTypes.STRING,
-        primaryKey: true,
-      },
-      Cmid: DataTypes.INTEGER,
-      MachineId: DataTypes.STRING,
-      ExpireTime: {
-        type: DataTypes.DATE,
-        // defaultValue: function() {
-        //   var date = new Date();
-        //   date.setHours(date.getHours() + SESSION_EXPIRE_HOURS);
+    GameSession.init(
+      {
+        SessionId: {
+          type: DataTypes.STRING,
+          primaryKey: true,
+        },
+        Cmid: DataTypes.INTEGER,
+        MachineId: DataTypes.STRING,
+        ExpireTime: {
+          type: DataTypes.DATE,
+          // defaultValue: function() {
+          //   var date = new Date();
+          //   date.setHours(date.getHours() + SESSION_EXPIRE_HOURS);
 
-        //   return date;
-        // }
+          //   return date;
+          // }
+        },
       },
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+      {
+        sequelize,
+        timestamps: false,
+      },
+    );
   }
 
   public static associate({ PublicProfile }) {

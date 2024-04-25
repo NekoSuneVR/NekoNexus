@@ -34,28 +34,31 @@ export default class PlayerMachine extends Model<PlayerMachineAttributes> {
   declare Cmid: number;
 
   public static initialize(sequelize: Sequelize) {
-    PlayerMachine.init({
-      SystemIdentifier: {
-        type: DataTypes.STRING,
-        primaryKey: true,
+    PlayerMachine.init(
+      {
+        SystemIdentifier: {
+          type: DataTypes.STRING,
+          primaryKey: true,
+        },
+        SystemModel: DataTypes.STRING,
+        SystemDeviceType: DataTypes.INTEGER,
+        SystemOperatingSystem: DataTypes.STRING,
+        SystemProcessorType: DataTypes.STRING,
+        SystemCoreCount: DataTypes.INTEGER,
+        SystemMemory: DataTypes.INTEGER,
+        GPUVendor: DataTypes.STRING,
+        GPUModel: DataTypes.STRING,
+        GPUVendorID: DataTypes.STRING,
+        GPUModelID: DataTypes.STRING,
+        GPUMemory: DataTypes.INTEGER,
+        GPUDriverVersion: DataTypes.STRING,
+        Cmid: DataTypes.INTEGER,
       },
-      SystemModel: DataTypes.STRING,
-      SystemDeviceType: DataTypes.INTEGER,
-      SystemOperatingSystem: DataTypes.STRING,
-      SystemProcessorType: DataTypes.STRING,
-      SystemCoreCount: DataTypes.INTEGER,
-      SystemMemory: DataTypes.INTEGER,
-      GPUVendor: DataTypes.STRING,
-      GPUModel: DataTypes.STRING,
-      GPUVendorID: DataTypes.STRING,
-      GPUModelID: DataTypes.STRING,
-      GPUMemory: DataTypes.INTEGER,
-      GPUDriverVersion: DataTypes.STRING,
-      Cmid: DataTypes.INTEGER,
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+      {
+        sequelize,
+        timestamps: false,
+      },
+    );
   }
 
   public static associate({ PublicProfile }) {

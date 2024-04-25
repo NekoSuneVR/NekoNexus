@@ -7,13 +7,13 @@ export default class XpCommand extends ParadiseCommand {
   public static override Command: string = 'xp';
   public static override Aliases: string[] = [];
 
-  public override Description: string = 'Increases or decreases a player\'s level.';
+  public override Description: string = "Increases or decreases a player's level.";
   public override HelpString: string = `${XpCommand.Command}\t\t${this.Description}`;
 
   public override UsageText: string[] = [
     `${XpCommand.Command}: ${this.Description}`,
-    '  give <cmid> <amount>\t\tAdds the specified amount of experience to increase a player\'s level.',
-    '  take <cmid> <amount>\t\tRemoves the specified amount of experience to decrease a player\'s level.',
+    "  give <cmid> <amount>\t\tAdds the specified amount of experience to increase a player's level.",
+    "  take <cmid> <amount>\t\tRemoves the specified amount of experience to decrease a player's level.",
   ];
 
   public override MinimumAccessLevel: MemberAccessLevel = MemberAccessLevel.Moderator;
@@ -59,7 +59,9 @@ export default class XpCommand extends ParadiseCommand {
           Level: XpPointsUtil.GetLevelForXp(playerStatistics.Xp + xpAmount),
         });
 
-        this.WriteLine(`Successfully added ${xpAmount} XP to player (total: ${playerStatistics.Xp}, level: ${playerStatistics.Level})`);
+        this.WriteLine(
+          `Successfully added ${xpAmount} XP to player (total: ${playerStatistics.Xp}, level: ${playerStatistics.Level})`,
+        );
 
         break;
       }
@@ -97,7 +99,9 @@ export default class XpCommand extends ParadiseCommand {
           Level: XpPointsUtil.GetLevelForXp(playerStatistics.Xp - xpAmount),
         });
 
-        this.WriteLine(`Successfully added ${xpAmount} XP to player (total: ${playerStatistics.Xp}, level: ${playerStatistics.Level})`);
+        this.WriteLine(
+          `Successfully added ${xpAmount} XP to player (total: ${playerStatistics.Xp}, level: ${playerStatistics.Level})`,
+        );
 
         break;
       }

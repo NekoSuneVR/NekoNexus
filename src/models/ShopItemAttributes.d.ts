@@ -10,6 +10,6 @@ export interface ShopItemAttributes {
   MaxDurationDays?: number;
   IsConsumable?: boolean;
   ShopHighlightType?: ItemShopHighlightType;
-  CustomProperties?: {[key: string]: string};
-  ItemProperties?: {[key: string]: string};
+  CustomProperties?: { [key: string]: string };
+  ItemProperties?: { [key: string]: string };
 }

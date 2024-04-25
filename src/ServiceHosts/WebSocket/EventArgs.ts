@@ -8,7 +8,11 @@ export class WebSocketConnectedEventArgs {
   public Socket: WebSocket;
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 }
 
@@ -19,7 +23,11 @@ export class WebSocketDisconnectedEventArgs {
   public Reason: string;
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 }
 
@@ -32,7 +40,11 @@ export class WebSocketDataReceivedEventArgs {
   public ServerType: ServerType;
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 
   public get Type(): WebSocketPacketType {
@@ -45,7 +57,11 @@ export class WebSocketPacketReceivedEventArgs {
   public PacketType: WebSocketPacketType;
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 }
 
@@ -54,7 +70,11 @@ export class WebSocketDataSentEventArgs {
   public BytesSent: number;
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 }
 
@@ -64,7 +84,11 @@ export class WebSocketConnectionRejectedEventArgs {
   public Reason: string;
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 }
 
@@ -73,6 +97,10 @@ export class WebSocketStateChangedEventArgs {
   // public State: SocketState;
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 }

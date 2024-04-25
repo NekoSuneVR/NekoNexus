@@ -1,21 +1,29 @@
-import {
-  Map, MapSettings, PhotonServer, UserAccount,
-} from '@/models';
+import { Map, MapSettings, PhotonServer, UserAccount } from '@/models';
 import { ApiVersion } from '@/utils';
 import { BuildType, ChannelType, PhotonUsageType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
-  EnumProxy, Int32Proxy, ListProxy, StringProxy,
+  EnumProxy,
+  Int32Proxy,
+  ListProxy,
+  StringProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import {
-  ApplicationViewProxy, AuthenticateApplicationViewProxy, BugViewProxy, MapViewProxy,
+  ApplicationViewProxy,
+  AuthenticateApplicationViewProxy,
+  BugViewProxy,
+  MapViewProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization/Legacy';
 import { DefinitionType, LocaleType, TutorialStepType } from '@festivaldev/uberstrike-js/UberStrike/Core/Types';
 import { AuthenticateApplicationView } from '@festivaldev/uberstrike-js/UberStrike/DataCenter/Common/Entities';
 import BaseWebService from '../BaseWebService';
 
 export default class ApplicationWebService extends BaseWebService {
-  public static get ServiceName(): string { return 'ApplicationWebService'; }
-  public static get ServiceVersion(): string { return ApiVersion.Legacy102; }
+  public static get ServiceName(): string {
+    return 'ApplicationWebService';
+  }
+  public static get ServiceVersion(): string {
+    return ApiVersion.Legacy102;
+  }
   // protected static get ServiceInterface(): string { return 'IApplicationWebServiceContract';
 
   static supportedClientVersions: List<string> = ['4.3.10'];
@@ -23,7 +31,9 @@ export default class ApplicationWebService extends BaseWebService {
 
   public static async GetPhotonServers(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const applicationView = ApplicationViewProxy.Deserialize(bytes);
@@ -43,7 +53,9 @@ export default class ApplicationWebService extends BaseWebService {
 
   public static async GetMyIP(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       this.debugEndpoint('GetMyIP');
@@ -70,18 +82,31 @@ export default class ApplicationWebService extends BaseWebService {
       this.debugEndpoint('AuthenticateApplication', clientVersion, channelType, publicKey);
 
       if (!ApplicationWebService.supportedClientChannels.includes(channelType)) {
-        AuthenticateApplicationViewProxy.Serialize(outputStream, new AuthenticateApplicationView({
-          IsEnabled: false,
-        }));
+        AuthenticateApplicationViewProxy.Serialize(
+          outputStream,
+          new AuthenticateApplicationView({
+            IsEnabled: false,
+          }),
+        );
       } else {
-        AuthenticateApplicationViewProxy.Serialize(outputStream, new AuthenticateApplicationView({
-          IsEnabled: true,
-          GameServers: (await PhotonServer.findAll({ where: { UsageType: PhotonUsageType.All }, raw: true })),
-          CommServer: (await PhotonServer.findAll({ where: { UsageType: PhotonUsageType.CommServer }, order: [['MinLatency', 'ASC']], raw: true }))[0] ?? null,
-          WarnPlayer: !ApplicationWebService.supportedClientVersions.includes(clientVersion),
-          EncryptionInitVector: this.EncryptionInitVector,
-          EncryptionPassPhrase: this.EncryptionPassPhrase,
-        }));
+        AuthenticateApplicationViewProxy.Serialize(
+          outputStream,
+          new AuthenticateApplicationView({
+            IsEnabled: true,
+            GameServers: await PhotonServer.findAll({ where: { UsageType: PhotonUsageType.All }, raw: true }),
+            CommServer:
+              (
+                await PhotonServer.findAll({
+                  where: { UsageType: PhotonUsageType.CommServer },
+                  order: [['MinLatency', 'ASC']],
+                  raw: true,
+                })
+              )[0] ?? null,
+            WarnPlayer: !ApplicationWebService.supportedClientVersions.includes(clientVersion),
+            EncryptionInitVector: this.EncryptionInitVector,
+            EncryptionPassPhrase: this.EncryptionPassPhrase,
+          }),
+        );
       }
 
       return outputStream;
@@ -94,7 +119,9 @@ export default class ApplicationWebService extends BaseWebService {
 
   public static async RecordException(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const cmid = Int32Proxy.Deserialize(bytes);
@@ -105,7 +132,16 @@ export default class ApplicationWebService extends BaseWebService {
       const stackTrace = StringProxy.Deserialize(bytes);
       const exceptionData = StringProxy.Deserialize(bytes);
 
-      this.debugEndpoint('RecordException', cmid, buildType, channelType, buildNumber, logString, stackTrace, exceptionData);
+      this.debugEndpoint(
+        'RecordException',
+        cmid,
+        buildType,
+        channelType,
+        buildNumber,
+        logString,
+        stackTrace,
+        exceptionData,
+      );
 
       // throw new Error('Not Implemented');
       return outputStream;
@@ -121,7 +157,9 @@ export default class ApplicationWebService extends BaseWebService {
 
   public static async RecordExceptionUnencrypted(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const buildType = EnumProxy.Deserialize<BuildType>(bytes);
@@ -145,7 +183,9 @@ export default class ApplicationWebService extends BaseWebService {
 
   public static async RecordTutorialStep(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const cmid = Int32Proxy.Deserialize(bytes);
@@ -173,7 +213,9 @@ export default class ApplicationWebService extends BaseWebService {
 
   public static async ReportBug(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const bugView = BugViewProxy.Deserialize(bytes);
@@ -193,7 +235,9 @@ export default class ApplicationWebService extends BaseWebService {
 
   public static async GetLiveFeed(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       this.debugEndpoint('GetLiveFeed');
@@ -211,7 +255,9 @@ export default class ApplicationWebService extends BaseWebService {
 
   public static async GetMaps(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const appVersion = StringProxy.Deserialize(bytes);
@@ -232,15 +278,17 @@ export default class ApplicationWebService extends BaseWebService {
         const mapData = maps.reduce((acc: any[], cur: any) => {
           acc.push({
             ...cur,
-            Settings: mapSettings.filter((_) => _.MapId === cur.MapId).reduce((acc, cur) => {
-              acc[cur.GameModeType!] = {
-                ...cur,
-                MapId: undefined,
-                GameModeType: undefined,
-              };
+            Settings: mapSettings
+              .filter((_) => _.MapId === cur.MapId)
+              .reduce((acc, cur) => {
+                acc[cur.GameModeType!] = {
+                  ...cur,
+                  MapId: undefined,
+                  GameModeType: undefined,
+                };
 
-              return acc;
-            }, {}),
+                return acc;
+              }, {}),
           });
 
           return acc;
@@ -261,11 +309,13 @@ export default class ApplicationWebService extends BaseWebService {
 
   public static async GetItemAssetBundles(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const appVersion = StringProxy.Deserialize(bytes);
-      const definition = EnumProxy.Deserialize <DefinitionType>(bytes);
+      const definition = EnumProxy.Deserialize<DefinitionType>(bytes);
 
       this.debugEndpoint('GetItemAssetBundles', appVersion, definition);
 
@@ -282,7 +332,9 @@ export default class ApplicationWebService extends BaseWebService {
 
   public static async SetLevelVersion(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const id = Int32Proxy.Deserialize(bytes);
@@ -304,7 +356,9 @@ export default class ApplicationWebService extends BaseWebService {
 
   public static async GetPhotonServerName(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const applicationVersion = StringProxy.Deserialize(bytes);
@@ -326,7 +380,9 @@ export default class ApplicationWebService extends BaseWebService {
 
   public static async IsAlive(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       this.debugEndpoint('IsAlive');

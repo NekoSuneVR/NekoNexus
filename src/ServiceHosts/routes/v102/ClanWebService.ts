@@ -1,22 +1,33 @@
-import {
-    Clan, ClanMember, GroupInvitation, UserAccount,
-} from '@/models';
+import { Clan, ClanMember, GroupInvitation, UserAccount } from '@/models';
 import { ApiVersion } from '@/utils';
 import { GroupInvitationView } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
-    BooleanProxy, Int32Proxy, ListProxy, StringProxy,
+  BooleanProxy,
+  Int32Proxy,
+  ListProxy,
+  StringProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
-import { GroupCreationViewProxy, GroupInvitationViewProxy, MemberPositionUpdateViewProxy } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization/Legacy';
+import {
+  GroupCreationViewProxy,
+  GroupInvitationViewProxy,
+  MemberPositionUpdateViewProxy,
+} from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization/Legacy';
 import BaseWebService from '../BaseWebService';
 
 export default class ClanWebService extends BaseWebService {
-  public static get ServiceName(): string { return 'ClanWebService'; }
-  public static get ServiceVersion(): string { return ApiVersion.Legacy102; }
+  public static get ServiceName(): string {
+    return 'ClanWebService';
+  }
+  public static get ServiceVersion(): string {
+    return ApiVersion.Legacy102;
+  }
   // protected static get ServiceInterface(): string { return 'IClanWebService'; }
 
   public static async IsMemberPartOfGroup(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const cmuneId = Int32Proxy.Deserialize(bytes);
@@ -30,7 +41,10 @@ export default class ClanWebService extends BaseWebService {
         const clan = await Clan.findOne({ where: { GroupId: groupId } });
 
         if (clan) {
-          BooleanProxy.Serialize(outputStream, !!(await ClanMember.findOne({ where: { GroupId: clan.GroupId, Cmid: userAccount.Cmid } })));
+          BooleanProxy.Serialize(
+            outputStream,
+            !!(await ClanMember.findOne({ where: { GroupId: clan.GroupId, Cmid: userAccount.Cmid } })),
+          );
         } else {
           BooleanProxy.Serialize(outputStream, false);
         }
@@ -50,7 +64,9 @@ export default class ClanWebService extends BaseWebService {
 
   public static async IsMemberPartOfAnyGroup(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const cmuneId = Int32Proxy.Deserialize(bytes);
@@ -71,7 +87,9 @@ export default class ClanWebService extends BaseWebService {
 
   public static async GetClan(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const groupId = Int32Proxy.Deserialize(bytes);
@@ -91,7 +109,9 @@ export default class ClanWebService extends BaseWebService {
 
   public static async UpdateMemberPosition(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const updateMemberPositionData = MemberPositionUpdateViewProxy.Deserialize(bytes);
@@ -111,7 +131,9 @@ export default class ClanWebService extends BaseWebService {
 
   public static async InviteMemberToJoinAGroup(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const clanId = Int32Proxy.Deserialize(bytes);
@@ -134,7 +156,9 @@ export default class ClanWebService extends BaseWebService {
 
   public static async AcceptClanInvitation(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const clanInvitationId = Int32Proxy.Deserialize(bytes);
@@ -155,7 +179,9 @@ export default class ClanWebService extends BaseWebService {
 
   public static async DeclineClanInvitation(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const clanInvitationId = Int32Proxy.Deserialize(bytes);
@@ -176,7 +202,9 @@ export default class ClanWebService extends BaseWebService {
 
   public static async KickMemberFromClan(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const groupId = Int32Proxy.Deserialize(bytes);
@@ -198,7 +226,9 @@ export default class ClanWebService extends BaseWebService {
 
   public static async DisbandGroup(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const groupId = Int32Proxy.Deserialize(bytes);
@@ -219,7 +249,9 @@ export default class ClanWebService extends BaseWebService {
 
   public static async LeaveAClan(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const groupId = Int32Proxy.Deserialize(bytes);
@@ -240,7 +272,9 @@ export default class ClanWebService extends BaseWebService {
 
   public static async GetMyClanId(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const cmid = Int32Proxy.Deserialize(bytes);
@@ -252,10 +286,12 @@ export default class ClanWebService extends BaseWebService {
 
       if (userAccount) {
         const clans = await Clan.findAll({
-          include: [{
-            model: ClanMember,
-            as: 'Members',
-          }],
+          include: [
+            {
+              model: ClanMember,
+              as: 'Members',
+            },
+          ],
         });
 
         for (const clan of clans) {
@@ -279,7 +315,9 @@ export default class ClanWebService extends BaseWebService {
 
   public static async CancelInvitation(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const groupInvitationId = Int32Proxy.Deserialize(bytes);
@@ -300,7 +338,9 @@ export default class ClanWebService extends BaseWebService {
 
   public static async GetAllGroupInvitations(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const inviteeCmid = Int32Proxy.Deserialize(bytes);
@@ -313,7 +353,11 @@ export default class ClanWebService extends BaseWebService {
       if (userAccount) {
         const groupInvitations = await GroupInvitation.findAll({ where: { InviteeCmid: inviteeCmid } });
 
-        ListProxy.Serialize<GroupInvitationView>(outputStream, (groupInvitations as GroupInvitationView[]), GroupInvitationViewProxy.Serialize);
+        ListProxy.Serialize<GroupInvitationView>(
+          outputStream,
+          groupInvitations as GroupInvitationView[],
+          GroupInvitationViewProxy.Serialize,
+        );
       }
 
       return isEncrypted
@@ -328,7 +372,9 @@ export default class ClanWebService extends BaseWebService {
 
   public static async GetPendingGroupInvitations(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const groupId = Int32Proxy.Deserialize(bytes);
@@ -340,7 +386,11 @@ export default class ClanWebService extends BaseWebService {
       if (clan) {
         const groupInvitations = await GroupInvitation.findAll({ where: { GroupId: clan.GroupId } });
 
-        ListProxy.Serialize<GroupInvitationView>(outputStream, (groupInvitations as GroupInvitationView[]), GroupInvitationViewProxy.Serialize);
+        ListProxy.Serialize<GroupInvitationView>(
+          outputStream,
+          groupInvitations as GroupInvitationView[],
+          GroupInvitationViewProxy.Serialize,
+        );
       }
 
       return isEncrypted
@@ -355,7 +405,9 @@ export default class ClanWebService extends BaseWebService {
 
   public static async CreateClan(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const createClanData = GroupCreationViewProxy.Deserialize(bytes);
@@ -375,7 +427,9 @@ export default class ClanWebService extends BaseWebService {
 
   public static async TransferOwnership(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const groupId = Int32Proxy.Deserialize(bytes);
@@ -397,7 +451,9 @@ export default class ClanWebService extends BaseWebService {
 
   public static async CanOwnAClan(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const cmid = Int32Proxy.Deserialize(bytes);
@@ -417,7 +473,9 @@ export default class ClanWebService extends BaseWebService {
 
   public static async test(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       this.debugEndpoint('test');

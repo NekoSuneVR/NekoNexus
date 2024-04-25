@@ -19,26 +19,29 @@ export default class ClanMember extends Model<ClanMemberAttributes> {
   declare Lastlogin: Date;
 
   public static initialize(sequelize: Sequelize) {
-    ClanMember.init({
-      GroupId: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+    ClanMember.init(
+      {
+        GroupId: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        Name: DataTypes.STRING(18),
+        Cmid: {
+          type: DataTypes.INTEGER,
+          unique: true,
+        },
+        Position: DataTypes.INTEGER,
+        JoiningDate: DataTypes.DATE,
+        Lastlogin: DataTypes.DATE,
       },
-      Name: DataTypes.STRING(18),
-      Cmid: {
-        type: DataTypes.INTEGER,
-        unique: true,
+      {
+        sequelize,
+        timestamps: false,
+        defaultScope: {
+          attributes: { exclude: ['GroupId'] },
+        },
       },
-      Position: DataTypes.INTEGER,
-      JoiningDate: DataTypes.DATE,
-      Lastlogin: DataTypes.DATE,
-    }, {
-      sequelize,
-      timestamps: false,
-      defaultScope: {
-        attributes: { exclude: ['GroupId'] },
-      },
-    });
+    );
   }
 
   public static associate(_) {}

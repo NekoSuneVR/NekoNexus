@@ -1,18 +1,26 @@
-import {
-  ApplicationConfiguration, Map, MapSettings, PhotonServer,
-} from '@/models';
+import { ApplicationConfiguration, Map, MapSettings, PhotonServer } from '@/models';
 import { ApiVersion } from '@/utils';
 import { ChannelType, PhotonUsageType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { ApplicationConfigurationView } from '@festivaldev/uberstrike-js/UberStrike/Core/Models/Views';
 import {
-  ApplicationConfigurationViewProxy, AuthenticateApplicationViewProxy, EnumProxy, ListProxy, MapViewProxy, MatchStatsProxy, StringProxy,
+  ApplicationConfigurationViewProxy,
+  AuthenticateApplicationViewProxy,
+  EnumProxy,
+  ListProxy,
+  MapViewProxy,
+  MatchStatsProxy,
+  StringProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import { AuthenticateApplicationView } from '@festivaldev/uberstrike-js/UberStrike/DataCenter/Common/Entities';
 import BaseWebService from '../BaseWebService';
 
 export default class ApplicationWebService extends BaseWebService {
-  public static get ServiceName(): string { return 'ApplicationWebService'; }
-  public static get ServiceVersion(): string { return ApiVersion.Current; }
+  public static get ServiceName(): string {
+    return 'ApplicationWebService';
+  }
+  public static get ServiceVersion(): string {
+    return ApiVersion.Current;
+  }
   // protected static get ServiceInterface(): string { return 'IApplicationWebServiceContract'; }
 
   static supportedClientVersions: List<string> = ['4.7.1'];
@@ -29,18 +37,31 @@ export default class ApplicationWebService extends BaseWebService {
       this.debugEndpoint('AuthenticateApplication', clientVersion, channelType, publicKey);
 
       if (!ApplicationWebService.supportedClientChannels.includes(channelType)) {
-        AuthenticateApplicationViewProxy.Serialize(outputStream, new AuthenticateApplicationView({
-          IsEnabled: false,
-        }));
+        AuthenticateApplicationViewProxy.Serialize(
+          outputStream,
+          new AuthenticateApplicationView({
+            IsEnabled: false,
+          }),
+        );
       } else {
-        AuthenticateApplicationViewProxy.Serialize(outputStream, new AuthenticateApplicationView({
-          IsEnabled: true,
-          GameServers: (await PhotonServer.findAll({ where: { UsageType: PhotonUsageType.All }, raw: true })),
-          CommServer: (await PhotonServer.findAll({ where: { UsageType: PhotonUsageType.CommServer }, order: [['MinLatency', 'ASC']], raw: true }))[0] ?? null,
-          WarnPlayer: !ApplicationWebService.supportedClientVersions.includes(clientVersion),
-          EncryptionInitVector: this.EncryptionInitVector,
-          EncryptionPassPhrase: this.EncryptionPassPhrase,
-        }));
+        AuthenticateApplicationViewProxy.Serialize(
+          outputStream,
+          new AuthenticateApplicationView({
+            IsEnabled: true,
+            GameServers: await PhotonServer.findAll({ where: { UsageType: PhotonUsageType.All }, raw: true }),
+            CommServer:
+              (
+                await PhotonServer.findAll({
+                  where: { UsageType: PhotonUsageType.CommServer },
+                  order: [['MinLatency', 'ASC']],
+                  raw: true,
+                })
+              )[0] ?? null,
+            WarnPlayer: !ApplicationWebService.supportedClientVersions.includes(clientVersion),
+            EncryptionInitVector: this.EncryptionInitVector,
+            EncryptionPassPhrase: this.EncryptionPassPhrase,
+          }),
+        );
       }
 
       return outputStream;
@@ -53,7 +74,9 @@ export default class ApplicationWebService extends BaseWebService {
 
   public static async GetConfigurationData(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const clientVersion = StringProxy.Deserialize(bytes);
@@ -63,7 +86,10 @@ export default class ApplicationWebService extends BaseWebService {
       if (ApplicationWebService.supportedClientVersions.includes(clientVersion)) {
         const applicationConfiguration = await ApplicationConfiguration.findOne();
 
-        ApplicationConfigurationViewProxy.Serialize(outputStream, new ApplicationConfigurationView({ ...applicationConfiguration!.get({ plain: true }) }));
+        ApplicationConfigurationViewProxy.Serialize(
+          outputStream,
+          new ApplicationConfigurationView({ ...applicationConfiguration!.get({ plain: true }) }),
+        );
       }
 
       return isEncrypted
@@ -78,7 +104,9 @@ export default class ApplicationWebService extends BaseWebService {
 
   public static async GetMaps(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const clientVersion = StringProxy.Deserialize(bytes);
@@ -98,15 +126,17 @@ export default class ApplicationWebService extends BaseWebService {
         const mapData = maps.reduce((acc: any[], cur: any) => {
           acc.push({
             ...cur,
-            Settings: mapSettings.filter((_) => _.MapId === cur.MapId).reduce((acc, cur) => {
-              acc[cur.GameModeType!] = {
-                ...cur,
-                MapId: undefined,
-                GameModeType: undefined,
-              };
+            Settings: mapSettings
+              .filter((_) => _.MapId === cur.MapId)
+              .reduce((acc, cur) => {
+                acc[cur.GameModeType!] = {
+                  ...cur,
+                  MapId: undefined,
+                  GameModeType: undefined,
+                };
 
-              return acc;
-            }, {}),
+                return acc;
+              }, {}),
           });
 
           return acc;
@@ -127,7 +157,9 @@ export default class ApplicationWebService extends BaseWebService {
 
   public static async SetMatchScore(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const clientVersion = StringProxy.Deserialize(bytes);

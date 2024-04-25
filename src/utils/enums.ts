@@ -10,7 +10,7 @@ export enum ModerationFlag {
   Banned = 0x4,
   Speed = 0x8,
   Spamming = 0x10,
-  CrudeLanguage = 0x20
+  CrudeLanguage = 0x20,
 }
 
 export enum UberstrikeInventoryItem {

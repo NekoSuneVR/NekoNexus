@@ -18,7 +18,7 @@ export interface GameRoomAttributes {
   LevelMin?: number;
   LevelMax?: number;
   IsPermanentGame?: boolean;
-  ChannelId?: string,
+  ChannelId?: string;
   WebhookUrl?: string;
 }
 
@@ -43,32 +43,35 @@ export default class GameRoom extends Model<GameRoomAttributes> {
   declare WebhookUrl: string;
 
   public static initialize(sequelize: Sequelize) {
-    GameRoom.init({
-      Number: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+    GameRoom.init(
+      {
+        Number: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        ServerIp: DataTypes.STRING,
+        ServerPort: DataTypes.INTEGER,
+        Name: DataTypes.STRING(16),
+        IsPasswordProtected: DataTypes.BOOLEAN,
+        GameMode: DataTypes.INTEGER,
+        PlayerLimit: DataTypes.INTEGER,
+        ConnectedPlayers: DataTypes.INTEGER,
+        TimeLimit: DataTypes.INTEGER,
+        KillLimit: DataTypes.INTEGER,
+        GameFlags: DataTypes.INTEGER,
+        MapID: DataTypes.INTEGER,
+        LevelMin: DataTypes.INTEGER,
+        LevelMax: DataTypes.INTEGER,
+        IsPermanentGame: DataTypes.BOOLEAN,
+        ChannelId: DataTypes.STRING,
+        WebhookUrl: DataTypes.STRING,
       },
-      ServerIp: DataTypes.STRING,
-      ServerPort: DataTypes.INTEGER,
-      Name: DataTypes.STRING(16),
-      IsPasswordProtected: DataTypes.BOOLEAN,
-      GameMode: DataTypes.INTEGER,
-      PlayerLimit: DataTypes.INTEGER,
-      ConnectedPlayers: DataTypes.INTEGER,
-      TimeLimit: DataTypes.INTEGER,
-      KillLimit: DataTypes.INTEGER,
-      GameFlags: DataTypes.INTEGER,
-      MapID: DataTypes.INTEGER,
-      LevelMin: DataTypes.INTEGER,
-      LevelMax: DataTypes.INTEGER,
-      IsPermanentGame: DataTypes.BOOLEAN,
-      ChannelId: DataTypes.STRING,
-      WebhookUrl: DataTypes.STRING,
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+      {
+        sequelize,
+        timestamps: false,
+      },
+    );
   }
 
-  public static associate(_) { }
+  public static associate(_) {}
 }

@@ -30,48 +30,51 @@ export default class ShopGearItem extends Model<ShopGearItemAttributes> {
   declare Prices: ShopItemPrice[];
 
   public static initialize(sequelize: Sequelize) {
-    ShopGearItem.init({
-      ID: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-      },
-      Name: DataTypes.STRING,
-      PrefabName: DataTypes.STRING,
-      Description: DataTypes.STRING,
-      ItemClass: DataTypes.INTEGER,
-      LevelLock: DataTypes.INTEGER,
-      MaxDurationDays: DataTypes.INTEGER,
-      IsConsumable: DataTypes.BOOLEAN,
-      ShopHighlightType: DataTypes.INTEGER,
-      CustomProperties: {
-        type: DataTypes.JSON,
-        defaultValue: {},
-        get(this: ShopGearItem): any {
-          return JSON.parse(this.getDataValue('CustomProperties') as any);
+    ShopGearItem.init(
+      {
+        ID: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
         },
-        set(this: ShopGearItem, value: any): any {
-          this.setDataValue('CustomProperties', JSON.stringify(value) as any);
+        Name: DataTypes.STRING,
+        PrefabName: DataTypes.STRING,
+        Description: DataTypes.STRING,
+        ItemClass: DataTypes.INTEGER,
+        LevelLock: DataTypes.INTEGER,
+        MaxDurationDays: DataTypes.INTEGER,
+        IsConsumable: DataTypes.BOOLEAN,
+        ShopHighlightType: DataTypes.INTEGER,
+        CustomProperties: {
+          type: DataTypes.JSON,
+          defaultValue: {},
+          get(this: ShopGearItem): any {
+            return JSON.parse(this.getDataValue('CustomProperties') as any);
+          },
+          set(this: ShopGearItem, value: any): any {
+            this.setDataValue('CustomProperties', JSON.stringify(value) as any);
+          },
         },
-      },
-      ItemProperties: {
-        type: DataTypes.JSON,
-        defaultValue: {},
-        get(this: ShopGearItem): any {
-          return JSON.parse(this.getDataValue('ItemProperties') as any);
+        ItemProperties: {
+          type: DataTypes.JSON,
+          defaultValue: {},
+          get(this: ShopGearItem): any {
+            return JSON.parse(this.getDataValue('ItemProperties') as any);
+          },
+          set(this: ShopGearItem, value: any): any {
+            this.setDataValue('ItemProperties', JSON.stringify(value) as any);
+          },
         },
-        set(this: ShopGearItem, value: any): any {
-          this.setDataValue('ItemProperties', JSON.stringify(value) as any);
-        },
-      },
 
-      // Gear specific
-      ArmorPoints: DataTypes.INTEGER,
-      ArmorWeight: DataTypes.INTEGER,
-      ArmorAbsorptionPercent: DataTypes.INTEGER,
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+        // Gear specific
+        ArmorPoints: DataTypes.INTEGER,
+        ArmorWeight: DataTypes.INTEGER,
+        ArmorAbsorptionPercent: DataTypes.INTEGER,
+      },
+      {
+        sequelize,
+        timestamps: false,
+      },
+    );
   }
 
   public static associate({ ShopItemPrice }) {

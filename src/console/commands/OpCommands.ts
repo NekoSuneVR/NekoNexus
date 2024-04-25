@@ -6,7 +6,7 @@ export class DeopCommand extends ParadiseCommand {
   public static override Command: string = 'deop';
   public static override Aliases: string[] = [];
 
-  public override Description: string = 'Resets a user\'s permission level.';
+  public override Description: string = "Resets a user's permission level.";
   public override HelpString: string = `${DeopCommand.Command}\t\t${this.Description}`;
 
   public override UsageText: string[] = [
@@ -51,14 +51,11 @@ export class OpCommand extends ParadiseCommand {
   public static override Command: string = 'op';
   public static override Aliases: string[] = [];
 
-  public override Description: string = 'Sets a user\'s permission level.';
+  public override Description: string = "Sets a user's permission level.";
   public override HelpString: string = `${OpCommand.Command}\t\t${this.Description}`;
 
   public get UsageText(): string[] {
-    const lines: any[] = [
-      `${OpCommand.Command}: ${this.Description}`,
-      `Usage: ${OpCommand.Command} <name> <level>`,
-    ];
+    const lines: any[] = [`${OpCommand.Command}: ${this.Description}`, `Usage: ${OpCommand.Command} <name> <level>`];
 
     const values: string[] = [];
     for (const key in Object.keys(MemberAccessLevel)) {
@@ -93,7 +90,12 @@ export class OpCommand extends ParadiseCommand {
     }
 
     const level = Number(args[1]);
-    if (isNaN(level) || !MemberAccessLevel[level] || level === MemberAccessLevel.Default || targetProfile.AccessLevel === level) {
+    if (
+      isNaN(level) ||
+      !MemberAccessLevel[level] ||
+      level === MemberAccessLevel.Default ||
+      targetProfile.AccessLevel === level
+    ) {
       this.WriteLine('Failed to set user permission level: Invalid data.');
       return;
     }

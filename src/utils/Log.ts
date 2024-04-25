@@ -9,7 +9,7 @@ export enum LogLevel {
   WARN,
   ERROR,
   FATAL,
-  DEBUG
+  DEBUG,
 }
 
 export default class Log {
@@ -59,18 +59,22 @@ export default class Log {
 
   static write(message: string, level: LogLevel = LogLevel.INFO, tag?: string, error?: any): void {
     if (level === LogLevel.FATAL) message = chalk.red(message);
-    console.log(`[${moment(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS')}] [${(this.levelColors[level] || chalk.reset)(tag ?? this.defaultTags[level])}] ${message}`);
+    console.log(
+      `[${moment(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS')}] [${(this.levelColors[level] || chalk.reset)(tag ?? this.defaultTags[level])}] ${message}`,
+    );
 
     if (error) console.error(error);
   }
 
   static inspect(object: any): void {
-    console.log(util.inspect(object, {
-      showHidden: false,
-      depth: null,
-      colors: true,
-      sorted: true,
-      compact: false,
-    }));
+    console.log(
+      util.inspect(object, {
+        showHidden: false,
+        depth: null,
+        colors: true,
+        sorted: true,
+        compact: false,
+      }),
+    );
   }
 }

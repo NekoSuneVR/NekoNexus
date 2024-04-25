@@ -2,29 +2,56 @@ import { ProfanityFilter } from '@/ProfanityFilter';
 import {
   Clan,
   ClanMember,
-  ItemTransaction, MemberWallet, ModerationAction, PlayerInventoryItem, PlayerLoadout, PlayerStatistics, PublicProfile, UserAccount,
+  ItemTransaction,
+  MemberWallet,
+  ModerationAction,
+  PlayerInventoryItem,
+  PlayerLoadout,
+  PlayerStatistics,
+  PublicProfile,
+  UserAccount,
 } from '@/models';
+import { ApiVersion, Log, ModerationFlag, UberstrikeInventoryItem } from '@/utils';
 import {
-  ApiVersion, Log, ModerationFlag, UberstrikeInventoryItem,
-} from '@/utils';
-import {
-  AccountCompletionResult, BuyingDurationType, ChannelType, EmailAddressStatus, MemberAuthenticationResult, MemberRegistrationResult, MemberView, MemberWalletView, PublicProfileView, WeeklySpecialView,
+  AccountCompletionResult,
+  BuyingDurationType,
+  ChannelType,
+  EmailAddressStatus,
+  MemberAuthenticationResult,
+  MemberRegistrationResult,
+  MemberView,
+  MemberWalletView,
+  PublicProfileView,
+  WeeklySpecialView,
 } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
-  DateTimeProxy, EnumProxy, Int32Proxy, StringProxy,
+  DateTimeProxy,
+  EnumProxy,
+  Int32Proxy,
+  StringProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
-import { AccountCompletionResultViewProxy, MemberAuthenticationResultViewProxy } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization/Legacy';
+import {
+  AccountCompletionResultViewProxy,
+  MemberAuthenticationResultViewProxy,
+} from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization/Legacy';
 import { MemberAuthenticationResultView } from '@festivaldev/uberstrike-js/UberStrike/Core/ViewModel';
 import {
-  AccountCompletionResultView, PlayerPersonalRecordStatisticsView, PlayerStatisticsView, PlayerWeaponStatisticsView,
+  AccountCompletionResultView,
+  PlayerPersonalRecordStatisticsView,
+  PlayerStatisticsView,
+  PlayerWeaponStatisticsView,
 } from '@festivaldev/uberstrike-js/UberStrike/DataCenter/Common/Entities';
 import bcrypt from 'bcrypt';
 import { Sequelize } from 'sequelize';
 import BaseWebService from '../BaseWebService';
 
 export default class AuthenticationWebService extends BaseWebService {
-  public static get ServiceName(): string { return 'AuthenticationWebService'; }
-  public static get ServiceVersion(): string { return ApiVersion.Legacy102; }
+  public static get ServiceName(): string {
+    return 'AuthenticationWebService';
+  }
+  public static get ServiceVersion(): string {
+    return ApiVersion.Legacy102;
+  }
   // protected static get ServiceInterface(): string { return 'IAuthenticationWebServiceContract'; }
 
   private static readonly ProfanityFilter: ProfanityFilter = new ProfanityFilter();
@@ -41,7 +68,9 @@ export default class AuthenticationWebService extends BaseWebService {
 
   public static async CreateUser(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const emailAddress = StringProxy.Deserialize(bytes);
@@ -52,7 +81,7 @@ export default class AuthenticationWebService extends BaseWebService {
 
       this.debugEndpoint('CreateUser', emailAddress, password, channel, locale, machineId);
 
-      if ((await UserAccount.findOne({ where: { EmailAddress: emailAddress } }))) {
+      if (await UserAccount.findOne({ where: { EmailAddress: emailAddress } })) {
         EnumProxy.Serialize<MemberRegistrationResult>(outputStream, MemberRegistrationResult.DuplicateEmail);
       } else {
         const Cmid = Math.randomInt();
@@ -84,7 +113,9 @@ export default class AuthenticationWebService extends BaseWebService {
 
   public static async CompleteAccount(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const cmid = Int32Proxy.Deserialize(bytes);
@@ -101,25 +132,40 @@ export default class AuthenticationWebService extends BaseWebService {
         const publicProfile = await PublicProfile.findOne({ where: { Cmid: cmid } });
 
         if (!publicProfile) {
-          AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView({
-            Result: AccountCompletionResult.InvalidData,
-          }));
+          AccountCompletionResultViewProxy.Serialize(
+            outputStream,
+            new AccountCompletionResultView({
+              Result: AccountCompletionResult.InvalidData,
+            }),
+          );
         } else if (publicProfile.Name.trim().length) {
-          AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView({
-            Result: AccountCompletionResult.AlreadyCompletedAccount,
-          }));
+          AccountCompletionResultViewProxy.Serialize(
+            outputStream,
+            new AccountCompletionResultView({
+              Result: AccountCompletionResult.AlreadyCompletedAccount,
+            }),
+          );
         } else if ((await PublicProfile.findOne({ where: { Name: name } })) != null) {
-          AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView({
-            Result: AccountCompletionResult.DuplicateName,
-          }));
+          AccountCompletionResultViewProxy.Serialize(
+            outputStream,
+            new AccountCompletionResultView({
+              Result: AccountCompletionResult.DuplicateName,
+            }),
+          );
         } else if (name.length < 3 || !name.match(/^[a-zA-Z0-9_]+$/)) {
-          AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView({
-            Result: AccountCompletionResult.InvalidName,
-          }));
+          AccountCompletionResultViewProxy.Serialize(
+            outputStream,
+            new AccountCompletionResultView({
+              Result: AccountCompletionResult.InvalidName,
+            }),
+          );
         } else if (this.ProfanityFilter.DetectAllProfanities(name).length > 0) {
-          AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView({
-            Result: AccountCompletionResult.InvalidName,
-          }));
+          AccountCompletionResultViewProxy.Serialize(
+            outputStream,
+            new AccountCompletionResultView({
+              Result: AccountCompletionResult.InvalidName,
+            }),
+          );
         } else {
           await publicProfile.update({
             Name: name,
@@ -187,29 +233,32 @@ export default class AuthenticationWebService extends BaseWebService {
             },
           ]);
 
-          MemberWallet.update(
-            { Points: Sequelize.literal('Points + 2000') },
-            { where: { Cmid: cmid } },
+          MemberWallet.update({ Points: Sequelize.literal('Points + 2000') }, { where: { Cmid: cmid } });
+
+          PlayerLoadout.update(
+            {
+              MeleeWeapon: UberstrikeInventoryItem.TheSplatbat,
+              Weapon1: UberstrikeInventoryItem.MachineGun,
+              Weapon2: UberstrikeInventoryItem.ShotGun,
+              Weapon3: UberstrikeInventoryItem.SniperRifle,
+            },
+            {
+              where: { Cmid: cmid },
+            },
           );
 
-          PlayerLoadout.update({
-            MeleeWeapon: UberstrikeInventoryItem.TheSplatbat,
-            Weapon1: UberstrikeInventoryItem.MachineGun,
-            Weapon2: UberstrikeInventoryItem.ShotGun,
-            Weapon3: UberstrikeInventoryItem.SniperRifle,
-          }, {
-            where: { Cmid: cmid },
-          });
-
-          AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView({
-            Result: AccountCompletionResult.Ok,
-            ItemsAttributed: {
-              [UberstrikeInventoryItem.TheSplatbat]: 1,
-              [UberstrikeInventoryItem.MachineGun]: 1,
-              [UberstrikeInventoryItem.ShotGun]: 1,
-              [UberstrikeInventoryItem.SniperRifle]: 1,
-            },
-          }));
+          AccountCompletionResultViewProxy.Serialize(
+            outputStream,
+            new AccountCompletionResultView({
+              Result: AccountCompletionResult.Ok,
+              ItemsAttributed: {
+                [UberstrikeInventoryItem.TheSplatbat]: 1,
+                [UberstrikeInventoryItem.MachineGun]: 1,
+                [UberstrikeInventoryItem.ShotGun]: 1,
+                [UberstrikeInventoryItem.SniperRifle]: 1,
+              },
+            }),
+          );
         }
       }
 
@@ -225,7 +274,9 @@ export default class AuthenticationWebService extends BaseWebService {
 
   public static async LoginMemberEmail(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const email = StringProxy.Deserialize(bytes);
@@ -238,14 +289,20 @@ export default class AuthenticationWebService extends BaseWebService {
       const userAccount = await UserAccount.findOne({ where: { EmailAddress: email } });
 
       if (!userAccount) {
-        MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView({
-          MemberAuthenticationResult: MemberAuthenticationResult.InvalidEmail,
-        }));
+        MemberAuthenticationResultViewProxy.Serialize(
+          outputStream,
+          new MemberAuthenticationResultView({
+            MemberAuthenticationResult: MemberAuthenticationResult.InvalidEmail,
+          }),
+        );
       } else {
         if (!bcrypt.compareSync(password, userAccount.Password)) {
-          MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView({
-            MemberAuthenticationResult: MemberAuthenticationResult.InvalidPassword,
-          }));
+          MemberAuthenticationResultViewProxy.Serialize(
+            outputStream,
+            new MemberAuthenticationResultView({
+              MemberAuthenticationResult: MemberAuthenticationResult.InvalidPassword,
+            }),
+          );
         } else {
           const bannedMember = await ModerationAction.findOne({
             where: {
@@ -255,9 +312,12 @@ export default class AuthenticationWebService extends BaseWebService {
           });
 
           if (bannedMember && (!bannedMember.ExpireTime || bannedMember.ExpireTime > new Date())) {
-            MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView({
-              MemberAuthenticationResult: MemberAuthenticationResult.IsBanned,
-            }));
+            MemberAuthenticationResultViewProxy.Serialize(
+              outputStream,
+              new MemberAuthenticationResultView({
+                MemberAuthenticationResult: MemberAuthenticationResult.IsBanned,
+              }),
+            );
           } else {
             const publicProfile = await PublicProfile.findOne({ where: { Cmid: userAccount.Cmid } });
 
@@ -297,7 +357,11 @@ export default class AuthenticationWebService extends BaseWebService {
                 WeaponStatistics: new PlayerWeaponStatisticsView(),
               });
 
-              const session = await global.SessionManager.findOrCreateSession(publicProfile as PublicProfileView, machineId, userAccount);
+              const session = await global.SessionManager.findOrCreateSession(
+                publicProfile as PublicProfileView,
+                machineId,
+                userAccount,
+              );
 
               const memberAuth = new MemberAuthenticationResultView({
                 MemberAuthenticationResult: MemberAuthenticationResult.Ok,
@@ -321,46 +385,58 @@ export default class AuthenticationWebService extends BaseWebService {
               const memberWallet = await MemberWallet.findOne({ where: { Cmid: userAccount.Cmid } });
               const playerStatistics = await PlayerStatistics.findOne({ where: { Cmid: userAccount.Cmid } });
 
-              const session = await global.SessionManager.findOrCreateSession(publicProfile as PublicProfileView, machineId, userAccount);
+              const session = await global.SessionManager.findOrCreateSession(
+                publicProfile as PublicProfileView,
+                machineId,
+                userAccount,
+              );
 
               let clan;
               if (publicProfile.Name.trim().length > 0) {
                 clan = await Clan.findOne({
-                  include: [{
-                    model: ClanMember,
-                    as: 'Members',
-                  }],
+                  include: [
+                    {
+                      model: ClanMember,
+                      as: 'Members',
+                    },
+                  ],
                 });
 
                 if (clan) {
                   const clanMember = clan.Members.find((_) => _.Cmid === userAccount!.Cmid);
 
                   if (clanMember) {
-                    ClanMember.update({
-                      Lastlogin: new Date(),
-                    }, {
-                      where: {
-                        GroupId: clan.GroupId,
-                        Cmid: clanMember.Cmid,
+                    ClanMember.update(
+                      {
+                        Lastlogin: new Date(),
                       },
-                    });
+                      {
+                        where: {
+                          GroupId: clan.GroupId,
+                          Cmid: clanMember.Cmid,
+                        },
+                      },
+                    );
                   }
                 }
 
                 Log.info(`${publicProfile.Name}(${publicProfile.Cmid}) logged in.`);
               }
 
-              MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView({
-                MemberAuthenticationResult: MemberAuthenticationResult.Ok,
-                MemberView: new MemberView({
-                  PublicProfile: new PublicProfileView({ ...publicProfile.get({ plain: true }) }),
-                  MemberWallet: new MemberWalletView({ ...memberWallet!.get({ plain: true }) }),
+              MemberAuthenticationResultViewProxy.Serialize(
+                outputStream,
+                new MemberAuthenticationResultView({
+                  MemberAuthenticationResult: MemberAuthenticationResult.Ok,
+                  MemberView: new MemberView({
+                    PublicProfile: new PublicProfileView({ ...publicProfile.get({ plain: true }) }),
+                    MemberWallet: new MemberWalletView({ ...memberWallet!.get({ plain: true }) }),
+                  }),
+                  PlayerStatisticsView: new PlayerStatisticsView({ ...playerStatistics!.get({ plain: true }) }),
+                  IsAccountComplete: publicProfile.Name.trim().length > 0,
+                  AuthToken: session.SessionId,
+                  WeeklySpecial: this.weeklySpecial,
                 }),
-                PlayerStatisticsView: new PlayerStatisticsView({ ...playerStatistics!.get({ plain: true }) }),
-                IsAccountComplete: publicProfile.Name.trim().length > 0,
-                AuthToken: session.SessionId,
-                WeeklySpecial: this.weeklySpecial,
-              }));
+              );
             }
           }
         }
@@ -378,7 +454,9 @@ export default class AuthenticationWebService extends BaseWebService {
 
   public static async LoginMemberCookie(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const cmid = Int32Proxy.Deserialize(bytes);
@@ -403,7 +481,9 @@ export default class AuthenticationWebService extends BaseWebService {
 
   public static async LoginMemberFacebook(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const facebookId = StringProxy.Deserialize(bytes);
@@ -425,7 +505,9 @@ export default class AuthenticationWebService extends BaseWebService {
 
   public static async FacebookSingleSignOn(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const authToken = StringProxy.Deserialize(bytes);

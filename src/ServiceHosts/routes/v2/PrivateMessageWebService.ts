@@ -2,19 +2,30 @@ import { PrivateMessage, PublicProfile } from '@/models';
 import { ApiVersion } from '@/utils';
 import { MessageThreadView, PrivateMessageView } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
-  BooleanProxy, Int32Proxy, ListProxy, MessageThreadViewProxy, PrivateMessageViewProxy, StringProxy,
+  BooleanProxy,
+  Int32Proxy,
+  ListProxy,
+  MessageThreadViewProxy,
+  PrivateMessageViewProxy,
+  StringProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import { Op } from 'sequelize';
 import BaseWebService from '../BaseWebService';
 
 export default class PrivateMessageWebService extends BaseWebService {
-  public static get ServiceName(): string { return 'PrivateMessageWebService'; }
-  public static get ServiceVersion(): string { return ApiVersion.Current; }
+  public static get ServiceName(): string {
+    return 'PrivateMessageWebService';
+  }
+  public static get ServiceVersion(): string {
+    return ApiVersion.Current;
+  }
   // protected static get ServiceInterface(): string { return 'IPrivateMessageWebServiceContract'; }
 
   public static async DeleteThread(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const authToken = StringProxy.Deserialize(bytes);
@@ -29,13 +40,16 @@ export default class PrivateMessageWebService extends BaseWebService {
         if (steamMember) {
           const messages = await PrivateMessage.findAll({
             where: {
-              [Op.or]: [{
-                FromCmid: steamMember.Cmid,
-                ToCmid: otherCmid,
-              }, {
-                FromCmid: otherCmid,
-                ToCmid: steamMember.Cmid,
-              }],
+              [Op.or]: [
+                {
+                  FromCmid: steamMember.Cmid,
+                  ToCmid: otherCmid,
+                },
+                {
+                  FromCmid: otherCmid,
+                  ToCmid: steamMember.Cmid,
+                },
+              ],
             },
           });
 
@@ -63,7 +77,9 @@ export default class PrivateMessageWebService extends BaseWebService {
 
   public static async GetAllMessageThreadsForUser(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const authToken = StringProxy.Deserialize(bytes);
@@ -76,14 +92,16 @@ export default class PrivateMessageWebService extends BaseWebService {
         const steamMember = await session.SteamMember;
 
         if (steamMember) {
-          const messages = (await PrivateMessage.findAll({
-            where: {
-              [Op.or]: {
-                FromCmid: steamMember.Cmid,
-                ToCmid: steamMember.Cmid,
+          const messages = (
+            await PrivateMessage.findAll({
+              where: {
+                [Op.or]: {
+                  FromCmid: steamMember.Cmid,
+                  ToCmid: steamMember.Cmid,
+                },
               },
-            },
-          })).reduce((acc: any, curr: PrivateMessage) => {
+            })
+          ).reduce((acc: any, curr: PrivateMessage) => {
             const threadId = [curr.FromCmid, curr.ToCmid].sort().join(',');
 
             if (!acc[threadId]) {
@@ -97,7 +115,11 @@ export default class PrivateMessageWebService extends BaseWebService {
           const threads: List<MessageThreadView> = [];
 
           for (const messageGroup of Object.values(messages)) {
-            const filteredMessages = (messageGroup as any).find((_) => (_.FromCmid === steamMember.Cmid && !_.IsDeletedBySender) || (_.ToCmid === steamMember.Cmid && !_.IsDeletedByReceiver));
+            const filteredMessages = (messageGroup as any).find(
+              (_) =>
+                (_.FromCmid === steamMember.Cmid && !_.IsDeletedBySender) ||
+                (_.ToCmid === steamMember.Cmid && !_.IsDeletedByReceiver),
+            );
 
             if (filteredMessages.length) {
               const message = filteredMessages[filteredMessages.length - 1];
@@ -106,14 +128,16 @@ export default class PrivateMessageWebService extends BaseWebService {
               const otherProfile = await PublicProfile.findOne({ where: { Cmid: otherCmid } });
 
               if (otherProfile) {
-                threads.push(new MessageThreadView({
-                  ThreadId: otherCmid,
-                  ThreadName: otherProfile.Name,
-                  MessageCount: filteredMessages.length,
-                  LastMessagePreview: message.ContentText,
-                  LastUpdate: message.DateSent,
-                  HasNewMessages: filteredMessages.some((_) => _.ToCmid === steamMember.Cmid && !_.IsRead),
-                }));
+                threads.push(
+                  new MessageThreadView({
+                    ThreadId: otherCmid,
+                    ThreadName: otherProfile.Name,
+                    MessageCount: filteredMessages.length,
+                    LastMessagePreview: message.ContentText,
+                    LastUpdate: message.DateSent,
+                    HasNewMessages: filteredMessages.some((_) => _.ToCmid === steamMember.Cmid && !_.IsRead),
+                  }),
+                );
               }
             }
           }
@@ -134,7 +158,9 @@ export default class PrivateMessageWebService extends BaseWebService {
 
   public static async GetMessageWithIdForCmid(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const authToken = StringProxy.Deserialize(bytes);
@@ -150,18 +176,24 @@ export default class PrivateMessageWebService extends BaseWebService {
           const message = await PrivateMessage.findOne({
             where: {
               PrivateMessageId: messageId,
-              [Op.or]: [{
-                FromCmid: steamMember.Cmid,
-                IsDeletedBySender: false,
-              }, {
-                ToCmid: steamMember.Cmid,
-                IsDeletedByReceiver: false,
-              }],
+              [Op.or]: [
+                {
+                  FromCmid: steamMember.Cmid,
+                  IsDeletedBySender: false,
+                },
+                {
+                  ToCmid: steamMember.Cmid,
+                  IsDeletedByReceiver: false,
+                },
+              ],
             },
           });
 
           if (message) {
-            PrivateMessageViewProxy.Serialize(outputStream, new PrivateMessageView({ ...message.get({ plain: true }) }));
+            PrivateMessageViewProxy.Serialize(
+              outputStream,
+              new PrivateMessageView({ ...message.get({ plain: true }) }),
+            );
           }
         }
       }
@@ -178,7 +210,9 @@ export default class PrivateMessageWebService extends BaseWebService {
 
   public static async GetThreadMessages(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const authToken = StringProxy.Deserialize(bytes);
@@ -194,19 +228,26 @@ export default class PrivateMessageWebService extends BaseWebService {
         if (steamMember) {
           const messages = await PrivateMessage.findAll({
             where: {
-              [Op.or]: [{
-                FromCmid: steamMember.Cmid,
-                ToCmid: otherCmid,
-                IsDeletedBySender: false,
-              }, {
-                FromCmid: otherCmid,
-                ToCmid: steamMember.Cmid,
-                IsDeletedByReceiver: false,
-              }],
+              [Op.or]: [
+                {
+                  FromCmid: steamMember.Cmid,
+                  ToCmid: otherCmid,
+                  IsDeletedBySender: false,
+                },
+                {
+                  FromCmid: otherCmid,
+                  ToCmid: steamMember.Cmid,
+                  IsDeletedByReceiver: false,
+                },
+              ],
             },
           });
 
-          ListProxy.Serialize<PrivateMessageView>(outputStream, messages as PrivateMessageView[], PrivateMessageViewProxy.Serialize);
+          ListProxy.Serialize<PrivateMessageView>(
+            outputStream,
+            messages as PrivateMessageView[],
+            PrivateMessageViewProxy.Serialize,
+          );
         }
       }
 
@@ -222,7 +263,9 @@ export default class PrivateMessageWebService extends BaseWebService {
 
   public static async MarkThreadAsRead(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const authToken = StringProxy.Deserialize(bytes);
@@ -265,7 +308,9 @@ export default class PrivateMessageWebService extends BaseWebService {
 
   public static async SendMessage(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const authToken = StringProxy.Deserialize(bytes);

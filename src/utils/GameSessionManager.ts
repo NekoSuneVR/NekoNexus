@@ -11,19 +11,26 @@ export default class GameSessionManager {
 
   constructor() {
     if (!GameSessionManager.GarbageCollector) {
-      GameSessionManager.GarbageCollector = setInterval(() => {
-        GameSession.destroy({
-          where: {
-            ExpireTime: {
-              [Op.lte]: new Date(),
+      GameSessionManager.GarbageCollector = setInterval(
+        () => {
+          GameSession.destroy({
+            where: {
+              ExpireTime: {
+                [Op.lte]: new Date(),
+              },
             },
-          },
-        });
-      }, 1000 * 60 * 5);
+          });
+        },
+        1000 * 60 * 5,
+      );
     }
   }
 
-  public async findOrCreateSession(profile: PublicProfileView, machineId: string, userAccount: UserAccount): Promise<any> {
+  public async findOrCreateSession(
+    profile: PublicProfileView,
+    machineId: string,
+    userAccount: UserAccount,
+  ): Promise<any> {
     const expireTime = new Date();
     expireTime.setHours(expireTime.getHours() + SESSION_EXPIRE_HOURS);
 
@@ -49,7 +56,11 @@ export default class GameSessionManager {
     return session;
   }
 
-  public async findOrCreateSessionForSteamUser(profile: PublicProfileView, machineId: string, steamMember: SteamMember): Promise<any> {
+  public async findOrCreateSessionForSteamUser(
+    profile: PublicProfileView,
+    machineId: string,
+    steamMember: SteamMember,
+  ): Promise<any> {
     const expireTime = new Date();
     expireTime.setHours(expireTime.getHours() + SESSION_EXPIRE_HOURS);
 
@@ -79,7 +90,7 @@ export default class GameSessionManager {
     const sessionId: Buffer = Buffer.alloc(20);
 
     const seed = this.Seed;
-    this.Seed = (this.Seed + 1n) & 0xFFFFFFFFFFFFFFn;
+    this.Seed = (this.Seed + 1n) & 0xffffffffffffffn;
 
     sessionId.writeInt32LE(cmid);
     sessionId.writeBigInt64LE(BigInt(new Date().getTime()), 4);
@@ -92,7 +103,7 @@ export default class GameSessionManager {
     const sessionId: Buffer = Buffer.alloc(20);
 
     const seed = this.Seed;
-    this.Seed = (this.Seed + 1n) & 0xFFFFFFFFFFFFFFn;
+    this.Seed = (this.Seed + 1n) & 0xffffffffffffffn;
 
     sessionId.writeInt32LE(cmid);
     sessionId.writeBigInt64LE(steamId, 4);

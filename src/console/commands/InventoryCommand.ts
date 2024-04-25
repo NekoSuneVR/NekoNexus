@@ -9,13 +9,13 @@ export default class InventoryCommand extends ParadiseCommand {
   public static override Command: string = 'inventory';
   public static override Aliases: string[] = ['inv'];
 
-  public override Description: string = 'Adds or removes items from a player\'s inventory.';
+  public override Description: string = "Adds or removes items from a player's inventory.";
   public override HelpString: string = `${InventoryCommand.Command}\t${this.Description}`;
 
   public override UsageText: string[] = [
     `${InventoryCommand.Command}: ${this.Description}`,
-    '  give <name> <item> [<amount>]\t\tAdds the specified item to a player\'s inventory.',
-    '  take <name> <item>\t\tRemoves the specified item from a player\'s inventory.',
+    "  give <name> <item> [<amount>]\t\tAdds the specified item to a player's inventory.",
+    "  take <name> <item>\t\tRemoves the specified item from a player's inventory.",
     '  set <name> <slot> <item>\tSets the specified inventory slot to a specific item.',
   ];
 
@@ -108,23 +108,31 @@ export default class InventoryCommand extends ParadiseCommand {
 
         if (playerLoadout) {
           await playerLoadout.update({
-            Head: ((playerLoadout.Head === itemId) ? 0 : playerLoadout.Head) as UberstrikeInventoryItem,
-            Gloves: ((playerLoadout.Gloves === itemId) ? 0 : playerLoadout.Gloves) as UberstrikeInventoryItem,
-            UpperBody: ((playerLoadout.UpperBody === itemId) ? 0 : playerLoadout.UpperBody) as UberstrikeInventoryItem,
-            LowerBody: ((playerLoadout.LowerBody === itemId) ? 0 : playerLoadout.LowerBody) as UberstrikeInventoryItem,
-            Boots: ((playerLoadout.Boots === itemId) ? 0 : playerLoadout.Boots) as UberstrikeInventoryItem,
-            Face: ((playerLoadout.Face === itemId) ? 0 : playerLoadout.Face) as UberstrikeInventoryItem,
-            Webbing: ((playerLoadout.Webbing === itemId) ? 0 : playerLoadout.Webbing) as UberstrikeInventoryItem,
-            MeleeWeapon: ((playerLoadout.MeleeWeapon === itemId) ? 0 : playerLoadout.MeleeWeapon) as UberstrikeInventoryItem,
-            Weapon1: ((playerLoadout.Weapon1 === itemId) ? 0 : playerLoadout.Weapon1) as UberstrikeInventoryItem,
-            Weapon2: ((playerLoadout.Weapon2 === itemId) ? 0 : playerLoadout.Weapon2) as UberstrikeInventoryItem,
-            Weapon3: ((playerLoadout.Weapon3 === itemId) ? 0 : playerLoadout.Weapon3) as UberstrikeInventoryItem,
-            QuickItem1: ((playerLoadout.QuickItem1 === itemId) ? 0 : playerLoadout.QuickItem1) as UberstrikeInventoryItem,
-            QuickItem2: ((playerLoadout.QuickItem2 === itemId) ? 0 : playerLoadout.QuickItem2) as UberstrikeInventoryItem,
-            QuickItem3: ((playerLoadout.QuickItem3 === itemId) ? 0 : playerLoadout.QuickItem3) as UberstrikeInventoryItem,
-            FunctionalItem1: ((playerLoadout.FunctionalItem1 === itemId) ? 0 : playerLoadout.FunctionalItem1) as UberstrikeInventoryItem,
-            FunctionalItem2: ((playerLoadout.FunctionalItem2 === itemId) ? 0 : playerLoadout.FunctionalItem2) as UberstrikeInventoryItem,
-            FunctionalItem3: ((playerLoadout.FunctionalItem3 === itemId) ? 0 : playerLoadout.FunctionalItem3) as UberstrikeInventoryItem,
+            Head: (playerLoadout.Head === itemId ? 0 : playerLoadout.Head) as UberstrikeInventoryItem,
+            Gloves: (playerLoadout.Gloves === itemId ? 0 : playerLoadout.Gloves) as UberstrikeInventoryItem,
+            UpperBody: (playerLoadout.UpperBody === itemId ? 0 : playerLoadout.UpperBody) as UberstrikeInventoryItem,
+            LowerBody: (playerLoadout.LowerBody === itemId ? 0 : playerLoadout.LowerBody) as UberstrikeInventoryItem,
+            Boots: (playerLoadout.Boots === itemId ? 0 : playerLoadout.Boots) as UberstrikeInventoryItem,
+            Face: (playerLoadout.Face === itemId ? 0 : playerLoadout.Face) as UberstrikeInventoryItem,
+            Webbing: (playerLoadout.Webbing === itemId ? 0 : playerLoadout.Webbing) as UberstrikeInventoryItem,
+            MeleeWeapon: (playerLoadout.MeleeWeapon === itemId
+              ? 0
+              : playerLoadout.MeleeWeapon) as UberstrikeInventoryItem,
+            Weapon1: (playerLoadout.Weapon1 === itemId ? 0 : playerLoadout.Weapon1) as UberstrikeInventoryItem,
+            Weapon2: (playerLoadout.Weapon2 === itemId ? 0 : playerLoadout.Weapon2) as UberstrikeInventoryItem,
+            Weapon3: (playerLoadout.Weapon3 === itemId ? 0 : playerLoadout.Weapon3) as UberstrikeInventoryItem,
+            QuickItem1: (playerLoadout.QuickItem1 === itemId ? 0 : playerLoadout.QuickItem1) as UberstrikeInventoryItem,
+            QuickItem2: (playerLoadout.QuickItem2 === itemId ? 0 : playerLoadout.QuickItem2) as UberstrikeInventoryItem,
+            QuickItem3: (playerLoadout.QuickItem3 === itemId ? 0 : playerLoadout.QuickItem3) as UberstrikeInventoryItem,
+            FunctionalItem1: (playerLoadout.FunctionalItem1 === itemId
+              ? 0
+              : playerLoadout.FunctionalItem1) as UberstrikeInventoryItem,
+            FunctionalItem2: (playerLoadout.FunctionalItem2 === itemId
+              ? 0
+              : playerLoadout.FunctionalItem2) as UberstrikeInventoryItem,
+            FunctionalItem3: (playerLoadout.FunctionalItem3 === itemId
+              ? 0
+              : playerLoadout.FunctionalItem3) as UberstrikeInventoryItem,
           });
         }
 
@@ -206,11 +214,14 @@ export default class InventoryCommand extends ParadiseCommand {
       where: {
         Cmid: cmid,
         ItemId: itemId,
-        [Op.or]: [{
-          ExpirationDate: { [Op.gt]: new Date() },
-        }, {
-          ExpirationDate: null,
-        }],
+        [Op.or]: [
+          {
+            ExpirationDate: { [Op.gt]: new Date() },
+          },
+          {
+            ExpirationDate: null,
+          },
+        ],
       },
     });
 

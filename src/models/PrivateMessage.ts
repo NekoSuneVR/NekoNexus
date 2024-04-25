@@ -26,24 +26,27 @@ export default class PrivateMessage extends Model<PrivateMessageAttributes> {
   declare IsDeletedByReceiver: boolean;
 
   public static initialize(sequelize: Sequelize) {
-    PrivateMessage.init({
-      PrivateMessageId: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+    PrivateMessage.init(
+      {
+        PrivateMessageId: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        FromCmid: DataTypes.INTEGER,
+        FromName: DataTypes.STRING(18),
+        ToCmid: DataTypes.INTEGER,
+        DateSent: DataTypes.DATE,
+        ContentText: DataTypes.TEXT,
+        IsRead: DataTypes.BOOLEAN,
+        HasAttachment: DataTypes.BOOLEAN,
+        IsDeletedBySender: DataTypes.BOOLEAN,
+        IsDeletedByReceiver: DataTypes.BOOLEAN,
       },
-      FromCmid: DataTypes.INTEGER,
-      FromName: DataTypes.STRING(18),
-      ToCmid: DataTypes.INTEGER,
-      DateSent: DataTypes.DATE,
-      ContentText: DataTypes.TEXT,
-      IsRead: DataTypes.BOOLEAN,
-      HasAttachment: DataTypes.BOOLEAN,
-      IsDeletedBySender: DataTypes.BOOLEAN,
-      IsDeletedByReceiver: DataTypes.BOOLEAN,
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+      {
+        sequelize,
+        timestamps: false,
+      },
+    );
   }
 
   public static associate({ PublicProfile }) {

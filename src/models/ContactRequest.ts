@@ -21,22 +21,25 @@ export default class ContactRequest extends Model<ContactRequestAttributes> {
   declare SentDate: Date;
 
   public static initialize(sequelize: Sequelize) {
-    ContactRequest.init({
-      RequestId: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
+    ContactRequest.init(
+      {
+        RequestId: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        InitiatorCmid: DataTypes.INTEGER,
+        InitiatorName: DataTypes.STRING(18),
+        ReceiverCmid: DataTypes.INTEGER,
+        InitiatorMessage: DataTypes.TEXT,
+        Status: DataTypes.INTEGER,
+        SentDate: DataTypes.DATE,
       },
-      InitiatorCmid: DataTypes.INTEGER,
-      InitiatorName: DataTypes.STRING(18),
-      ReceiverCmid: DataTypes.INTEGER,
-      InitiatorMessage: DataTypes.TEXT,
-      Status: DataTypes.INTEGER,
-      SentDate: DataTypes.DATE,
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+      {
+        sequelize,
+        timestamps: false,
+      },
+    );
   }
 
   public static associate({ PublicProfile }) {

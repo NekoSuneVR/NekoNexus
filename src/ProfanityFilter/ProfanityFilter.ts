@@ -107,7 +107,9 @@ export default class ProfanityFilter extends ProfanityBase implements IProfanity
       swearList = swearList.filter((x) => swearList.some((y) => x !== y && y.includes(x)));
     }
 
-    return this.FilterSwearListForCompleteWordsOnly(sentence, swearList).filter((value, index, array) => array.indexOf(value) === index);
+    return this.FilterSwearListForCompleteWordsOnly(sentence, swearList).filter(
+      (value, index, array) => array.indexOf(value) === index,
+    );
   }
 
   /**
@@ -155,7 +157,13 @@ export default class ProfanityFilter extends ProfanityBase implements IProfanity
     // Catch whether multi-word profanities are in the allow list filtered sentence.
     this.AddMultiWordProfanities(swearList, ProfanityFilter.ConvertWordListToSentence(postAllowList));
 
-    return this.CensorStringByProfanityList(censorCharacter, swearList, String(sentence), String(sentence), ignoreNumbers);
+    return this.CensorStringByProfanityList(
+      censorCharacter,
+      swearList,
+      String(sentence),
+      String(sentence),
+      ignoreNumbers,
+    );
   }
 
   /**
@@ -239,7 +247,13 @@ export default class ProfanityFilter extends ProfanityBase implements IProfanity
     return false;
   }
 
-  private CensorStringByProfanityList(censorCharacter: string, swearList: string[], censored: string, tracker: string, ignoreNumeric: boolean) {
+  private CensorStringByProfanityList(
+    censorCharacter: string,
+    swearList: string[],
+    censored: string,
+    tracker: string,
+    ignoreNumeric: boolean,
+  ) {
     for (const word of swearList.sort((a, b) => b.length - a.length)) {
       let result: [int, int, string] | null = [0, 0, ''];
       const multiword = word.split(' ');

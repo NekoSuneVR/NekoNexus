@@ -12,7 +12,9 @@ export default class HelpCommand extends ParadiseCommand {
 
   public override async Run(args: string[]): Promise<any> {
     if (args.length) {
-      const commandObj = CommandHandler.Commands.find((_) => _.Command.localeCompare(args[0], undefined, { sensitivity: 'base' }) === 0);
+      const commandObj = CommandHandler.Commands.find(
+        (_) => _.Command.localeCompare(args[0], undefined, { sensitivity: 'base' }) === 0,
+      );
 
       if (commandObj) {
         /* eslint-disable new-cap */
@@ -26,7 +28,9 @@ export default class HelpCommand extends ParadiseCommand {
       this.WriteLine('Use "help <command>" to get help for a specific command.');
       this.WriteLine('Available commands:\n');
 
-      for (const commandObj of CommandHandler.Commands.toSorted((a, b) => a.Command.localeCompare(b.Command, undefined, { sensitivity: 'base' }))) {
+      for (const commandObj of CommandHandler.Commands.toSorted((a, b) =>
+        a.Command.localeCompare(b.Command, undefined, { sensitivity: 'base' }),
+      )) {
         /* eslint-disable new-cap */
         const cmd = new commandObj('');
         this.WriteLine(cmd.HelpString);

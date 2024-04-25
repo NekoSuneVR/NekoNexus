@@ -3,13 +3,19 @@ import { Int32Proxy, StringProxy } from '@festivaldev/uberstrike-js/UberStrike/C
 import BaseWebService from '../BaseWebService';
 
 export default class ModerationWebService extends BaseWebService {
-  public static get ServiceName(): string { return 'ModerationWebService'; }
-  public static get ServiceVersion(): string { return ApiVersion.Legacy102; }
+  public static get ServiceName(): string {
+    return 'ModerationWebService';
+  }
+  public static get ServiceVersion(): string {
+    return ApiVersion.Legacy102;
+  }
   // protected static get ServiceInterface(): string { return 'IModerationWebServiceContract'; }
 
   public static async BanPermanently(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const sourceCmid = Int32Proxy.Deserialize(bytes);

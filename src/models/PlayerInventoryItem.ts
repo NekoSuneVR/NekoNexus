@@ -15,24 +15,27 @@ export default class PlayerInventoryItem extends Model<PlayerInventoryItemAttrib
   declare AmountRemaining: number;
 
   public static initialize(sequelize: Sequelize) {
-    PlayerInventoryItem.init({
-      Cmid: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+    PlayerInventoryItem.init(
+      {
+        Cmid: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        ItemId: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        ExpirationDate: {
+          type: DataTypes.DATE,
+          allowNull: true,
+        },
+        AmountRemaining: DataTypes.INTEGER,
       },
-      ItemId: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+      {
+        sequelize,
+        timestamps: false,
       },
-      ExpirationDate: {
-        type: DataTypes.DATE,
-        allowNull: true,
-      },
-      AmountRemaining: DataTypes.INTEGER,
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+    );
   }
 
   public static associate({ PublicProfile }) {

@@ -1,7 +1,5 @@
 import { EmailAddressStatus, MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
-import {
-  DataTypes, Model, Op, Utils, type Sequelize,
-} from 'sequelize';
+import { DataTypes, Model, Op, Utils, type Sequelize } from 'sequelize';
 
 export interface PublicProfileAttributes {
   Cmid?: number;
@@ -25,31 +23,34 @@ export default class PublicProfile extends Model<PublicProfileAttributes> {
   declare FacebookId: string;
 
   public static initialize(sequelize: Sequelize) {
-    PublicProfile.init({
-      Cmid: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+    PublicProfile.init(
+      {
+        Cmid: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        Name: {
+          type: DataTypes.STRING(18),
+          // unique: true,
+        },
+        IsChatDisabled: {
+          type: DataTypes.BOOLEAN,
+          defaultValue: false,
+        },
+        AccessLevel: {
+          type: DataTypes.INTEGER,
+          defaultValue: MemberAccessLevel.Default,
+        },
+        GroupTag: DataTypes.STRING(5),
+        LastLoginDate: DataTypes.DATE,
+        EmailAddressStatus: DataTypes.INTEGER,
+        FacebookId: DataTypes.STRING,
       },
-      Name: {
-        type: DataTypes.STRING(18),
-        // unique: true,
+      {
+        sequelize,
+        timestamps: false,
       },
-      IsChatDisabled: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
-      AccessLevel: {
-        type: DataTypes.INTEGER,
-        defaultValue: MemberAccessLevel.Default,
-      },
-      GroupTag: DataTypes.STRING(5),
-      LastLoginDate: DataTypes.DATE,
-      EmailAddressStatus: DataTypes.INTEGER,
-      FacebookId: DataTypes.STRING,
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+    );
   }
 
   public static associate(_) {}

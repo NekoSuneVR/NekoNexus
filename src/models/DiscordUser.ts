@@ -14,24 +14,27 @@ export default class DiscordUser extends Model<DiscordUserAttributes> {
   declare Completed: boolean;
 
   public static initialize(sequelize: Sequelize) {
-    DiscordUser.init({
-      Cmid: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+    DiscordUser.init(
+      {
+        Cmid: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        DiscordUserId: DataTypes.STRING,
+        Nonce: {
+          type: DataTypes.TEXT,
+          unique: true,
+        },
+        Completed: {
+          type: DataTypes.BOOLEAN,
+          defaultValue: false,
+        },
       },
-      DiscordUserId: DataTypes.STRING,
-      Nonce: {
-        type: DataTypes.TEXT,
-        unique: true,
+      {
+        sequelize,
+        timestamps: false,
       },
-      Completed: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+    );
   }
 
   public static associate({ PublicProfile }) {

@@ -1,4 +1,8 @@
-import { BuyingDurationType, PackType, UberStrikeCurrencyType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
+import {
+  BuyingDurationType,
+  PackType,
+  UberStrikeCurrencyType,
+} from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { DataTypes, Model, type Sequelize } from 'sequelize';
 
 export interface ShopItemPriceAttributes {
@@ -21,28 +25,31 @@ export default class ShopItemPrice extends Model<ShopItemPriceAttributes> {
   declare Duration: BuyingDurationType;
 
   public static initialize(sequelize: Sequelize) {
-    ShopItemPrice.init({
-      ID: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+    ShopItemPrice.init(
+      {
+        ID: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        Price: DataTypes.INTEGER,
+        Currency: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        Discount: DataTypes.INTEGER,
+        Amount: DataTypes.INTEGER,
+        PackType: DataTypes.INTEGER,
+        Duration: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
       },
-      Price: DataTypes.INTEGER,
-      Currency: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+      {
+        sequelize,
+        timestamps: false,
       },
-      Discount: DataTypes.INTEGER,
-      Amount: DataTypes.INTEGER,
-      PackType: DataTypes.INTEGER,
-      Duration: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-      },
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+    );
   }
 
-  public static associate(_) { }
+  public static associate(_) {}
 }

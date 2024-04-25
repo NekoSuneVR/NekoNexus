@@ -6,7 +6,10 @@ import models, { DiscordUser } from '@/models';
 import { Log } from '@/utils';
 import { MemberAccessLevel, PhotonUsageType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
-  CommActorInfo, EndOfMatchData, GameActorInfo, GameRoomData,
+  CommActorInfo,
+  EndOfMatchData,
+  GameActorInfo,
+  GameRoomData,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Models';
 import { GameModeType } from '@festivaldev/uberstrike-js/UberStrike/Core/Types';
 import crypto from 'crypto';
@@ -14,8 +17,14 @@ import {
   ActivityType,
   CategoryChannel,
   ChannelType,
-  Client, Colors, EmbedBuilder, Events, GatewayIntentBits,
-  Message, Partials, TextChannel,
+  Client,
+  Colors,
+  EmbedBuilder,
+  Events,
+  GatewayIntentBits,
+  Message,
+  Partials,
+  TextChannel,
   WebhookClient,
 } from 'discord.js';
 import { Op } from 'sequelize';
@@ -26,7 +35,7 @@ enum GAME_FLAGS {
   LowGravity = 0x1,
   NoArmor = 0x2,
   QuickSwitch = 0x4,
-  MeleeOnly = 0x8
+  MeleeOnly = 0x8,
 }
 
 export default class DiscordClient {
@@ -73,10 +82,7 @@ export default class DiscordClient {
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMembers,
       ],
-      partials: [
-        Partials.Channel,
-        Partials.Message,
-      ],
+      partials: [Partials.Channel, Partials.Message],
     });
 
     const loginPromise = new Promise<void>((resolve, reject) => {
@@ -95,18 +101,27 @@ export default class DiscordClient {
       this.lobbyChatClient = new WebhookClient({ url: this.discordSettings.WebHooks.LobbyChat });
     }
 
-    if ((this.discordSettings.Integrations.PlayerJoinAnnouncements || this.discordSettings.Integrations.PlayerLeaveAnnouncements)
-      && this.discordSettings.WebHooks.PlayerAnnouncements?.trim().length) {
+    if (
+      (this.discordSettings.Integrations.PlayerJoinAnnouncements ||
+        this.discordSettings.Integrations.PlayerLeaveAnnouncements) &&
+      this.discordSettings.WebHooks.PlayerAnnouncements?.trim().length
+    ) {
       this.playerAnnouncementClient = new WebhookClient({ url: this.discordSettings.WebHooks.PlayerAnnouncements });
     }
 
-    if ((this.discordSettings.Integrations.RoomOpenAnnouncements || this.discordSettings.Integrations.RoomCloseAnnouncements)
-      && this.discordSettings.WebHooks.RoomAnnouncements?.trim().length) {
+    if (
+      (this.discordSettings.Integrations.RoomOpenAnnouncements ||
+        this.discordSettings.Integrations.RoomCloseAnnouncements) &&
+      this.discordSettings.WebHooks.RoomAnnouncements?.trim().length
+    ) {
       this.gameRoomAnnouncementClient = new WebhookClient({ url: this.discordSettings.WebHooks.RoomAnnouncements });
     }
 
-    if ((this.discordSettings.Integrations.RoundStartAnnouncements || this.discordSettings.Integrations.RoundEndAnnouncements)
-      && this.discordSettings.WebHooks.RoundAnnouncements?.trim().length) {
+    if (
+      (this.discordSettings.Integrations.RoundStartAnnouncements ||
+        this.discordSettings.Integrations.RoundEndAnnouncements) &&
+      this.discordSettings.WebHooks.RoundAnnouncements?.trim().length
+    ) {
       this.gameRoundAnnouncementClient = new WebhookClient({ url: this.discordSettings.WebHooks.RoundAnnouncements });
     }
 
@@ -227,21 +242,29 @@ export default class DiscordClient {
       _resolve = resolve;
     });
 
-    const category: CategoryChannel = await this.discordClient.channels.fetch(this.discordSettings.RoomChatCategory) as CategoryChannel;
+    const category: CategoryChannel = (await this.discordClient.channels.fetch(
+      this.discordSettings.RoomChatCategory,
+    )) as CategoryChannel;
 
     if (!category) {
-      Log.error(`Failed to create a channel for room ${metadata.Number}: No category for id ${this.discordSettings.RoomChatCategory}`);
+      Log.error(
+        `Failed to create a channel for room ${metadata.Number}: No category for id ${this.discordSettings.RoomChatCategory}`,
+      );
       return [null, null];
     }
-    let channel: TextChannel = category.children.cache.find((_) => _.name === `${metadata.Name}-${metadata.Number}`) as TextChannel;
+    let channel: TextChannel = category.children.cache.find(
+      (_) => _.name === `${metadata.Name}-${metadata.Number}`,
+    ) as TextChannel;
 
     if (!channel) {
-      channel = await category.children.create({
+      channel = (await category.children.create({
         name: `${metadata.Name}-${metadata.Number}`,
         type: ChannelType.GuildText,
-      }) as TextChannel;
+      })) as TextChannel;
 
-      channel.permissionOverwrites.create(channel.guild.roles.cache.find((_) => _.name === 'Bot')!, { ViewChannel: true });
+      channel.permissionOverwrites.create(channel.guild.roles.cache.find((_) => _.name === 'Bot')!, {
+        ViewChannel: true,
+      });
       channel.permissionOverwrites.create(channel.guild.roles.everyone, { ViewChannel: false });
     }
 
@@ -347,7 +370,9 @@ export default class DiscordClient {
     const embed = new EmbedBuilder({
       title: 'Game Room created',
       color: Colors.Default,
-      image: { url: `https://static.paradise.festival.tf/images/maps/${this.GetImageNameForMapID(metadata.MapID)}.jpg` },
+      image: {
+        url: `https://static.paradise.festival.tf/images/maps/${this.GetImageNameForMapID(metadata.MapID)}.jpg`,
+      },
       footer: {
         text: `Room ID: ${metadata.Number}`,
       },
@@ -365,7 +390,10 @@ export default class DiscordClient {
         { name: 'Requires Password', value: metadata.IsPasswordProtected ? 'Yes' : 'No', inline: true },
         { name: 'Minimum Level', value: metadata.LevelMin > 0 ? metadata.LevelMin.toString() : 'None', inline: true },
         { name: 'Maximum Level', value: metadata.LevelMax > 0 ? metadata.LevelMax.toString() : 'None', inline: true },
-        { name: 'Join this game', value: `uberstrike://connect/${metadata.Server.ConnectionString}/${metadata.Number}` },
+        {
+          name: 'Join this game',
+          value: `uberstrike://connect/${metadata.Server.ConnectionString}/${metadata.Number}`,
+        },
       );
 
       await this.gameRoomAnnouncementClient?.send({
@@ -375,10 +403,16 @@ export default class DiscordClient {
       });
     } catch (e: any) {
       Log.error(e);
-      Log.info(JSON.stringify(embed.data.fields?.map((_) => ({
-        Name: _.name,
-        Value: _.value,
-      })), null, 4));
+      Log.info(
+        JSON.stringify(
+          embed.data.fields?.map((_) => ({
+            Name: _.name,
+            Value: _.value,
+          })),
+          null,
+          4,
+        ),
+      );
     }
   }
 
@@ -407,10 +441,16 @@ export default class DiscordClient {
       });
     } catch (e: any) {
       Log.error(e);
-      Log.info(JSON.stringify(embed.data.fields?.map((_) => ({
-        Name: _.name,
-        Value: _.value,
-      })), null, 4));
+      Log.info(
+        JSON.stringify(
+          embed.data.fields?.map((_) => ({
+            Name: _.name,
+            Value: _.value,
+          })),
+          null,
+          4,
+        ),
+      );
     }
   }
 
@@ -502,10 +542,12 @@ export default class DiscordClient {
   private async OnReady(readyClient: Client<boolean>): Promise<void> {
     Log.info(`Connected to Discord as ${readyClient.user?.tag}`);
     await readyClient.user!.setPresence({
-      activities: [{
-        name: 'Paradise Web Services TEST',
-        type: ActivityType.Playing,
-      }],
+      activities: [
+        {
+          name: 'Paradise Web Services TEST',
+          type: ActivityType.Playing,
+        },
+      ],
       status: 'online',
     });
   }
@@ -526,7 +568,9 @@ export default class DiscordClient {
       discordUser = await DiscordUser.findOne({ where: { Nonce: message.cleanContent } });
 
       if (!discordUser) {
-        await message.reply('Your Discord profile could not be linked to UberStrike.\nPlease make sure to enter a valid link code.');
+        await message.reply(
+          'Your Discord profile could not be linked to UberStrike.\nPlease make sure to enter a valid link code.',
+        );
         return;
       }
 
@@ -538,11 +582,17 @@ export default class DiscordClient {
 
       await message.reply('Your Discord profile has been successfully linked to UberStrike!');
     } else if (message.channel.isTextBased()) {
-      if (message.channel.id === this.discordSettings.CommandChannelId && message.cleanContent.startsWith('?') && message.cleanContent.length > 1) {
+      if (
+        message.channel.id === this.discordSettings.CommandChannelId &&
+        message.cleanContent.startsWith('?') &&
+        message.cleanContent.length > 1
+      ) {
         const discordUser = await this.GetDiscordUserFromDiscordId(message.author.id);
 
         if (!discordUser) {
-          await message.reply('Please link your Discord profile to UberStrike using `?link` in the ingame Lobby chat in order to execute commands.');
+          await message.reply(
+            'Please link your Discord profile to UberStrike using `?link` in the ingame Lobby chat in order to execute commands.',
+          );
           return;
         }
 
@@ -554,7 +604,8 @@ export default class DiscordClient {
         }
 
         const cmd = message.cleanContent.substring(1);
-        const cmdArgs = cmd.match(/[a-zA-Z0-9-]+|"(?:\\"|[^"])+"/g)?.map((_) => (_.match(/".+"/g) ? _.slice(1, -1) : _)) ?? [];
+        const cmdArgs =
+          cmd.match(/[a-zA-Z0-9-]+|"(?:\\"|[^"])+"/g)?.map((_) => (_.match(/".+"/g) ? _.slice(1, -1) : _)) ?? [];
 
         switch (cmdArgs[0]?.toLocaleLowerCase()) {
           case 'clear': {
@@ -568,7 +619,8 @@ export default class DiscordClient {
           case 'help':
             this.PrintDiscordHelp(message);
             break;
-          case 'quit': break;
+          case 'quit':
+            break;
           default:
             await CommandHandler.HandleCommand(
               cmdArgs[0].toLocaleLowerCase(),
@@ -589,22 +641,29 @@ export default class DiscordClient {
         const discordUser = await this.GetDiscordUserFromDiscordId(message.author.id);
 
         if (!discordUser) {
-          await message.reply('Your message could not be delivered to the Lobby chat.\nPlease link your Discord profile to UberStrike using `?link` in the ingame Lobby chat.');
+          await message.reply(
+            'Your message could not be delivered to the Lobby chat.\nPlease link your Discord profile to UberStrike using `?link` in the ingame Lobby chat.',
+          );
           return;
         }
 
         const publicProfile = await PublicProfile.findOne({ where: { Cmid: discordUser.Cmid } });
 
-        await ParadiseService.Instance.SocketHost.SendToCommServer(PacketType.ChatMessage, new WebSocketChatMessage({
-          Cmid: discordUser.Cmid,
-          Name: `[Discord] ${publicProfile?.Name || message.author.displayName}`,
-          Message: message.cleanContent,
-        }));
+        await ParadiseService.Instance.SocketHost.SendToCommServer(
+          PacketType.ChatMessage,
+          new WebSocketChatMessage({
+            Cmid: discordUser.Cmid,
+            Name: `[Discord] ${publicProfile?.Name || message.author.displayName}`,
+            Message: message.cleanContent,
+          }),
+        );
       } else if (this.roomChatMap[message.channel.id]) {
         const discordUser = await this.GetDiscordUserFromDiscordId(message.author.id);
 
         if (!discordUser) {
-          await message.reply('Your message could not be delivered to the game chat.\nPlease link your Discord profile to UberStrike using `?link` in the ingame Lobby chat.');
+          await message.reply(
+            'Your message could not be delivered to the game chat.\nPlease link your Discord profile to UberStrike using `?link` in the ingame Lobby chat.',
+          );
           return;
         }
 
@@ -612,30 +671,38 @@ export default class DiscordClient {
 
         const room = await GameRoom.findOne({ where: { Number: this.roomChatMap[message.channel.id] } });
         if (!room) {
-          await message.reply('Your message could not be delivered to the game chat.\nThis room does not exist anymore.');
+          await message.reply(
+            'Your message could not be delivered to the game chat.\nThis room does not exist anymore.',
+          );
           return;
         }
 
-        const server = await PhotonServer.findOne({ where: { IP: room.ServerIp, Port: room.ServerPort, UsageType: PhotonUsageType.All } });
+        const server = await PhotonServer.findOne({
+          where: { IP: room.ServerIp, Port: room.ServerPort, UsageType: PhotonUsageType.All },
+        });
         if (!server) return;
 
-        await ParadiseService.Instance.SocketHost.SendToGameServer(server.Guid, PacketType.ChatMessage, new WebSocketChatMessage({
-          Cmid: discordUser.Cmid,
-          Name: `[Discord] ${publicProfile?.Name || message.author.displayName}`,
-          Message: message.cleanContent,
-          RoomNumber: room.Number,
-        }));
+        await ParadiseService.Instance.SocketHost.SendToGameServer(
+          server.Guid,
+          PacketType.ChatMessage,
+          new WebSocketChatMessage({
+            Cmid: discordUser.Cmid,
+            Name: `[Discord] ${publicProfile?.Name || message.author.displayName}`,
+            Message: message.cleanContent,
+            RoomNumber: room.Number,
+          }),
+        );
       }
     }
   }
   // #endregion
 
   private async PrintDiscordHelp(message: Message): Promise<void> {
-    const lines = [
-      'Available commands:\n',
-    ];
+    const lines = ['Available commands:\n'];
 
-    for (const commandObj of CommandHandler.Commands.toSorted((a, b) => a.Command.localeCompare(b.Command, undefined, { sensitivity: 'base' }))) {
+    for (const commandObj of CommandHandler.Commands.toSorted((a, b) =>
+      a.Command.localeCompare(b.Command, undefined, { sensitivity: 'base' }),
+    )) {
       if (commandObj.Command.toLocaleLowerCase() === 'clear') {
         lines.push('clear\t\tClears the messages in the Command channel.');
       } else if (commandObj.Command.toLocaleLowerCase() === 'help') {
@@ -652,73 +719,126 @@ export default class DiscordClient {
 
   private GetNameForMapID(mapID: number): string {
     switch (mapID) {
-      case 3: return 'Apex Twin';
-      case 4: return 'Aqualab Research Hub';
-      case 5: return 'Catalyst';
-      case 6: return 'CuberSpace';
-      case 7: return 'CuberStrike';
-      case 8: return 'Fort Winter';
-      case 9: return 'Ghost Island';
-      case 10: return 'Gideon\'s Tower';
-      case 11: return 'Monkey Island 2';
-      case 12: return 'Lost Paradise 2';
-      case 13: return 'Sky Garden';
-      case 14: return 'SuperPRISM Reactor';
-      case 15: return 'Temple of the Raven';
-      case 16: return 'The Hangar';
-      case 17: return 'The Warehouse';
-      case 18: return 'Danger Zone';
-      case 64: return 'Space City';
-      case 65: return 'Spaceport Alpha';
-      case 66: return 'UberZone';
-      default: return 'Unknown Map';
+      case 3:
+        return 'Apex Twin';
+      case 4:
+        return 'Aqualab Research Hub';
+      case 5:
+        return 'Catalyst';
+      case 6:
+        return 'CuberSpace';
+      case 7:
+        return 'CuberStrike';
+      case 8:
+        return 'Fort Winter';
+      case 9:
+        return 'Ghost Island';
+      case 10:
+        return "Gideon's Tower";
+      case 11:
+        return 'Monkey Island 2';
+      case 12:
+        return 'Lost Paradise 2';
+      case 13:
+        return 'Sky Garden';
+      case 14:
+        return 'SuperPRISM Reactor';
+      case 15:
+        return 'Temple of the Raven';
+      case 16:
+        return 'The Hangar';
+      case 17:
+        return 'The Warehouse';
+      case 18:
+        return 'Danger Zone';
+      case 64:
+        return 'Space City';
+      case 65:
+        return 'Spaceport Alpha';
+      case 66:
+        return 'UberZone';
+      default:
+        return 'Unknown Map';
     }
   }
 
   private GetImageNameForMapID(mapID: number): string {
     switch (mapID) {
-      case 3: return 'ApexTwin';
-      case 4: return 'AqualabResearchHub';
-      case 5: return 'Catalyst';
-      case 6: return 'Cuberspace';
-      case 7: return 'CuberStrike';
-      case 8: return 'FortWinter';
-      case 9: return 'GhostIsland';
-      case 10: return 'GideonsTower';
-      case 11: return 'MonkeyIsland';
-      case 12: return 'LostParadise2';
-      case 13: return 'SkyGarden';
-      case 14: return 'SuperPRISMReactor';
-      case 15: return 'TempleOfTheRaven';
-      case 16: return 'TheHangar';
-      case 17: return 'TheWarehouse';
-      case 18: return 'Volley';
-      case 64: return 'SpaceCity';
-      case 65: return 'SpacePortAlpha';
-      case 66: return 'UberZone';
-      default: return 'Default';
+      case 3:
+        return 'ApexTwin';
+      case 4:
+        return 'AqualabResearchHub';
+      case 5:
+        return 'Catalyst';
+      case 6:
+        return 'Cuberspace';
+      case 7:
+        return 'CuberStrike';
+      case 8:
+        return 'FortWinter';
+      case 9:
+        return 'GhostIsland';
+      case 10:
+        return 'GideonsTower';
+      case 11:
+        return 'MonkeyIsland';
+      case 12:
+        return 'LostParadise2';
+      case 13:
+        return 'SkyGarden';
+      case 14:
+        return 'SuperPRISMReactor';
+      case 15:
+        return 'TempleOfTheRaven';
+      case 16:
+        return 'TheHangar';
+      case 17:
+        return 'TheWarehouse';
+      case 18:
+        return 'Volley';
+      case 64:
+        return 'SpaceCity';
+      case 65:
+        return 'SpacePortAlpha';
+      case 66:
+        return 'UberZone';
+      default:
+        return 'Default';
     }
   }
 
   private GetGamemodeName(gameMode: GameModeType): string {
     switch (gameMode) {
-      case GameModeType.DeathMatch: return 'Deathmatch';
-      case GameModeType.TeamDeathMatch: return 'Team Deathmatch';
-      case GameModeType.EliminationMode: return 'Team Elimination';
-      default: return 'Unknown Game Mode';
+      case GameModeType.DeathMatch:
+        return 'Deathmatch';
+      case GameModeType.TeamDeathMatch:
+        return 'Team Deathmatch';
+      case GameModeType.EliminationMode:
+        return 'Team Elimination';
+      default:
+        return 'Unknown Game Mode';
     }
   }
 
   private GetGameFlags(gameFlags: number): string {
-    return (Object.values(GAME_FLAGS).filter(Number) as number[]).map((flag) => {
-      switch (flag) {
-        case GAME_FLAGS.None: return 'None';
-        case GAME_FLAGS.LowGravity: return 'Low Gravity';
-        case GAME_FLAGS.NoArmor: return 'No Armor';
-        case GAME_FLAGS.QuickSwitch: return 'Quick Switch';
-        case GAME_FLAGS.MeleeOnly: return 'Meelee Only';
-        default: return null;
-      }
-    }).filter(Boolean).join(', ');
+    return (Object.values(GAME_FLAGS).filter(Number) as number[])
+      .map((flag) => {
+        switch (flag) {
+          case GAME_FLAGS.None:
+            return 'None';
+          case GAME_FLAGS.LowGravity:
+            return 'Low Gravity';
+          case GAME_FLAGS.NoArmor:
+            return 'No Armor';
+          case GAME_FLAGS.QuickSwitch:
+            return 'Quick Switch';
+          case GAME_FLAGS.MeleeOnly:
+            return 'Meelee Only';
+          default:
+            return null;
+        }
+      })
+      .filter(Boolean)
+      .join(', ');
   }
 }

@@ -24,22 +24,25 @@ export default class ItemTransaction extends Model<ItemTransactionAttributes> {
   declare Duration: BuyingDurationType;
 
   public static initialize(sequelize: Sequelize) {
-    ItemTransaction.init({
-      WithdrawalId: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+    ItemTransaction.init(
+      {
+        WithdrawalId: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        WithdrawalDate: DataTypes.DATE,
+        Points: DataTypes.INTEGER,
+        Credits: DataTypes.INTEGER,
+        Cmid: DataTypes.INTEGER,
+        IsAdminAction: DataTypes.BOOLEAN,
+        ItemId: DataTypes.INTEGER,
+        Duration: DataTypes.INTEGER,
       },
-      WithdrawalDate: DataTypes.DATE,
-      Points: DataTypes.INTEGER,
-      Credits: DataTypes.INTEGER,
-      Cmid: DataTypes.INTEGER,
-      IsAdminAction: DataTypes.BOOLEAN,
-      ItemId: DataTypes.INTEGER,
-      Duration: DataTypes.INTEGER,
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+      {
+        sequelize,
+        timestamps: false,
+      },
+    );
   }
 
   public static associate({ PublicProfile }) {

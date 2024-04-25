@@ -1,23 +1,31 @@
-import {
-  ItemTransaction, Map, MapSettings, MemberWallet, PlayerInventoryItem, PublicProfile,
-} from '@/models';
+import { ItemTransaction, Map, MapSettings, MemberWallet, PlayerInventoryItem, PublicProfile } from '@/models';
 import { ApiVersion } from '@/utils';
 import { BuyItemResult } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
-  EnumProxy, Int32Proxy, ListProxy, ParadiseMapViewProxy, StringProxy,
+  EnumProxy,
+  Int32Proxy,
+  ListProxy,
+  ParadiseMapViewProxy,
+  StringProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import { Op } from 'sequelize';
 import BaseWebService from '../BaseWebService';
 import ApplicationWebService from './ApplicationWebService';
 
 export default class ParadiseWebService extends BaseWebService {
-  public static get ServiceName(): string { return 'ParadiseWebService'; }
-  public static get ServiceVersion(): string { return ApiVersion.Current; }
+  public static get ServiceName(): string {
+    return 'ParadiseWebService';
+  }
+  public static get ServiceVersion(): string {
+    return ApiVersion.Current;
+  }
   // protected static get ServiceInterface(): string { return 'IParadiseWebServiceContract'; }
 
   public static async GetCustomMaps(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const clientVersion = StringProxy.Deserialize(bytes);
@@ -37,15 +45,17 @@ export default class ParadiseWebService extends BaseWebService {
         const mapData = maps.reduce((acc: any[], cur: any) => {
           acc.push({
             ...cur,
-            Settings: mapSettings.filter((_) => _.MapId === cur.MapId).reduce((acc, cur) => {
-              acc[cur.GameModeType!] = {
-                ...cur,
-                MapId: undefined,
-                GameModeType: undefined,
-              };
+            Settings: mapSettings
+              .filter((_) => _.MapId === cur.MapId)
+              .reduce((acc, cur) => {
+                acc[cur.GameModeType!] = {
+                  ...cur,
+                  MapId: undefined,
+                  GameModeType: undefined,
+                };
 
-              return acc;
-            }, {}),
+                return acc;
+              }, {}),
           });
 
           return acc;
@@ -66,7 +76,9 @@ export default class ParadiseWebService extends BaseWebService {
 
   public static async RecordPlayerMachineData(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const clientVersion = StringProxy.Deserialize(bytes);
@@ -84,7 +96,23 @@ export default class ParadiseWebService extends BaseWebService {
       const gpuMemory = Int32Proxy.Deserialize(bytes);
       const gpuDriverVersion = StringProxy.Deserialize(bytes);
 
-      this.debugEndpoint('RecordPlayerMachineData', clientVersion, cmid, systemIdentifier, systemModel, deviceType, operatingSystem, processorType, processorCount, systemMemorySize, gpuVendor, gpuVendorId, gpuDeviceId, gpuMemory, gpuDriverVersion);
+      this.debugEndpoint(
+        'RecordPlayerMachineData',
+        clientVersion,
+        cmid,
+        systemIdentifier,
+        systemModel,
+        deviceType,
+        operatingSystem,
+        processorType,
+        processorCount,
+        systemMemorySize,
+        gpuVendor,
+        gpuVendorId,
+        gpuDeviceId,
+        gpuMemory,
+        gpuDriverVersion,
+      );
 
       Int32Proxy.Serialize(outputStream, 0);
 
@@ -100,7 +128,9 @@ export default class ParadiseWebService extends BaseWebService {
 
   public static async RecordException(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const cmid = Int32Proxy.Deserialize(bytes);
@@ -124,7 +154,9 @@ export default class ParadiseWebService extends BaseWebService {
 
   public static async RemoveItemFromInventory(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const itemId = Int32Proxy.Deserialize(bytes);

@@ -71,68 +71,71 @@ export default class ShopWeaponItem extends Model<ShopWeaponItemAttributes> {
   declare Prices: ShopItemPrice[];
 
   public static initialize(sequelize: Sequelize) {
-    ShopWeaponItem.init({
-      ID: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-      },
-      Name: DataTypes.STRING,
-      PrefabName: DataTypes.STRING,
-      Description: DataTypes.STRING,
-      ItemClass: DataTypes.INTEGER,
-      LevelLock: DataTypes.INTEGER,
-      MaxDurationDays: DataTypes.INTEGER,
-      IsConsumable: DataTypes.BOOLEAN,
-      ShopHighlightType: DataTypes.INTEGER,
-      CustomProperties: {
-        type: DataTypes.JSON,
-        defaultValue: {},
-        get(this: ShopWeaponItem): any {
-          return JSON.parse(this.getDataValue('CustomProperties') as any);
+    ShopWeaponItem.init(
+      {
+        ID: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
         },
-        set(this: ShopWeaponItem, value: any): any {
-          this.setDataValue('CustomProperties', JSON.stringify(value) as any);
+        Name: DataTypes.STRING,
+        PrefabName: DataTypes.STRING,
+        Description: DataTypes.STRING,
+        ItemClass: DataTypes.INTEGER,
+        LevelLock: DataTypes.INTEGER,
+        MaxDurationDays: DataTypes.INTEGER,
+        IsConsumable: DataTypes.BOOLEAN,
+        ShopHighlightType: DataTypes.INTEGER,
+        CustomProperties: {
+          type: DataTypes.JSON,
+          defaultValue: {},
+          get(this: ShopWeaponItem): any {
+            return JSON.parse(this.getDataValue('CustomProperties') as any);
+          },
+          set(this: ShopWeaponItem, value: any): any {
+            this.setDataValue('CustomProperties', JSON.stringify(value) as any);
+          },
         },
-      },
-      ItemProperties: {
-        type: DataTypes.JSON,
-        defaultValue: {},
-        get(this: ShopWeaponItem): any {
-          return JSON.parse(this.getDataValue('ItemProperties') as any);
+        ItemProperties: {
+          type: DataTypes.JSON,
+          defaultValue: {},
+          get(this: ShopWeaponItem): any {
+            return JSON.parse(this.getDataValue('ItemProperties') as any);
+          },
+          set(this: ShopWeaponItem, value: any): any {
+            this.setDataValue('ItemProperties', JSON.stringify(value) as any);
+          },
         },
-        set(this: ShopWeaponItem, value: any): any {
-          this.setDataValue('ItemProperties', JSON.stringify(value) as any);
-        },
-      },
 
-      // Weapon Specific
-      AccuracySpread: DataTypes.INTEGER,
-      CombatRange: DataTypes.INTEGER,
-      CriticalStrikeBonus: DataTypes.INTEGER,
-      DamageKnockback: DataTypes.INTEGER,
-      DamagePerProjectile: DataTypes.INTEGER,
-      DefaultZoomMultiplier: DataTypes.INTEGER,
-      HasAutomaticFire: DataTypes.BOOLEAN,
-      MaxAmmo: DataTypes.INTEGER,
-      MaxZoomMultiplier: DataTypes.INTEGER,
-      MinZoomMultiplier: DataTypes.INTEGER,
-      MissileBounciness: DataTypes.INTEGER,
-      MissileForceImpulse: DataTypes.INTEGER,
-      MissileTimeToDetonate: DataTypes.INTEGER,
-      ProjectileSpeed: DataTypes.INTEGER,
-      ProjectilesPerShot: DataTypes.INTEGER,
-      RateOfFire: DataTypes.INTEGER,
-      RecoilKickback: DataTypes.INTEGER,
-      RecoilMovement: DataTypes.INTEGER,
-      SecondaryActionReticle: DataTypes.INTEGER,
-      SplashRadius: DataTypes.INTEGER,
-      StartAmmo: DataTypes.INTEGER,
-      Tier: DataTypes.INTEGER,
-      WeaponSecondaryAction: DataTypes.INTEGER,
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+        // Weapon Specific
+        AccuracySpread: DataTypes.INTEGER,
+        CombatRange: DataTypes.INTEGER,
+        CriticalStrikeBonus: DataTypes.INTEGER,
+        DamageKnockback: DataTypes.INTEGER,
+        DamagePerProjectile: DataTypes.INTEGER,
+        DefaultZoomMultiplier: DataTypes.INTEGER,
+        HasAutomaticFire: DataTypes.BOOLEAN,
+        MaxAmmo: DataTypes.INTEGER,
+        MaxZoomMultiplier: DataTypes.INTEGER,
+        MinZoomMultiplier: DataTypes.INTEGER,
+        MissileBounciness: DataTypes.INTEGER,
+        MissileForceImpulse: DataTypes.INTEGER,
+        MissileTimeToDetonate: DataTypes.INTEGER,
+        ProjectileSpeed: DataTypes.INTEGER,
+        ProjectilesPerShot: DataTypes.INTEGER,
+        RateOfFire: DataTypes.INTEGER,
+        RecoilKickback: DataTypes.INTEGER,
+        RecoilMovement: DataTypes.INTEGER,
+        SecondaryActionReticle: DataTypes.INTEGER,
+        SplashRadius: DataTypes.INTEGER,
+        StartAmmo: DataTypes.INTEGER,
+        Tier: DataTypes.INTEGER,
+        WeaponSecondaryAction: DataTypes.INTEGER,
+      },
+      {
+        sequelize,
+        timestamps: false,
+      },
+    );
   }
 
   public static associate({ ShopItemPrice }) {

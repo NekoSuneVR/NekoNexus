@@ -19,20 +19,23 @@ export default class ActivePlayer extends Model<ActivePlayerAttributes> {
   declare GameRoomId: number | null;
 
   public static initialize(sequelize: Sequelize) {
-    ActivePlayer.init({
-      Cmid: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+    ActivePlayer.init(
+      {
+        Cmid: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        IPAddress: DataTypes.STRING,
+        Channel: DataTypes.INTEGER,
+        CommServerId: DataTypes.INTEGER,
+        GameServerId: DataTypes.INTEGER,
+        GameRoomId: DataTypes.INTEGER,
       },
-      IPAddress: DataTypes.STRING,
-      Channel: DataTypes.INTEGER,
-      CommServerId: DataTypes.INTEGER,
-      GameServerId: DataTypes.INTEGER,
-      GameRoomId: DataTypes.INTEGER,
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+      {
+        sequelize,
+        timestamps: false,
+      },
+    );
   }
 
   public static associate({ PublicProfile }) {

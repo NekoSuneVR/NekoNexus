@@ -1,6 +1,4 @@
-import {
-  ActivePlayer, Clan, ClanMember, PublicProfile, SteamMember,
-} from '@/models';
+import { ActivePlayer, Clan, ClanMember, PublicProfile, SteamMember } from '@/models';
 import { GroupPosition, MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { Op } from 'sequelize';
 import ParadiseCommand from '../ParadiseCommand';
@@ -52,13 +50,19 @@ export default class PlayersCommand extends ParadiseCommand {
         });
         const steamMembers = await SteamMember.findAll();
 
-        let players = playerProfiles.filter((_) => _.Name.toLowerCase().includes(pattern.toLowerCase()) || _.Cmid.toString().includes(pattern));
+        let players = playerProfiles.filter(
+          (_) => _.Name.toLowerCase().includes(pattern.toLowerCase()) || _.Cmid.toString().includes(pattern),
+        );
         let steamPlayers = steamMembers.filter((_) => _.SteamId.toString().includes(pattern));
 
         if (players.length) {
-          steamPlayers = steamMembers.filter((steamMember) => players.map((player) => player.Cmid).includes(steamMember.Cmid));
+          steamPlayers = steamMembers.filter((steamMember) =>
+            players.map((player) => player.Cmid).includes(steamMember.Cmid),
+          );
         } else if (steamPlayers.length) {
-          players = playerProfiles.filter((profile) => steamPlayers.map((steamMember) => steamMember.Cmid).includes(profile.Cmid));
+          players = playerProfiles.filter((profile) =>
+            steamPlayers.map((steamMember) => steamMember.Cmid).includes(profile.Cmid),
+          );
         }
 
         if (!players.length) {
@@ -119,14 +123,18 @@ export default class PlayersCommand extends ParadiseCommand {
         this.WriteLine(`Players currently online: ${connectedPeers.length}\n`);
 
         this.WriteLine(' ----------------------------------------------------------------------- ');
-        this.WriteLine(`| ${'Username'.padEnd(18)} | ${'CMID'.padEnd(10)} | ${'SteamID64'.padEnd(17)} | ${'Rank'.padEnd(15)} |`);
+        this.WriteLine(
+          `| ${'Username'.padEnd(18)} | ${'CMID'.padEnd(10)} | ${'SteamID64'.padEnd(17)} | ${'Rank'.padEnd(15)} |`,
+        );
         this.WriteLine('|-----------------------------------------------------------------------|');
 
         for (const peer of connectedPeers) {
           const profile = playerProfiles.find((_) => _.Cmid === peer.Cmid);
           const steamMember = steamMembers.find((_) => _.Cmid === peer.Cmid);
 
-          this.WriteLine(`| ${profile!.Name.padEnd(18)} | ${String(profile!.Cmid).padEnd(10)} | ${String(steamMember!.SteamId).padEnd(17)} | ${MemberAccessLevel[profile!.AccessLevel].padEnd(15)} |`);
+          this.WriteLine(
+            `| ${profile!.Name.padEnd(18)} | ${String(profile!.Cmid).padEnd(10)} | ${String(steamMember!.SteamId).padEnd(17)} | ${MemberAccessLevel[profile!.AccessLevel].padEnd(15)} |`,
+          );
         }
 
         this.WriteLine('|-----------------------------------------------------------------------|');
@@ -148,14 +156,18 @@ export default class PlayersCommand extends ParadiseCommand {
         this.WriteLine(`Players currently online: ${connectedPeers.length}\n`);
 
         this.WriteLine(' -------------------------------------------------------------------------------- ');
-        this.WriteLine(`| ${'Username'.padEnd(18)} | ${'CMID'.padEnd(10)} | ${'SteamID64'.padEnd(17)} | ${'Rank'.padEnd(15)} | ${'Online'.padEnd(6)} |`);
+        this.WriteLine(
+          `| ${'Username'.padEnd(18)} | ${'CMID'.padEnd(10)} | ${'SteamID64'.padEnd(17)} | ${'Rank'.padEnd(15)} | ${'Online'.padEnd(6)} |`,
+        );
         this.WriteLine('|--------------------------------------------------------------------------------|');
 
         for (const profile of playerProfiles) {
           const steamMember = steamMembers.find((_) => _.Cmid === profile.Cmid);
           const peer = connectedPeers.find((_) => _.Cmid === profile.Cmid);
 
-          this.WriteLine(`| ${profile.Name.padEnd(18)} | ${String(profile.Cmid).padEnd(10)} | ${String(steamMember!.SteamId).padEnd(17)} | ${MemberAccessLevel[profile.AccessLevel].padEnd(15)} | ${String(peer === undefined ? 'No' : 'Yes').padEnd(6)} |`);
+          this.WriteLine(
+            `| ${profile.Name.padEnd(18)} | ${String(profile.Cmid).padEnd(10)} | ${String(steamMember!.SteamId).padEnd(17)} | ${MemberAccessLevel[profile.AccessLevel].padEnd(15)} | ${String(peer === undefined ? 'No' : 'Yes').padEnd(6)} |`,
+          );
         }
 
         this.WriteLine('|--------------------------------------------------------------------------------|');
@@ -186,25 +198,35 @@ export default class PlayersCommand extends ParadiseCommand {
         const steamMembers = await SteamMember.findAll();
         const connectedPeers = await ActivePlayer.findAll();
 
-        let players = playerProfiles.filter((_) => _.Name.toLowerCase().includes(pattern.toLowerCase()) || _.Cmid.toString().includes(pattern));
+        let players = playerProfiles.filter(
+          (_) => _.Name.toLowerCase().includes(pattern.toLowerCase()) || _.Cmid.toString().includes(pattern),
+        );
         let steamPlayers = steamMembers.filter((_) => _.SteamId.toString().includes(pattern));
 
         if (players.length) {
-          steamPlayers = steamMembers.filter((steamMember) => players.map((player) => player.Cmid).includes(steamMember.Cmid));
+          steamPlayers = steamMembers.filter((steamMember) =>
+            players.map((player) => player.Cmid).includes(steamMember.Cmid),
+          );
         } else if (steamPlayers.length) {
-          players = playerProfiles.filter((profile) => steamPlayers.map((steamMember) => steamMember.Cmid).includes(profile.Cmid));
+          players = playerProfiles.filter((profile) =>
+            steamPlayers.map((steamMember) => steamMember.Cmid).includes(profile.Cmid),
+          );
         }
 
         if (players.length) {
           this.WriteLine(' -------------------------------------------------------------------------------- ');
-          this.WriteLine(`| ${'Username'.padEnd(18)} | ${'CMID'.padEnd(10)} | ${'SteamID64'.padEnd(17)} | ${'Rank'.padEnd(15)} | ${'Online'.padEnd(6)} |`);
+          this.WriteLine(
+            `| ${'Username'.padEnd(18)} | ${'CMID'.padEnd(10)} | ${'SteamID64'.padEnd(17)} | ${'Rank'.padEnd(15)} | ${'Online'.padEnd(6)} |`,
+          );
           this.WriteLine('|--------------------------------------------------------------------------------|');
 
           for (const profile of players) {
             const steamMember = steamMembers.find((_) => _.Cmid === profile.Cmid);
             const peer = connectedPeers?.find((_) => _.Cmid === profile.Cmid);
 
-            this.WriteLine(`| ${profile.Name.padEnd(18)} | ${String(profile.Cmid).padEnd(10)} | ${String(steamMember!.SteamId).padEnd(17)} | ${MemberAccessLevel[profile.AccessLevel].padEnd(15)} | ${String(peer === undefined ? 'No' : 'Yes').padEnd(6)} |`);
+            this.WriteLine(
+              `| ${profile.Name.padEnd(18)} | ${String(profile.Cmid).padEnd(10)} | ${String(steamMember!.SteamId).padEnd(17)} | ${MemberAccessLevel[profile.AccessLevel].padEnd(15)} | ${String(peer === undefined ? 'No' : 'Yes').padEnd(6)} |`,
+            );
           }
 
           this.WriteLine(' -------------------------------------------------------------------------------- ');

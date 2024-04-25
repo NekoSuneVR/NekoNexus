@@ -24,23 +24,26 @@ export default class GroupInvitation extends Model<GroupInvitationAttributes> {
   declare Message: string;
 
   public static initialize(sequelize: Sequelize) {
-    GroupInvitation.init({
-      InviterName: DataTypes.STRING(18),
-      InviterCmid: DataTypes.INTEGER,
-      GroupId: DataTypes.INTEGER,
-      GroupName: DataTypes.STRING(25),
-      GroupTag: DataTypes.STRING(5),
-      GroupInvitationId: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+    GroupInvitation.init(
+      {
+        InviterName: DataTypes.STRING(18),
+        InviterCmid: DataTypes.INTEGER,
+        GroupId: DataTypes.INTEGER,
+        GroupName: DataTypes.STRING(25),
+        GroupTag: DataTypes.STRING(5),
+        GroupInvitationId: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        InviteeName: DataTypes.STRING(18),
+        InviteeCmid: DataTypes.INTEGER,
+        Message: DataTypes.TEXT,
       },
-      InviteeName: DataTypes.STRING(18),
-      InviteeCmid: DataTypes.INTEGER,
-      Message: DataTypes.TEXT,
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+      {
+        sequelize,
+        timestamps: false,
+      },
+    );
   }
 
   public static associate({ Clan, PublicProfile }) {

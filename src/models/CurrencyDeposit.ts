@@ -37,29 +37,32 @@ export default class CurrencyDeposit extends Model<CurrencyDepositAttributes> {
   declare BundleName: string;
 
   public static initialize(sequelize: Sequelize) {
-    CurrencyDeposit.init({
-      CreditsDepositId: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+    CurrencyDeposit.init(
+      {
+        CreditsDepositId: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        DepositDate: DataTypes.DATE,
+        Credits: DataTypes.INTEGER,
+        Points: DataTypes.INTEGER,
+        Cash: DataTypes.DECIMAL,
+        CurrencyLabel: DataTypes.STRING,
+        Cmid: DataTypes.INTEGER,
+        IsAdminAction: DataTypes.BOOLEAN,
+        PaymentProviderId: DataTypes.INTEGER,
+        TransactionKey: DataTypes.STRING,
+        ApplicationId: DataTypes.INTEGER,
+        ChannelId: DataTypes.INTEGER,
+        UsdAmount: DataTypes.DECIMAL,
+        BundleId: DataTypes.INTEGER,
+        BundleName: DataTypes.STRING,
       },
-      DepositDate: DataTypes.DATE,
-      Credits: DataTypes.INTEGER,
-      Points: DataTypes.INTEGER,
-      Cash: DataTypes.DECIMAL,
-      CurrencyLabel: DataTypes.STRING,
-      Cmid: DataTypes.INTEGER,
-      IsAdminAction: DataTypes.BOOLEAN,
-      PaymentProviderId: DataTypes.INTEGER,
-      TransactionKey: DataTypes.STRING,
-      ApplicationId: DataTypes.INTEGER,
-      ChannelId: DataTypes.INTEGER,
-      UsdAmount: DataTypes.DECIMAL,
-      BundleId: DataTypes.INTEGER,
-      BundleName: DataTypes.STRING,
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+      {
+        sequelize,
+        timestamps: false,
+      },
+    );
   }
 
   public static associate({ PublicProfile }) {

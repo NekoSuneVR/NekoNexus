@@ -25,7 +25,7 @@ enum WebSocketPacketType {
 
   OpenRoom,
   CloseRoom,
-  BanPlayer
+  BanPlayer,
 }
 
 export default WebSocketPacketType;

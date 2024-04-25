@@ -25,24 +25,27 @@ export default class ModerationAction extends Model<ModerationActionAttributes> 
   declare Reason: string;
 
   public static initialize(sequelize: Sequelize) {
-    ModerationAction.init({
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
+    ModerationAction.init(
+      {
+        id: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        ModerationFlag: DataTypes.INTEGER,
+        SourceCmid: DataTypes.INTEGER,
+        SourceName: DataTypes.STRING(18),
+        TargetCmid: DataTypes.INTEGER,
+        TargetName: DataTypes.STRING(18),
+        ActionDate: DataTypes.DATE,
+        ExpireTime: DataTypes.DATE,
+        Reason: DataTypes.TEXT,
       },
-      ModerationFlag: DataTypes.INTEGER,
-      SourceCmid: DataTypes.INTEGER,
-      SourceName: DataTypes.STRING(18),
-      TargetCmid: DataTypes.INTEGER,
-      TargetName: DataTypes.STRING(18),
-      ActionDate: DataTypes.DATE,
-      ExpireTime: DataTypes.DATE,
-      Reason: DataTypes.TEXT,
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+      {
+        sequelize,
+        timestamps: false,
+      },
+    );
   }
 
   public static associate({ PublicProfile }) {

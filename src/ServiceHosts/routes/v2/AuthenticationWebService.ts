@@ -1,34 +1,61 @@
 import { ProfanityFilter } from '@/ProfanityFilter';
 import {
-  Clan, ClanMember, CurrencyDeposit, ItemTransaction, MemberWallet, ModerationAction, PlayerInventoryItem, PlayerLoadout, PlayerStatistics, PublicProfile, SteamMember,
+  Clan,
+  ClanMember,
+  CurrencyDeposit,
+  ItemTransaction,
+  MemberWallet,
+  ModerationAction,
+  PlayerInventoryItem,
+  PlayerLoadout,
+  PlayerStatistics,
+  PublicProfile,
+  SteamMember,
 } from '@/models';
+import { ApiVersion, Log, ModerationFlag, UberstrikeInventoryItem } from '@/utils';
 import {
-  ApiVersion, Log, ModerationFlag, UberstrikeInventoryItem,
-} from '@/utils';
-import {
-  AccountCompletionResult, BuyingDurationType, ChannelType,
-  EmailAddressStatus, MemberAuthenticationResult, MemberView, MemberWalletView, PublicProfileView,
+  AccountCompletionResult,
+  BuyingDurationType,
+  ChannelType,
+  EmailAddressStatus,
+  MemberAuthenticationResult,
+  MemberView,
+  MemberWalletView,
+  PublicProfileView,
 } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
-  AccountCompletionResultViewProxy, EnumProxy, Int32Proxy, MemberAuthenticationResultViewProxy, StringProxy,
+  AccountCompletionResultViewProxy,
+  EnumProxy,
+  Int32Proxy,
+  MemberAuthenticationResultViewProxy,
+  StringProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import { MemberAuthenticationResultView } from '@festivaldev/uberstrike-js/UberStrike/Core/ViewModel';
 import {
-  AccountCompletionResultView, PlayerPersonalRecordStatisticsView, PlayerStatisticsView, PlayerWeaponStatisticsView,
+  AccountCompletionResultView,
+  PlayerPersonalRecordStatisticsView,
+  PlayerStatisticsView,
+  PlayerWeaponStatisticsView,
 } from '@festivaldev/uberstrike-js/UberStrike/DataCenter/Common/Entities';
 import crypto from 'crypto';
 import BaseWebService from '../BaseWebService';
 
 export default class AuthenticationWebService extends BaseWebService {
-  public static get ServiceName(): string { return 'AuthenticationWebService'; }
-  public static get ServiceVersion(): string { return ApiVersion.Current; }
+  public static get ServiceName(): string {
+    return 'AuthenticationWebService';
+  }
+  public static get ServiceVersion(): string {
+    return ApiVersion.Current;
+  }
   // protected static get ServiceInterface(): string { return 'IAuthenticationWebServiceContract'; }
 
   private static readonly ProfanityFilter: ProfanityFilter = new ProfanityFilter();
 
   public static async CompleteAccount(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const cmid = Int32Proxy.Deserialize(bytes);
@@ -42,25 +69,40 @@ export default class AuthenticationWebService extends BaseWebService {
       const publicProfile = await PublicProfile.findOne({ where: { Cmid: cmid } });
 
       if (!publicProfile) {
-        AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView({
-          Result: AccountCompletionResult.InvalidData,
-        }));
+        AccountCompletionResultViewProxy.Serialize(
+          outputStream,
+          new AccountCompletionResultView({
+            Result: AccountCompletionResult.InvalidData,
+          }),
+        );
       } else if (publicProfile.Name.trim().length) {
-        AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView({
-          Result: AccountCompletionResult.AlreadyCompletedAccount,
-        }));
+        AccountCompletionResultViewProxy.Serialize(
+          outputStream,
+          new AccountCompletionResultView({
+            Result: AccountCompletionResult.AlreadyCompletedAccount,
+          }),
+        );
       } else if ((await PublicProfile.findOne({ where: { Name: name } })) != null) {
-        AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView({
-          Result: AccountCompletionResult.DuplicateName,
-        }));
+        AccountCompletionResultViewProxy.Serialize(
+          outputStream,
+          new AccountCompletionResultView({
+            Result: AccountCompletionResult.DuplicateName,
+          }),
+        );
       } else if (name.length < 3 || !name.match(/^[a-zA-Z0-9_]+$/)) {
-        AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView({
-          Result: AccountCompletionResult.InvalidName,
-        }));
+        AccountCompletionResultViewProxy.Serialize(
+          outputStream,
+          new AccountCompletionResultView({
+            Result: AccountCompletionResult.InvalidName,
+          }),
+        );
       } else if (this.ProfanityFilter.DetectAllProfanities(name).length > 0) {
-        AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView({
-          Result: AccountCompletionResult.InvalidName,
-        }));
+        AccountCompletionResultViewProxy.Serialize(
+          outputStream,
+          new AccountCompletionResultView({
+            Result: AccountCompletionResult.InvalidName,
+          }),
+        );
       } else {
         await publicProfile.update({
           Name: name,
@@ -128,24 +170,30 @@ export default class AuthenticationWebService extends BaseWebService {
           },
         ]);
 
-        PlayerLoadout.update({
-          MeleeWeapon: UberstrikeInventoryItem.TheSplatbat,
-          Weapon1: UberstrikeInventoryItem.MachineGun,
-          Weapon2: UberstrikeInventoryItem.ShotGun,
-          Weapon3: UberstrikeInventoryItem.SniperRifle,
-        }, {
-          where: { Cmid: cmid },
-        });
-
-        AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView({
-          Result: AccountCompletionResult.Ok,
-          ItemsAttributed: {
-            [UberstrikeInventoryItem.TheSplatbat]: 1,
-            [UberstrikeInventoryItem.MachineGun]: 1,
-            [UberstrikeInventoryItem.ShotGun]: 1,
-            [UberstrikeInventoryItem.SniperRifle]: 1,
+        PlayerLoadout.update(
+          {
+            MeleeWeapon: UberstrikeInventoryItem.TheSplatbat,
+            Weapon1: UberstrikeInventoryItem.MachineGun,
+            Weapon2: UberstrikeInventoryItem.ShotGun,
+            Weapon3: UberstrikeInventoryItem.SniperRifle,
           },
-        }));
+          {
+            where: { Cmid: cmid },
+          },
+        );
+
+        AccountCompletionResultViewProxy.Serialize(
+          outputStream,
+          new AccountCompletionResultView({
+            Result: AccountCompletionResult.Ok,
+            ItemsAttributed: {
+              [UberstrikeInventoryItem.TheSplatbat]: 1,
+              [UberstrikeInventoryItem.MachineGun]: 1,
+              [UberstrikeInventoryItem.ShotGun]: 1,
+              [UberstrikeInventoryItem.SniperRifle]: 1,
+            },
+          }),
+        );
 
         Log.info(`${publicProfile.Name}(${publicProfile.Cmid}) logged in.`);
       }
@@ -162,7 +210,9 @@ export default class AuthenticationWebService extends BaseWebService {
 
   public static async CreateUser(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const emailAddress = StringProxy.Deserialize(bytes);
@@ -264,7 +314,9 @@ export default class AuthenticationWebService extends BaseWebService {
 
   public static async LoginSteam(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const steamId = StringProxy.Deserialize(bytes);
@@ -320,7 +372,11 @@ export default class AuthenticationWebService extends BaseWebService {
           WeaponStatistics: new PlayerWeaponStatisticsView(),
         });
 
-        const session = await global.SessionManager.findOrCreateSessionForSteamUser(publicProfile as PublicProfileView, machineId, steamMember);
+        const session = await global.SessionManager.findOrCreateSessionForSteamUser(
+          publicProfile as PublicProfileView,
+          machineId,
+          steamMember,
+        );
 
         const memberAuth = new MemberAuthenticationResultView({
           MemberAuthenticationResult: MemberAuthenticationResult.Ok,
@@ -348,59 +404,77 @@ export default class AuthenticationWebService extends BaseWebService {
         });
 
         if (bannedMember && (!bannedMember.ExpireTime || bannedMember.ExpireTime > new Date())) {
-          MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView({
-            MemberAuthenticationResult: MemberAuthenticationResult.IsBanned,
-          }));
+          MemberAuthenticationResultViewProxy.Serialize(
+            outputStream,
+            new MemberAuthenticationResultView({
+              MemberAuthenticationResult: MemberAuthenticationResult.IsBanned,
+            }),
+          );
         } else {
           const publicProfile = await PublicProfile.findOne({ where: { Cmid: steamMember.Cmid } });
 
           if (!publicProfile) {
-            MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView({
-              MemberAuthenticationResult: MemberAuthenticationResult.UnknownError,
-            }));
+            MemberAuthenticationResultViewProxy.Serialize(
+              outputStream,
+              new MemberAuthenticationResultView({
+                MemberAuthenticationResult: MemberAuthenticationResult.UnknownError,
+              }),
+            );
           } else {
             const memberWallet = await MemberWallet.findOne({ where: { Cmid: steamMember.Cmid } });
             const playerStatistics = await PlayerStatistics.findOne({ where: { Cmid: steamMember.Cmid } });
 
-            const session = await global.SessionManager.findOrCreateSessionForSteamUser(publicProfile as PublicProfileView, machineId, steamMember);
+            const session = await global.SessionManager.findOrCreateSessionForSteamUser(
+              publicProfile as PublicProfileView,
+              machineId,
+              steamMember,
+            );
 
             let clan;
             if (publicProfile.Name.trim().length > 0) {
               clan = await Clan.findOne({
-                include: [{
-                  model: ClanMember,
-                  as: 'Members',
-                }],
+                include: [
+                  {
+                    model: ClanMember,
+                    as: 'Members',
+                  },
+                ],
               });
 
               if (clan) {
                 const clanMember = clan.Members.find((_) => _.Cmid === steamMember!.Cmid);
 
                 if (clanMember) {
-                  ClanMember.update({
-                    Lastlogin: new Date(),
-                  }, {
-                    where: {
-                      GroupId: clan.GroupId,
-                      Cmid: clanMember.Cmid,
+                  ClanMember.update(
+                    {
+                      Lastlogin: new Date(),
                     },
-                  });
+                    {
+                      where: {
+                        GroupId: clan.GroupId,
+                        Cmid: clanMember.Cmid,
+                      },
+                    },
+                  );
                 }
               }
 
               Log.info(`${publicProfile.Name}(${publicProfile.Cmid}) logged in.`);
             }
 
-            MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView({
-              MemberAuthenticationResult: MemberAuthenticationResult.Ok,
-              MemberView: new MemberView({
-                PublicProfile: new PublicProfileView({ ...publicProfile.get({ plain: true }) }),
-                MemberWallet: new MemberWalletView({ ...memberWallet!.get({ plain: true }) }),
+            MemberAuthenticationResultViewProxy.Serialize(
+              outputStream,
+              new MemberAuthenticationResultView({
+                MemberAuthenticationResult: MemberAuthenticationResult.Ok,
+                MemberView: new MemberView({
+                  PublicProfile: new PublicProfileView({ ...publicProfile.get({ plain: true }) }),
+                  MemberWallet: new MemberWalletView({ ...memberWallet!.get({ plain: true }) }),
+                }),
+                PlayerStatisticsView: new PlayerStatisticsView({ ...playerStatistics!.get({ plain: true }) }),
+                IsAccountComplete: publicProfile.Name.trim().length > 0,
+                AuthToken: session.SessionId,
               }),
-              PlayerStatisticsView: new PlayerStatisticsView({ ...playerStatistics!.get({ plain: true }) }),
-              IsAccountComplete: publicProfile.Name.trim().length > 0,
-              AuthToken: session.SessionId,
-            }));
+            );
           }
         }
       }
@@ -417,7 +491,9 @@ export default class AuthenticationWebService extends BaseWebService {
 
   public static async VerifyAuthToken(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const authToken = StringProxy.Deserialize(bytes);
@@ -426,16 +502,22 @@ export default class AuthenticationWebService extends BaseWebService {
 
       const session = await global.SessionManager.findSessionForSteamUser(authToken);
       if (!session) {
-        MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView({
-          MemberAuthenticationResult: MemberAuthenticationResult.InvalidCookie,
-        }));
+        MemberAuthenticationResultViewProxy.Serialize(
+          outputStream,
+          new MemberAuthenticationResultView({
+            MemberAuthenticationResult: MemberAuthenticationResult.InvalidCookie,
+          }),
+        );
       } else {
         const steamMember = await session.SteamMember;
 
         if (!steamMember) {
-          MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView({
-            MemberAuthenticationResult: MemberAuthenticationResult.UnknownError,
-          }));
+          MemberAuthenticationResultViewProxy.Serialize(
+            outputStream,
+            new MemberAuthenticationResultView({
+              MemberAuthenticationResult: MemberAuthenticationResult.UnknownError,
+            }),
+          );
         } else {
           const bannedMember = await ModerationAction.findOne({
             where: {
@@ -445,38 +527,49 @@ export default class AuthenticationWebService extends BaseWebService {
           });
 
           if (bannedMember && (!bannedMember.ExpireTime || bannedMember.ExpireTime > new Date())) {
-            MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView({
-              MemberAuthenticationResult: MemberAuthenticationResult.IsBanned,
-            }));
+            MemberAuthenticationResultViewProxy.Serialize(
+              outputStream,
+              new MemberAuthenticationResultView({
+                MemberAuthenticationResult: MemberAuthenticationResult.IsBanned,
+              }),
+            );
           } else {
             const publicProfile = await PublicProfile.findOne({ where: { Cmid: steamMember.Cmid } });
 
             if (!publicProfile) {
-              MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView({
-                MemberAuthenticationResult: MemberAuthenticationResult.UnknownError,
-              }));
+              MemberAuthenticationResultViewProxy.Serialize(
+                outputStream,
+                new MemberAuthenticationResultView({
+                  MemberAuthenticationResult: MemberAuthenticationResult.UnknownError,
+                }),
+              );
             } else {
               const memberWallet = await MemberWallet.findOne({ where: { Cmid: steamMember.Cmid } });
               const playerStatistics = await MemberWallet.findOne({ where: { Cmid: steamMember.Cmid } });
 
-              MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView({
-                MemberAuthenticationResult: MemberAuthenticationResult.Ok,
-                MemberView: new MemberView({
-                  PublicProfile: new PublicProfileView({ ...publicProfile.get({ plain: true }) }),
-                  MemberWallet: new MemberWalletView({ ...memberWallet!.get({ plain: true }) }),
+              MemberAuthenticationResultViewProxy.Serialize(
+                outputStream,
+                new MemberAuthenticationResultView({
+                  MemberAuthenticationResult: MemberAuthenticationResult.Ok,
+                  MemberView: new MemberView({
+                    PublicProfile: new PublicProfileView({ ...publicProfile.get({ plain: true }) }),
+                    MemberWallet: new MemberWalletView({ ...memberWallet!.get({ plain: true }) }),
+                  }),
+                  PlayerStatisticsView: new PlayerStatisticsView({ ...playerStatistics!.get({ plain: true }) }),
+                  ServerTime: new Date(),
+                  IsAccountComplete: publicProfile.Name.trim().length > 0,
+                  AuthToken: session.SessionId,
                 }),
-                PlayerStatisticsView: new PlayerStatisticsView({ ...playerStatistics!.get({ plain: true }) }),
-                ServerTime: new Date(),
-                IsAccountComplete: publicProfile.Name.trim().length > 0,
-                AuthToken: session.SessionId,
-              }));
+              );
 
               if (publicProfile.Name.trim().length > 0) {
                 const clan = await Clan.findOne({
-                  include: [{
-                    model: ClanMember,
-                    as: 'Members',
-                  }],
+                  include: [
+                    {
+                      model: ClanMember,
+                      as: 'Members',
+                    },
+                  ],
                 });
 
                 if (clan) {

@@ -3,7 +3,14 @@ import { ChannelType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/
 import {
   ArrayProxy,
   ByteProxy,
-  CommActorInfoProxy, DictionaryProxy, EndOfMatchDataProxy, EnumProxy, GameActorInfoProxy, GameRoomDataProxy, Int32Proxy, StringProxy,
+  CommActorInfoProxy,
+  DictionaryProxy,
+  EndOfMatchDataProxy,
+  EnumProxy,
+  GameActorInfoProxy,
+  GameRoomDataProxy,
+  Int32Proxy,
+  StringProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import { v4 as uuid } from 'uuid';
 import WebSocketPacketType from './PacketType';
@@ -13,7 +20,7 @@ import { ServerType } from './WebSocket';
 enum PayloadFlags {
   IsSerialized = 1 << 0,
   IsEncrypted = 1 << 1,
-  IsOneWay = 1 << 2
+  IsOneWay = 1 << 2,
 }
 
 export default class WebSocketPayload {
@@ -57,10 +64,21 @@ export default class WebSocketPayload {
   }
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 
-  public static Encode(type: WebSocketPacketType, data: any, crypto: RijndaelCryptoProvider | null, oneWay: boolean = false, conversationId: string | null = null, serverType: ServerType = ServerType.None): [byte[] | null, WebSocketPayload | null] {
+  public static Encode(
+    type: WebSocketPacketType,
+    data: any,
+    crypto: RijndaelCryptoProvider | null,
+    oneWay: boolean = false,
+    conversationId: string | null = null,
+    serverType: ServerType = ServerType.None,
+  ): [byte[] | null, WebSocketPayload | null] {
     if (!conversationId) {
       conversationId = uuid();
     }
@@ -210,15 +228,14 @@ export default class WebSocketPayload {
         result = StringProxy.Deserialize(bytes);
         break;
       case WebSocketPacketType.RoomChatMessage:
-        result = [
-          JSON.parse(StringProxy.Deserialize(bytes)),
-          GameRoomDataProxy.Deserialize(bytes),
-        ];
+        result = [JSON.parse(StringProxy.Deserialize(bytes)), GameRoomDataProxy.Deserialize(bytes)];
 
         break;
       case WebSocketPacketType.Monitoring:
       case WebSocketPacketType.BanPlayer:
-        result = DictionaryProxy.Deserialize<string, object>(bytes, StringProxy.Deserialize, (stream) => JSON.parse(StringProxy.Deserialize(stream)));
+        result = DictionaryProxy.Deserialize<string, object>(bytes, StringProxy.Deserialize, (stream) =>
+          JSON.parse(StringProxy.Deserialize(stream)),
+        );
         break;
       case WebSocketPacketType.PlayerJoined:
       case WebSocketPacketType.PlayerLeft:
@@ -237,19 +254,13 @@ export default class WebSocketPayload {
         break;
       case WebSocketPacketType.PlayerJoinedRoom:
       case WebSocketPacketType.PlayerLeftRoom:
-        result = [
-          GameActorInfoProxy.Deserialize(bytes),
-          GameRoomDataProxy.Deserialize(bytes),
-        ];
+        result = [GameActorInfoProxy.Deserialize(bytes), GameRoomDataProxy.Deserialize(bytes)];
         break;
       case WebSocketPacketType.RoundStarted:
         result = GameRoomDataProxy.Deserialize(bytes);
         break;
       case WebSocketPacketType.RoundEnded:
-        result = [
-          GameRoomDataProxy.Deserialize(bytes),
-          EndOfMatchDataProxy.Deserialize(bytes),
-        ];
+        result = [GameRoomDataProxy.Deserialize(bytes), EndOfMatchDataProxy.Deserialize(bytes)];
         break;
       case WebSocketPacketType.OpenRoom:
         /// TODO

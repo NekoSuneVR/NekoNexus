@@ -27,7 +27,11 @@ export default class WebSocketConnection {
   private pingDisconnect?: ReturnType<typeof setTimeout>;
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 
   private connectionState: WebSocketState = WebSocketState.Disconnected;
@@ -80,9 +84,7 @@ export default class WebSocketConnection {
       await this.sendTask;
       this.sendTask = undefined;
       this.ConnectionState = WebSocketState.Connected;
-    } catch {
-
-    }
+    } catch {}
   }
 
   public async SendPacket(type: PacketType) {
@@ -94,8 +96,21 @@ export default class WebSocketConnection {
     await this.SendBytes(bytes);
   }
 
-  public async Send(type: PacketType, payload: any, oneWay: boolean = true, conversationId: string | null = null, serverType: ServerType = ServerType.None) {
-    const [bytes, payloadObj] = WebSocketPayload.Encode(type, payload, this.CryptoProvider, oneWay, conversationId, serverType);
+  public async Send(
+    type: PacketType,
+    payload: any,
+    oneWay: boolean = true,
+    conversationId: string | null = null,
+    serverType: ServerType = ServerType.None,
+  ) {
+    const [bytes, payloadObj] = WebSocketPayload.Encode(
+      type,
+      payload,
+      this.CryptoProvider,
+      oneWay,
+      conversationId,
+      serverType,
+    );
     await this.SendBytes(bytes!);
 
     if (oneWay) return null;

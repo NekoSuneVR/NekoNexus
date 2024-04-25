@@ -46,34 +46,37 @@ export default class Clan extends Model<ClanAttributes> {
   declare Members: ClanMember[];
 
   public static initialize(sequelize: Sequelize) {
-    Clan.init({
-      GroupId: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+    Clan.init(
+      {
+        GroupId: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        MembersCount: DataTypes.INTEGER,
+        Description: DataTypes.TEXT,
+        Name: {
+          type: DataTypes.STRING(25),
+          unique: true,
+        },
+        Motto: DataTypes.STRING(25),
+        Address: DataTypes.STRING,
+        FoundingDate: DataTypes.DATE,
+        Picture: DataTypes.STRING,
+        Type: DataTypes.INTEGER,
+        LastUpdated: DataTypes.DATE,
+        Tag: DataTypes.STRING(5),
+        MembersLimit: DataTypes.INTEGER,
+        ColorStyle: DataTypes.INTEGER,
+        FontStyle: DataTypes.INTEGER,
+        ApplicationId: DataTypes.INTEGER,
+        OwnerCmid: DataTypes.INTEGER,
+        OwnerName: DataTypes.STRING,
       },
-      MembersCount: DataTypes.INTEGER,
-      Description: DataTypes.TEXT,
-      Name: {
-        type: DataTypes.STRING(25),
-        unique: true,
+      {
+        sequelize,
+        timestamps: false,
       },
-      Motto: DataTypes.STRING(25),
-      Address: DataTypes.STRING,
-      FoundingDate: DataTypes.DATE,
-      Picture: DataTypes.STRING,
-      Type: DataTypes.INTEGER,
-      LastUpdated: DataTypes.DATE,
-      Tag: DataTypes.STRING(5),
-      MembersLimit: DataTypes.INTEGER,
-      ColorStyle: DataTypes.INTEGER,
-      FontStyle: DataTypes.INTEGER,
-      ApplicationId: DataTypes.INTEGER,
-      OwnerCmid: DataTypes.INTEGER,
-      OwnerName: DataTypes.STRING,
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+    );
   }
 
   public static associate({ ClanMember, PublicProfile }) {

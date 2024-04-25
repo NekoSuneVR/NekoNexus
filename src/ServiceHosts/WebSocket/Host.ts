@@ -1,8 +1,6 @@
 import ParadiseService from '@/ParadiseService';
 import { Log } from '@/utils';
-import {
-  ArrayProxy, ByteProxy, EnumProxy, Int32Proxy,
-} from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
+import { ArrayProxy, ByteProxy, EnumProxy, Int32Proxy } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import { EventEmitter } from 'stream';
 import { v4 as uuid } from 'uuid';
 import { WebSocketServer } from 'ws';
@@ -86,10 +84,11 @@ export default class WebSocketHost extends EventEmitter {
       });
 
       client.on('message', async (data) => {
-        const inputBytes = [...data as Buffer];
+        const inputBytes = [...(data as Buffer)];
 
         const payloadType = Int32Proxy.Deserialize(inputBytes);
-        if (payloadType === 0x42) { // Packet / Raw Data
+        if (payloadType === 0x42) {
+          // Packet / Raw Data
           const packetType = EnumProxy.Deserialize<PacketType>(inputBytes);
           switch (packetType) {
             case PacketType.MagicBytes: {
@@ -105,15 +104,23 @@ export default class WebSocketHost extends EventEmitter {
             case PacketType.Pong:
               socketClient.ResetPingTimeout();
               break;
-            default: break;
+            default:
+              break;
           }
 
-          this.emit('PacketReceived', new WebSocketPacketReceivedEventArgs({
-            Socket: socketClient,
-            PacketType: packetType,
-          }));
-        } else { // JSON Object
-          const [payload, payloadObj] = WebSocketPayload.Decode<any>(data.toString('utf-8'), socketClient.CryptoProvider);
+          this.emit(
+            'PacketReceived',
+            new WebSocketPacketReceivedEventArgs({
+              Socket: socketClient,
+              PacketType: packetType,
+            }),
+          );
+        } else {
+          // JSON Object
+          const [payload, payloadObj] = WebSocketPayload.Decode<any>(
+            data.toString('utf-8'),
+            socketClient.CryptoProvider,
+          );
 
           if (!payloadObj) return;
 
@@ -124,7 +131,9 @@ export default class WebSocketHost extends EventEmitter {
               socketClient.Info = clientInfo;
               socketClient.Info.IsClient = true;
 
-              const passphrase = ParadiseService.Instance.ServiceSettings.ServerCredentials.find((_) => _.Id.toLowerCase() === socketClient.Identifier.toLowerCase())?.Passphrase.trim();
+              const passphrase = ParadiseService.Instance.ServiceSettings.ServerCredentials.find(
+                (_) => _.Id.toLowerCase() === socketClient.Identifier.toLowerCase(),
+              )?.Passphrase.trim();
 
               if (!passphrase || !passphrase.length) {
                 socketClient.DisconnectReason = 'Unknown server';
@@ -135,11 +144,16 @@ export default class WebSocketHost extends EventEmitter {
                   Reason: socketClient.DisconnectReason,
                 });
 
-                await socketClient.Send(PacketType.ConnectionStatus, new WebSocketConnectionStatus({
-                  Connected: false,
-                  Rejected: true,
-                  DisconnectReason: socketClient.DisconnectReason,
-                }), true, payloadObj.ConversationId);
+                await socketClient.Send(
+                  PacketType.ConnectionStatus,
+                  new WebSocketConnectionStatus({
+                    Connected: false,
+                    Rejected: true,
+                    DisconnectReason: socketClient.DisconnectReason,
+                  }),
+                  true,
+                  payloadObj.ConversationId,
+                );
 
                 return;
               }
@@ -155,11 +169,16 @@ export default class WebSocketHost extends EventEmitter {
                       Reason: socketClient.DisconnectReason,
                     });
 
-                    await socketClient.Send(PacketType.ConnectionStatus, new WebSocketConnectionStatus({
-                      Connected: false,
-                      Rejected: true,
-                      DisconnectReason: socketClient.DisconnectReason,
-                    }), true, payloadObj.ConversationId);
+                    await socketClient.Send(
+                      PacketType.ConnectionStatus,
+                      new WebSocketConnectionStatus({
+                        Connected: false,
+                        Rejected: true,
+                        DisconnectReason: socketClient.DisconnectReason,
+                      }),
+                      true,
+                      payloadObj.ConversationId,
+                    );
 
                     return;
                   }
@@ -177,11 +196,16 @@ export default class WebSocketHost extends EventEmitter {
                       Reason: socketClient.DisconnectReason,
                     });
 
-                    await socketClient.Send(PacketType.ConnectionStatus, new WebSocketConnectionStatus({
-                      Connected: false,
-                      Rejected: true,
-                      DisconnectReason: socketClient.DisconnectReason,
-                    }), true, payloadObj.ConversationId);
+                    await socketClient.Send(
+                      PacketType.ConnectionStatus,
+                      new WebSocketConnectionStatus({
+                        Connected: false,
+                        Rejected: true,
+                        DisconnectReason: socketClient.DisconnectReason,
+                      }),
+                      true,
+                      payloadObj.ConversationId,
+                    );
 
                     return;
                   }
@@ -198,11 +222,16 @@ export default class WebSocketHost extends EventEmitter {
                     Reason: socketClient.DisconnectReason,
                   });
 
-                  await socketClient.Send(PacketType.ConnectionStatus, new WebSocketConnectionStatus({
-                    Connected: false,
-                    Rejected: true,
-                    DisconnectReason: socketClient.DisconnectReason,
-                  }), true, payloadObj.ConversationId);
+                  await socketClient.Send(
+                    PacketType.ConnectionStatus,
+                    new WebSocketConnectionStatus({
+                      Connected: false,
+                      Rejected: true,
+                      DisconnectReason: socketClient.DisconnectReason,
+                    }),
+                    true,
+                    payloadObj.ConversationId,
+                  );
 
                   return;
               }
@@ -210,10 +239,19 @@ export default class WebSocketHost extends EventEmitter {
               this.ConnectedSockets[socketClient.ConnectionId] = socketClient;
 
               const uuidByteArray = [...Buffer.from(socketClient.Info.SocketId.replaceAll('-', ''), 'hex')];
-              const uuidBytes = Buffer.from(uuidByteArray.slice(0, 4).reverse().concat(uuidByteArray.slice(4, 6).reverse())
-                .concat(uuidByteArray.slice(6, 8).reverse())
-                .concat(uuidByteArray.slice(8)));
-              this.CryptoProviders[socketClient.ConnectionId] = new RijndaelCryptoProvider(Buffer.from(passphrase, 'utf-8'), uuidBytes, uuidBytes);
+              const uuidBytes = Buffer.from(
+                uuidByteArray
+                  .slice(0, 4)
+                  .reverse()
+                  .concat(uuidByteArray.slice(4, 6).reverse())
+                  .concat(uuidByteArray.slice(6, 8).reverse())
+                  .concat(uuidByteArray.slice(8)),
+              );
+              this.CryptoProviders[socketClient.ConnectionId] = new RijndaelCryptoProvider(
+                Buffer.from(passphrase, 'utf-8'),
+                uuidBytes,
+                uuidBytes,
+              );
               socketClient.CryptoProvider = this.CryptoProviders[socketClient.ConnectionId];
 
               this.emit('ClientConnected', {
@@ -222,21 +260,30 @@ export default class WebSocketHost extends EventEmitter {
 
               socketClient.OnOpen();
 
-              await socketClient.Send(PacketType.ConnectionStatus, new WebSocketConnectionStatus({
-                Connected: true,
-              }), true, payloadObj.ConversationId);
+              await socketClient.Send(
+                PacketType.ConnectionStatus,
+                new WebSocketConnectionStatus({
+                  Connected: true,
+                }),
+                true,
+                payloadObj.ConversationId,
+              );
 
               break;
             }
-            default: break;
+            default:
+              break;
           }
 
-          this.emit('DataReceived', new WebSocketDataReceivedEventArgs({
-            Socket: socketClient,
-            Payload: payloadObj,
-            Data: payload,
-            ServerType: socketClient.Info.Type,
-          }));
+          this.emit(
+            'DataReceived',
+            new WebSocketDataReceivedEventArgs({
+              Socket: socketClient,
+              Payload: payloadObj,
+              Data: payload,
+              ServerType: socketClient.Info.Type,
+            }),
+          );
         }
       });
     });
@@ -247,17 +294,34 @@ export default class WebSocketHost extends EventEmitter {
   }
 
   // #region Send
-  public async SendToCommServer(type: PacketType, payload: any, oneWay: boolean = true, conversationId?: string): Promise<any> {
+  public async SendToCommServer(
+    type: PacketType,
+    payload: any,
+    oneWay: boolean = true,
+    conversationId?: string,
+  ): Promise<any> {
     if (!this.CommServer) return null;
 
     const r = await this.CommServer.Send(type, payload, oneWay, conversationId, ServerType.MasterServer);
     return r;
   }
 
-  public async SendToGameServer(guid: string, type: PacketType, payload: any, oneWay: boolean = true, conversationId?: string): Promise<any> {
+  public async SendToGameServer(
+    guid: string,
+    type: PacketType,
+    payload: any,
+    oneWay: boolean = true,
+    conversationId?: string,
+  ): Promise<any> {
     if (!this.GameServers.find((_) => _.Identifier === guid)) return null;
 
-    const r = await this.GameServers.find((_) => _.Identifier === guid)?.Send(type, payload, oneWay, conversationId, ServerType.MasterServer);
+    const r = await this.GameServers.find((_) => _.Identifier === guid)?.Send(
+      type,
+      payload,
+      oneWay,
+      conversationId,
+      ServerType.MasterServer,
+    );
     return r;
   }
 

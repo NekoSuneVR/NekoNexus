@@ -6,18 +6,18 @@ export default class WalletCommand extends ParadiseCommand {
   public static override Command: string = 'wallet';
   public static override Aliases: string[] = [];
 
-  public override Description: string = 'Manages credits and points in a player\'s wallet.';
+  public override Description: string = "Manages credits and points in a player's wallet.";
   public override HelpString: string = `${WalletCommand.Command}\t\t${this.Description}`;
 
   public override UsageText: string[] = [
     `${WalletCommand.Command}: ${this.Description}`,
-    '  info <name>\t\t\tShows the current status of a player\'s wallet.',
+    "  info <name>\t\t\tShows the current status of a player's wallet.",
     '  credits',
-    '    add <name> <amount>\t\tAdds the specified amount of credits to a players\'s wallet.',
-    '    remove <name> <amount>\tRemoves the specified amount of credits from a players\'s wallet.',
+    "    add <name> <amount>\t\tAdds the specified amount of credits to a players's wallet.",
+    "    remove <name> <amount>\tRemoves the specified amount of credits from a players's wallet.",
     '  points',
-    '    add <name> <amount>\t\tAdds the specified amount of points to a players\'s wallet.',
-    '    remove <name> <amount>\tRemoves the specified amount of points from a players\'s wallet.',
+    "    add <name> <amount>\t\tAdds the specified amount of points to a players's wallet.",
+    "    remove <name> <amount>\tRemoves the specified amount of points from a players's wallet.",
   ];
 
   public override MinimumAccessLevel: MemberAccessLevel = MemberAccessLevel.Moderator;
@@ -56,13 +56,17 @@ export default class WalletCommand extends ParadiseCommand {
 
         if (profiles?.length && wallets?.length) {
           this.WriteLine(' ----------------------------------------------------- ');
-          this.WriteLine(`| ${'Username'.padEnd(18)} | ${'CMID'.padEnd(10)} | ${'Credits'.padEnd(7)} | ${'Points'.padEnd(7)} |`);
+          this.WriteLine(
+            `| ${'Username'.padEnd(18)} | ${'CMID'.padEnd(10)} | ${'Credits'.padEnd(7)} | ${'Points'.padEnd(7)} |`,
+          );
           this.WriteLine(' -----------------------------------------------------|');
 
           for (const profile of profiles) {
             const wallet = wallets.find((_) => _.Cmid === profile.Cmid);
             if (wallet) {
-              this.WriteLine(`| ${profile.Name.padEnd(18)} | ${String(profile.Cmid).padEnd(10)} | ${String(wallet.Credits).padEnd(7)} | ${String(wallet.Points).padEnd(7)} |`);
+              this.WriteLine(
+                `| ${profile.Name.padEnd(18)} | ${String(profile.Cmid).padEnd(10)} | ${String(wallet.Credits).padEnd(7)} | ${String(wallet.Points).padEnd(7)} |`,
+              );
             }
           }
 

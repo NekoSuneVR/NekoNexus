@@ -50,7 +50,16 @@ export default class RijndaelCipher {
   private encryptor: Cipher;
   private decryptor: Cipher;
 
-  constructor(passPhrase: string, initVector: string | null = null, minSaltLen: number = -1, maxSaltLen: number = -1, keySize: number = -1, hashAlgorithm: string | null = null, saltValue: string | null = null, passwordIterations: number = 1) {
+  constructor(
+    passPhrase: string,
+    initVector: string | null = null,
+    minSaltLen: number = -1,
+    maxSaltLen: number = -1,
+    keySize: number = -1,
+    hashAlgorithm: string | null = null,
+    saltValue: string | null = null,
+    passwordIterations: number = 1,
+  ) {
     if (minSaltLen < RijndaelCipher.MIN_ALLOWED_SALT_LEN) {
       this.minSaltLen = RijndaelCipher.DEFAULT_MIN_SALT_LEN;
     } else {
@@ -150,7 +159,10 @@ export default class RijndaelCipher {
   }
 
   private GenerateSalt(): Buffer {
-    const num = (this.minSaltLen === this.maxSaltLen) ? this.minSaltLen : this.GenerateRandomNumber(this.minSaltLen, this.maxSaltLen);
+    const num =
+      this.minSaltLen === this.maxSaltLen
+        ? this.minSaltLen
+        : this.GenerateRandomNumber(this.minSaltLen, this.maxSaltLen);
     const array = crypto.randomBytes(num);
 
     array[0] = (array[0] & 252) | (num & 3);

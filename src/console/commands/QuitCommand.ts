@@ -9,9 +9,7 @@ export default class QuitCommand extends ParadiseCommand {
   public override Description: string = 'Quits the application.';
   public override HelpString: string = `${QuitCommand.Command}\t\t${this.Description}`;
 
-  public override UsageText: string[] = [
-    `${QuitCommand.Command}: ${this.Description}`,
-  ];
+  public override UsageText: string[] = [`${QuitCommand.Command}: ${this.Description}`];
 
   public override MinimumAccessLevel: MemberAccessLevel = MemberAccessLevel.Admin;
 

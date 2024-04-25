@@ -45,15 +45,17 @@ export class BanCommand extends ParadiseCommand {
     const reason = args[1];
     const duration = Number(args[2]);
 
-    if (await ModerationAction.findOne({
-      where: {
-        ModerationFlag: ModerationFlag.Banned,
-        ExpireTime: {
-          [Op.gt]: new Date(),
+    if (
+      await ModerationAction.findOne({
+        where: {
+          ModerationFlag: ModerationFlag.Banned,
+          ExpireTime: {
+            [Op.gt]: new Date(),
+          },
+          TargetCmid: publicProfile.Cmid,
         },
-        TargetCmid: publicProfile.Cmid,
-      },
-    })) {
+      })
+    ) {
       this.WriteLine('Failed to ban player: Player is already banned.');
       return;
     }
@@ -65,7 +67,10 @@ export class BanCommand extends ParadiseCommand {
       TargetCmid: publicProfile.Cmid,
       TargetName: publicProfile.Name,
       ActionDate: new Date(),
-      ExpireTime: (Number.isNaN(duration) || duration === 0) ? new Date('9999-12-31T23:59:59.999Z') : moment(new Date()).add(duration, 'minutes').toDate(),
+      ExpireTime:
+        Number.isNaN(duration) || duration === 0
+          ? new Date('9999-12-31T23:59:59.999Z')
+          : moment(new Date()).add(duration, 'minutes').toDate(),
       Reason: reason,
     });
 
@@ -118,30 +123,35 @@ export class UnbanCommand extends ParadiseCommand {
       return;
     }
 
-    if (!(await ModerationAction.findOne({
-      where: {
-        ModerationFlag: ModerationFlag.Banned,
-        ExpireTime: {
-          [Op.gt]: new Date(),
+    if (
+      !(await ModerationAction.findOne({
+        where: {
+          ModerationFlag: ModerationFlag.Banned,
+          ExpireTime: {
+            [Op.gt]: new Date(),
+          },
+          TargetCmid: publicProfile.Cmid,
         },
-        TargetCmid: publicProfile.Cmid,
-      },
-    }))) {
+      }))
+    ) {
       this.WriteLine('Failed to ban player: Player is not currently banned.');
       return;
     }
 
-    await ModerationAction.update({
-      ExpireTime: new Date(0),
-    }, {
-      where: {
-        ModerationFlag: ModerationFlag.Banned,
-        TargetCmid: publicProfile.Cmid,
-        ExpireTime: {
-          [Op.gt]: new Date(),
+    await ModerationAction.update(
+      {
+        ExpireTime: new Date(0),
+      },
+      {
+        where: {
+          ModerationFlag: ModerationFlag.Banned,
+          TargetCmid: publicProfile.Cmid,
+          ExpireTime: {
+            [Op.gt]: new Date(),
+          },
         },
       },
-    });
+    );
 
     this.WriteLine('User has been unbanned successfully.');
   }

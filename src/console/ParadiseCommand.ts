@@ -6,7 +6,11 @@ export class CommandOutputArgs {
   public Inline: boolean = false;
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 }
 
@@ -41,24 +45,33 @@ export default abstract class ParadiseCommand {
   protected WriteLine(text: string): void {
     this.OutputBuffer.push(text);
 
-    this.CommandOutput?.(this, new CommandOutputArgs({
-      InvocationId: this.InvocationId,
-      Text: text,
-    }));
+    this.CommandOutput?.(
+      this,
+      new CommandOutputArgs({
+        InvocationId: this.InvocationId,
+        Text: text,
+      }),
+    );
   }
 
   protected Write(text: string): void {
     if (this.OutputBuffer.length > 0) {
-      this.OutputBuffer[this.OutputBuffer.length - 1] = this.OutputBuffer[this.OutputBuffer.length - 1].concat('', text);
+      this.OutputBuffer[this.OutputBuffer.length - 1] = this.OutputBuffer[this.OutputBuffer.length - 1].concat(
+        '',
+        text,
+      );
     } else {
       this.OutputBuffer.push(text);
     }
 
-    this.CommandOutput?.(this, new CommandOutputArgs({
-      InvocationId: this.InvocationId,
-      Text: text,
-      Inline: true,
-    }));
+    this.CommandOutput?.(
+      this,
+      new CommandOutputArgs({
+        InvocationId: this.InvocationId,
+        Text: text,
+        Inline: true,
+      }),
+    );
   }
 
   protected PrintUsageText(): void {

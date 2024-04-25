@@ -50,42 +50,45 @@ export default class ShopBundle extends Model<ShopBundleAttributes> {
   declare BundleItemViews: ShopBundleItem[];
 
   public static initialize(sequelize: Sequelize) {
-    ShopBundle.init({
-      Id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-      },
-      ApplicationId: DataTypes.INTEGER,
-      Name: DataTypes.STRING,
-      ImageUrl: DataTypes.STRING,
-      IconUrl: DataTypes.STRING,
-      Description: DataTypes.TEXT,
-      IsOnSale: DataTypes.BOOLEAN,
-      IsPromoted: DataTypes.BOOLEAN,
-      USDPrice: DataTypes.DECIMAL,
-      USDPromoPrice: DataTypes.DECIMAL,
-      Credits: DataTypes.INTEGER,
-      Points: DataTypes.INTEGER,
-      // BundleItemViews
-      Category: DataTypes.INTEGER,
-      Availability: {
-        type: DataTypes.JSON,
-        get(this: ShopBundle): any {
-          return JSON.parse(this.getDataValue('Availability') as any);
+    ShopBundle.init(
+      {
+        Id: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
         },
-        set(this: ShopBundle, value: any): any {
-          this.setDataValue('Availability', JSON.stringify(value) as any);
+        ApplicationId: DataTypes.INTEGER,
+        Name: DataTypes.STRING,
+        ImageUrl: DataTypes.STRING,
+        IconUrl: DataTypes.STRING,
+        Description: DataTypes.TEXT,
+        IsOnSale: DataTypes.BOOLEAN,
+        IsPromoted: DataTypes.BOOLEAN,
+        USDPrice: DataTypes.DECIMAL,
+        USDPromoPrice: DataTypes.DECIMAL,
+        Credits: DataTypes.INTEGER,
+        Points: DataTypes.INTEGER,
+        // BundleItemViews
+        Category: DataTypes.INTEGER,
+        Availability: {
+          type: DataTypes.JSON,
+          get(this: ShopBundle): any {
+            return JSON.parse(this.getDataValue('Availability') as any);
+          },
+          set(this: ShopBundle, value: any): any {
+            this.setDataValue('Availability', JSON.stringify(value) as any);
+          },
         },
+        PromotionTag: DataTypes.STRING,
+        MacAppStoreUniqueId: DataTypes.STRING,
+        IosAppStoreUniqueId: DataTypes.STRING,
+        AndroidStoreUniqueId: DataTypes.STRING,
+        IsDefault: DataTypes.BOOLEAN,
       },
-      PromotionTag: DataTypes.STRING,
-      MacAppStoreUniqueId: DataTypes.STRING,
-      IosAppStoreUniqueId: DataTypes.STRING,
-      AndroidStoreUniqueId: DataTypes.STRING,
-      IsDefault: DataTypes.BOOLEAN,
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+      {
+        sequelize,
+        timestamps: false,
+      },
+    );
   }
 
   public static associate({ ShopBundleItem }) {

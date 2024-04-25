@@ -14,18 +14,21 @@ export default class SteamMember extends Model<SteamMemberAttributes> {
   declare MachineId: string;
 
   public static initialize(sequelize: Sequelize) {
-    SteamMember.init({
-      SteamId: {
-        type: DataTypes.STRING,
-        primaryKey: true,
+    SteamMember.init(
+      {
+        SteamId: {
+          type: DataTypes.STRING,
+          primaryKey: true,
+        },
+        Cmid: DataTypes.INTEGER,
+        AuthToken: DataTypes.STRING,
+        MachineId: DataTypes.STRING,
       },
-      Cmid: DataTypes.INTEGER,
-      AuthToken: DataTypes.STRING,
-      MachineId: DataTypes.STRING,
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+      {
+        sequelize,
+        timestamps: false,
+      },
+    );
   }
 
   public static associate({ PublicProfile }) {

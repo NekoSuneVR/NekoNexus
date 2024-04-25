@@ -1,18 +1,40 @@
 import {
-  CurrencyDeposit, ItemTransaction, MemberWallet, PlayerInventoryItem,
+  CurrencyDeposit,
+  ItemTransaction,
+  MemberWallet,
+  PlayerInventoryItem,
   PlayerStatistics,
-  PublicProfile, ShopBundle, ShopBundleItem, ShopFunctionalItem, ShopGearItem, ShopItemPrice, ShopQuickItem, ShopWeaponItem,
+  PublicProfile,
+  ShopBundle,
+  ShopBundleItem,
+  ShopFunctionalItem,
+  ShopGearItem,
+  ShopItemPrice,
+  ShopQuickItem,
+  ShopWeaponItem,
 } from '@/models';
 import { ApiVersion, XpPointsUtil } from '@/utils';
 import {
-  BundleCategoryType, BundleView,
+  BundleCategoryType,
+  BundleView,
   BuyItemResult,
-  BuyingDurationType, BuyingLocationType, BuyingRecommendationType, ChannelType, PackType, PaymentProviderType, UberStrikeCurrencyType,
+  BuyingDurationType,
+  BuyingLocationType,
+  BuyingRecommendationType,
+  ChannelType,
+  PackType,
+  PaymentProviderType,
+  UberStrikeCurrencyType,
 } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { UberStrikeItemShopClientView } from '@festivaldev/uberstrike-js/UberStrike/Core/Models/Views';
 import {
   BooleanProxy,
-  BundleViewProxy, EnumProxy, Int32Proxy, ListProxy, StringProxy, UberStrikeItemShopClientViewProxy,
+  BundleViewProxy,
+  EnumProxy,
+  Int32Proxy,
+  ListProxy,
+  StringProxy,
+  UberStrikeItemShopClientViewProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import { UberstrikeItemType } from '@festivaldev/uberstrike-js/UberStrike/Core/Types';
 import crypto from 'crypto';
@@ -21,13 +43,19 @@ import { Op } from 'sequelize';
 import BaseWebService from '../BaseWebService';
 
 export default class ShopWebService extends BaseWebService {
-  public static get ServiceName(): string { return 'ShopWebService'; }
-  public static get ServiceVersion(): string { return ApiVersion.Current; }
+  public static get ServiceName(): string {
+    return 'ShopWebService';
+  }
+  public static get ServiceVersion(): string {
+    return ApiVersion.Current;
+  }
   // protected static get ServiceInterface(): string { return 'IShopWebServiceContract'; }
 
   public static async BuyBundle(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const authToken = StringProxy.Deserialize(bytes);
@@ -50,7 +78,9 @@ export default class ShopWebService extends BaseWebService {
 
   public static async BuyBundleSteam(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const bundleId = Int32Proxy.Deserialize(bytes);
@@ -116,7 +146,8 @@ export default class ShopWebService extends BaseWebService {
                       case BuyingDurationType.NinetyDays:
                         expirationDate = moment(new Date()).add(90, 'days').toDate();
                         break;
-                      default: break;
+                      default:
+                        break;
                     }
 
                     await PlayerInventoryItem.create({
@@ -163,7 +194,9 @@ export default class ShopWebService extends BaseWebService {
 
   public static async BuyItem(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const itemId = Int32Proxy.Deserialize(bytes);
@@ -174,7 +207,16 @@ export default class ShopWebService extends BaseWebService {
       const marketLocation = EnumProxy.Deserialize<BuyingLocationType>(bytes);
       const recommendationType = EnumProxy.Deserialize<BuyingRecommendationType>(bytes);
 
-      this.debugEndpoint('BuyItem', itemId, authToken, currencyType, durationType, itemType, marketLocation, recommendationType);
+      this.debugEndpoint(
+        'BuyItem',
+        itemId,
+        authToken,
+        currencyType,
+        durationType,
+        itemType,
+        marketLocation,
+        recommendationType,
+      );
 
       const session = await global.SessionManager.findSessionForSteamUser(authToken);
 
@@ -195,17 +237,22 @@ export default class ShopWebService extends BaseWebService {
             if (!memberWallet) {
               Int32Proxy.Serialize(outputStream, BuyItemResult.InvalidMember);
             } else {
-              if (await PlayerInventoryItem.findOne({
-                where: {
-                  Cmid: steamMember.Cmid,
-                  ItemId: itemId,
-                  ExpirationDate: {
-                    [Op.or]: [null, {
-                      [Op.gt]: new Date(),
-                    }],
+              if (
+                await PlayerInventoryItem.findOne({
+                  where: {
+                    Cmid: steamMember.Cmid,
+                    ItemId: itemId,
+                    ExpirationDate: {
+                      [Op.or]: [
+                        null,
+                        {
+                          [Op.gt]: new Date(),
+                        },
+                      ],
+                    },
                   },
-                },
-              })) {
+                })
+              ) {
                 Int32Proxy.Serialize(outputStream, BuyItemResult.AlreadyInInventory);
               } else {
                 let item: any = null;
@@ -214,44 +261,53 @@ export default class ShopWebService extends BaseWebService {
                   case UberstrikeItemType.Weapon:
                     item = await ShopWeaponItem.findOne({
                       where: { ID: itemId },
-                      include: [{
-                        model: ShopItemPrice,
-                        as: 'Prices',
-                        required: false,
-                      }],
+                      include: [
+                        {
+                          model: ShopItemPrice,
+                          as: 'Prices',
+                          required: false,
+                        },
+                      ],
                     });
                     break;
                   case UberstrikeItemType.Gear:
                     item = await ShopWeaponItem.findOne({
                       where: { ID: itemId },
-                      include: [{
-                        model: ShopItemPrice,
-                        as: 'Prices',
-                        required: false,
-                      }],
+                      include: [
+                        {
+                          model: ShopItemPrice,
+                          as: 'Prices',
+                          required: false,
+                        },
+                      ],
                     });
                     break;
                   case UberstrikeItemType.QuickUse:
                     item = await ShopWeaponItem.findOne({
                       where: { ID: itemId },
-                      include: [{
-                        model: ShopItemPrice,
-                        as: 'Prices',
-                        required: false,
-                      }],
+                      include: [
+                        {
+                          model: ShopItemPrice,
+                          as: 'Prices',
+                          required: false,
+                        },
+                      ],
                     });
                     break;
                   case UberstrikeItemType.Functional:
                     item = await ShopWeaponItem.findOne({
                       where: { ID: itemId },
-                      include: [{
-                        model: ShopItemPrice,
-                        as: 'Prices',
-                        required: false,
-                      }],
+                      include: [
+                        {
+                          model: ShopItemPrice,
+                          as: 'Prices',
+                          required: false,
+                        },
+                      ],
                     });
                     break;
-                  default: break;
+                  default:
+                    break;
                 }
 
                 if (!item) {
@@ -304,25 +360,29 @@ export default class ShopWebService extends BaseWebService {
                           WithdrawalId: Math.randomInt(),
                         });
                       }
-                    } else if (currencyType === UberStrikeCurrencyType.None || UberStrikeCurrencyType[currencyType] === undefined) {
+                    } else if (
+                      currencyType === UberStrikeCurrencyType.None ||
+                      UberStrikeCurrencyType[currencyType] === undefined
+                    ) {
                       Int32Proxy.Serialize(outputStream, BuyItemResult.InvalidData);
                     } else {
                       let expirationDate;
 
                       switch (durationType) {
-                        case (BuyingDurationType.OneDay):
+                        case BuyingDurationType.OneDay:
                           expirationDate = moment(new Date()).add(1, 'day').toDate();
                           break;
-                        case (BuyingDurationType.SevenDays):
+                        case BuyingDurationType.SevenDays:
                           expirationDate = moment(new Date()).add(7, 'days').toDate();
                           break;
-                        case (BuyingDurationType.ThirtyDays):
+                        case BuyingDurationType.ThirtyDays:
                           expirationDate = moment(new Date()).add(30, 'days').toDate();
                           break;
-                        case (BuyingDurationType.NinetyDays):
+                        case BuyingDurationType.NinetyDays:
                           expirationDate = moment(new Date()).add(90, 'days').toDate();
                           break;
-                        default: break;
+                        default:
+                          break;
                       }
 
                       await PlayerInventoryItem.create({
@@ -354,7 +414,9 @@ export default class ShopWebService extends BaseWebService {
 
   public static async BuyPack(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const itemId = Int32Proxy.Deserialize(bytes);
@@ -365,7 +427,16 @@ export default class ShopWebService extends BaseWebService {
       const marketLocation = EnumProxy.Deserialize<BuyingLocationType>(bytes);
       const recommendationType = EnumProxy.Deserialize<BuyingRecommendationType>(bytes);
 
-      this.debugEndpoint('BuyPack', itemId, authToken, packType, currencyType, itemType, marketLocation, recommendationType);
+      this.debugEndpoint(
+        'BuyPack',
+        itemId,
+        authToken,
+        packType,
+        currencyType,
+        itemType,
+        marketLocation,
+        recommendationType,
+      );
 
       throw new Error('Not Implemented');
       // return isEncrypted
@@ -380,7 +451,9 @@ export default class ShopWebService extends BaseWebService {
 
   public static async FinishBuyBundleSteam(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const orderId = StringProxy.Deserialize(bytes);
@@ -401,7 +474,9 @@ export default class ShopWebService extends BaseWebService {
 
   public static async GetAllLuckyDraws_1(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       this.debugEndpoint('GetAllLuckyDraws_1');
@@ -419,7 +494,9 @@ export default class ShopWebService extends BaseWebService {
 
   public static async GetAllLuckyDraws_2(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const bundleCategoryType = EnumProxy.Deserialize<BundleCategoryType>(bytes);
@@ -439,7 +516,9 @@ export default class ShopWebService extends BaseWebService {
 
   public static async GetAllMysteryBoxs_1(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       this.debugEndpoint('GetAllMysteryBoxs_1');
@@ -457,7 +536,9 @@ export default class ShopWebService extends BaseWebService {
 
   public static async GetAllMysteryBoxs_2(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const bundleCategoryType = EnumProxy.Deserialize<BundleCategoryType>(bytes);
@@ -477,20 +558,26 @@ export default class ShopWebService extends BaseWebService {
 
   public static async GetBundles(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const channelType = EnumProxy.Deserialize<ChannelType>(bytes);
 
       this.debugEndpoint('GetBundles', channelType);
 
-      const bundles = (await ShopBundle.findAll({
-        include: [{
-          model: ShopBundleItem,
-          as: 'BundleItemViews',
-          required: false,
-        }],
-      })).filter((_) => _.Availability!.includes(channelType));
+      const bundles = (
+        await ShopBundle.findAll({
+          include: [
+            {
+              model: ShopBundleItem,
+              as: 'BundleItemViews',
+              required: false,
+            },
+          ],
+        })
+      ).filter((_) => _.Availability!.includes(channelType));
 
       ListProxy.Serialize<BundleView>(outputStream, bundles as BundleView[], BundleViewProxy.Serialize);
 
@@ -506,7 +593,9 @@ export default class ShopWebService extends BaseWebService {
 
   public static async GetLuckyDraw(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const luckyDrawId = Int32Proxy.Deserialize(bytes);
@@ -526,7 +615,9 @@ export default class ShopWebService extends BaseWebService {
 
   public static async GetMysteryBox(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const mysteryBoxId = Int32Proxy.Deserialize(bytes);
@@ -546,17 +637,28 @@ export default class ShopWebService extends BaseWebService {
 
   public static async GetShop(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       this.debugEndpoint('GetShop');
 
-      UberStrikeItemShopClientViewProxy.Serialize(outputStream, new UberStrikeItemShopClientView({
-        FunctionalItems: await ShopFunctionalItem.findAll({ include: [{ model: ShopItemPrice, as: 'Prices', required: false }] }),
-        GearItems: await ShopGearItem.findAll({ include: [{ model: ShopItemPrice, as: 'Prices', required: false }] }),
-        QuickItems: await ShopQuickItem.findAll({ include: [{ model: ShopItemPrice, as: 'Prices', required: false }] }),
-        WeaponItems: await ShopWeaponItem.findAll({ include: [{ model: ShopItemPrice, as: 'Prices', required: false }] }),
-      }));
+      UberStrikeItemShopClientViewProxy.Serialize(
+        outputStream,
+        new UberStrikeItemShopClientView({
+          FunctionalItems: await ShopFunctionalItem.findAll({
+            include: [{ model: ShopItemPrice, as: 'Prices', required: false }],
+          }),
+          GearItems: await ShopGearItem.findAll({ include: [{ model: ShopItemPrice, as: 'Prices', required: false }] }),
+          QuickItems: await ShopQuickItem.findAll({
+            include: [{ model: ShopItemPrice, as: 'Prices', required: false }],
+          }),
+          WeaponItems: await ShopWeaponItem.findAll({
+            include: [{ model: ShopItemPrice, as: 'Prices', required: false }],
+          }),
+        }),
+      );
 
       return isEncrypted
         ? this.CryptoPolicy.RijndaelEncrypt(outputStream, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -570,7 +672,9 @@ export default class ShopWebService extends BaseWebService {
 
   public static async RollLuckyDraw(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const authToken = StringProxy.Deserialize(bytes);
@@ -592,7 +696,9 @@ export default class ShopWebService extends BaseWebService {
 
   public static async RollMysteryBox(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const authToken = StringProxy.Deserialize(bytes);
@@ -614,7 +720,9 @@ export default class ShopWebService extends BaseWebService {
 
   public static async UseConsumableItem(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const authToken = StringProxy.Deserialize(bytes);
@@ -635,7 +743,9 @@ export default class ShopWebService extends BaseWebService {
 
   public static async VerifyReceipt(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const hashedReceipt = StringProxy.Deserialize(bytes);

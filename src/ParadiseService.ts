@@ -3,18 +3,19 @@ import { default as DefaultSettings, type ParadiseServiceSettings } from '@/Para
 import FileServerHost from '@/ServiceHosts/FileServerHost';
 import WebServiceHost from '@/ServiceHosts/WebServiceHost';
 import {
-  ServerType, WebSocketCommand, WebSocketDataReceivedEventArgs, WebSocketHost, WebSocketPacketReceivedEventArgs, WebSocketPacketType,
+  ServerType,
+  WebSocketCommand,
+  WebSocketDataReceivedEventArgs,
+  WebSocketHost,
+  WebSocketPacketReceivedEventArgs,
+  WebSocketPacketType,
 } from '@/ServiceHosts/WebSocket';
 import { CommandHandler, Commands, ConsoleHelper } from '@/console';
 import DiscordClient from '@/discord/DiscordClient';
 import models from '@/models';
 import { GameSessionManager, Log, XpPointsUtil } from '@/utils';
 import readline, { Interface } from 'readline';
-import {
-  Dialect,
-  Op,
-  QueryOptions, QueryOptionsWithType, QueryTypes, Sequelize,
-} from 'sequelize';
+import { Dialect, Op, QueryOptions, QueryOptionsWithType, QueryTypes, Sequelize } from 'sequelize';
 
 const intToIPv4 = (ip: number): string => `${ip >>> 24}.${(ip >> 16) & 255}.${(ip >> 8) & 255}.${ip & 255}`;
 
@@ -42,12 +43,17 @@ export default class ParadiseService {
     ConsoleHelper.PrintConsoleHeader();
 
     // #region Database Configuration
-    const sequelize = new Sequelize(this.ServiceSettings.DatabaseSettings.DatabaseName!, this.ServiceSettings.DatabaseSettings.Username!, this.ServiceSettings.DatabaseSettings.Password, {
-      host: this.ServiceSettings.DatabaseSettings.Server,
-      port: Number(this.ServiceSettings.DatabaseSettings.Port),
-      dialect: (this.ServiceSettings.DatabaseSettings.Type as Dialect),
-      logging: false,
-    });
+    const sequelize = new Sequelize(
+      this.ServiceSettings.DatabaseSettings.DatabaseName!,
+      this.ServiceSettings.DatabaseSettings.Username!,
+      this.ServiceSettings.DatabaseSettings.Password,
+      {
+        host: this.ServiceSettings.DatabaseSettings.Server,
+        port: Number(this.ServiceSettings.DatabaseSettings.Port),
+        dialect: this.ServiceSettings.DatabaseSettings.Type as Dialect,
+        logging: false,
+      },
+    );
 
     sequelize.query = async function (
       sql: string | { query: string; values: unknown[] },
@@ -63,7 +69,9 @@ export default class ParadiseService {
     };
 
     Log.info('Connecting to database...');
-    Log.debug(`Type:${this.ServiceSettings.DatabaseSettings.Type} Database:${this.ServiceSettings.DatabaseSettings.DatabaseName} Auth:'${this.ServiceSettings.DatabaseSettings.Username}'@'${this.ServiceSettings.DatabaseSettings.Server}:${this.ServiceSettings.DatabaseSettings.Port}' (using password: ${this.ServiceSettings.DatabaseSettings.Password?.length! > 0 ? 'YES' : 'NO'})`);
+    Log.debug(
+      `Type:${this.ServiceSettings.DatabaseSettings.Type} Database:${this.ServiceSettings.DatabaseSettings.DatabaseName} Auth:'${this.ServiceSettings.DatabaseSettings.Username}'@'${this.ServiceSettings.DatabaseSettings.Server}:${this.ServiceSettings.DatabaseSettings.Port}' (using password: ${this.ServiceSettings.DatabaseSettings.Password?.length! > 0 ? 'YES' : 'NO'})`,
+    );
     for (const [modelName, model] of Object.entries(models)) {
       model.initialize(sequelize);
     }
@@ -94,7 +102,7 @@ export default class ParadiseService {
       await GameRoom.destroy({
         truncate: true,
       });
-    } catch { }
+    } catch {}
     // #endregion
 
     this.fileServer = new FileServerHost(+this.ServiceSettings.FileServerPort!);
@@ -110,15 +118,21 @@ export default class ParadiseService {
 
     this.SocketHost = new WebSocketHost(+this.ServiceSettings.SocketPort!);
     this.SocketHost.on('ConnectionRejected', (e) => {
-      Log.warn(`[Socket] Rejecting ${ServerType[e.Socket.Type]}Server(${e.Socket.Identifier}) from ${e.Socket.RemoteAddress}. Reason: ${e.Reason}`);
+      Log.warn(
+        `[Socket] Rejecting ${ServerType[e.Socket.Type]}Server(${e.Socket.Identifier}) from ${e.Socket.RemoteAddress}. Reason: ${e.Reason}`,
+      );
     });
 
     this.SocketHost.on('ClientConnected', (e) => {
-      Log.info(`[Socket] ${ServerType[e.Socket.Type]}Server(${e.Socket.Identifier}) connected from ${e.Socket.RemoteAddress}.`);
+      Log.info(
+        `[Socket] ${ServerType[e.Socket.Type]}Server(${e.Socket.Identifier}) connected from ${e.Socket.RemoteAddress}.`,
+      );
     });
 
     this.SocketHost.on('ClientDisconnected', (e) => {
-      Log.info(`[Socket] ${ServerType[e.Socket.Type]}Server(${e.Socket.Identifier}) disconnected. Reason: ${e.Reason ?? 'Connection closed'}`);
+      Log.info(
+        `[Socket] ${ServerType[e.Socket.Type]}Server(${e.Socket.Identifier}) disconnected. Reason: ${e.Reason ?? 'Connection closed'}`,
+      );
     });
 
     this.SocketHost.on('PacketReceived', async (e: WebSocketPacketReceivedEventArgs) => {
@@ -126,19 +140,25 @@ export default class ParadiseService {
       switch (e.PacketType) {
         case WebSocketPacketType.Pong:
           try {
-            await PhotonServer.update({
-              LastResponseTime: e.Socket.LastResponseTime,
-            }, {
-              where: {
-                PhotonId: e.Socket.Info.PhotonId,
+            await PhotonServer.update(
+              {
+                LastResponseTime: e.Socket.LastResponseTime,
               },
-            });
+              {
+                where: {
+                  PhotonId: e.Socket.Info.PhotonId,
+                },
+              },
+            );
           } catch (error) {
-            Log.error(`Failed to update LastResponseTime for Photon server with id ${e.Socket.Info.PhotonId}: No database entry`);
+            Log.error(
+              `Failed to update LastResponseTime for Photon server with id ${e.Socket.Info.PhotonId}: No database entry`,
+            );
           }
 
           break;
-        default: break;
+        default:
+          break;
       }
     });
 
@@ -153,12 +173,13 @@ export default class ParadiseService {
                 Cmid: peer.Cmid,
                 IPAddress: peer.RemoteIP,
                 Channel: peer.Channel,
-                CommServerId: (await PhotonServer.findOne({ where: { IP: peer.LocalIP, Port: peer.LocalPort } }))?.PhotonId,
+                CommServerId: (await PhotonServer.findOne({ where: { IP: peer.LocalIP, Port: peer.LocalPort } }))
+                  ?.PhotonId,
               });
             }
           } else if (e.ServerType === ServerType.Game) {
             for (const room of e.Data.Rooms) {
-              const [channelId, webhookUrl] = await this.discordClient?.CreateGameRoom(room.MetaData) || [null, null];
+              const [channelId, webhookUrl] = (await this.discordClient?.CreateGameRoom(room.MetaData)) || [null, null];
 
               await GameRoom.create({
                 ...room.MetaData,
@@ -168,14 +189,21 @@ export default class ParadiseService {
                 WebhookUrl: webhookUrl,
               });
 
-              await ActivePlayer.update({
-                GameServerId: (await PhotonServer.findOne({ where: { IP: room.MetaData.Server.IpAddress, Port: room.MetaData.Server.Port } }))?.PhotonId,
-                GameRoomId: room.RoomId,
-              }, {
-                where: {
-                  Cmid: room.Peers,
+              await ActivePlayer.update(
+                {
+                  GameServerId: (
+                    await PhotonServer.findOne({
+                      where: { IP: room.MetaData.Server.IpAddress, Port: room.MetaData.Server.Port },
+                    })
+                  )?.PhotonId,
+                  GameRoomId: room.RoomId,
                 },
-              });
+                {
+                  where: {
+                    Cmid: room.Peers,
+                  },
+                },
+              );
             }
           }
           break;
@@ -198,15 +226,26 @@ export default class ParadiseService {
           switch (cmd.Command) {
             case 'link': {
               if (await this.discordClient?.IsMemberLinked(cmd.Invoker.Cmid)) {
-                e.Socket.Send(WebSocketPacketType.CommandOutput, 'Your profile has already been linked to Discord.', true, e.Payload.ConversationId);
+                e.Socket.Send(
+                  WebSocketPacketType.CommandOutput,
+                  'Your profile has already been linked to Discord.',
+                  true,
+                  e.Payload.ConversationId,
+                );
                 return;
               }
 
               const nonce = await this.discordClient?.BeginLinkMember(cmd.Invoker.Cmid);
-              e.Socket.Send(WebSocketPacketType.CommandOutput, `Your Discord link code is: ${nonce}.\nPlease send a DM to the Paradise Discord bot containing this code to complete the process.`, true, e.Payload.ConversationId);
+              e.Socket.Send(
+                WebSocketPacketType.CommandOutput,
+                `Your Discord link code is: ${nonce}.\nPlease send a DM to the Paradise Discord bot containing this code to complete the process.`,
+                true,
+                e.Payload.ConversationId,
+              );
               break;
             }
-            default: break;
+            default:
+              break;
           }
 
           break;
@@ -218,8 +257,14 @@ export default class ParadiseService {
             Cmid: e.Data.Cmid,
             IPAddress: e.Data.RemoteIP,
             Channel: e.Data.Channel,
-            CommServerId: e.ServerType === ServerType.Comm ? (await PhotonServer.findOne({ where: { IP: e.Data.LocalIP, Port: e.Data.LocalPort } }))?.PhotonId : undefined,
-            GameServerId: e.ServerType === ServerType.Game ? (await PhotonServer.findOne({ where: { IP: e.Data.LocalIP, Port: e.Data.LocalPort } }))?.PhotonId : undefined,
+            CommServerId:
+              e.ServerType === ServerType.Comm
+                ? (await PhotonServer.findOne({ where: { IP: e.Data.LocalIP, Port: e.Data.LocalPort } }))?.PhotonId
+                : undefined,
+            GameServerId:
+              e.ServerType === ServerType.Game
+                ? (await PhotonServer.findOne({ where: { IP: e.Data.LocalIP, Port: e.Data.LocalPort } }))?.PhotonId
+                : undefined,
           });
           break;
         case WebSocketPacketType.PlayerLeft:
@@ -234,7 +279,7 @@ export default class ParadiseService {
           break;
         case WebSocketPacketType.RoomOpened: {
           await this.discordClient?.SendGameRoomCreatedMessage(e.Data);
-          const [channelId, webhookUrl] = await this.discordClient?.CreateGameRoom(e.Data) || [null, null];
+          const [channelId, webhookUrl] = (await this.discordClient?.CreateGameRoom(e.Data)) || [null, null];
 
           await GameRoom.create({
             ...e.Data,
@@ -313,7 +358,8 @@ export default class ParadiseService {
 
   private Prompt(): void {
     this.stdin.question('> ', async (cmd) => {
-      const cmdArgs = cmd.match(/[a-zA-Z0-9-]+|"(?:\\"|[^"])+"/g)?.map((_) => (_.match(/".+"/g) ? _.slice(1, -1) : _)) ?? [];
+      const cmdArgs =
+        cmd.match(/[a-zA-Z0-9-]+|"(?:\\"|[^"])+"/g)?.map((_) => (_.match(/".+"/g) ? _.slice(1, -1) : _)) ?? [];
 
       await CommandHandler.HandleCommand(
         cmdArgs[0].toLocaleLowerCase(),

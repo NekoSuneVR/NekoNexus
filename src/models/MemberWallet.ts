@@ -16,19 +16,22 @@ export default class MemberWallet extends Model<MemberWalletAttributes> {
   declare PointsExpiration: Date;
 
   public static initialize(sequelize: Sequelize) {
-    MemberWallet.init({
-      Cmid: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+    MemberWallet.init(
+      {
+        Cmid: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        Credits: DataTypes.INTEGER,
+        Points: DataTypes.INTEGER,
+        CreditsExpiration: DataTypes.DATE,
+        PointsExpiration: DataTypes.DATE,
       },
-      Credits: DataTypes.INTEGER,
-      Points: DataTypes.INTEGER,
-      CreditsExpiration: DataTypes.DATE,
-      PointsExpiration: DataTypes.DATE,
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+      {
+        sequelize,
+        timestamps: false,
+      },
+    );
   }
 
   public static associate({ PublicProfile }) {

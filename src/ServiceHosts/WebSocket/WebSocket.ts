@@ -4,7 +4,7 @@ export enum ServerType {
   None,
   MasterServer,
   Comm,
-  Game
+  Game,
 }
 
 export class WebSocketInfo {
@@ -14,7 +14,11 @@ export class WebSocketInfo {
   public IsClient: boolean;
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 }
 
@@ -24,7 +28,7 @@ export enum WebSocketState {
   Connected,
   Sending,
   Receiving,
-  Disconnecting
+  Disconnecting,
 }
 
 export class WebSocketConnectionStatus {
@@ -33,7 +37,11 @@ export class WebSocketConnectionStatus {
   public DisconnectReason: string;
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 }
 
@@ -44,7 +52,11 @@ export class WebSocketChatMessage {
   public RoomNumber: number;
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 }
 

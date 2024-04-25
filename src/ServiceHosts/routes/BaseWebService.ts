@@ -3,9 +3,15 @@ import { Log } from '@/utils';
 import RijndaelCryptographyPolicy from '@/utils/RijndaelCryptographyPolicy';
 
 export default abstract class BaseWebService {
-  public static get ServiceName(): string | null { return null; }
-  public static get ServiceVersion(): string | null { return null; }
-  public static get ServiceInterface(): string | null { return `I${this.ServiceName}Contract`; }
+  public static get ServiceName(): string | null {
+    return null;
+  }
+  public static get ServiceVersion(): string | null {
+    return null;
+  }
+  public static get ServiceInterface(): string | null {
+    return `I${this.ServiceName}Contract`;
+  }
 
   public static readonly CryptoPolicy = new RijndaelCryptographyPolicy();
 
@@ -18,7 +24,9 @@ export default abstract class BaseWebService {
   }
 
   public static debugEndpoint(serviceMethod: String, ...args: any): void {
-    Log.debug(`${this.ServiceName}(${this.ServiceVersion}):${serviceMethod} {\n\t${args.map((_: any) => `[${typeof _}] ${_}`).join('\n\t')}\n}`);
+    Log.debug(
+      `${this.ServiceName}(${this.ServiceVersion}):${serviceMethod} {\n\t${args.map((_: any) => `[${typeof _}] ${_}`).join('\n\t')}\n}`,
+    );
   }
 
   protected static handleEndpointError(serviceMethod: string, e: any): void {

@@ -26,25 +26,28 @@ export default class Map extends Model<MapAttributes> {
   declare FileName: string;
 
   public static initialize(sequelize: Sequelize) {
-    Map.init({
-      MapId: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+    Map.init(
+      {
+        MapId: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        DisplayName: DataTypes.STRING,
+        Description: DataTypes.TEXT,
+        SceneName: DataTypes.STRING,
+        IsBlueBox: DataTypes.BOOLEAN,
+        RecommendedItemId: DataTypes.INTEGER,
+        SupportedGameModes: DataTypes.INTEGER,
+        SupportedItemClass: DataTypes.INTEGER,
+        MaxPlayers: DataTypes.INTEGER,
+        FileName: DataTypes.STRING,
       },
-      DisplayName: DataTypes.STRING,
-      Description: DataTypes.TEXT,
-      SceneName: DataTypes.STRING,
-      IsBlueBox: DataTypes.BOOLEAN,
-      RecommendedItemId: DataTypes.INTEGER,
-      SupportedGameModes: DataTypes.INTEGER,
-      SupportedItemClass: DataTypes.INTEGER,
-      MaxPlayers: DataTypes.INTEGER,
-      FileName: DataTypes.STRING,
-    }, {
-      sequelize,
-      tableName: 'Maps',
-      timestamps: false,
-    });
+      {
+        sequelize,
+        tableName: 'Maps',
+        timestamps: false,
+      },
+    );
   }
 
   public static associate(_) {}

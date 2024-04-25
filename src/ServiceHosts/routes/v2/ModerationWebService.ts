@@ -1,23 +1,36 @@
-import {
-  Clan, ClanMember, ModerationAction, PublicProfile,
-} from '@/models';
+import { Clan, ClanMember, ModerationAction, PublicProfile } from '@/models';
 import { ApiVersion, ModerationFlag } from '@/utils/';
-import { ChannelType, MemberAccessLevel, MemberOperationResult } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
+import {
+  ChannelType,
+  MemberAccessLevel,
+  MemberOperationResult,
+} from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { CommActorInfo } from '@festivaldev/uberstrike-js/UberStrike/Core/Models';
 import {
-  CommActorInfoProxy, DateTimeProxy, EnumProxy, Int32Proxy, ListProxy, StringProxy,
+  CommActorInfoProxy,
+  DateTimeProxy,
+  EnumProxy,
+  Int32Proxy,
+  ListProxy,
+  StringProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import { Op } from 'sequelize';
 import BaseWebService from '../BaseWebService';
 
 export default class ModerationWebService extends BaseWebService {
-  public static get ServiceName(): string { return 'ModerationWebService'; }
-  public static get ServiceVersion(): string { return ApiVersion.Current; }
+  public static get ServiceName(): string {
+    return 'ModerationWebService';
+  }
+  public static get ServiceVersion(): string {
+    return ApiVersion.Current;
+  }
   // protected static get ServiceInterface(): string { return 'IModerationWebServiceContract'; }
 
   public static async BanPermanently(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const sourceCmid = Int32Proxy.Deserialize(bytes);
@@ -40,7 +53,9 @@ export default class ModerationWebService extends BaseWebService {
 
   public static async SetModerationFlag(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const authToken = StringProxy.Deserialize(bytes);
@@ -66,7 +81,9 @@ export default class ModerationWebService extends BaseWebService {
             if (!targetProfile || targetProfile.Cmid === publicProfile.Cmid) {
               EnumProxy.Serialize<MemberOperationResult>(outputStream, MemberOperationResult.InvalidCmid);
             } else if (targetProfile.AccessLevel < publicProfile.AccessLevel) {
-              const moderationAction = await ModerationAction.findOne({ where: { TargetCmid: targetCmid, ModerationFlag: moderationFlag } });
+              const moderationAction = await ModerationAction.findOne({
+                where: { TargetCmid: targetCmid, ModerationFlag: moderationFlag },
+              });
 
               if (moderationAction) {
                 await moderationAction.update({
@@ -109,7 +126,9 @@ export default class ModerationWebService extends BaseWebService {
 
   public static async UnsetModerationFlag(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const authToken = StringProxy.Deserialize(bytes);
@@ -133,7 +152,9 @@ export default class ModerationWebService extends BaseWebService {
             if (!targetProfile || targetProfile.Cmid === publicProfile.Cmid) {
               EnumProxy.Serialize<MemberOperationResult>(outputStream, MemberOperationResult.InvalidCmid);
             } else if (targetProfile.AccessLevel < publicProfile.AccessLevel) {
-              const moderationAction = await ModerationAction.findOne({ where: { TargetCmid: targetCmid, ModerationFlag: moderationFlag } });
+              const moderationAction = await ModerationAction.findOne({
+                where: { TargetCmid: targetCmid, ModerationFlag: moderationFlag },
+              });
 
               if (moderationAction) {
                 await moderationAction.update({
@@ -163,7 +184,9 @@ export default class ModerationWebService extends BaseWebService {
 
   public static async ClearModerationFlags(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const authToken = StringProxy.Deserialize(bytes);
@@ -218,7 +241,9 @@ export default class ModerationWebService extends BaseWebService {
 
   public static async GetNaughtyList(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const authToken = StringProxy.Deserialize(bytes);
@@ -254,15 +279,17 @@ export default class ModerationWebService extends BaseWebService {
                   clan = await Clan.findOne({ where: { GroupId: clanMember.GroupId } });
                 }
 
-                naughtyUsers.push(new CommActorInfo({
-                  AccessLevel: profile!.AccessLevel,
-                  Channel: ChannelType.Steam,
-                  ClanTag: clan?.Tag,
-                  Cmid: action.TargetCmid,
-                  ModerationFlag: action.ModerationFlag,
-                  ModInformation: action.Reason,
-                  PlayerName: profile!.Name,
-                }));
+                naughtyUsers.push(
+                  new CommActorInfo({
+                    AccessLevel: profile!.AccessLevel,
+                    Channel: ChannelType.Steam,
+                    ClanTag: clan?.Tag,
+                    Cmid: action.TargetCmid,
+                    ModerationFlag: action.ModerationFlag,
+                    ModInformation: action.Reason,
+                    PlayerName: profile!.Name,
+                  }),
+                );
               }
             }
 

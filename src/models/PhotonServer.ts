@@ -25,23 +25,26 @@ export default class PhotonServer extends Model<PhotonServerAttributes> {
   declare Guid: string;
 
   public static initialize(sequelize: Sequelize) {
-    PhotonServer.init({
-      PhotonId: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+    PhotonServer.init(
+      {
+        PhotonId: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        IP: DataTypes.STRING,
+        Name: DataTypes.STRING,
+        Region: DataTypes.INTEGER,
+        Port: DataTypes.INTEGER,
+        UsageType: DataTypes.INTEGER,
+        MinLatency: DataTypes.INTEGER,
+        LastResponseTime: DataTypes.DATE,
+        Guid: DataTypes.STRING(36),
       },
-      IP: DataTypes.STRING,
-      Name: DataTypes.STRING,
-      Region: DataTypes.INTEGER,
-      Port: DataTypes.INTEGER,
-      UsageType: DataTypes.INTEGER,
-      MinLatency: DataTypes.INTEGER,
-      LastResponseTime: DataTypes.DATE,
-      Guid: DataTypes.STRING(36),
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+      {
+        sequelize,
+        timestamps: false,
+      },
+    );
   }
 
   public static associate(_) {}

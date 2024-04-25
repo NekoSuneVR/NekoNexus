@@ -1,19 +1,34 @@
 import { ContactRequest, PublicProfile, UserAccount } from '@/models';
 import { ApiVersion } from '@/utils';
-import { ContactGroupView, ContactRequestStatus, ContactRequestView } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
-import { ContactRequestViewProxy, Int32Proxy, ListProxy, StringProxy } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
+import {
+  ContactGroupView,
+  ContactRequestStatus,
+  ContactRequestView,
+} from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
+import {
+  ContactRequestViewProxy,
+  Int32Proxy,
+  ListProxy,
+  StringProxy,
+} from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import { ContactGroupViewProxy } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization/Legacy';
 import { Op } from 'sequelize';
 import BaseWebService from '../BaseWebService';
 
 export default class RelationshipWebService extends BaseWebService {
-  public static get ServiceName(): string { return 'RelationshipWebService'; }
-  public static get ServiceVersion(): string { return ApiVersion.Legacy102; }
+  public static get ServiceName(): string {
+    return 'RelationshipWebService';
+  }
+  public static get ServiceVersion(): string {
+    return ApiVersion.Legacy102;
+  }
   // protected static get ServiceInterface(): string { return 'IRelationshipWebServiceContract'; }
 
   public static async SendContactRequest(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const initiatorCmid = Int32Proxy.Deserialize(bytes);
@@ -35,7 +50,9 @@ export default class RelationshipWebService extends BaseWebService {
 
   public static async GetContactRequests(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const cmid = Int32Proxy.Deserialize(bytes);
@@ -52,7 +69,11 @@ export default class RelationshipWebService extends BaseWebService {
           },
         });
 
-        ListProxy.Serialize<ContactRequestView>(outputStream, contactRequests as ContactRequestView[], ContactRequestViewProxy.Serialize);
+        ListProxy.Serialize<ContactRequestView>(
+          outputStream,
+          contactRequests as ContactRequestView[],
+          ContactRequestViewProxy.Serialize,
+        );
       }
 
       return isEncrypted
@@ -67,7 +88,9 @@ export default class RelationshipWebService extends BaseWebService {
 
   public static async AcceptContactRequest(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const contactRequestId = Int32Proxy.Deserialize(bytes);
@@ -89,7 +112,9 @@ export default class RelationshipWebService extends BaseWebService {
 
   public static async DeclineContactRequest(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const contactRequestId = Int32Proxy.Deserialize(bytes);
@@ -110,7 +135,9 @@ export default class RelationshipWebService extends BaseWebService {
 
   public static async DeleteContact(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const cmid = Int32Proxy.Deserialize(bytes);
@@ -131,7 +158,9 @@ export default class RelationshipWebService extends BaseWebService {
 
   public static async MoveContactToGroup(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const cmid = Int32Proxy.Deserialize(bytes);
@@ -154,7 +183,9 @@ export default class RelationshipWebService extends BaseWebService {
 
   public static async GetContactsByGroups(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
     const isEncrypted = this.isEncrypted(data);
-    const bytes = isEncrypted ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector) : data;
+    const bytes = isEncrypted
+      ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
+      : data;
 
     try {
       const cmid = Int32Proxy.Deserialize(bytes);
@@ -178,15 +209,22 @@ export default class RelationshipWebService extends BaseWebService {
         const contacts: List<ContactGroupView> = [];
 
         for (const contactRequest of contactRequests) {
-          contacts.push(new ContactGroupView({
-            GroupId: userAccount.Cmid,
-            Contacts: [
-              await PublicProfile.findOne({
-                where: { Cmid: (contactRequest.InitiatorCmid !== userAccount.Cmid ? contactRequest.InitiatorCmid : contactRequest.ReceiverCmid) },
-                raw: true,
-              })
-            ],
-          }));
+          contacts.push(
+            new ContactGroupView({
+              GroupId: userAccount.Cmid,
+              Contacts: [
+                await PublicProfile.findOne({
+                  where: {
+                    Cmid:
+                      contactRequest.InitiatorCmid !== userAccount.Cmid
+                        ? contactRequest.InitiatorCmid
+                        : contactRequest.ReceiverCmid,
+                  },
+                  raw: true,
+                }),
+              ],
+            }),
+          );
         }
 
         ListProxy.Serialize<ContactGroupView>(outputStream, contacts, ContactGroupViewProxy.Serialize);

@@ -20,21 +20,24 @@ export default class UserAccount extends Model<UserAccountAttributes> {
   declare TutorialStep: TutorialStepType;
 
   public static initialize(sequelize: Sequelize) {
-    UserAccount.init({
-      Cmid: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
+    UserAccount.init(
+      {
+        Cmid: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+        },
+        EmailAddress: DataTypes.STRING,
+        Password: DataTypes.STRING,
+        Channel: DataTypes.INTEGER,
+        Locale: DataTypes.STRING,
+        TutorialStep: DataTypes.INTEGER,
       },
-      EmailAddress: DataTypes.STRING,
-      Password: DataTypes.STRING,
-      Channel: DataTypes.INTEGER,
-      Locale: DataTypes.STRING,
-      TutorialStep: DataTypes.INTEGER,
-    }, {
-      sequelize,
-      timestamps: false,
-    });
+      {
+        sequelize,
+        timestamps: false,
+      },
+    );
   }
 
-  public static associate(_) { }
+  public static associate(_) {}
 }
