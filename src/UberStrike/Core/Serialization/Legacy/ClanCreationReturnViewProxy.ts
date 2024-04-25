@@ -26,7 +26,7 @@ export default class ClanCreationReturnViewProxy {
     if (num !== 0) {
       clanCreationReturnView = new ClanCreationReturnView();
       if ((num & 1) !== 0) {
-        clanCreationReturnView.ClanView = (ClanViewProxy.Deserialize(bytes))!;
+        clanCreationReturnView.ClanView = ClanViewProxy.Deserialize(bytes)!;
       }
       clanCreationReturnView.ResultCode = Int32Proxy.Deserialize(bytes);
     }

@@ -30,10 +30,10 @@ export default class CheckApplicationVersionViewProxy {
     if (num !== 0) {
       checkApplicationVersionView = new CheckApplicationVersionView();
       if ((num & 1) !== 0) {
-        checkApplicationVersionView.ClientVersion = (ApplicationViewProxy.Deserialize(bytes))!;
+        checkApplicationVersionView.ClientVersion = ApplicationViewProxy.Deserialize(bytes)!;
       }
       if ((num & 2) !== 0) {
-        checkApplicationVersionView.CurrentVersion = (ApplicationViewProxy.Deserialize(bytes))!;
+        checkApplicationVersionView.CurrentVersion = ApplicationViewProxy.Deserialize(bytes)!;
       }
     }
     return checkApplicationVersionView;

@@ -3,7 +3,7 @@ enum ItemPropertyType {
   XpBoost = 1,
   PointsBoost,
   IsGiftable,
-  CritDamageBonus
+  CritDamageBonus,
 }
 
 export default ItemPropertyType;

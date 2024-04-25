@@ -21,6 +21,10 @@ export default class MysteryBoxUnityView {
   public MysteryBoxItems: List<BundleItemView>;
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 }

@@ -62,4 +62,3 @@ export { default as PublicProfileView } from './PublicProfileView';
 export { default as RegionType } from './RegionType';
 export { default as UberStrikeCurrencyType } from './UberStrikeCurrencyType';
 export { default as WeeklySpecialView } from './WeeklySpecialView';
-

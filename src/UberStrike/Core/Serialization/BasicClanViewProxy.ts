@@ -1,6 +1,4 @@
-import {
-    BasicClanView, GroupColor, GroupFontStyle, GroupType,
-} from '@/Cmune/DataCenter/Common/Entities';
+import { BasicClanView, GroupColor, GroupFontStyle, GroupType } from '@/Cmune/DataCenter/Common/Entities';
 import DateTimeProxy from './DateTimeProxy';
 import EnumProxy from './EnumProxy';
 import Int32Proxy from './Int32Proxy';

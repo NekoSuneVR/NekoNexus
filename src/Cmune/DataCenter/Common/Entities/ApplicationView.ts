@@ -18,7 +18,11 @@ export default class ApplicationView {
   public PhotonGroupName: string;
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
 
     let num = -1;
 
@@ -28,7 +32,7 @@ export default class ApplicationView {
       if (value.getTime() - new Date().getTime() <= 0) {
         num = 0;
       } else {
-        num = Math.floor(((new Date().getTime() - value.getTime()) / 1000) / 60);
+        num = Math.floor((new Date().getTime() - value.getTime()) / 1000 / 60);
       }
 
       this.RemainingTime = num;
@@ -36,6 +40,6 @@ export default class ApplicationView {
   }
 
   public toString(): string {
-    return `[Application: [ID: ${this.ApplicationVersionId}][version: ${this.Version}][Builld: ${this.Build}][Channel: ${this.Channel}][File name: ${this.FileName}][Release date: ${this.ReleaseDate}][Expiration date: ${this.ExpirationDate}][Remaining time: ${this.RemainingTime}][Is current: ${this.IsCurrent}][Support URL: ${this.SupportUrl}][Servers]${this.Servers.map(_ => _.toString()).join('')}[/Servers]]`;
+    return `[Application: [ID: ${this.ApplicationVersionId}][version: ${this.Version}][Builld: ${this.Build}][Channel: ${this.Channel}][File name: ${this.FileName}][Release date: ${this.ReleaseDate}][Expiration date: ${this.ExpirationDate}][Remaining time: ${this.RemainingTime}][Is current: ${this.IsCurrent}][Support URL: ${this.SupportUrl}][Servers]${this.Servers.map((_) => _.toString()).join('')}[/Servers]]`;
   }
 }

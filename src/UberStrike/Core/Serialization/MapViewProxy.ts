@@ -36,7 +36,12 @@ export default class MapViewProxy {
     }
 
     if (instance.Settings) {
-      DictionaryProxy.Serialize<GameModeType, MapSettings>(memoryStream, instance.Settings, EnumProxy.Serialize<GameModeType>, MapSettingsProxy.Serialize);
+      DictionaryProxy.Serialize<GameModeType, MapSettings>(
+        memoryStream,
+        instance.Settings,
+        EnumProxy.Serialize<GameModeType>,
+        MapSettingsProxy.Serialize,
+      );
     } else {
       num |= 8;
     }
@@ -69,7 +74,11 @@ export default class MapViewProxy {
     }
 
     if ((num & 8) !== 0) {
-      mapView.Settings = DictionaryProxy.Deserialize<GameModeType, MapSettings>(bytes, EnumProxy.Deserialize<GameModeType>, MapSettingsProxy.Deserialize);
+      mapView.Settings = DictionaryProxy.Deserialize<GameModeType, MapSettings>(
+        bytes,
+        EnumProxy.Deserialize<GameModeType>,
+        MapSettingsProxy.Deserialize,
+      );
     }
 
     mapView.SupportedGameModes = Int32Proxy.Deserialize(bytes);

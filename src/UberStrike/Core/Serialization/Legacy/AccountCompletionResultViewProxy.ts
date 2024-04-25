@@ -10,7 +10,12 @@ export default class AccountCompletionResultViewProxy {
     if (instance) {
       const memoryStream: MemoryStream = [];
       if (instance.ItemsAttributed) {
-        DictionaryProxy.Serialize<int, int>(memoryStream, instance.ItemsAttributed, Int32Proxy.Serialize, Int32Proxy.Serialize);
+        DictionaryProxy.Serialize<int, int>(
+          memoryStream,
+          instance.ItemsAttributed,
+          Int32Proxy.Serialize,
+          Int32Proxy.Serialize,
+        );
       } else {
         num |= 1;
       }
@@ -33,7 +38,11 @@ export default class AccountCompletionResultViewProxy {
     if (num !== 0) {
       accountCompletionResultView = new AccountCompletionResultView();
       if ((num & 1) !== 0) {
-        accountCompletionResultView.ItemsAttributed = DictionaryProxy.Deserialize<int, int>(bytes, Int32Proxy.Deserialize, Int32Proxy.Deserialize);
+        accountCompletionResultView.ItemsAttributed = DictionaryProxy.Deserialize<int, int>(
+          bytes,
+          Int32Proxy.Deserialize,
+          Int32Proxy.Deserialize,
+        );
       }
       if ((num & 2) !== 0) {
         accountCompletionResultView.NonDuplicateNames = ListProxy.Deserialize<string>(bytes, StringProxy.Deserialize);

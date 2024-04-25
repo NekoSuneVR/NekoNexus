@@ -53,18 +53,19 @@ export default class MemberAuthenticationResultViewProxy {
       memberAuthenticationResultView.IsAccountComplete = BooleanProxy.Deserialize(bytes);
       memberAuthenticationResultView.IsTutorialComplete = BooleanProxy.Deserialize(bytes);
       if ((num & 1) !== 0) {
-        memberAuthenticationResultView.LuckyDraw = (LuckyDrawUnityViewProxy.Deserialize(bytes))!;
+        memberAuthenticationResultView.LuckyDraw = LuckyDrawUnityViewProxy.Deserialize(bytes)!;
       }
-      memberAuthenticationResultView.MemberAuthenticationResult = EnumProxy.Deserialize<MemberAuthenticationResult>(bytes);
+      memberAuthenticationResultView.MemberAuthenticationResult =
+        EnumProxy.Deserialize<MemberAuthenticationResult>(bytes);
       if ((num & 2) !== 0) {
-        memberAuthenticationResultView.MemberView = (MemberViewProxy.Deserialize(bytes))!;
+        memberAuthenticationResultView.MemberView = MemberViewProxy.Deserialize(bytes)!;
       }
       if ((num & 4) !== 0) {
-        memberAuthenticationResultView.PlayerStatisticsView = (PlayerStatisticsViewProxy.Deserialize(bytes))!;
+        memberAuthenticationResultView.PlayerStatisticsView = PlayerStatisticsViewProxy.Deserialize(bytes)!;
       }
       memberAuthenticationResultView.ServerTime = DateTimeProxy.Deserialize(bytes);
       if ((num & 8) !== 0) {
-        memberAuthenticationResultView.WeeklySpecial = (WeeklySpecialViewProxy.Deserialize(bytes))!;
+        memberAuthenticationResultView.WeeklySpecial = WeeklySpecialViewProxy.Deserialize(bytes)!;
       }
     }
     return memberAuthenticationResultView;

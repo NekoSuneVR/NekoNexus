@@ -16,7 +16,7 @@ enum LoadoutSlotType {
   QuickItem3,
   FunctionalItem1,
   FunctionalItem2,
-  FunctionalItem3
+  FunctionalItem3,
 }
 
 export default LoadoutSlotType;

@@ -10,7 +10,7 @@ enum MemberAuthenticationResult {
   InvalidEsns,
   InvalidCookie,
   IsIpBanned,
-  UnknownError
+  UnknownError,
 }
 
 export default MemberAuthenticationResult;

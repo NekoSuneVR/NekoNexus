@@ -29,7 +29,7 @@ export default class ClanRequestAcceptViewProxy {
       clanRequestAcceptView.ActionResult = Int32Proxy.Deserialize(bytes);
       clanRequestAcceptView.ClanRequestId = Int32Proxy.Deserialize(bytes);
       if ((num & 1) !== 0) {
-        clanRequestAcceptView.ClanView = (ClanViewProxy.Deserialize(bytes))!;
+        clanRequestAcceptView.ClanView = ClanViewProxy.Deserialize(bytes)!;
       }
     }
     return clanRequestAcceptView;

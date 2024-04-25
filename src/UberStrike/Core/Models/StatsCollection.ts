@@ -43,30 +43,63 @@ export default class StatsCollection {
   public Points: int;
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 
   public GetKills(): int {
-    return (this.MeleeKills + this.HandgunKills + this.MachineGunKills
-      + this.ShotgunSplats + this.SniperKills + this.SplattergunKills
-      + this.CannonKills + this.LauncherKills) - this.Suicides;
+    return (
+      this.MeleeKills +
+      this.HandgunKills +
+      this.MachineGunKills +
+      this.ShotgunSplats +
+      this.SniperKills +
+      this.SplattergunKills +
+      this.CannonKills +
+      this.LauncherKills -
+      this.Suicides
+    );
   }
 
   public GetShots(): int {
-    return this.MeleeShotsFired + this.HandgunShotsFired + this.MachineGunShotsFired
-      + this.ShotgunShotsFired + this.SniperShotsFired + this.SplattergunShotsFired
-      + this.CannonShotsFired + this.LauncherShotsFired;
+    return (
+      this.MeleeShotsFired +
+      this.HandgunShotsFired +
+      this.MachineGunShotsFired +
+      this.ShotgunShotsFired +
+      this.SniperShotsFired +
+      this.SplattergunShotsFired +
+      this.CannonShotsFired +
+      this.LauncherShotsFired
+    );
   }
 
   public GetHits(): int {
-    return this.MeleeShotsHit + this.HandgunShotsHit + this.MachineGunShotsHit
-      + this.ShotgunShotsHit + this.SniperShotsHit + this.SplattergunShotsHit
-      + this.CannonShotsHit + this.LauncherShotsHit;
+    return (
+      this.MeleeShotsHit +
+      this.HandgunShotsHit +
+      this.MachineGunShotsHit +
+      this.ShotgunShotsHit +
+      this.SniperShotsHit +
+      this.SplattergunShotsHit +
+      this.CannonShotsHit +
+      this.LauncherShotsHit
+    );
   }
 
   public GetDamageDealt(): int {
-    return this.MeleeDamageDone + this.HandgunDamageDone + this.MachineGunDamageDone
-      + this.ShotgunDamageDone + this.SniperDamageDone + this.SplattergunDamageDone
-      + this.CannonDamageDone + this.LauncherDamageDone;
+    return (
+      this.MeleeDamageDone +
+      this.HandgunDamageDone +
+      this.MachineGunDamageDone +
+      this.ShotgunDamageDone +
+      this.SniperDamageDone +
+      this.SplattergunDamageDone +
+      this.CannonDamageDone +
+      this.LauncherDamageDone
+    );
   }
 }

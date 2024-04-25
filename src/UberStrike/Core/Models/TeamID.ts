@@ -2,7 +2,7 @@
 enum TeamID {
   NONE,
   BLUE,
-  RED
+  RED,
 }
 
 export default TeamID;

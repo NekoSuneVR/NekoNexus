@@ -9,6 +9,11 @@ export default class QuaternionProxy {
   }
 
   public static Deserialize(bytes: Stream): Quaternion {
-    return new Quaternion(SingleProxy.Deserialize(bytes), SingleProxy.Deserialize(bytes), SingleProxy.Deserialize(bytes), SingleProxy.Deserialize(bytes));
+    return new Quaternion(
+      SingleProxy.Deserialize(bytes),
+      SingleProxy.Deserialize(bytes),
+      SingleProxy.Deserialize(bytes),
+      SingleProxy.Deserialize(bytes),
+    );
   }
 }

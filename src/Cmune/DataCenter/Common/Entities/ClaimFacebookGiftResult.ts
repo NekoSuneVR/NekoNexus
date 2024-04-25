@@ -9,7 +9,7 @@ enum ClaimFacebookGiftResult {
   RentalTimeProlonged,
   NewItemAttributed,
   ErrorWhileSavingItemChanges,
-  ErrorClaimerIsNotReceiver
+  ErrorClaimerIsNotReceiver,
 }
 
 export default ClaimFacebookGiftResult;

@@ -15,7 +15,7 @@ enum MemberOperationResult {
   InvalidPassword,
   OffensiveName,
   NameChangeNotInInventory,
-  AlreadyHasAnESNSAccountOfThisTypeAttached
+  AlreadyHasAnESNSAccountOfThisTypeAttached,
 }
 
 export default MemberOperationResult;

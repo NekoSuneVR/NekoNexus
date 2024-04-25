@@ -7,7 +7,7 @@ enum GroupColor {
   Blue,
   Brown,
   Purple,
-  Pink
+  Pink,
 }
 
 export default GroupColor;

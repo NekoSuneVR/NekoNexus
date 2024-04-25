@@ -16,4 +16,3 @@ export { default as PlayerStatisticsView } from './PlayerStatisticsView';
 export { default as PlayerWeaponStatisticsView } from './PlayerWeaponStatisticsView';
 export { default as PlayerXPEventView } from './PlayerXPEventView';
 export { default as UberstrikeMemberView } from './UberstrikeMemberView';
-

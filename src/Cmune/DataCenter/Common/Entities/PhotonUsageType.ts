@@ -3,7 +3,7 @@ enum PhotonUsageType {
   None,
   All,
   Mobile,
-  CommServer = 6
+  CommServer = 6,
 }
 
 export default PhotonUsageType;

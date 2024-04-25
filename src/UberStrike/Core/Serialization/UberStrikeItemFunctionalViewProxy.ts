@@ -15,7 +15,12 @@ export default class UberStrikeItemFunctionalViewProxy {
 
     const memoryStream: MemoryStream = [];
     if (instance.CustomProperties) {
-      DictionaryProxy.Serialize<string, string>(memoryStream, instance.CustomProperties, StringProxy.Serialize, StringProxy.Serialize);
+      DictionaryProxy.Serialize<string, string>(
+        memoryStream,
+        instance.CustomProperties,
+        StringProxy.Serialize,
+        StringProxy.Serialize,
+      );
     } else {
       num |= 1;
     }
@@ -31,7 +36,12 @@ export default class UberStrikeItemFunctionalViewProxy {
     EnumProxy.Serialize<UberstrikeItemClass>(memoryStream, instance.ItemClass);
 
     if (instance.ItemProperties) {
-      DictionaryProxy.Serialize<ItemPropertyType, int>(memoryStream, instance.ItemProperties, EnumProxy.Serialize<ItemPropertyType>, Int32Proxy.Serialize);
+      DictionaryProxy.Serialize<ItemPropertyType, int>(
+        memoryStream,
+        instance.ItemProperties,
+        EnumProxy.Serialize<ItemPropertyType>,
+        Int32Proxy.Serialize,
+      );
     } else {
       num |= 4;
     }
@@ -67,7 +77,11 @@ export default class UberStrikeItemFunctionalViewProxy {
     const uberStrikeItemFunctionalView = new UberStrikeItemFunctionalView();
 
     if ((num & 1) !== 0) {
-      uberStrikeItemFunctionalView.CustomProperties = DictionaryProxy.Deserialize<string, string>(bytes, StringProxy.Deserialize, StringProxy.Deserialize);
+      uberStrikeItemFunctionalView.CustomProperties = DictionaryProxy.Deserialize<string, string>(
+        bytes,
+        StringProxy.Deserialize,
+        StringProxy.Deserialize,
+      );
     }
 
     if ((num & 2) !== 0) {
@@ -79,7 +93,11 @@ export default class UberStrikeItemFunctionalViewProxy {
     uberStrikeItemFunctionalView.ItemClass = EnumProxy.Deserialize<UberstrikeItemClass>(bytes);
 
     if ((num & 4) !== 0) {
-      uberStrikeItemFunctionalView.ItemProperties = DictionaryProxy.Deserialize<ItemPropertyType, int>(bytes, EnumProxy.Deserialize<ItemPropertyType>, Int32Proxy.Deserialize);
+      uberStrikeItemFunctionalView.ItemProperties = DictionaryProxy.Deserialize<ItemPropertyType, int>(
+        bytes,
+        EnumProxy.Deserialize<ItemPropertyType>,
+        Int32Proxy.Deserialize,
+      );
     }
 
     uberStrikeItemFunctionalView.LevelLock = Int32Proxy.Deserialize(bytes);

@@ -30,7 +30,7 @@ export default class ItemInventoryViewProxy {
       itemInventoryView.AmountRemaining = Int32Proxy.Deserialize(bytes);
       itemInventoryView.Cmid = Int32Proxy.Deserialize(bytes);
       if ((num & 1) !== 0) {
-        itemInventoryView.ExpirationDate = new Date() ?? (DateTimeProxy.Deserialize(bytes));
+        itemInventoryView.ExpirationDate = new Date() ?? DateTimeProxy.Deserialize(bytes);
       }
       itemInventoryView.ItemId = Int32Proxy.Deserialize(bytes);
     }

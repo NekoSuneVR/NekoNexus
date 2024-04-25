@@ -12,7 +12,12 @@ export default class StatsSummaryProxy {
     const memoryStream: MemoryStream = [];
 
     if (instance.Achievements) {
-      DictionaryProxy.Serialize<byte, ushort>(memoryStream, instance.Achievements, ByteProxy.Serialize, UInt16Proxy.Serialize);
+      DictionaryProxy.Serialize<byte, ushort>(
+        memoryStream,
+        instance.Achievements,
+        ByteProxy.Serialize,
+        UInt16Proxy.Serialize,
+      );
     } else {
       num |= 1;
     }
@@ -38,7 +43,11 @@ export default class StatsSummaryProxy {
     const statsSummary = new StatsSummary();
 
     if ((num & 1) !== 0) {
-      statsSummary.Achievements = DictionaryProxy.Deserialize<byte, ushort>(bytes, ByteProxy.Deserialize, UInt16Proxy.Deserialize);
+      statsSummary.Achievements = DictionaryProxy.Deserialize<byte, ushort>(
+        bytes,
+        ByteProxy.Deserialize,
+        UInt16Proxy.Deserialize,
+      );
     }
 
     statsSummary.Cmid = Int32Proxy.Deserialize(bytes);

@@ -2,7 +2,7 @@
 enum FireMode {
   Primary,
   Alternative,
-  Secondary
+  Secondary,
 }
 
 export default FireMode;

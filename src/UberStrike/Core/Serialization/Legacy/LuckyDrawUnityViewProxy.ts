@@ -1,5 +1,8 @@
 import {
-  BundleCategoryType, LuckyDrawSetUnityView, LuckyDrawUnityView, UberStrikeCurrencyType,
+  BundleCategoryType,
+  LuckyDrawSetUnityView,
+  LuckyDrawUnityView,
+  UberStrikeCurrencyType,
 } from '@/Cmune/DataCenter/Common/Entities';
 import BooleanProxy from '../BooleanProxy';
 import EnumProxy from '../EnumProxy';
@@ -27,7 +30,11 @@ export default class LuckyDrawUnityViewProxy {
       Int32Proxy.Serialize(memoryStream, instance.Id);
       BooleanProxy.Serialize(memoryStream, instance.IsAvailableInShop);
       if (instance.LuckyDrawSets) {
-        ListProxy.Serialize<LuckyDrawSetUnityView>(memoryStream, instance.LuckyDrawSets, LuckyDrawSetUnityViewProxy.Serialize);
+        ListProxy.Serialize<LuckyDrawSetUnityView>(
+          memoryStream,
+          instance.LuckyDrawSets,
+          LuckyDrawSetUnityViewProxy.Serialize,
+        );
       } else {
         num |= 4;
       }
@@ -60,7 +67,10 @@ export default class LuckyDrawUnityViewProxy {
       luckyDrawUnityView.Id = Int32Proxy.Deserialize(bytes);
       luckyDrawUnityView.IsAvailableInShop = BooleanProxy.Deserialize(bytes);
       if ((num & 4) !== 0) {
-        luckyDrawUnityView.LuckyDrawSets = ListProxy.Deserialize<LuckyDrawSetUnityView>(bytes, LuckyDrawSetUnityViewProxy.Deserialize);
+        luckyDrawUnityView.LuckyDrawSets = ListProxy.Deserialize<LuckyDrawSetUnityView>(
+          bytes,
+          LuckyDrawSetUnityViewProxy.Deserialize,
+        );
       }
       if ((num & 8) !== 0) {
         luckyDrawUnityView.Name = StringProxy.Deserialize(bytes);

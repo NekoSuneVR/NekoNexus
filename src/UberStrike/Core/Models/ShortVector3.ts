@@ -1,9 +1,15 @@
 export default class ShortVector3 {
   private value: Vector3;
 
-  public get x(): float { return this.value.x; }
-  public get y(): float { return this.value.y; }
-  public get z(): float { return this.value.z; }
+  public get x(): float {
+    return this.value.x;
+  }
+  public get y(): float {
+    return this.value.y;
+  }
+  public get z(): float {
+    return this.value.z;
+  }
 
   constructor(x: float, y: float, z: float) {
     this.value = new Vector3(x, y, z);

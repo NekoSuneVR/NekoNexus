@@ -5,7 +5,7 @@ enum MemberAccessLevel {
   Moderator,
   SeniorQA = 6,
   SeniorModerator,
-  Admin = 10
+  Admin = 10,
 }
 
 export default MemberAccessLevel;

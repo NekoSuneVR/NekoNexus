@@ -61,7 +61,8 @@ export default class MemberAuthenticationResultViewProxy {
       memberAuthenticationResultView.LuckyDraw = LuckyDrawUnityViewProxy.Deserialize(bytes);
     }
 
-    memberAuthenticationResultView.MemberAuthenticationResult = EnumProxy.Deserialize<MemberAuthenticationResult>(bytes);
+    memberAuthenticationResultView.MemberAuthenticationResult =
+      EnumProxy.Deserialize<MemberAuthenticationResult>(bytes);
 
     if ((num & 4) !== 0) {
       memberAuthenticationResultView.MemberView = MemberViewProxy.Deserialize(bytes);

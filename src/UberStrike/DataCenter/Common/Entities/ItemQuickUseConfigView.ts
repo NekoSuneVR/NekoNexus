@@ -11,6 +11,10 @@ export default class ItemQuickUseConfigView {
   public BehaviourType: QuickItemLogic;
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 }

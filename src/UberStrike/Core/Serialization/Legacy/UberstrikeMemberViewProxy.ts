@@ -31,10 +31,10 @@ export default class UberstrikeMemberViewProxy {
     if (num !== 0) {
       uberstrikeMemberView = new UberstrikeMemberView();
       if ((num & 1) !== 0) {
-        uberstrikeMemberView.PlayerCardView = (PlayerCardViewProxy.Deserialize(bytes))!;
+        uberstrikeMemberView.PlayerCardView = PlayerCardViewProxy.Deserialize(bytes)!;
       }
       if ((num & 2) !== 0) {
-        uberstrikeMemberView.PlayerStatisticsView = (PlayerStatisticsViewProxy.Deserialize(bytes))!;
+        uberstrikeMemberView.PlayerStatisticsView = PlayerStatisticsViewProxy.Deserialize(bytes)!;
       }
     }
     return uberstrikeMemberView;

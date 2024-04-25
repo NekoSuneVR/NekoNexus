@@ -30,7 +30,7 @@ export enum Keys {
   SkinColor,
   StepSound,
   TeamID,
-  Weapons
+  Weapons,
 }
 
 export default class GameActorInfoDelta {
@@ -39,7 +39,11 @@ export default class GameActorInfoDelta {
   public Id: byte;
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 
   public Apply(instance: GameActorInfo) {
@@ -141,7 +145,8 @@ export default class GameActorInfoDelta {
           instance.Weapons = value as List<int>;
 
           break;
-        default: break;
+        default:
+          break;
       }
     });
   }

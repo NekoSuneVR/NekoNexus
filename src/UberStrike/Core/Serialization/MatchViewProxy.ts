@@ -14,7 +14,11 @@ export default class MatchViewProxy {
     Int32Proxy.Serialize(memoryStream, instance.MapId);
 
     if (instance.PlayersCompleted) {
-      ListProxy.Serialize<PlayerStatisticsView>(memoryStream, instance.PlayersCompleted, PlayerStatisticsViewProxy.Serialize);
+      ListProxy.Serialize<PlayerStatisticsView>(
+        memoryStream,
+        instance.PlayersCompleted,
+        PlayerStatisticsViewProxy.Serialize,
+      );
     } else {
       num |= 1;
     }
@@ -22,7 +26,11 @@ export default class MatchViewProxy {
     Int32Proxy.Serialize(memoryStream, instance.PlayersLimit);
 
     if (instance.PlayersNonCompleted) {
-      ListProxy.Serialize<PlayerStatisticsView>(memoryStream, instance.PlayersNonCompleted, PlayerStatisticsViewProxy.Serialize);
+      ListProxy.Serialize<PlayerStatisticsView>(
+        memoryStream,
+        instance.PlayersNonCompleted,
+        PlayerStatisticsViewProxy.Serialize,
+      );
     } else {
       num |= 2;
     }
@@ -39,13 +47,19 @@ export default class MatchViewProxy {
     matchView.MapId = Int32Proxy.Deserialize(bytes);
 
     if ((num & 1) !== 0) {
-      matchView.PlayersCompleted = ListProxy.Deserialize<PlayerStatisticsView>(bytes, PlayerStatisticsViewProxy.Deserialize);
+      matchView.PlayersCompleted = ListProxy.Deserialize<PlayerStatisticsView>(
+        bytes,
+        PlayerStatisticsViewProxy.Deserialize,
+      );
     }
 
     matchView.PlayersLimit = Int32Proxy.Deserialize(bytes);
 
     if ((num & 2) !== 0) {
-      matchView.PlayersNonCompleted = ListProxy.Deserialize<PlayerStatisticsView>(bytes, PlayerStatisticsViewProxy.Deserialize);
+      matchView.PlayersNonCompleted = ListProxy.Deserialize<PlayerStatisticsView>(
+        bytes,
+        PlayerStatisticsViewProxy.Deserialize,
+      );
     }
 
     matchView.TimeLimit = Int32Proxy.Deserialize(bytes);

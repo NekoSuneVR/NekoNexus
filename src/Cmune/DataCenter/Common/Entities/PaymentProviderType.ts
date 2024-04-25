@@ -16,7 +16,7 @@ enum PaymentProviderType {
   CherryCredits,
   GoogleWallet,
   Steam,
-  PayPal
+  PayPal,
 }
 
 export default PaymentProviderType;

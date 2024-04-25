@@ -9,7 +9,11 @@ export default class CurrencyDepositsViewModelProxy {
     let num = 0;
     const memoryStream: MemoryStream = [];
     if (instance.CurrencyDeposits) {
-      ListProxy.Serialize<CurrencyDepositView>(memoryStream, instance.CurrencyDeposits, CurrencyDepositViewProxy.Serialize);
+      ListProxy.Serialize<CurrencyDepositView>(
+        memoryStream,
+        instance.CurrencyDeposits,
+        CurrencyDepositViewProxy.Serialize,
+      );
     } else {
       num |= 1;
     }
@@ -24,7 +28,10 @@ export default class CurrencyDepositsViewModelProxy {
     const currencyDepositsViewModel = new CurrencyDepositsViewModel();
 
     if ((num & 1) !== 0) {
-      currencyDepositsViewModel.CurrencyDeposits = ListProxy.Deserialize<CurrencyDepositView>(bytes, CurrencyDepositViewProxy.Deserialize);
+      currencyDepositsViewModel.CurrencyDeposits = ListProxy.Deserialize<CurrencyDepositView>(
+        bytes,
+        CurrencyDepositViewProxy.Deserialize,
+      );
     }
 
     currencyDepositsViewModel.TotalCount = Int32Proxy.Deserialize(bytes);

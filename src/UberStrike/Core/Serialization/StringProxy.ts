@@ -15,7 +15,7 @@ export default class StringProxy {
     const num = UShortProxy.Deserialize(bytes);
 
     if (num > 0) {
-      return Buffer.from(bytes.splice(0, (num * 2))).toString('utf16le');
+      return Buffer.from(bytes.splice(0, num * 2)).toString('utf16le');
     }
 
     return '';

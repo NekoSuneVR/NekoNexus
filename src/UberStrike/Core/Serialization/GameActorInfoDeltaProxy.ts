@@ -1,9 +1,5 @@
-import {
-    ChannelType, MemberAccessLevel,
-} from '@/Cmune/DataCenter/Common/Entities';
-import {
-    FireMode, GameActorInfoDelta, PlayerStates, SurfaceType, TeamID,
-} from '@/UberStrike/Core/Models';
+import { ChannelType, MemberAccessLevel } from '@/Cmune/DataCenter/Common/Entities';
+import { FireMode, GameActorInfoDelta, PlayerStates, SurfaceType, TeamID } from '@/UberStrike/Core/Models';
 import { Keys } from '@/UberStrike/Core/Models/GameActorInfoDelta';
 import ByteProxy from './ByteProxy';
 import ColorProxy from './ColorProxy';

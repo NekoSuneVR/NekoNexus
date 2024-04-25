@@ -1,7 +1,11 @@
 import UShortProxy from './UShortProxy';
 
 export default class ListProxy {
-  public static Serialize<T>(bytes: Stream, instance: List<T>, serialization: (bytes: Stream, instance: T) => void): void {
+  public static Serialize<T>(
+    bytes: Stream,
+    instance: List<T>,
+    serialization: (bytes: Stream, instance: T) => void,
+  ): void {
     UShortProxy.Serialize(bytes, instance.length);
 
     for (const t of instance) {

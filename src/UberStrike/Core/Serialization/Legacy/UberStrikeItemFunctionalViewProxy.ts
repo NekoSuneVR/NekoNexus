@@ -14,7 +14,12 @@ export default class UberStrikeItemFunctionalViewProxy {
     if (instance) {
       const memoryStream: MemoryStream = [];
       if (instance.CustomProperties) {
-        DictionaryProxy.Serialize<string, string>(memoryStream, instance.CustomProperties, StringProxy.Serialize, StringProxy.Serialize);
+        DictionaryProxy.Serialize<string, string>(
+          memoryStream,
+          instance.CustomProperties,
+          StringProxy.Serialize,
+          StringProxy.Serialize,
+        );
       } else {
         num |= 1;
       }
@@ -56,7 +61,11 @@ export default class UberStrikeItemFunctionalViewProxy {
     if (num !== 0) {
       uberStrikeItemFunctionalView = new UberStrikeItemFunctionalView();
       if ((num & 1) !== 0) {
-        uberStrikeItemFunctionalView.CustomProperties = DictionaryProxy.Deserialize<string, string>(bytes, StringProxy.Deserialize, StringProxy.Deserialize);
+        uberStrikeItemFunctionalView.CustomProperties = DictionaryProxy.Deserialize<string, string>(
+          bytes,
+          StringProxy.Deserialize,
+          StringProxy.Deserialize,
+        );
       }
       if ((num & 2) !== 0) {
         uberStrikeItemFunctionalView.Description = StringProxy.Deserialize(bytes);

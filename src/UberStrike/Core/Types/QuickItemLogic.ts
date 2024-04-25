@@ -5,7 +5,7 @@ enum QuickItemLogic {
   HealthPack,
   ArmorPack,
   AmmoPack,
-  ExplosiveGrenade
+  ExplosiveGrenade,
 }
 
 export default QuickItemLogic;

@@ -3,7 +3,7 @@ enum GameModeType {
   None,
   DeathMatch,
   TeamDeathMatch,
-  EliminationMode
+  EliminationMode,
 }
 
 export default GameModeType;

@@ -9,6 +9,10 @@ export default class ShortVector3Proxy {
   }
 
   public static Deserialize(bytes: Stream): ShortVector3 {
-    return new ShortVector3(0.01 * Int16Proxy.Deserialize(bytes), 0.01 * Int16Proxy.Deserialize(bytes), 0.01 * Int16Proxy.Deserialize(bytes));
+    return new ShortVector3(
+      0.01 * Int16Proxy.Deserialize(bytes),
+      0.01 * Int16Proxy.Deserialize(bytes),
+      0.01 * Int16Proxy.Deserialize(bytes),
+    );
   }
 }

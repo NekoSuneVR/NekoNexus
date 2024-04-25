@@ -5,7 +5,7 @@ enum BuyingLocationType {
   HomeScreen,
   PreGame,
   DeathScene,
-  EndOfRound
+  EndOfRound,
 }
 
 export default BuyingLocationType;

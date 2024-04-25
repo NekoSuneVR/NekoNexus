@@ -26,7 +26,12 @@ export default class ApplicationConfigurationViewProxy {
     Int32Proxy.Serialize(memoryStream, instance.XpPerMinuteWinner);
 
     if (instance.XpRequiredPerLevel) {
-      DictionaryProxy.Serialize<int, int>(memoryStream, instance.XpRequiredPerLevel, Int32Proxy.Serialize, Int32Proxy.Serialize);
+      DictionaryProxy.Serialize<int, int>(
+        memoryStream,
+        instance.XpRequiredPerLevel,
+        Int32Proxy.Serialize,
+        Int32Proxy.Serialize,
+      );
     } else {
       num |= 1;
     }
@@ -58,7 +63,11 @@ export default class ApplicationConfigurationViewProxy {
     applicationConfigurationView.XpPerMinuteWinner = Int32Proxy.Deserialize(bytes);
 
     if ((num & 1) !== 0) {
-      applicationConfigurationView.XpRequiredPerLevel = DictionaryProxy.Deserialize<number, number>(bytes, Int32Proxy.Deserialize, Int32Proxy.Deserialize);
+      applicationConfigurationView.XpRequiredPerLevel = DictionaryProxy.Deserialize<number, number>(
+        bytes,
+        Int32Proxy.Deserialize,
+        Int32Proxy.Deserialize,
+      );
     }
 
     applicationConfigurationView.XpSmackdown = Int32Proxy.Deserialize(bytes);

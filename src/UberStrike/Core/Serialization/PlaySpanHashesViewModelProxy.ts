@@ -10,7 +10,12 @@ export default class PlaySpanHashesViewModelProxy {
 
     const memoryStream: MemoryStream = [];
     if (instance.Hashes) {
-      DictionaryProxy.Serialize<decimal, string>(memoryStream, instance.Hashes, DecimalProxy.Serialize, StringProxy.Serialize);
+      DictionaryProxy.Serialize<decimal, string>(
+        memoryStream,
+        instance.Hashes,
+        DecimalProxy.Serialize,
+        StringProxy.Serialize,
+      );
     } else {
       num |= 1;
     }
@@ -30,7 +35,11 @@ export default class PlaySpanHashesViewModelProxy {
     const playSpanHashesViewModel = new PlaySpanHashesViewModel();
 
     if ((num & 1) !== 0) {
-      playSpanHashesViewModel.Hashes = DictionaryProxy.Deserialize<decimal, string>(bytes, DecimalProxy.Deserialize, StringProxy.Deserialize);
+      playSpanHashesViewModel.Hashes = DictionaryProxy.Deserialize<decimal, string>(
+        bytes,
+        DecimalProxy.Deserialize,
+        StringProxy.Deserialize,
+      );
     }
 
     if ((num & 2) !== 0) {

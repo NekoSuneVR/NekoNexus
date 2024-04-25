@@ -14,7 +14,7 @@ export default class DailyPointsViewProxy {
     return new DailyPointsView({
       Current: Int32Proxy.Deserialize(bytes),
       PointsMax: Int32Proxy.Deserialize(bytes),
-      PointsTomorrow: Int32Proxy.Deserialize(bytes)
+      PointsTomorrow: Int32Proxy.Deserialize(bytes),
     });
   }
 }

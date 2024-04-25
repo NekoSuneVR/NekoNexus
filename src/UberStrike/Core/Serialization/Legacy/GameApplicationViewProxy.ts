@@ -53,7 +53,7 @@ export default class GameApplicationViewProxy {
     if (num !== 0) {
       gameApplicationView = new GameApplicationView();
       if ((num & 1) !== 0) {
-        gameApplicationView.CommServer = (PhotonViewProxy.Deserialize(bytes))!;
+        gameApplicationView.CommServer = PhotonViewProxy.Deserialize(bytes)!;
       }
       if ((num & 2) !== 0) {
         gameApplicationView.EncryptionInitVector = StringProxy.Deserialize(bytes);

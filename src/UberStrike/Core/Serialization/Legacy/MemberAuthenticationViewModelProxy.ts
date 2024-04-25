@@ -27,9 +27,10 @@ export default class MemberAuthenticationViewModelProxy {
     let memberAuthenticationViewModel: MemberAuthenticationViewModel | null = null;
     if (num !== 0) {
       memberAuthenticationViewModel = new MemberAuthenticationViewModel();
-      memberAuthenticationViewModel.MemberAuthenticationResult = EnumProxy.Deserialize<MemberAuthenticationResult>(bytes);
+      memberAuthenticationViewModel.MemberAuthenticationResult =
+        EnumProxy.Deserialize<MemberAuthenticationResult>(bytes);
       if ((num & 1) !== 0) {
-        memberAuthenticationViewModel.MemberView = (MemberViewProxy.Deserialize(bytes))!;
+        memberAuthenticationViewModel.MemberView = MemberViewProxy.Deserialize(bytes)!;
       }
     }
     return memberAuthenticationViewModel;

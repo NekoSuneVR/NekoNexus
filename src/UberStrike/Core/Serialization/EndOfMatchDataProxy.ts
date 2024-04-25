@@ -43,7 +43,12 @@ export default class EndOfMatchDataProxy {
     }
 
     if (instance.PlayerXpEarned) {
-      DictionaryProxy.Serialize<byte, ushort>(memoryStream, instance.PlayerXpEarned, ByteProxy.Serialize, UInt16Proxy.Serialize);
+      DictionaryProxy.Serialize<byte, ushort>(
+        memoryStream,
+        instance.PlayerXpEarned,
+        ByteProxy.Serialize,
+        UInt16Proxy.Serialize,
+      );
     } else {
       num |= 16;
     }
@@ -77,7 +82,11 @@ export default class EndOfMatchDataProxy {
     }
 
     if ((num & 16) !== 0) {
-      endOfMatchData.PlayerXpEarned = DictionaryProxy.Deserialize<byte, ushort>(bytes, ByteProxy.Deserialize, UInt16Proxy.Deserialize);
+      endOfMatchData.PlayerXpEarned = DictionaryProxy.Deserialize<byte, ushort>(
+        bytes,
+        ByteProxy.Deserialize,
+        UInt16Proxy.Deserialize,
+      );
     }
 
     endOfMatchData.TimeInGameMinutes = Int32Proxy.Deserialize(bytes);

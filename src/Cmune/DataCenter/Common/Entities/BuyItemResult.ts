@@ -15,7 +15,7 @@ enum BuyItemResult {
   InvalidData,
   TooManyUsage,
   InvalidLevel = 100,
-  ItemNotFound = 404
+  ItemNotFound = 404,
 }
 
 export default BuyItemResult;

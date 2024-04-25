@@ -10,7 +10,11 @@ export default class ItemTransactionsViewModelProxy {
     if (instance != null) {
       const memoryStream: MemoryStream = [];
       if (instance.ItemTransactions != null) {
-        ListProxy.Serialize<ItemTransactionView>(memoryStream, instance.ItemTransactions, ItemTransactionViewProxy.Serialize);
+        ListProxy.Serialize<ItemTransactionView>(
+          memoryStream,
+          instance.ItemTransactions,
+          ItemTransactionViewProxy.Serialize,
+        );
       } else {
         num |= 1;
       }
@@ -28,7 +32,10 @@ export default class ItemTransactionsViewModelProxy {
     if (num !== 0) {
       itemTransactionsViewModel = new ItemTransactionsViewModel();
       if ((num & 1) !== 0) {
-        itemTransactionsViewModel.ItemTransactions = ListProxy.Deserialize<ItemTransactionView>(bytes, ItemTransactionViewProxy.Deserialize);
+        itemTransactionsViewModel.ItemTransactions = ListProxy.Deserialize<ItemTransactionView>(
+          bytes,
+          ItemTransactionViewProxy.Deserialize,
+        );
       }
       itemTransactionsViewModel.TotalCount = Int32Proxy.Deserialize(bytes);
     }

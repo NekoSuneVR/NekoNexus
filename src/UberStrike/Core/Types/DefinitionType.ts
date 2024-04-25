@@ -3,7 +3,7 @@ enum DefinitionType {
   StandardDefinition,
   HighDefinition,
   Android,
-  iPhone
+  iPhone,
 }
 
 export default DefinitionType;

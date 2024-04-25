@@ -17,7 +17,12 @@ export default class UberStrikeItemGearViewProxy {
       Int32Proxy.Serialize(memoryStream, instance.ArmorPoints);
       Int32Proxy.Serialize(memoryStream, instance.ArmorWeight);
       if (instance.CustomProperties) {
-        DictionaryProxy.Serialize<string, string>(memoryStream, instance.CustomProperties, StringProxy.Serialize, StringProxy.Serialize);
+        DictionaryProxy.Serialize<string, string>(
+          memoryStream,
+          instance.CustomProperties,
+          StringProxy.Serialize,
+          StringProxy.Serialize,
+        );
       } else {
         num |= 1;
       }
@@ -62,7 +67,11 @@ export default class UberStrikeItemGearViewProxy {
       uberStrikeItemGearView.ArmorPoints = Int32Proxy.Deserialize(bytes);
       uberStrikeItemGearView.ArmorWeight = Int32Proxy.Deserialize(bytes);
       if ((num & 1) !== 0) {
-        uberStrikeItemGearView.CustomProperties = DictionaryProxy.Deserialize<string, string>(bytes, StringProxy.Deserialize, StringProxy.Deserialize);
+        uberStrikeItemGearView.CustomProperties = DictionaryProxy.Deserialize<string, string>(
+          bytes,
+          StringProxy.Deserialize,
+          StringProxy.Deserialize,
+        );
       }
       if ((num & 2) !== 0) {
         uberStrikeItemGearView.Description = StringProxy.Deserialize(bytes);

@@ -48,7 +48,7 @@ export default class PlayerStatisticsViewProxy {
       playerStatisticsView.Level = Int32Proxy.Deserialize(bytes);
       playerStatisticsView.Nutshots = Int32Proxy.Deserialize(bytes);
       if ((num & 1) !== 0) {
-        playerStatisticsView.PersonalRecord = (PlayerPersonalRecordStatisticsViewProxy.Deserialize(bytes))!;
+        playerStatisticsView.PersonalRecord = PlayerPersonalRecordStatisticsViewProxy.Deserialize(bytes)!;
       }
       playerStatisticsView.Points = Int32Proxy.Deserialize(bytes);
       playerStatisticsView.Shots = Int64Proxy.Deserialize(bytes);
@@ -56,7 +56,7 @@ export default class PlayerStatisticsViewProxy {
       playerStatisticsView.Splatted = Int32Proxy.Deserialize(bytes);
       playerStatisticsView.TimeSpentInGame = Int32Proxy.Deserialize(bytes);
       if ((num & 2) !== 0) {
-        playerStatisticsView.WeaponStatistics = (PlayerWeaponStatisticsViewProxy.Deserialize(bytes))!;
+        playerStatisticsView.WeaponStatistics = PlayerWeaponStatisticsViewProxy.Deserialize(bytes)!;
       }
       playerStatisticsView.Xp = Int32Proxy.Deserialize(bytes);
     }

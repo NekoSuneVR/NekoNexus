@@ -7,7 +7,7 @@ enum PointsDepositType {
   Game,
   Invite,
   PointPurchase,
-  LuckyDrawMysteryBoxPrize
+  LuckyDrawMysteryBoxPrize,
 }
 
 export default PointsDepositType;

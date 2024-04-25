@@ -2,7 +2,7 @@ enum MemberReportType {
   OffensiveChat,
   Spamming,
   OffensiveName,
-  Cheating
+  Cheating,
 }
 
 export default MemberReportType;

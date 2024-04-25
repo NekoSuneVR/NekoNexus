@@ -1,5 +1,8 @@
 import {
-  LuckyDrawUnityView, MemberAuthenticationResult, MemberView, WeeklySpecialView,
+  LuckyDrawUnityView,
+  MemberAuthenticationResult,
+  MemberView,
+  WeeklySpecialView,
 } from '@/Cmune/DataCenter/Common/Entities';
 import { PlayerStatisticsView } from '@/UberStrike/DataCenter/Common/Entities';
 
@@ -15,6 +18,10 @@ export default class MemberAuthenticationResultView {
   public WeeklySpecial: WeeklySpecialView; // # LEGACY # //
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 }

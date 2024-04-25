@@ -15,7 +15,7 @@ export default class CurrencyDepositViewProxy {
     if (instance.BundleId) {
       const stream2 = memoryStream;
       const bundleId = instance.BundleId;
-      Int32Proxy.Serialize(stream2, (Number.isNaN(bundleId)) ? 0 : bundleId);
+      Int32Proxy.Serialize(stream2, Number.isNaN(bundleId) ? 0 : bundleId);
     } else {
       num |= 1;
     }

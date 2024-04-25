@@ -7,7 +7,7 @@ enum PlayerStates {
   Sniping = 8,
   Shooting = 16,
   Ready = 32,
-  Offline = 64
+  Offline = 64,
 }
 
 export default PlayerStates;

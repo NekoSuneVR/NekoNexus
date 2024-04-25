@@ -3,7 +3,7 @@ enum GroupFontStyle {
   Normal,
   Bold,
   Underline,
-  Italic
+  Italic,
 }
 
 export default GroupFontStyle;

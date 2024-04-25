@@ -9,7 +9,7 @@ enum AvatarType {
   JuliaNinja,
   Lola,
   LolaAvatar,
-  LolaBlack
+  LolaBlack,
 }
 
 export default AvatarType;

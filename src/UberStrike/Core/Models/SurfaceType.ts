@@ -5,7 +5,7 @@ enum SurfaceType {
   Grass,
   Metal,
   Wood,
-  Water
+  Water,
 }
 
 export default SurfaceType;

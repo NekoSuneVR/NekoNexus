@@ -6,7 +6,7 @@ enum UberstrikeItemType {
   Gear,
   QuickUse,
   Functional,
-  Special
+  Special,
 }
 
 export default UberstrikeItemType;

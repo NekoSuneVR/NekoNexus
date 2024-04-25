@@ -2,7 +2,7 @@
 enum BuildType {
   Prod,
   Dev,
-  Staging
+  Staging,
 }
 
 export default BuildType;

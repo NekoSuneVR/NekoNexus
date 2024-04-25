@@ -2,7 +2,7 @@
 enum PackType {
   One,
   Two,
-  Three
+  Three,
 }
 
 export default PackType;

@@ -46,7 +46,10 @@ export default class LuckyDrawSetUnityViewProxy {
       }
       luckyDrawSetUnityView.LuckyDrawId = Int32Proxy.Deserialize(bytes);
       if ((num & 2) !== 0) {
-        luckyDrawSetUnityView.LuckyDrawSetItems = ListProxy.Deserialize<BundleItemView>(bytes, BundleItemViewProxy.Deserialize);
+        luckyDrawSetUnityView.LuckyDrawSetItems = ListProxy.Deserialize<BundleItemView>(
+          bytes,
+          BundleItemViewProxy.Deserialize,
+        );
       }
       luckyDrawSetUnityView.PointsAttributed = Int32Proxy.Deserialize(bytes);
       luckyDrawSetUnityView.SetWeight = Int32Proxy.Deserialize(bytes);

@@ -10,7 +10,12 @@ export default class AccountCompletionResultViewProxy {
     const memoryStream: MemoryStream = [];
 
     if (instance.ItemsAttributed) {
-      DictionaryProxy.Serialize<int, int>(memoryStream, instance.ItemsAttributed, Int32Proxy.Serialize, Int32Proxy.Serialize);
+      DictionaryProxy.Serialize<int, int>(
+        memoryStream,
+        instance.ItemsAttributed,
+        Int32Proxy.Serialize,
+        Int32Proxy.Serialize,
+      );
     } else {
       num |= 1;
     }
@@ -31,7 +36,11 @@ export default class AccountCompletionResultViewProxy {
     const accountCompletionResultView = new AccountCompletionResultView();
 
     if ((num & 1) !== 0) {
-      accountCompletionResultView.ItemsAttributed = DictionaryProxy.Deserialize<int, int>(bytes, Int32Proxy.Deserialize, Int32Proxy.Deserialize);
+      accountCompletionResultView.ItemsAttributed = DictionaryProxy.Deserialize<int, int>(
+        bytes,
+        Int32Proxy.Deserialize,
+        Int32Proxy.Deserialize,
+      );
     }
 
     if ((num & 2) !== 0) {

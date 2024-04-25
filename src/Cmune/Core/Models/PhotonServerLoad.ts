@@ -2,7 +2,7 @@
 export enum Status {
   None,
   Alive,
-  NotReachable
+  NotReachable,
 }
 
 export default class PhotonServerLoad {
@@ -15,6 +15,10 @@ export default class PhotonServerLoad {
   public MaxPlayerCount: float;
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 }

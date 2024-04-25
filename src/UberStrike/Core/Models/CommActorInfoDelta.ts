@@ -11,7 +11,7 @@ export enum Keys {
   CurrentRoom,
   ModerationFlag,
   ModInformation,
-  PlayerName
+  PlayerName,
 }
 
 export default class CommActorInfoDelta {
@@ -20,7 +20,11 @@ export default class CommActorInfoDelta {
   public Id: byte;
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 
   public Apply(instance: CommActorInfo) {
@@ -58,7 +62,8 @@ export default class CommActorInfoDelta {
           instance.PlayerName = value as string;
 
           break;
-        default: break;
+        default:
+          break;
       }
     });
   }

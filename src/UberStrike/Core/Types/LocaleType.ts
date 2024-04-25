@@ -4,7 +4,7 @@ enum LocaleType {
   tr_TR,
   fr_FR,
   it_IT,
-  de_DE
+  de_DE,
 }
 
 export default LocaleType;

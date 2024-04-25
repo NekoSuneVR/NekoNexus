@@ -1,6 +1,4 @@
-import {
-  BundleCategoryType, BundleItemView, BundleView, ChannelType,
-} from '@/Cmune/DataCenter/Common/Entities';
+import { BundleCategoryType, BundleItemView, BundleView, ChannelType } from '@/Cmune/DataCenter/Common/Entities';
 import BooleanProxy from '../BooleanProxy';
 import DecimalProxy from '../DecimalProxy';
 import EnumProxy from '../EnumProxy';

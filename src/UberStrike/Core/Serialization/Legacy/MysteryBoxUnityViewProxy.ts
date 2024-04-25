@@ -1,5 +1,8 @@
 import {
-  BundleCategoryType, BundleItemView, MysteryBoxUnityView, UberStrikeCurrencyType,
+  BundleCategoryType,
+  BundleItemView,
+  MysteryBoxUnityView,
+  UberStrikeCurrencyType,
 } from '@/Cmune/DataCenter/Common/Entities';
 import BooleanProxy from '../BooleanProxy';
 import EnumProxy from '../EnumProxy';
@@ -78,7 +81,10 @@ export default class MysteryBoxUnityViewProxy {
       mysteryBoxUnityView.IsAvailableInShop = BooleanProxy.Deserialize(bytes);
       mysteryBoxUnityView.ItemsAttributed = Int32Proxy.Deserialize(bytes);
       if ((num & 8) !== 0) {
-        mysteryBoxUnityView.MysteryBoxItems = ListProxy.Deserialize<BundleItemView>(bytes, BundleItemViewProxy.Deserialize);
+        mysteryBoxUnityView.MysteryBoxItems = ListProxy.Deserialize<BundleItemView>(
+          bytes,
+          BundleItemViewProxy.Deserialize,
+        );
       }
       if ((num & 16) !== 0) {
         mysteryBoxUnityView.Name = StringProxy.Deserialize(bytes);

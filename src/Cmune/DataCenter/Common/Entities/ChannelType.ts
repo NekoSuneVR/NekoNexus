@@ -8,7 +8,7 @@ enum ChannelType {
   IPhone,
   IPad,
   Android,
-  Steam = 12
+  Steam = 12,
 }
 
 export default ChannelType;

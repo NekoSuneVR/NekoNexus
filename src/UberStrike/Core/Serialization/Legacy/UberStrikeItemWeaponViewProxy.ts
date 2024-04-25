@@ -15,7 +15,12 @@ export default class UberStrikeItemWeaponViewProxy {
       const memoryStream: MemoryStream = [];
       Int32Proxy.Serialize(memoryStream, instance.AccuracySpread);
       if (instance.CustomProperties) {
-        DictionaryProxy.Serialize<string, string>(memoryStream, instance.CustomProperties, StringProxy.Serialize, StringProxy.Serialize);
+        DictionaryProxy.Serialize<string, string>(
+          memoryStream,
+          instance.CustomProperties,
+          StringProxy.Serialize,
+          StringProxy.Serialize,
+        );
       } else {
         num |= 1;
       }
@@ -71,7 +76,11 @@ export default class UberStrikeItemWeaponViewProxy {
       uberStrikeItemWeaponView = new UberStrikeItemWeaponView();
       uberStrikeItemWeaponView.AccuracySpread = Int32Proxy.Deserialize(bytes);
       if ((num & 1) !== 0) {
-        uberStrikeItemWeaponView.CustomProperties = DictionaryProxy.Deserialize<string, string>(bytes, StringProxy.Deserialize, StringProxy.Deserialize);
+        uberStrikeItemWeaponView.CustomProperties = DictionaryProxy.Deserialize<string, string>(
+          bytes,
+          StringProxy.Deserialize,
+          StringProxy.Deserialize,
+        );
       }
       uberStrikeItemWeaponView.DamageKnockback = Int32Proxy.Deserialize(bytes);
       uberStrikeItemWeaponView.DamagePerProjectile = Int32Proxy.Deserialize(bytes);

@@ -25,7 +25,10 @@ export default class PointDepositsViewModelProxy {
     const pointDepositsViewModel = new PointDepositsViewModel();
 
     if ((num & 1) !== 0) {
-      pointDepositsViewModel.PointDeposits = ListProxy.Deserialize<PointDepositView>(bytes, PointDepositViewProxy.Deserialize);
+      pointDepositsViewModel.PointDeposits = ListProxy.Deserialize<PointDepositView>(
+        bytes,
+        PointDepositViewProxy.Deserialize,
+      );
     }
 
     pointDepositsViewModel.TotalCount = Int32Proxy.Deserialize(bytes);

@@ -11,7 +11,7 @@ export default class ClaimFacebookGiftViewProxy {
     if (!Number.isNaN(instance.ItemId!)) {
       const stream2 = memoryStream;
       const itemId = instance.ItemId;
-      Int32Proxy.Serialize(stream2, (itemId == null) ? 0 : itemId);
+      Int32Proxy.Serialize(stream2, itemId == null ? 0 : itemId);
     } else {
       num |= 1;
     }

@@ -18,7 +18,12 @@ export default class UberStrikeItemQuickViewProxy {
     Int32Proxy.Serialize(memoryStream, instance.CoolDownTime);
 
     if (instance.CustomProperties) {
-      DictionaryProxy.Serialize<string, string>(memoryStream, instance.CustomProperties, StringProxy.Serialize, StringProxy.Serialize);
+      DictionaryProxy.Serialize<string, string>(
+        memoryStream,
+        instance.CustomProperties,
+        StringProxy.Serialize,
+        StringProxy.Serialize,
+      );
     } else {
       num |= 1;
     }
@@ -34,7 +39,12 @@ export default class UberStrikeItemQuickViewProxy {
     EnumProxy.Serialize<UberstrikeItemClass>(memoryStream, instance.ItemClass);
 
     if (instance.ItemProperties) {
-      DictionaryProxy.Serialize<ItemPropertyType, int>(memoryStream, instance.ItemProperties, EnumProxy.Serialize<ItemPropertyType>, Int32Proxy.Serialize);
+      DictionaryProxy.Serialize<ItemPropertyType, int>(
+        memoryStream,
+        instance.ItemProperties,
+        EnumProxy.Serialize<ItemPropertyType>,
+        Int32Proxy.Serialize,
+      );
     } else {
       num |= 4;
     }
@@ -77,7 +87,11 @@ export default class UberStrikeItemQuickViewProxy {
     uberStrikeItemQuickView.CoolDownTime = Int32Proxy.Deserialize(bytes);
 
     if ((num & 1) !== 0) {
-      uberStrikeItemQuickView.CustomProperties = DictionaryProxy.Deserialize<string, string>(bytes, StringProxy.Deserialize, StringProxy.Deserialize);
+      uberStrikeItemQuickView.CustomProperties = DictionaryProxy.Deserialize<string, string>(
+        bytes,
+        StringProxy.Deserialize,
+        StringProxy.Deserialize,
+      );
     }
 
     if ((num & 2) !== 0) {
@@ -89,7 +103,11 @@ export default class UberStrikeItemQuickViewProxy {
     uberStrikeItemQuickView.ItemClass = EnumProxy.Deserialize<UberstrikeItemClass>(bytes);
 
     if ((num & 4) !== 0) {
-      uberStrikeItemQuickView.ItemProperties = DictionaryProxy.Deserialize<ItemPropertyType, int>(bytes, EnumProxy.Deserialize<ItemPropertyType>, Int32Proxy.Deserialize);
+      uberStrikeItemQuickView.ItemProperties = DictionaryProxy.Deserialize<ItemPropertyType, int>(
+        bytes,
+        EnumProxy.Deserialize<ItemPropertyType>,
+        Int32Proxy.Deserialize,
+      );
     }
 
     uberStrikeItemQuickView.LevelLock = Int32Proxy.Deserialize(bytes);

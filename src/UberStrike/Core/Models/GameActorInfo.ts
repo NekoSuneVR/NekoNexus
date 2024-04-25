@@ -44,7 +44,9 @@ export default class GameActorInfo {
   }
 
   public CurrentWeaponID(): int {
-    return (this.Weapons == null || this.Weapons.length <= this.CurrentWeaponSlot) ? 0 : this.Weapons[this.CurrentWeaponSlot];
+    return this.Weapons == null || this.Weapons.length <= this.CurrentWeaponSlot
+      ? 0
+      : this.Weapons[this.CurrentWeaponSlot];
   }
 
   public get IsAlive(): bool {
@@ -56,7 +58,11 @@ export default class GameActorInfo {
   }
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 
   public Is(state: PlayerStates): bool {

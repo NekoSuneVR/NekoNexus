@@ -2,7 +2,7 @@
 enum UberStrikeCurrencyType {
   None,
   Credits,
-  Points
+  Points,
 }
 
 export default UberStrikeCurrencyType;

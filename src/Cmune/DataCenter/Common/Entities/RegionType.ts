@@ -5,7 +5,7 @@ enum RegionType {
   AsiaPacific,
   UsWest,
   SouthKorea,
-  Japan
-};
+  Japan,
+}
 
 export default RegionType;

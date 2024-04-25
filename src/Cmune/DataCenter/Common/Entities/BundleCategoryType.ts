@@ -5,7 +5,7 @@ enum BundleCategoryType {
   Pro,
   Elite,
   Login,
-  Signup
+  Signup,
 }
 
 export default BundleCategoryType;

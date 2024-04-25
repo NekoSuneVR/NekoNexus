@@ -19,7 +19,12 @@ export default class UberStrikeItemWeaponViewProxy {
     Int32Proxy.Serialize(memoryStream, instance.CriticalStrikeBonus);
 
     if (instance.CustomProperties) {
-      DictionaryProxy.Serialize<string, string>(memoryStream, instance.CustomProperties, StringProxy.Serialize, StringProxy.Serialize);
+      DictionaryProxy.Serialize<string, string>(
+        memoryStream,
+        instance.CustomProperties,
+        StringProxy.Serialize,
+        StringProxy.Serialize,
+      );
     } else {
       num |= 1;
     }
@@ -40,7 +45,12 @@ export default class UberStrikeItemWeaponViewProxy {
     EnumProxy.Serialize<UberstrikeItemClass>(memoryStream, instance.ItemClass);
 
     if (instance.ItemProperties) {
-      DictionaryProxy.Serialize<ItemPropertyType, int>(memoryStream, instance.ItemProperties, EnumProxy.Serialize<ItemPropertyType>, Int32Proxy.Serialize);
+      DictionaryProxy.Serialize<ItemPropertyType, int>(
+        memoryStream,
+        instance.ItemProperties,
+        EnumProxy.Serialize<ItemPropertyType>,
+        Int32Proxy.Serialize,
+      );
     } else {
       num |= 4;
     }
@@ -95,7 +105,11 @@ export default class UberStrikeItemWeaponViewProxy {
     uberStrikeItemWeaponView.CriticalStrikeBonus = Int32Proxy.Deserialize(bytes);
 
     if ((num & 1) !== 0) {
-      uberStrikeItemWeaponView.CustomProperties = DictionaryProxy.Deserialize<string, string>(bytes, StringProxy.Deserialize, StringProxy.Deserialize);
+      uberStrikeItemWeaponView.CustomProperties = DictionaryProxy.Deserialize<string, string>(
+        bytes,
+        StringProxy.Deserialize,
+        StringProxy.Deserialize,
+      );
     }
 
     uberStrikeItemWeaponView.DamageKnockback = Int32Proxy.Deserialize(bytes);
@@ -112,7 +126,11 @@ export default class UberStrikeItemWeaponViewProxy {
     uberStrikeItemWeaponView.ItemClass = EnumProxy.Deserialize<UberstrikeItemClass>(bytes);
 
     if ((num & 4) !== 0) {
-      uberStrikeItemWeaponView.ItemProperties = DictionaryProxy.Deserialize<ItemPropertyType, int>(bytes, EnumProxy.Deserialize<ItemPropertyType>, Int32Proxy.Deserialize);
+      uberStrikeItemWeaponView.ItemProperties = DictionaryProxy.Deserialize<ItemPropertyType, int>(
+        bytes,
+        EnumProxy.Deserialize<ItemPropertyType>,
+        Int32Proxy.Deserialize,
+      );
     }
 
     uberStrikeItemWeaponView.LevelLock = Int32Proxy.Deserialize(bytes);

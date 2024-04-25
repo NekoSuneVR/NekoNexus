@@ -7,7 +7,7 @@ enum TutorialStepType {
   ShootSecondGroup,
   TutorialComplete,
   NameSelection,
-  TutorialStart
+  TutorialStart,
 }
 
 export default TutorialStepType;

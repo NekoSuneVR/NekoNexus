@@ -5,7 +5,7 @@ enum BuyingDurationType {
   SevenDays,
   ThirtyDays,
   NinetyDays,
-  Permanent
+  Permanent,
 }
 
 export default BuyingDurationType;

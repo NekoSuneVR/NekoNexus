@@ -11,7 +11,11 @@ export default class GroupCreationView {
   public Cmid: int; // # LEGACY # //
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
   public toString(): string {
     return `[GroupCreationView: [name:${this.Name}][description:${this.Description}][Motto:${this.Motto}][Address:${this.Address}][Has picture:${this.HasPicture}][Application Id:${this.ApplicationId}][AuthToken:${this.AuthToken}][Tag:${this.Tag}][Locale:${this.Locale}]]`;

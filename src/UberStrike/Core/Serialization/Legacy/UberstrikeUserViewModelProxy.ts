@@ -31,10 +31,10 @@ export default class UberstrikeUserViewModelProxy {
     if (num !== 0) {
       uberstrikeUserViewModel = new UberstrikeUserViewModel();
       if ((num & 1) !== 0) {
-        uberstrikeUserViewModel.CmuneMemberView = (MemberViewProxy.Deserialize(bytes))!;
+        uberstrikeUserViewModel.CmuneMemberView = MemberViewProxy.Deserialize(bytes)!;
       }
       if ((num & 2) !== 0) {
-        uberstrikeUserViewModel.UberstrikeMemberView = (UberstrikeMemberViewProxy.Deserialize(bytes))!;
+        uberstrikeUserViewModel.UberstrikeMemberView = UberstrikeMemberViewProxy.Deserialize(bytes)!;
       }
     }
     return uberstrikeUserViewModel;

@@ -3,7 +3,7 @@ enum GroupType {
   Clan,
   Work,
   Country,
-  School
-};
+  School,
+}
 
 export default GroupType;

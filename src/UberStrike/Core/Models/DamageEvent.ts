@@ -5,11 +5,15 @@ export default class DamageEvent {
   public DamgeEffectValue: float;
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 
   public get Count(): int {
-    return (this.Damage == null) ? 0 : Object.keys(this.Damage).length;
+    return this.Damage == null ? 0 : Object.keys(this.Damage).length;
   }
 
   public Clear(): void {
@@ -30,7 +34,7 @@ export default class DamageEvent {
     if ((this.Damage as any)[angle] !== undefined) {
       let damage1;
       let key;
-      (damage1 = (this.Damage as any))[key = angle] = (damage1[key] + damage);
+      (damage1 = this.Damage as any)[(key = angle)] = damage1[key] + damage;
     } else {
       (this.Damage as any)[angle] = damage;
     }

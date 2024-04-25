@@ -11,6 +11,10 @@ export default class UberStrikeItemShopClientView {
   public ItemsRecommendationPerMap: Dictionary<int, int>; // # LEGACY # //
 
   constructor(params: any = {}) {
-    Object.keys(params).filter((key) => key in this).forEach((key) => { this[key] = params[key]; });
+    Object.keys(params)
+      .filter((key) => key in this)
+      .forEach((key) => {
+        this[key] = params[key];
+      });
   }
 }

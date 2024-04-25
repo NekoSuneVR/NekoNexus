@@ -40,10 +40,10 @@ export default class MemberViewProxy {
         memberView.MemberItems = ListProxy.Deserialize<int>(bytes, Int32Proxy.Deserialize);
       }
       if ((num & 2) !== 0) {
-        memberView.MemberWallet = (MemberWalletViewProxy.Deserialize(bytes))!;
+        memberView.MemberWallet = MemberWalletViewProxy.Deserialize(bytes)!;
       }
       if ((num & 4) !== 0) {
-        memberView.PublicProfile = (PublicProfileViewProxy.Deserialize(bytes))!;
+        memberView.PublicProfile = PublicProfileViewProxy.Deserialize(bytes)!;
       }
     }
     return memberView;

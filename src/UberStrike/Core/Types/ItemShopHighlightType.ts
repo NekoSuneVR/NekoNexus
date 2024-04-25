@@ -3,7 +3,7 @@ enum ItemShopHighlightType {
   None,
   Featured,
   Popular,
-  New
+  New,
 }
 
 export default ItemShopHighlightType;

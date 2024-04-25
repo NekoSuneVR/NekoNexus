@@ -22,7 +22,7 @@ enum UberstrikeItemClass {
   QuickUseMine,
   FunctionalGeneral,
   SpecialGeneral,
-  GearHolo
+  GearHolo,
 }
 
 export default UberstrikeItemClass;

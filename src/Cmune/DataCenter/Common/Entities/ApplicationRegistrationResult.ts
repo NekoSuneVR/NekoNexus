@@ -3,7 +3,7 @@ enum ApplicationRegistrationResult {
   Ok,
   DuplicateHashCode,
   InvalidApplication,
-  InvalidHash
+  InvalidHash,
 }
 
 export default ApplicationRegistrationResult;

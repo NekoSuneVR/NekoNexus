@@ -16,7 +16,12 @@ export default class UberStrikeItemQuickViewProxy {
       EnumProxy.Serialize<QuickItemLogic>(memoryStream, instance.BehaviourType);
       Int32Proxy.Serialize(memoryStream, instance.CoolDownTime);
       if (instance.CustomProperties) {
-        DictionaryProxy.Serialize<string, string>(memoryStream, instance.CustomProperties, StringProxy.Serialize, StringProxy.Serialize);
+        DictionaryProxy.Serialize<string, string>(
+          memoryStream,
+          instance.CustomProperties,
+          StringProxy.Serialize,
+          StringProxy.Serialize,
+        );
       } else {
         num |= 1;
       }
@@ -65,7 +70,11 @@ export default class UberStrikeItemQuickViewProxy {
       uberStrikeItemQuickView.BehaviourType = EnumProxy.Deserialize<QuickItemLogic>(bytes);
       uberStrikeItemQuickView.CoolDownTime = Int32Proxy.Deserialize(bytes);
       if ((num & 1) !== 0) {
-        uberStrikeItemQuickView.CustomProperties = DictionaryProxy.Deserialize<string, string>(bytes, StringProxy.Deserialize, StringProxy.Deserialize);
+        uberStrikeItemQuickView.CustomProperties = DictionaryProxy.Deserialize<string, string>(
+          bytes,
+          StringProxy.Deserialize,
+          StringProxy.Deserialize,
+        );
       }
       if ((num & 2) !== 0) {
         uberStrikeItemQuickView.Description = StringProxy.Deserialize(bytes);

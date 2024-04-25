@@ -2,7 +2,7 @@
 enum ContactRequestStatus {
   Pending,
   Accepted,
-  Refused
+  Refused,
 }
 
 export default ContactRequestStatus;

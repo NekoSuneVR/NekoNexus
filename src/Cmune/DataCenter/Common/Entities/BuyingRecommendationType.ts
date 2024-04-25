@@ -2,7 +2,7 @@
 enum BuyingRecommendationType {
   None,
   Manual,
-  Behavior
+  Behavior,
 }
 
 export default BuyingRecommendationType;

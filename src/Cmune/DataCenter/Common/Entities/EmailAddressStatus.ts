@@ -2,7 +2,7 @@
 enum EmailAddressStatus {
   Unverified,
   Verified,
-  Invalid
+  Invalid,
 }
 
 export default EmailAddressStatus;
