@@ -34,6 +34,7 @@ import {
   AccountCompletionResultViewProxy,
   MemberAuthenticationResultViewProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization/Legacy';
+import { TutorialStepType } from '@festivaldev/uberstrike-js/UberStrike/Core/Types';
 import { MemberAuthenticationResultView } from '@festivaldev/uberstrike-js/UberStrike/Core/ViewModel';
 import {
   AccountCompletionResultView,
@@ -376,6 +377,7 @@ export default class AuthenticationWebService extends BaseWebService {
                 PlayerStatisticsView: playerStatistics,
                 ServerTime: new Date(),
                 IsAccountComplete: false,
+                IsTutorialComplete: false,
                 AuthToken: session.SessionId,
                 WeeklySpecial: this.weeklySpecial,
               });
@@ -433,6 +435,7 @@ export default class AuthenticationWebService extends BaseWebService {
                   }),
                   PlayerStatisticsView: new PlayerStatisticsView({ ...playerStatistics!.get({ plain: true }) }),
                   IsAccountComplete: publicProfile.Name.trim().length > 0,
+                  IsTutorialComplete: userAccount.TutorialStep >= TutorialStepType.TutorialComplete,
                   AuthToken: session.SessionId,
                   WeeklySpecial: this.weeklySpecial,
                 }),
