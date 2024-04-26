@@ -24,6 +24,10 @@ export default class FileServerHost {
     // }
 
     this.expressApp.use('/', express.static(path.join(process.cwd(), 'wwwroot')));
+    this.expressApp.use(
+      '/UberStrike/Images/MapIcons/',
+      express.static(path.join(process.cwd(), 'wwwroot/images/maps')),
+    );
   }
 
   public async start(): Promise<void> {
