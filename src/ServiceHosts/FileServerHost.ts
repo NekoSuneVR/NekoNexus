@@ -28,6 +28,10 @@ export default class FileServerHost {
       '/UberStrike/Images/MapIcons/',
       express.static(path.join(process.cwd(), 'wwwroot/images/maps')),
     );
+    this.expressApp.use(
+      '/UberStrike/Images/MapIcons/TheBunker.jpg',
+      express.static(path.join(process.cwd(), 'wwwroot/images/maps/TheHangar.jpg')),
+    );
   }
 
   public async start(): Promise<void> {
