@@ -1,4 +1,5 @@
 import {
+  Map,
   ShopBundle,
   ShopBundleItem,
   ShopFunctionalItem,
@@ -67,6 +68,12 @@ export default class ShopWebService extends BaseWebService {
           WeaponItems: await ShopWeaponItem.findAll({
             include: [{ model: ShopItemPrice, as: 'Prices', required: false }],
           }),
+          ItemsRecommendationPerMap: await Map.findAll().then((maps) =>
+            maps.reduce((acc: any, cur: Map) => {
+              acc[cur.MapId] = cur.RecommendedItemId;
+              return acc;
+            }, {}),
+          ),
         }),
       );
 
