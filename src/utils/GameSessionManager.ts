@@ -86,6 +86,27 @@ export default class GameSessionManager {
     return session;
   }
 
+  public async findSessionByPlayerId(id: number): Promise<any> {
+    const [session, isCreated] = await GameSession.findOrCreate({
+      where: {
+        Cmid: id,
+        ExpireTime: {
+          [Op.gt]: new Date(),
+        },
+      },
+    });
+
+    if (!isCreated) {
+      session.extendExpireTime();
+    }
+
+    return session;
+  }
+
+  public async findSessionForSteamUser(sessionId: string): Promise<any> {
+    return this.findSessionByPlayerId(GameSession.getCmidFromSessionId(sessionId));
+  }
+
   private createSessionId(cmid: number): string {
     const sessionId: Buffer = Buffer.alloc(20);
 
