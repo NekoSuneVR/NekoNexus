@@ -4,7 +4,7 @@ export interface MapAttributes {
   MapId?: number;
   DisplayName?: string;
   Description?: string;
-  SceneName?: string;
+  SceneName?: { [key: string]: string };
   IsBlueBox?: boolean;
   RecommendedItemId?: number;
   SupportedGameModes?: number;
@@ -17,7 +17,7 @@ export default class Map extends Model<MapAttributes> {
   declare MapId: number;
   declare DisplayName: string;
   declare Description: string;
-  declare SceneName: string;
+  declare SceneName: { [key: string]: string };
   declare IsBlueBox: boolean;
   declare RecommendedItemId: number;
   declare SupportedGameModes: number;
@@ -34,7 +34,12 @@ export default class Map extends Model<MapAttributes> {
         },
         DisplayName: DataTypes.STRING,
         Description: DataTypes.TEXT,
-        SceneName: DataTypes.STRING,
+        SceneName: {
+          type: DataTypes.JSON,
+          get(this: Map): any {
+            return JSON.parse(this.getDataValue('SceneName') as any);
+          },
+        },
         IsBlueBox: DataTypes.BOOLEAN,
         RecommendedItemId: DataTypes.INTEGER,
         SupportedGameModes: DataTypes.INTEGER,
@@ -43,12 +48,8 @@ export default class Map extends Model<MapAttributes> {
         FileName: {
           type: DataTypes.JSON,
           get(this: Map): any {
-            console.log(this.getDataValue('FileName'), JSON.parse(this.getDataValue('FileName') as any));
             return JSON.parse(this.getDataValue('FileName') as any);
           },
-          // set(this: Map, value: any): any {
-          //   this.setDataValue('FileName', JSON.stringify(value) as any);
-          // },
         },
       },
       {

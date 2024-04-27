@@ -126,6 +126,7 @@ export default class ApplicationWebService extends BaseWebService {
         const mapData = maps.reduce((acc: any[], cur: Map) => {
           acc.push({
             ...cur.get({ plain: true }),
+            SceneName: cur.SceneName['4.7.1'] || cur.SceneName.default,
             FileName: cur.FileName?.['4.7.1'],
             Settings: mapSettings
               .filter((_) => _.MapId === cur.MapId)
