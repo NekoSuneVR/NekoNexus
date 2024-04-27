@@ -6,7 +6,6 @@ namespace Paradise.Client {
 		private DateTime lastExceptionRecord;
 
 		void Awake() {
-			Application.RegisterLogCallback(HandleException);
 			DontDestroyOnLoad(gameObject);
 		}
 
@@ -15,16 +14,6 @@ namespace Paradise.Client {
 			Singleton<GameStateController>.Instance.SetGameMode(null);
 
 			System.Diagnostics.Process.GetCurrentProcess().Close();
-		}
-
-		private void HandleException(string condition, string stackTrace, LogType type) {
-			if (ParadiseClient.Settings.AllowTelemetry && (type == LogType.Error || type == LogType.Exception)) {
-				if (Math.Abs((lastExceptionRecord - DateTime.Now).TotalSeconds) < 5)
-					return;
-				lastExceptionRecord = DateTime.Now;
-
-				ParadiseWebServiceClient.RecordException(PlayerDataManager.Cmid, condition, stackTrace, string.Empty);
-			}
 		}
 	}
 }

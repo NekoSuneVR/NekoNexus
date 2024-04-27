@@ -121,7 +121,7 @@ namespace Paradise.Client {
 						}
 					}
 				} catch (Exception ex) {
-					ParadiseWebServiceClient.RecordException(PlayerDataManager.Cmid, ex.Message, ex.StackTrace, string.Empty);
+					ParadiseWebServiceClient.RecordException(PlayerDataManager.Cmid, ApplicationDataManager.Channel, ApplicationDataManager.Version, ex.Message, ex.StackTrace, DebugLogMessages.Console.ToHTML(), () => { });
 					if (exceptionHandler != null) {
 						exceptionHandler(ex);
 					} else {

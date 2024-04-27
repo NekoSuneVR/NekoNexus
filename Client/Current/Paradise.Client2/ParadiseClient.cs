@@ -14,6 +14,8 @@ namespace Paradise.Client {
 		public static readonly ILog Log = LogManager.GetLogger(nameof(ParadiseClient));
 		public static ParadisePrefs Settings { get; private set; } = new ParadisePrefs();
 
+		private static bool _isExceptionSent = false;
+
 		static ParadiseClient() {
 			AppDomain.CurrentDomain.AssemblyResolve += (sender, e) => {
 				var assemblyName = new AssemblyName(e.Name).Name;
@@ -29,6 +31,8 @@ namespace Paradise.Client {
 		}
 
 		public static void Initialize() {
+			Application.RegisterLogCallback(new Application.LogCallback(OnUnityDebugCallback));
+
 			using (var stream = Assembly.GetAssembly(typeof(ParadiseClient)).GetManifestResourceStream("Paradise.Client.log4net.config")) {
 				using (var reader = new StreamReader(stream)) {
 					var logConfig = new XmlDocument();
@@ -47,6 +51,18 @@ namespace Paradise.Client {
 
 			ParadiseMainMenuMusicManager.LoadMainMenuMusic();
 			//RichPresenceClient.Initialize();
+		}
+
+		private static void OnUnityDebugCallback(string logString, string stackTrace, LogType logType) {
+			Log.Error($"Exception: {logString}\n{stackTrace}");
+
+			if (ApplicationDataManager.IsOnline) {
+				if (!_isExceptionSent) {
+					_isExceptionSent = true;
+
+					ParadiseWebServiceClient.RecordException(PlayerDataManager.Cmid, ApplicationDataManager.Channel, ApplicationDataManager.Version, logString, stackTrace, DebugLogMessages.Console.ToHTML(), () => { });
+				}
+			}
 		}
 	}
 
