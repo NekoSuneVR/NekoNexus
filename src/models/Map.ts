@@ -10,7 +10,7 @@ export interface MapAttributes {
   SupportedGameModes?: number;
   SupportedItemClass?: number;
   MaxPlayers?: number;
-  FileName?: string | null;
+  FileName?: { [key: string]: string };
 }
 
 export default class Map extends Model<MapAttributes> {
@@ -23,7 +23,7 @@ export default class Map extends Model<MapAttributes> {
   declare SupportedGameModes: number;
   declare SupportedItemClass: number;
   declare MaxPlayers: number;
-  declare FileName: string;
+  declare FileName: { [key: string]: string };
 
   public static initialize(sequelize: Sequelize) {
     Map.init(
@@ -40,7 +40,16 @@ export default class Map extends Model<MapAttributes> {
         SupportedGameModes: DataTypes.INTEGER,
         SupportedItemClass: DataTypes.INTEGER,
         MaxPlayers: DataTypes.INTEGER,
-        FileName: DataTypes.STRING,
+        FileName: {
+          type: DataTypes.JSON,
+          get(this: Map): any {
+            console.log(this.getDataValue('FileName'), JSON.parse(this.getDataValue('FileName') as any));
+            return JSON.parse(this.getDataValue('FileName') as any);
+          },
+          // set(this: Map, value: any): any {
+          //   this.setDataValue('FileName', JSON.stringify(value) as any);
+          // },
+        },
       },
       {
         sequelize,

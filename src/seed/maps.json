@@ -5,6 +5,9 @@
 		"SceneName": "ApexTwin",
 		"MapId": 3,
 		"IsBlueBox": false,
+		"FileName": {
+			"4.7.1": ""
+		},
 		"Settings": {
 			"1": {
 				"KillsMin": 1,
@@ -47,6 +50,10 @@
 		"SceneName": "AqualabResearchHub",
 		"MapId": 4,
 		"IsBlueBox": false,
+		"FileName": {
+			"4.3.10": "AqualabResearchHub-82e283cf508b2ac1a8ba786d8ca2ee12e2f8e802-HD.unity3d",
+			"4.7.1": ""
+		},
 		"Settings": {
 			"1": {
 				"KillsMin": 1,
@@ -89,6 +96,9 @@
 		"SceneName": "Catalyst",
 		"MapId": 5,
 		"IsBlueBox": false,
+		"FileName": {
+			"4.7.1": ""
+		},
 		"Settings": {
 			"1": {
 				"KillsMin": 1,
@@ -131,6 +141,10 @@
 		"SceneName": "CuberSpace",
 		"MapId": 6,
 		"IsBlueBox": false,
+		"FileName": {
+			"4.3.10": "CuberSpace-a98fed474821524414c5fd9dd31e26dba5721849-HD.unity3d",
+			"4.7.1": ""
+		},
 		"Settings": {
 			"1": {
 				"KillsMin": 1,
@@ -173,6 +187,10 @@
 		"SceneName": "CuberStrike",
 		"MapId": 7,
 		"IsBlueBox": false,
+		"FileName": {
+			"4.3.10": "CuberStrike-b1ced0a3cec425da2a795b65a9bcb55530ef986f-HD.unity3d",
+			"4.7.1": ""
+		},
 		"Settings": {
 			"1": {
 				"KillsMin": 1,
@@ -215,6 +233,9 @@
 		"SceneName": "Volley",
 		"MapId": 18,
 		"IsBlueBox": false,
+		"FileName": {
+			"4.7.1": ""
+		},
 		"Settings": {
 			"2": {
 				"KillsMin": 1,
@@ -246,6 +267,10 @@
 		"SceneName": "FortWinter",
 		"MapId": 8,
 		"IsBlueBox": false,
+		"FileName": {
+			"4.3.10": "FortWinter-b0708b78b63fd6bc633596d78c5c3582350a97cb-HD.unity3d",
+			"4.7.1": ""
+		},
 		"Settings": {
 			"1": {
 				"KillsMin": 1,
@@ -288,6 +313,9 @@
 		"SceneName": "GhostIsland",
 		"MapId": 9,
 		"IsBlueBox": false,
+		"FileName": {
+			"4.7.1": ""
+		},
 		"Settings": {
 			"1": {
 				"KillsMin": 1,
@@ -330,6 +358,10 @@
 		"SceneName": "GideonsTower",
 		"MapId": 10,
 		"IsBlueBox": false,
+		"FileName": {
+			"4.3.10": "GideonsTower-cb25d4436e4b3b37e6f80ea078e468c33c9f6d65-HD.unity3d",
+			"4.7.1": ""
+		},
 		"Settings": {
 			"1": {
 				"KillsMin": 1,
@@ -372,6 +404,10 @@
 		"SceneName": "LostParadise2",
 		"MapId": 12,
 		"IsBlueBox": false,
+		"FileName": {
+			"4.3.10": "LostParadise2-3782646dc20e7eedd938136d7745502ec530889d-HD.unity3d",
+			"4.7.1": ""
+		},
 		"Settings": {
 			"1": {
 				"KillsMin": 1,
@@ -414,6 +450,10 @@
 		"SceneName": "MonkeyIsland",
 		"MapId": 11,
 		"IsBlueBox": false,
+		"FileName": {
+			"4.3.10": "MonkeyIsland-a0322b907ed23bebd46feb37833ab7c35681ebf2-HD.unity3d",
+			"4.7.1": ""
+		},
 		"Settings": {
 			"1": {
 				"KillsMin": 1,
@@ -456,6 +496,10 @@
 		"SceneName": "SkyGarden",
 		"MapId": 13,
 		"IsBlueBox": false,
+		"FileName": {
+			"4.3.10": "SkyGarden-04418dc8f6b7f7986a907d2126a09d23a2f7e15b-HD.unity3d",
+			"4.7.1": ""
+		},
 		"Settings": {
 			"1": {
 				"KillsMin": 1,
@@ -499,7 +543,10 @@
 		"MapId": 64,
 		"IsBlueBox": false,
 		"MaxPlayer": 20,
-		"FileName": "SpaceCity.unity3d",
+		"FileName": {
+			"4.3.10": "SpaceCity-39cc09a30cead812868d2ec3f39c43d7050f18d2-HD.unity3d",
+			"4.7.1": "SpaceCity.unity3d"
+		},
 		"Settings": {
 			"1": {
 				"KillsMin": 1,
@@ -543,7 +590,10 @@
 		"MapId": 65,
 		"IsBlueBox": false,
 		"MaxPlayer": 20,
-		"FileName": "SpacePortAlpha.unity3d",
+		"FileName": {
+			"4.3.10": "SpacePortAlpha-f5a000d702f88da661050a3741e4c10000f277e8-HD.unity3d",
+			"4.7.1": "SpacePortAlpha.unity3d"
+		},
 		"Settings": {
 			"1": {
 				"KillsMin": 1,
@@ -564,6 +614,10 @@
 		"SceneName": "SuperPRISMReactor",
 		"MapId": 14,
 		"IsBlueBox": false,
+		"FileName": {
+			"4.3.10": "SuperPRISMReactor-6e883afbadffd55625b69f7a7986ed435ec5e080-HD.unity3d",
+			"4.7.1": ""
+		},
 		"Settings": {
 			"1": {
 				"KillsMin": 1,
@@ -606,6 +660,10 @@
 		"SceneName": "TempleOfTheRaven",
 		"MapId": 15,
 		"IsBlueBox": false,
+		"FileName": {
+			"4.3.10": "TempleOfTheRaven-8be5439c13e0f91c7ef30837e6e85ea39658f9b8-HD.unity3d",
+			"4.7.1": ""
+		},
 		"Settings": {
 			"1": {
 				"KillsMin": 1,
@@ -648,6 +706,10 @@
 		"SceneName": "TheHangar",
 		"MapId": 16,
 		"IsBlueBox": false,
+		"FileName": {
+			"4.3.10": "TheBunker-259f7cd6c9727b5c9ecc294959b3464f492d9de4-HD.unity3d",
+			"4.7.1": ""
+		},
 		"Settings": {
 			"1": {
 				"KillsMin": 1,
@@ -690,6 +752,10 @@
 		"SceneName": "TheWarehouse",
 		"MapId": 17,
 		"IsBlueBox": false,
+		"FileName": {
+			"4.3.10": "TheWarehouse-89b7709067cea63ea20e7a993b8a886f225852ba-HD.unity3d",
+			"4.7.1": ""
+		},
 		"Settings": {
 			"1": {
 				"KillsMin": 1,
@@ -732,7 +798,10 @@
 		"SceneName": "UberZone",
 		"MapId": 66,
 		"IsBlueBox": false,
-		"FileName": "UberZone.unity3d",
+		"FileName": {
+			"4.3.10": "UberZone-3d65324112d322a4dc2a155c9795d4b7ec08ee3a-HD.unity3d",
+			"4.7.1": "UberZone.unity3d"
+		},
 		"Settings": {
 			"1": {
 				"KillsMin": 1,

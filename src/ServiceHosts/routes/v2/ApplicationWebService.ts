@@ -115,17 +115,18 @@ export default class ApplicationWebService extends BaseWebService {
       this.debugEndpoint('GetMaps', clientVersion, clientType);
 
       if (ApplicationWebService.supportedClientVersions.includes(clientVersion)) {
-        const maps = await Map.findAll({
-          where: { FileName: null },
-          raw: true,
-        });
+        const maps = await Map.findAll().then((mapList) =>
+          mapList.filter((map) => map.FileName?.['4.7.1'] !== undefined && !map.FileName?.['4.7.1'].length),
+        );
+
         const mapSettings = await MapSettings.findAll({
           raw: true,
         });
 
-        const mapData = maps.reduce((acc: any[], cur: any) => {
+        const mapData = maps.reduce((acc: any[], cur: Map) => {
           acc.push({
-            ...cur,
+            ...cur.get({ plain: true }),
+            FileName: cur.FileName?.['4.7.1'],
             Settings: mapSettings
               .filter((_) => _.MapId === cur.MapId)
               .reduce((acc, cur) => {
