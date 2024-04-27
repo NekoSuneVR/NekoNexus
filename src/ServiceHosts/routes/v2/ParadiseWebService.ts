@@ -1,6 +1,6 @@
 import { ItemTransaction, Map, MapSettings, MemberWallet, PlayerInventoryItem, PublicProfile } from '@/models';
 import { ApiVersion } from '@/utils';
-import { BuyItemResult } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
+import { BuyItemResult, ChannelType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
   EnumProxy,
   Int32Proxy,
@@ -135,11 +135,13 @@ export default class ParadiseWebService extends BaseWebService {
 
     try {
       const cmid = Int32Proxy.Deserialize(bytes);
+      const channel = EnumProxy.Deserialize<ChannelType>(bytes);
+      const version = StringProxy.Deserialize(bytes);
       const exceptionMessage = StringProxy.Deserialize(bytes);
       const stackTrace = StringProxy.Deserialize(bytes);
       const exceptionData = StringProxy.Deserialize(bytes);
 
-      this.debugEndpoint('RecordException', cmid, exceptionMessage, stackTrace, exceptionData);
+      this.debugEndpoint('RecordException', cmid, channel, version, exceptionMessage, stackTrace, exceptionData);
 
       Int32Proxy.Serialize(outputStream, 0);
 
