@@ -34,6 +34,12 @@ import { Dialect, Sequelize } from 'sequelize';
     Log.info('Database opened.');
   } catch {}
 
+  // #region Application Configuration
+  const applicationConfiguration = require('./seed/applicationConfiguration.json');
+  await models.ApplicationConfiguration.destroy({ where: {} });
+  await models.ApplicationConfiguration.bulkCreate(applicationConfiguration);
+  // #endregion
+
   // #region Users
   const users = require('./seed/users.json');
   await models.PublicProfile.destroy({ where: {} });

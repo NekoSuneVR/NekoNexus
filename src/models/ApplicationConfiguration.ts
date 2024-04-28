@@ -1,7 +1,7 @@
 import { DataTypes, Model, type Sequelize } from 'sequelize';
 
 export interface ApplicationConfigurationAttributes {
-  id?: number;
+  ApplicationId?: number;
   XpRequiredPerLevel?: { [key: string]: number };
   MaxLevel?: number;
   MaxXp?: number;
@@ -24,7 +24,7 @@ export interface ApplicationConfigurationAttributes {
 }
 
 export default class ApplicationConfiguration extends Model<ApplicationConfigurationAttributes> {
-  declare id: number;
+  declare ApplicationId: number;
   declare XpRequiredPerLevel: { [key: string]: number };
   declare MaxLevel: number;
   declare MaxXp: number;
@@ -48,7 +48,7 @@ export default class ApplicationConfiguration extends Model<ApplicationConfigura
   public static initialize(sequelize: Sequelize) {
     ApplicationConfiguration.init(
       {
-        id: {
+        ApplicationId: {
           type: DataTypes.INTEGER,
           primaryKey: true,
         },
@@ -56,9 +56,6 @@ export default class ApplicationConfiguration extends Model<ApplicationConfigura
           type: DataTypes.JSON,
           get(this: ApplicationConfiguration): any {
             return JSON.parse(this.getDataValue('XpRequiredPerLevel') as any);
-          },
-          set(this: ApplicationConfiguration, value: any): any {
-            this.setDataValue('XpRequiredPerLevel', JSON.stringify(value) as any);
           },
         },
         MaxLevel: DataTypes.INTEGER,
