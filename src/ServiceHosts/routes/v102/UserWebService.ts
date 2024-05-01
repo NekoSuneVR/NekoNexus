@@ -1,8 +1,11 @@
 import {
+  CurrencyDeposit,
+  ItemTransaction,
   MemberWallet,
   PlayerInventoryItem,
   PlayerLoadout,
   PlayerStatistics,
+  PointDeposit,
   PublicProfile,
   UserAccount,
 } from '@/models';
@@ -20,12 +23,20 @@ import {
   StringProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import {
+  CurrencyDepositsViewModelProxy,
   ItemInventoryViewProxy,
+  ItemTransactionsViewModelProxy,
   LoadoutViewProxy,
   PlayerLevelCapViewProxy,
+  PointDepositsViewModelProxy,
   UberstrikeUserViewModelProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization/Legacy';
-import { UberstrikeUserViewModel } from '@festivaldev/uberstrike-js/UberStrike/Core/ViewModel';
+import {
+  CurrencyDepositsViewModel,
+  ItemTransactionsViewModel,
+  PointDepositsViewModel,
+  UberstrikeUserViewModel,
+} from '@festivaldev/uberstrike-js/UberStrike/Core/ViewModel';
 import {
   LoadoutView,
   PlayerLevelCapView,
@@ -203,12 +214,33 @@ export default class UserWebService extends BaseWebService {
 
       this.debugEndpoint('GetCurrencyDeposits', cmid, pageIndex, elementPerPage);
 
-      throw new Error('Not Implemented');
-      // return isEncrypted
-      //   ? this.CryptoPolicy.RijndaelEncrypt(outputStream, this.EncryptionPassPhrase, this.EncryptionInitVector)
-      //   : outputStream;
-    } catch (e) {
-      this.handleEndpointError('GetCurrencyDeposits', e);
+      const userAccount = await UserAccount.findOne({ where: { Cmid: cmid } });
+
+      if (userAccount) {
+        const currencyDeposits = await CurrencyDeposit.findAll({
+          where: {
+            Cmid: userAccount.Cmid,
+          },
+          raw: true,
+        });
+
+        CurrencyDepositsViewModelProxy.Serialize(
+          outputStream,
+          new CurrencyDepositsViewModel({
+            CurrencyDeposits: currencyDeposits.slice(
+              (pageIndex - 1) * elementPerPage,
+              (pageIndex - 1) * elementPerPage + elementPerPage,
+            ),
+            TotalCount: currencyDeposits.length,
+          }),
+        );
+      }
+
+      return isEncrypted
+        ? this.CryptoPolicy.RijndaelEncrypt(outputStream, this.EncryptionPassPhrase, this.EncryptionInitVector)
+        : outputStream;
+    } catch (error) {
+      this.handleEndpointError('GetCurrencyDeposits', error);
     }
 
     return null;
@@ -227,12 +259,33 @@ export default class UserWebService extends BaseWebService {
 
       this.debugEndpoint('GetItemTransactions', cmid, pageIndex, elementPerPage);
 
-      throw new Error('Not Implemented');
-      // return isEncrypted
-      //   ? this.CryptoPolicy.RijndaelEncrypt(outputStream, this.EncryptionPassPhrase, this.EncryptionInitVector)
-      //   : outputStream;
-    } catch (e) {
-      this.handleEndpointError('GetItemTransactions', e);
+      const userAccount = await UserAccount.findOne({ where: { Cmid: cmid } });
+
+      if (userAccount) {
+        const itemTransactions = await ItemTransaction.findAll({
+          where: {
+            Cmid: userAccount.Cmid,
+          },
+          raw: true,
+        });
+
+        ItemTransactionsViewModelProxy.Serialize(
+          outputStream,
+          new ItemTransactionsViewModel({
+            ItemTransactions: itemTransactions.slice(
+              (pageIndex - 1) * elementPerPage,
+              (pageIndex - 1) * elementPerPage + elementPerPage,
+            ),
+            TotalCount: itemTransactions.length,
+          }),
+        );
+      }
+
+      return isEncrypted
+        ? this.CryptoPolicy.RijndaelEncrypt(outputStream, this.EncryptionPassPhrase, this.EncryptionInitVector)
+        : outputStream;
+    } catch (error) {
+      this.handleEndpointError('GetItemTransactions', error);
     }
 
     return null;
@@ -251,12 +304,33 @@ export default class UserWebService extends BaseWebService {
 
       this.debugEndpoint('GetPointsDeposits', cmid, pageIndex, elementPerPage);
 
-      throw new Error('Not Implemented');
-      // return isEncrypted
-      //   ? this.CryptoPolicy.RijndaelEncrypt(outputStream, this.EncryptionPassPhrase, this.EncryptionInitVector)
-      //   : outputStream;
-    } catch (e) {
-      this.handleEndpointError('GetPointsDeposits', e);
+      const userAccount = await UserAccount.findOne({ where: { Cmid: cmid } });
+
+      if (userAccount) {
+        const pointDeposits = await PointDeposit.findAll({
+          where: {
+            Cmid: userAccount.Cmid,
+          },
+          raw: true,
+        });
+
+        PointDepositsViewModelProxy.Serialize(
+          outputStream,
+          new PointDepositsViewModel({
+            PointDeposits: pointDeposits.slice(
+              (pageIndex - 1) * elementPerPage,
+              (pageIndex - 1) * elementPerPage + elementPerPage,
+            ),
+            TotalCount: pointDeposits.length,
+          }),
+        );
+      }
+
+      return isEncrypted
+        ? this.CryptoPolicy.RijndaelEncrypt(outputStream, this.EncryptionPassPhrase, this.EncryptionInitVector)
+        : outputStream;
+    } catch (error) {
+      this.handleEndpointError('GetPointsDeposits', error);
     }
 
     return null;

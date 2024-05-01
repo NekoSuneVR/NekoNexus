@@ -1,5 +1,10 @@
 import {
+  ItemTransaction,
   Map,
+  MemberWallet,
+  PlayerInventoryItem,
+  PlayerStatistics,
+  PublicProfile,
   ShopBundle,
   ShopBundleItem,
   ShopFunctionalItem,
@@ -7,11 +12,13 @@ import {
   ShopItemPrice,
   ShopQuickItem,
   ShopWeaponItem,
+  UserAccount,
 } from '@/models';
-import { ApiVersion } from '@/utils';
+import { ApiVersion, XpPointsUtil } from '@/utils';
 import {
   BundleCategoryType,
   BundleView,
+  BuyItemResult,
   BuyingDurationType,
   BuyingLocationType,
   BuyingRecommendationType,
@@ -33,6 +40,8 @@ import {
   UberStrikeItemShopClientViewProxy,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization/Legacy';
 import { UberstrikeItemType } from '@festivaldev/uberstrike-js/UberStrike/Core/Types';
+import moment from 'moment';
+import { Op } from 'sequelize';
 import BaseWebService from '../BaseWebService';
 
 export default class ShopWebService extends BaseWebService {
@@ -113,10 +122,189 @@ export default class ShopWebService extends BaseWebService {
         recommendationType,
       );
 
-      throw new Error('Not Implemented');
-      // return isEncrypted
-      //   ? this.CryptoPolicy.RijndaelEncrypt(outputStream, this.EncryptionPassPhrase, this.EncryptionInitVector)
-      //   : outputStream;
+      const userAccount = await UserAccount.findOne({ where: { Cmid: buyerCmid } });
+
+      if (!userAccount) {
+        Int32Proxy.Serialize(outputStream, BuyItemResult.InvalidMember);
+      } else {
+        const publicProfile = await PublicProfile.findOne({ where: { Cmid: userAccount.Cmid } });
+
+        if (!publicProfile) {
+          Int32Proxy.Serialize(outputStream, BuyItemResult.InvalidMember);
+        } else {
+          const playerStatistics = await PlayerStatistics.findOne({ where: { Cmid: userAccount.Cmid } });
+          const memberWallet = await MemberWallet.findOne({ where: { Cmid: publicProfile.Cmid } });
+
+          if (!memberWallet) {
+            Int32Proxy.Serialize(outputStream, BuyItemResult.InvalidMember);
+          } else {
+            if (
+              await PlayerInventoryItem.findOne({
+                where: {
+                  Cmid: userAccount.Cmid,
+                  ItemId: itemId,
+                  ExpirationDate: {
+                    [Op.or]: [
+                      null,
+                      {
+                        [Op.gt]: new Date(),
+                      },
+                    ],
+                  },
+                },
+              })
+            ) {
+              Int32Proxy.Serialize(outputStream, BuyItemResult.AlreadyInInventory);
+            } else {
+              let item: any = null;
+
+              switch (itemType) {
+                case UberstrikeItemType.Weapon:
+                  item = await ShopWeaponItem.findOne({
+                    where: { ID: itemId },
+                    include: [
+                      {
+                        model: ShopItemPrice,
+                        as: 'Prices',
+                        required: false,
+                      },
+                    ],
+                  });
+                  break;
+                case UberstrikeItemType.Gear:
+                  item = await ShopWeaponItem.findOne({
+                    where: { ID: itemId },
+                    include: [
+                      {
+                        model: ShopItemPrice,
+                        as: 'Prices',
+                        required: false,
+                      },
+                    ],
+                  });
+                  break;
+                case UberstrikeItemType.QuickUse:
+                  item = await ShopWeaponItem.findOne({
+                    where: { ID: itemId },
+                    include: [
+                      {
+                        model: ShopItemPrice,
+                        as: 'Prices',
+                        required: false,
+                      },
+                    ],
+                  });
+                  break;
+                case UberstrikeItemType.Functional:
+                  item = await ShopWeaponItem.findOne({
+                    where: { ID: itemId },
+                    include: [
+                      {
+                        model: ShopItemPrice,
+                        as: 'Prices',
+                        required: false,
+                      },
+                    ],
+                  });
+                  break;
+                default:
+                  break;
+              }
+
+              if (!item) {
+                Int32Proxy.Serialize(outputStream, BuyItemResult.ItemNotFound);
+              } else {
+                if (!item) {
+                  Int32Proxy.Serialize(outputStream, BuyItemResult.ItemNotFound);
+                } else if (!item.IsForSale) {
+                  Int32Proxy.Serialize(outputStream, BuyItemResult.IsNotForSale);
+                } else if (XpPointsUtil.GetLevelForXp(playerStatistics!.Xp) < item.LevelLock) {
+                  Int32Proxy.Serialize(outputStream, BuyItemResult.InvalidLevel);
+                } else {
+                  if (currencyType === UberStrikeCurrencyType.Credits) {
+                    const price = item.Prices.find((_: ShopItemPrice) => _.Currency === UberStrikeCurrencyType.Credits);
+                    if (!price) {
+                      Int32Proxy.Serialize(outputStream, BuyItemResult.IsNotForSale);
+                    } else if (memberWallet.Credits! < price.Price) {
+                      Int32Proxy.Serialize(outputStream, BuyItemResult.NotEnoughCurrency);
+                    } else {
+                      await memberWallet.update({
+                        Credits: memberWallet.Credits! - price.Price,
+                      });
+
+                      await ItemTransaction.create({
+                        Cmid: publicProfile.Cmid,
+                        Duration: durationType,
+                        ItemId: itemId,
+                        Credits: price.Price,
+                        WithdrawalDate: new Date(),
+                        WithdrawalId: Math.randomInt(),
+                      });
+                    }
+                  } else if (currencyType === UberStrikeCurrencyType.Points) {
+                    const price = item.Prices.find((_: ShopItemPrice) => _.Currency === UberStrikeCurrencyType.Points);
+                    if (!price) {
+                      Int32Proxy.Serialize(outputStream, BuyItemResult.IsNotForSale);
+                    } else if (memberWallet.Points! < price.Price) {
+                      Int32Proxy.Serialize(outputStream, BuyItemResult.NotEnoughCurrency);
+                    } else {
+                      await memberWallet.update({
+                        Credits: memberWallet.Points! - price.Price,
+                      });
+
+                      await ItemTransaction.create({
+                        Cmid: publicProfile.Cmid,
+                        Duration: durationType,
+                        ItemId: itemId,
+                        Points: price.Price,
+                        WithdrawalDate: new Date(),
+                        WithdrawalId: Math.randomInt(),
+                      });
+                    }
+                  } else if (
+                    currencyType === UberStrikeCurrencyType.None ||
+                    UberStrikeCurrencyType[currencyType] === undefined
+                  ) {
+                    Int32Proxy.Serialize(outputStream, BuyItemResult.InvalidData);
+                  } else {
+                    let expirationDate;
+
+                    switch (durationType) {
+                      case BuyingDurationType.OneDay:
+                        expirationDate = moment(new Date()).add(1, 'day').toDate();
+                        break;
+                      case BuyingDurationType.SevenDays:
+                        expirationDate = moment(new Date()).add(7, 'days').toDate();
+                        break;
+                      case BuyingDurationType.ThirtyDays:
+                        expirationDate = moment(new Date()).add(30, 'days').toDate();
+                        break;
+                      case BuyingDurationType.NinetyDays:
+                        expirationDate = moment(new Date()).add(90, 'days').toDate();
+                        break;
+                      default:
+                        break;
+                    }
+
+                    await PlayerInventoryItem.create({
+                      Cmid: publicProfile.Cmid,
+                      ItemId: itemId,
+                      AmountRemaining: -1,
+                      ExpirationDate: expirationDate,
+                    });
+
+                    Int32Proxy.Serialize(outputStream, BuyItemResult.OK);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      return isEncrypted
+        ? this.CryptoPolicy.RijndaelEncrypt(outputStream, this.EncryptionPassPhrase, this.EncryptionInitVector)
+        : outputStream;
     } catch (e) {
       this.handleEndpointError('BuyItem', e);
     }
