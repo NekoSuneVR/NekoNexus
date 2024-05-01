@@ -1,6 +1,8 @@
 import BuyingDurationType from './BuyingDurationType';
 
 export default class ItemTransactionView {
+  [key: string]: any;
+
   public WithdrawalId: int;
   public WithdrawalDate: DateTime;
   public Points: int;

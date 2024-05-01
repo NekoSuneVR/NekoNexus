@@ -1,4 +1,6 @@
 export default class ItemInventoryView {
+  [key: string]: any;
+
   public Cmid: int;
   public ItemId: int;
   public ExpirationDate?: DateTime;

@@ -1,6 +1,8 @@
 import { ItemTransactionView } from '@/Cmune/DataCenter/Common/Entities';
 
 export default class ItemTransactionsViewModel {
+  [key: string]: any;
+
   public ItemTransactions: List<ItemTransactionView>;
   public TotalCount: int;
 

@@ -2,6 +2,8 @@ import { ChannelType, MemberAccessLevel } from '@/Cmune/DataCenter/Common/Entiti
 import GameRoom from './GameRoom';
 
 export default class CommActorInfo {
+  [key: string]: any;
+
   public Cmid: int;
   public PlayerName: string;
   public AccessLevel: MemberAccessLevel;

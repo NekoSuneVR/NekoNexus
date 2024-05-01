@@ -1,6 +1,8 @@
 import { PhotonView } from '@/Cmune/Core/Models/Views';
 
 export default class AuthenticateApplicationView {
+  [key: string]: any;
+
   public GameServers: List<PhotonView>;
   public CommServer: PhotonView;
   public WarnPlayer: bool;

@@ -3,6 +3,8 @@ import BundleItemView from './BundleItemView';
 import ChannelType from './ChannelType';
 
 export default class BundleView {
+  [key: string]: any;
+
   public Id: int;
   public ApplicationId: int;
   public Name: string;

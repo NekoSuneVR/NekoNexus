@@ -15,6 +15,8 @@ export enum Keys {
 }
 
 export default class CommActorInfoDelta {
+  [key: string]: any;
+
   public readonly Changes: { [key: int]: any };
   public DeltaMask: int;
   public Id: byte;

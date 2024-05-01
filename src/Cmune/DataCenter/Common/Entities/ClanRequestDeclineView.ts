@@ -1,4 +1,6 @@
 export default class ClanRequestDeclineView {
+  [key: string]: any;
+
   public ActionResult: int;
   public ClanRequestId: int;
 

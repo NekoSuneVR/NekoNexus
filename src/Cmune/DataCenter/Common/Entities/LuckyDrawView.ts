@@ -3,6 +3,8 @@ import LuckyDrawSetView from './LuckyDrawSetView';
 import UberStrikeCurrencyType from './UberStrikeCurrencyType';
 
 export default class LuckyDrawView {
+  [key: string]: any;
+
   public Id: int;
   public Name: string;
   public Description: string;

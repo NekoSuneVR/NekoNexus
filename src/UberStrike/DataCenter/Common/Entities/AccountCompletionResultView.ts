@@ -1,4 +1,6 @@
 export default class AccountCompletionResultView {
+  [key: string]: any;
+
   public Result: int;
   public ItemsAttributed?: Dictionary<int, int> = {};
   public NonDuplicateNames?: List<string> = [];

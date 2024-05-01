@@ -3,6 +3,8 @@ import BundleItemView from './BundleItemView';
 import UberStrikeCurrencyType from './UberStrikeCurrencyType';
 
 export default class MysteryBoxUnityView {
+  [key: string]: any;
+
   public Id: int;
   public Name: string;
   public Description: string;

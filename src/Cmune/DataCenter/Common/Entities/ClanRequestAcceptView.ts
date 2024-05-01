@@ -1,6 +1,8 @@
 import ClanView from './ClanView';
 
 export default class ClanRequestAcceptView {
+  [key: string]: any;
+
   public ActionResult: int;
   public ClanRequestId: int;
   public ClanView: ClanView;

@@ -1,4 +1,6 @@
 export default class GroupInvitationView {
+  [key: string]: any;
+
   public InviterName: string;
   public InviterCmid: int;
   public GroupId: int;

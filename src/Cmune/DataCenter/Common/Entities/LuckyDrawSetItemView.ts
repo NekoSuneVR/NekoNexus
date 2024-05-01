@@ -1,6 +1,8 @@
 import BuyingDurationType from './BuyingDurationType';
 
 export default class LuckyDrawSetItemView {
+  [key: string]: any;
+
   public Id: int;
   public Name: string;
   public ItemId: int;

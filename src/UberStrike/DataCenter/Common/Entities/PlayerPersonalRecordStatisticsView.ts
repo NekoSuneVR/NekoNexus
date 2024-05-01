@@ -1,4 +1,6 @@
 export default class PlayerPersonalRecordStatisticsView {
+  [key: string]: any;
+
   public MostHeadshots: int;
   public MostNutshots: int;
   public MostConsecutiveSnipes: int;

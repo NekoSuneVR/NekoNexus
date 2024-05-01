@@ -1,4 +1,6 @@
 export default class LiveFeedView {
+  [key: string]: any;
+
   public Date: DateTime = new Date();
   public Priority: int;
   public Description: string;

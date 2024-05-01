@@ -1,6 +1,8 @@
 import { AvatarType } from '@/UberStrike/Core/Types';
 
 export default class LoadoutView {
+  [key: string]: any;
+
   public LoadoutId: int;
   public Backpack: int;
   public Boots: int;

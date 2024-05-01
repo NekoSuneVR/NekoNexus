@@ -1,4 +1,6 @@
 export default class PlaySpanHashesViewModel {
+  [key: string]: any;
+
   public MerchTrans: string;
   public Hashes: Dictionary<decimal, string>;
 

@@ -1,6 +1,8 @@
 import TeamID from './TeamID';
 
 export default class StatsSummary {
+  [key: string]: any;
+
   public Name: string;
   public Kills: int;
   public Deaths: int;

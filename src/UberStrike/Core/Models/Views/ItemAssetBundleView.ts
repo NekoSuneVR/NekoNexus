@@ -1,4 +1,6 @@
 export default class ItemAssetBundleView {
+  [key: string]: any;
+
   public Url: string;
 
   constructor(params: any = {}) {

@@ -2,6 +2,8 @@ import PlayerPersonalRecordStatisticsView from './PlayerPersonalRecordStatistics
 import PlayerWeaponStatisticsView from './PlayerWeaponStatisticsView';
 
 export default class PlayerMatchStats {
+  [key: string]: any;
+
   public Cmid: int;
   public Kills: int;
   public Death: int;

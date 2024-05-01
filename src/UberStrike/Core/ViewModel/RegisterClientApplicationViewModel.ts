@@ -1,6 +1,8 @@
 import { ApplicationRegistrationResult } from '@/Cmune/DataCenter/Common/Entities';
 
 export default class RegisterClientApplicationViewModel {
+  [key: string]: any;
+
   public Result: ApplicationRegistrationResult;
   public ItemsAttributed: List<int>;
 

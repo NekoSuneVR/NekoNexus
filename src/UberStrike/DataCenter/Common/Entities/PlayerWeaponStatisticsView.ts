@@ -1,4 +1,6 @@
 export default class PlayerWeaponStatisticsView {
+  [key: string]: any;
+
   public MeleeTotalSplats: int;
   public HandgunTotalSplats: int; // # LEGACY # //
   public MachineGunTotalSplats: int;

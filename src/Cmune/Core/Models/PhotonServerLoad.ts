@@ -6,6 +6,8 @@ export enum Status {
 }
 
 export default class PhotonServerLoad {
+  [key: string]: any;
+
   public Latency: int;
   public State: Status;
   public TimeStamp: DateTime;

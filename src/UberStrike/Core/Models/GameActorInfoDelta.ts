@@ -34,6 +34,8 @@ export enum Keys {
 }
 
 export default class GameActorInfoDelta {
+  [key: string]: any;
+
   public readonly Changes: { [key: int]: any };
   public DeltaMask: int;
   public Id: byte;

@@ -1,6 +1,8 @@
 import LuckyDrawSetItemView from './LuckyDrawSetItemView';
 
 export default class LuckyDrawSetView {
+  [key: string]: any;
+
   public Id: int;
   public SetWeight: int;
   public CreditsAttributed: int;

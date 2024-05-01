@@ -1,4 +1,6 @@
 export default class ApplicationConfigurationView {
+  [key: string]: any;
+
   public XpRequiredPerLevel: { [key: int]: int };
   public MaxLevel: int;
   public MaxXp: int;

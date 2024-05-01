@@ -1,6 +1,8 @@
 import { MemberAuthenticationResult, MemberView } from '@/Cmune/DataCenter/Common/Entities';
 
 export default class MemberAuthenticationViewModel {
+  [key: string]: any;
+
   public MemberAuthenticationResult: MemberAuthenticationResult;
   public MemberView: MemberView;
 

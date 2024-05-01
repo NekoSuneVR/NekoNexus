@@ -1,4 +1,6 @@
 export default class PlayerXPEventView {
+  [key: string]: any;
+
   public PlayerXPEventId: int;
   public Name: string;
   public XPMultiplier: decimal;

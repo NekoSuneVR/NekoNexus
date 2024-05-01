@@ -1,6 +1,8 @@
 import MemberReportType from './MemberReportType';
 
 export default class MemberReportView {
+  [key: string]: any;
+
   public ReportId: int;
   public SourceCmid: int;
   public TargetCmid: int;

@@ -1,6 +1,8 @@
 import { PhotonUsageType, RegionType } from '@/Cmune/DataCenter/Common/Entities';
 
 export default class PhotonView {
+  [key: string]: any;
+
   public PhotonId: int;
   public IP: string;
   public Name: string;

@@ -1,6 +1,8 @@
 import GroupPosition from './GroupPosition';
 
 export default class ClanMemberView {
+  [key: string]: any;
+
   public Name: string;
   public Cmid: int;
   public Position: GroupPosition;

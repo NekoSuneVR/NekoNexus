@@ -3,6 +3,8 @@ import BuildType from './BuildType';
 import ChannelType from './ChannelType';
 
 export default class ApplicationView {
+  [key: string]: any;
+
   public ApplicationVersionId: int;
   public Version: string;
   public Build: BuildType;

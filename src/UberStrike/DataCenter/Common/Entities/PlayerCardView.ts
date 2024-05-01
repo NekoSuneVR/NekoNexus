@@ -1,4 +1,6 @@
 export default class PlayerCardView {
+  [key: string]: any;
+
   public Name: string;
   public Cmid: int;
   public Splats: int;

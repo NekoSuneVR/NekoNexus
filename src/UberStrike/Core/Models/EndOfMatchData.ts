@@ -2,6 +2,8 @@ import StatsCollection from './StatsCollection';
 import StatsSummary from './StatsSummary';
 
 export default class EndOfMatchData {
+  [key: string]: any;
+
   public MostValuablePlayers: List<StatsSummary>;
   public MostEffecientWeaponId: int;
   public PlayerStatsTotal: StatsCollection;

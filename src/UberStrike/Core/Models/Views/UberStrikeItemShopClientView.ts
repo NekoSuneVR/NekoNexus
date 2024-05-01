@@ -4,6 +4,8 @@ import UberStrikeItemQuickView from './UberStrikeItemQuickView';
 import UberStrikeItemWeaponView from './UberStrikeItemWeaponView';
 
 export default class UberStrikeItemShopClientView {
+  [key: string]: any;
+
   public FunctionalItems: List<UberStrikeItemFunctionalView>;
   public GearItems: List<UberStrikeItemGearView>;
   public QuickItems: List<UberStrikeItemQuickView>;

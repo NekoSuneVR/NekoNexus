@@ -1,6 +1,8 @@
 import ShortVector3 from './ShortVector3';
 
 export default class PlayerMovement {
+  [key: string]: any;
+
   public Number: byte;
   public Position: ShortVector3;
   public Velocity: ShortVector3;

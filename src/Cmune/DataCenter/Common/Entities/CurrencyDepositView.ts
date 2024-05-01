@@ -2,6 +2,8 @@ import ChannelType from './ChannelType';
 import PaymentProviderType from './PaymentProviderType';
 
 export default class CurrencyDepositView {
+  [key: string]: any;
+
   public CreditsDepositId: int;
   public DepositDate: DateTime;
   public Credits: int;

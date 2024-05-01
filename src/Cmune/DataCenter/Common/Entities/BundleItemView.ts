@@ -1,6 +1,8 @@
 import BuyingDurationType from './BuyingDurationType';
 
 export default class BundleItemView {
+  [key: string]: any;
+
   public BundleId: int;
   public ItemId: int;
   public Amount: int;

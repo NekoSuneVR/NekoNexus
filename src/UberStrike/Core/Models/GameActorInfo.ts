@@ -6,6 +6,8 @@ import SurfaceType from './SurfaceType';
 import TeamID from './TeamID';
 
 export default class GameActorInfo {
+  [key: string]: any;
+
   public Cmid: int;
   public PlayerName: string;
   public AccessLevel: MemberAccessLevel;

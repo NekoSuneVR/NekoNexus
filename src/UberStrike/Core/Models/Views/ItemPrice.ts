@@ -1,6 +1,8 @@
 import { BuyingDurationType, PackType, UberStrikeCurrencyType } from '@/Cmune/DataCenter/Common/Entities';
 
 export default class ItemPrice {
+  [key: string]: any;
+
   public Price: int;
   public Currency: UberStrikeCurrencyType;
   public Discount: int;

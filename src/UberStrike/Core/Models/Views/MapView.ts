@@ -2,6 +2,8 @@ import { GameModeType } from '@/UberStrike/Core/Types';
 import MapSettings from './MapSettings';
 
 export default class MapView {
+  [key: string]: any;
+
   public MapId: int;
   public DisplayName: string;
   public Description: string;

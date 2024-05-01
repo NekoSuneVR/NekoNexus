@@ -1,4 +1,6 @@
 export default class WeeklySpecialView {
+  [key: string]: any;
+
   public Id: int;
   public Title: string;
   public Text: string;

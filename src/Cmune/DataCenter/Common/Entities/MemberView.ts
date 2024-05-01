@@ -2,6 +2,8 @@ import MemberWalletView from './MemberWalletView';
 import PublicProfileView from './PublicProfileView';
 
 export default class MemberView {
+  [key: string]: any;
+
   public PublicProfile: PublicProfileView = new PublicProfileView();
   public MemberWallet: MemberWalletView = new MemberWalletView();
   public MemberItems: List<int> = [];

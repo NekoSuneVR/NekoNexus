@@ -7,6 +7,8 @@ import {
 import { PlayerStatisticsView } from '@/UberStrike/DataCenter/Common/Entities';
 
 export default class MemberAuthenticationResultView {
+  [key: string]: any;
+
   public MemberAuthenticationResult: MemberAuthenticationResult;
   public MemberView: MemberView;
   public PlayerStatisticsView: PlayerStatisticsView;

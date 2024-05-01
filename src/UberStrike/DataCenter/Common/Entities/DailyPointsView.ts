@@ -1,4 +1,6 @@
 export default class DailyPointsView {
+  [key: string]: any;
+
   public Current: int;
   public PointsTomorrow: int;
   public PointsMax: int;

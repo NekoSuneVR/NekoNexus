@@ -1,6 +1,8 @@
 import { CurrencyDepositView } from '@/Cmune/DataCenter/Common/Entities';
 
 export default class CurrencyDepositsViewModel {
+  [key: string]: any;
+
   public CurrencyDeposits: List<CurrencyDepositView>;
   public TotalCount: int;
 

@@ -2,6 +2,8 @@ import { GameModeType } from '@/UberStrike/Core/Types';
 import PlayerMatchStats from './PlayerMatchStats';
 
 export default class MatchStats {
+  [key: string]: any;
+
   public Players: List<PlayerMatchStats>;
   public MapId: int;
   public GameModeId: GameModeType;

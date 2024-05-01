@@ -1,6 +1,8 @@
 import { MapView } from '@/UberStrike/Core/Models/Views';
 
 export default class UberstrikeLevelViewModel {
+  [key: string]: any;
+
   public Maps: List<MapView> = [];
 
   constructor(params: any = {}) {

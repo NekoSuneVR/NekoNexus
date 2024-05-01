@@ -1,6 +1,8 @@
 import ClaimFacebookGiftResult from './ClaimFacebookGiftResult';
 
 export default class ClaimFacebookGiftView {
+  [key: string]: any;
+
   public ClaimResult: ClaimFacebookGiftResult;
   public ItemId?: int;
 

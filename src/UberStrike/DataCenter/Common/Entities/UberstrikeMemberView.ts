@@ -2,6 +2,8 @@ import PlayerCardView from './PlayerCardView';
 import PlayerStatisticsView from './PlayerStatisticsView';
 
 export default class UberstrikeMemberView {
+  [key: string]: any;
+
   public PlayerCardView: PlayerCardView;
   public PlayerStatisticsView: PlayerStatisticsView;
 

@@ -2,6 +2,8 @@ import EmailAddressStatus from './EmailAddressStatus';
 import MemberAccessLevel from './MemberAccessLevel';
 
 export default class PublicProfileView {
+  [key: string]: any;
+
   public Cmid: int;
   public Name: string;
   public IsChatDisabled: bool;

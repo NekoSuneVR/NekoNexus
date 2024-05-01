@@ -1,4 +1,6 @@
 export default class MapSettings {
+  [key: string]: any;
+
   public KillsMin: int;
   public KillsMax: int;
   public KillsCurrent: int;

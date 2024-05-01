@@ -1,4 +1,6 @@
 export default class PrivateMessageView {
+  [key: string]: any;
+
   public PrivateMessageId: int;
   public FromCmid: int;
   public FromName: string;

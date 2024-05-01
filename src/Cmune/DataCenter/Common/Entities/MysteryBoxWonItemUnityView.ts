@@ -1,4 +1,6 @@
 export default class MysteryBoxWonItemUnityView {
+  [key: string]: any;
+
   public ItemIdWon: int;
   public CreditWon: int;
   public PointWon: int;

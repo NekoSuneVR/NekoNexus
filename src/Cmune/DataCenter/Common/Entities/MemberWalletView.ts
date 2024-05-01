@@ -1,4 +1,6 @@
 export default class MemberWalletView {
+  [key: string]: any;
+
   public Cmid: int;
   public Credits: int = 0;
   public Points: int = 0;

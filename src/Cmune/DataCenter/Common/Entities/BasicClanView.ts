@@ -3,6 +3,8 @@ import GroupFontStyle from './GroupFontStyle';
 import GroupType from './GroupType';
 
 export default class BasicClanView {
+  [key: string]: any;
+
   public GroupId: int;
   public MembersCount: int;
   public Description: string;

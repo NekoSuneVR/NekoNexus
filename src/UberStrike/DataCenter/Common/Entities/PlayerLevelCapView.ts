@@ -1,4 +1,6 @@
 export default class PlayerLevelCapView {
+  [key: string]: any;
+
   public PlayerLevelCapId: int;
   public Level: int;
   public XPRequired: int;

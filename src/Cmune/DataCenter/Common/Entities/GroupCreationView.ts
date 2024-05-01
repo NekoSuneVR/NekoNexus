@@ -1,4 +1,6 @@
 export default class GroupCreationView {
+  [key: string]: any;
+
   public Name: string;
   public Description: string;
   public Motto: string;

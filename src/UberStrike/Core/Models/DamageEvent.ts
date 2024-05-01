@@ -1,4 +1,6 @@
 export default class DamageEvent {
+  [key: string]: any;
+
   public Damage: Dictionary<byte, byte>;
   public BodyPartFlag: byte;
   public DamageEffectFlag: int;

@@ -1,6 +1,8 @@
 import GroupPosition from './GroupPosition';
 
 export default class MemberPositionUpdateView {
+  [key: string]: any;
+
   public GroupId: int;
   public AuthToken: string;
   public MemberCmid: int;

@@ -1,4 +1,6 @@
 export default class ClanInvitationAnswerViewModel {
+  [key: string]: any;
+
   public ReturnValue: int;
   public GroupInvitationId: int;
   public IsInvitationAccepted: bool;

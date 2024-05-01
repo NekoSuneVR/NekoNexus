@@ -1,4 +1,6 @@
 export default class MessageThreadView {
+  [key: string]: any;
+
   public ThreadId: int;
   public ThreadName: string;
   public HasNewMessages: bool;

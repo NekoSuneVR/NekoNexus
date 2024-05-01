@@ -1,6 +1,8 @@
 import ConnectionAddress from './ConnectionAddress';
 
 export default class GameRoom {
+  [key: string]: any;
+
   public Server: ConnectionAddress;
   public Number: int;
   public MapId: int;

@@ -1,6 +1,8 @@
 import PublicProfileView from './PublicProfileView';
 
 export default class ContactGroupView {
+  [key: string]: any;
+
   public GroupId: int;
   public GroupName: string;
   public Contacts: List<PublicProfileView>;

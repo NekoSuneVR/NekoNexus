@@ -2,6 +2,8 @@ import BasicClanView from './BasicClanView';
 import ClanMemberView from './ClanMemberView';
 
 export default class ClanView extends BasicClanView {
+  [key: string]: any;
+
   public Members: List<ClanMemberView>;
 
   constructor(params: any = {}) {

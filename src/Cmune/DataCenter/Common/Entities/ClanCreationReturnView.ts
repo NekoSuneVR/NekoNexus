@@ -1,6 +1,8 @@
 import ClanView from './ClanView';
 
 export default class ClanCreationReturnView {
+  [key: string]: any;
+
   public ResultCode: int;
   public ClanView: ClanView;
 

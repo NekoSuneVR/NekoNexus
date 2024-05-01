@@ -2,6 +2,8 @@ import PlayerPersonalRecordStatisticsView from './PlayerPersonalRecordStatistics
 import PlayerWeaponStatisticsView from './PlayerWeaponStatisticsView';
 
 export default class PlayerStatisticsView {
+  [key: string]: any;
+
   public Cmid: int;
   public Splats: int;
   public Splatted: int;

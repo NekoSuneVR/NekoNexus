@@ -1,4 +1,6 @@
 export default class StatsCollection {
+  [key: string]: any;
+
   public Headshots: int;
   public Nutshots: int;
   public ConsecutiveSnipes: int;

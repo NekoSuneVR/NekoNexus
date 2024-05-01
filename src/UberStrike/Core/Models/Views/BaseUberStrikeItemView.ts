@@ -3,8 +3,9 @@ import { ItemShopHighlightType, UberstrikeItemClass, UberstrikeItemType } from '
 import ItemPrice from './ItemPrice';
 
 export default abstract class BaseUberStrikeItemView {
-  private _itemClass: UberstrikeItemClass;
+  [key: string]: any;
 
+  private _itemClass: UberstrikeItemClass;
   public abstract get ItemType(): UberstrikeItemType;
 
   public get ItemClass(): UberstrikeItemClass {

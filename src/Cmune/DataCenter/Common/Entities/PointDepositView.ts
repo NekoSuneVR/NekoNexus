@@ -1,6 +1,8 @@
 import PointsDepositType from './PointsDepositType';
 
 export default class PointDepositView {
+  [key: string]: any;
+
   public PointDepositId: int;
   public DepositDate: DateTime;
   public Points: int;

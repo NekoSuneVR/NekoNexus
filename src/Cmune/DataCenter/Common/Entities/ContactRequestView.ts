@@ -1,6 +1,8 @@
 import ContactRequestStatus from './ContactRequestStatus';
 
 export default class ContactRequestView {
+  [key: string]: any;
+
   public RequestId: int;
   public InitiatorCmid: int;
   public InitiatorName: string;

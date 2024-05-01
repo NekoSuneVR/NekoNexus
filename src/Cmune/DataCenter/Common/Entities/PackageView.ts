@@ -1,4 +1,6 @@
 export default class PackageView {
+  [key: string]: any;
+
   public Bonus: int;
   public Price: decimal;
   public Items: List<int>;

@@ -2,6 +2,8 @@ import { GameModeType } from '@/UberStrike/Core/Types';
 import PlayerStatisticsView from './PlayerStatisticsView';
 
 export default class MatchView {
+  [key: string]: any;
+
   public PlayersCompleted: List<PlayerStatisticsView>;
   public PlayersNonCompleted: List<PlayerStatisticsView>;
   public MapId: int;

@@ -1,6 +1,8 @@
 import BundleItemView from './BundleItemView';
 
 export default class LuckyDrawSetUnityView {
+  [key: string]: any;
+
   public Id: int;
   public SetWeight: int;
   public CreditsAttributed: int;

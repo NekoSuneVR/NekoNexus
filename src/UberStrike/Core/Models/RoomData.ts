@@ -1,6 +1,8 @@
 import ConnectionAddress from './ConnectionAddress';
 
 export default class RoomData {
+  [key: string]: any;
+
   public Guid: string;
   public Name: string;
   public Server: ConnectionAddress;

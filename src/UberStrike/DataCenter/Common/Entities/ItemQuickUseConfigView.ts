@@ -1,6 +1,8 @@
 import { QuickItemLogic } from '@/UberStrike/Core/Types';
 
 export default class ItemQuickUseConfigView {
+  [key: string]: any;
+
   public ItemId: int;
   public LevelRequired: int;
   public UsesPerLife: int;

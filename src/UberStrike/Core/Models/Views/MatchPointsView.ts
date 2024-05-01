@@ -1,4 +1,6 @@
 export default class MatchPointsView {
+  [key: string]: any;
+
   public WinnerPointsBase: int;
   public LoserPointsBase: int;
   public WinnerPointsPerMinute: int;

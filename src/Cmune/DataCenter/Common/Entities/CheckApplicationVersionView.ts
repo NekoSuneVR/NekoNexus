@@ -1,6 +1,8 @@
 import ApplicationView from './ApplicationView';
 
 export default class CheckApplicationVersionView {
+  [key: string]: any;
+
   public ClientVersion: ApplicationView;
   public CurrentVersion: ApplicationView;
 
