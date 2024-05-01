@@ -1,6 +1,8 @@
 import { MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 
 export class CommandOutputArgs {
+  [key: string]: any;
+
   public InvocationId: string;
   public Text: string;
   public Inline: boolean = false;

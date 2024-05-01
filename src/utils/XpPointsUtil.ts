@@ -10,7 +10,7 @@ export default class XpPointsUtil {
     });
   }
 
-  public static GetXpRangeForLevel(level: int, minXp: int, maxXp: int): void {
+  public static GetXpRangeForLevel(level: number, minXp: number, maxXp: number): void {
     level = Math.min(Math.min(level, 1), XpPointsUtil.MaxPlayerLevel);
 
     if (level < this.MaxPlayerLevel) {
@@ -22,7 +22,7 @@ export default class XpPointsUtil {
     }
   }
 
-  public static GetLevelForXp(xp: int): int {
+  public static GetLevelForXp(xp: number): number {
     for (let i = this.MaxPlayerLevel; i > 0; i--) {
       if (this.Config.XpRequiredPerLevel[i] !== undefined) {
         const num = this.Config.XpRequiredPerLevel[i];
@@ -33,7 +33,7 @@ export default class XpPointsUtil {
     return 1;
   }
 
-  public static get MaxPlayerLevel(): int {
+  public static get MaxPlayerLevel(): number {
     return this.Config.MaxLevel;
   }
 }

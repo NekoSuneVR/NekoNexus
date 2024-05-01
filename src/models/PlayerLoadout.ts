@@ -1,5 +1,5 @@
-import { AvatarType } from '@festivaldev/uberstrike-js/UberStrike/Core/Types';
 import { UberstrikeInventoryItem } from '@/utils';
+import { AvatarType } from '@festivaldev/uberstrike-js/UberStrike/Core/Types';
 import { DataTypes, Model, type Sequelize } from 'sequelize';
 
 export interface PlayerLoadoutAttributes {
@@ -109,12 +109,13 @@ export default class PlayerLoadout extends Model<PlayerLoadoutAttributes> {
       },
       {
         sequelize,
+        tableName: 'PlayerLoadouts',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ PublicProfile }) {
+  public static associate({ PublicProfile }: any) {
     PlayerLoadout.belongsTo(PublicProfile, {
       foreignKey: 'Cmid',
       targetKey: 'Cmid',

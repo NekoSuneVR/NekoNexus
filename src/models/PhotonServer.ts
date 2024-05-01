@@ -42,10 +42,11 @@ export default class PhotonServer extends Model<PhotonServerAttributes> {
       },
       {
         sequelize,
+        tableName: 'PhotonServers',
         timestamps: false,
       },
     );
   }
 
-  public static associate(_) {}
+  public static associate(_: any) {}
 }

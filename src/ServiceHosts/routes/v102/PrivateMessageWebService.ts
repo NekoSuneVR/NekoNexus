@@ -76,7 +76,7 @@ export default class PrivateMessageWebService extends BaseWebService {
 
         for (const messageGroup of Object.values(messages)) {
           const filteredMessages = (messageGroup as any).find(
-            (_) =>
+            (_: PrivateMessage) =>
               (_.FromCmid === userAccount.Cmid && !_.IsDeletedBySender) ||
               (_.ToCmid === userAccount.Cmid && !_.IsDeletedByReceiver),
           );
@@ -95,7 +95,9 @@ export default class PrivateMessageWebService extends BaseWebService {
                   MessageCount: filteredMessages.length,
                   LastMessagePreview: message.ContentText,
                   LastUpdate: message.DateSent,
-                  HasNewMessages: filteredMessages.some((_) => _.ToCmid === userAccount.Cmid && !_.IsRead),
+                  HasNewMessages: filteredMessages.some(
+                    (_: PrivateMessage) => _.ToCmid === userAccount.Cmid && !_.IsRead,
+                  ),
                 }),
               );
             }

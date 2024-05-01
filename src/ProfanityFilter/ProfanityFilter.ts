@@ -152,7 +152,7 @@ export default class ProfanityFilter extends ProfanityBase implements IProfanity
     const words = noPunctuation.split(' ');
 
     const postAllowList = this.FilterWordListByAllowList(words);
-    const swearList = [];
+    const swearList: string[] = [];
 
     // Catch whether multi-word profanities are in the allow list filtered sentence.
     this.AddMultiWordProfanities(swearList, ProfanityFilter.ConvertWordListToSentence(postAllowList));
@@ -179,7 +179,7 @@ export default class ProfanityFilter extends ProfanityBase implements IProfanity
    * @returns {[int, int, string] | null} Tuple of the following format (start character, end character, found enclosed word).
    * If no enclosed word is found then return null.
    */
-  public GetCompleteWord(toCheck: string, profanity: string): [int, int, string] | null {
+  public GetCompleteWord(toCheck: string, profanity: string): [number, number, string] | null {
     if (!toCheck?.trim().length) {
       return null;
     }
@@ -255,7 +255,7 @@ export default class ProfanityFilter extends ProfanityBase implements IProfanity
     ignoreNumeric: boolean,
   ) {
     for (const word of swearList.sort((a, b) => b.length - a.length)) {
-      let result: [int, int, string] | null = [0, 0, ''];
+      let result: [number, number, string] | null = [0, 0, ''];
       const multiword = word.split(' ');
 
       if (multiword.length === 1) {
@@ -294,7 +294,7 @@ export default class ProfanityFilter extends ProfanityBase implements IProfanity
     let tracker = String(sentence);
 
     for (const word of swearList.sort((a, b) => b.length - a.length)) {
-      let result: [int, int, string] | null = [0, 0, ''];
+      let result: [number, number, string] | null = [0, 0, ''];
       const multiword = word.split(' ');
 
       if (multiword.length === 1) {

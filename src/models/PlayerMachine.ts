@@ -56,12 +56,13 @@ export default class PlayerMachine extends Model<PlayerMachineAttributes> {
       },
       {
         sequelize,
+        tableName: 'PlayerMachines',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ PublicProfile }) {
+  public static associate({ PublicProfile }: any) {
     PlayerMachine.belongsTo(PublicProfile, {
       foreignKey: 'Cmid',
       targetKey: 'Cmid',

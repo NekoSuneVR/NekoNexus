@@ -67,7 +67,7 @@ export default class ProfanityBase {
    * @param {string} profanity - The profanity to remove from the list.
    * @returns {bool} True of the profanity was removed. False otherwise.
    */
-  public RemoveProfanity(profanity: string): bool {
+  public RemoveProfanity(profanity: string): boolean {
     if (!profanity.trim().length) throw new Error('ArgumentNullException: profanity');
 
     const index = this._profanities.indexOf(profanity.toLowerCase());
@@ -80,7 +80,7 @@ export default class ProfanityBase {
    * @param {string[]} profanities - The array of profanities to remove from the list.
    * @returns {bool} True if the profanities were removed. False otherwise.
    */
-  public RemoveProfanities(profanities: string[]): bool {
+  public RemoveProfanities(profanities: string[]): boolean {
     if (!profanities) throw new Error('ArgumentNullException: profanities');
 
     for (const naughtyWord in profanities) {
@@ -102,7 +102,7 @@ export default class ProfanityBase {
   /**
    * Return the number of profanities in the system.
    */
-  public get Count(): int {
+  public get Count(): number {
     return this._profanities.length;
   }
 }

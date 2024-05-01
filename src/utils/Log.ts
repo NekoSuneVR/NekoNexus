@@ -14,6 +14,7 @@ export enum LogLevel {
 
 export default class Log {
   private static levelColors = {
+    [LogLevel.NONE]: chalk.reset,
     [LogLevel.OK]: chalk.green,
     [LogLevel.INFO]: chalk.blue,
     [LogLevel.WARN]: chalk.yellow,
@@ -23,6 +24,7 @@ export default class Log {
   };
 
   private static defaultTags = {
+    [LogLevel.NONE]: 'LOG',
     [LogLevel.OK]: 'OK',
     [LogLevel.INFO]: 'INFO',
     [LogLevel.WARN]: 'WARN',

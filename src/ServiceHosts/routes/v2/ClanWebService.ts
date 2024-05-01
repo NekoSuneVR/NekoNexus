@@ -1,3 +1,4 @@
+import ParadiseService from '@/ParadiseService';
 import { ProfanityFilter } from '@/ProfanityFilter';
 import {
   Clan,
@@ -76,7 +77,7 @@ export default class ClanWebService extends BaseWebService {
 
       this.debugEndpoint('AcceptClanInvitation', clanInvitationId, authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -151,7 +152,7 @@ export default class ClanWebService extends BaseWebService {
 
       this.debugEndpoint('CancelInvitation', groupInvitationId, authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -211,7 +212,7 @@ export default class ClanWebService extends BaseWebService {
 
       this.debugEndpoint('CreateClan', createClanData);
 
-      const session = await global.SessionManager.findSessionForSteamUser(createClanData.AuthToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(createClanData.AuthToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -385,7 +386,7 @@ export default class ClanWebService extends BaseWebService {
 
       this.debugEndpoint('DeclineClanInvitation', clanInvitationId, authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -436,7 +437,7 @@ export default class ClanWebService extends BaseWebService {
 
       this.debugEndpoint('DisbandGroup', groupId, authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -482,7 +483,7 @@ export default class ClanWebService extends BaseWebService {
 
       this.debugEndpoint('GetAllGroupInvitations', authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -518,7 +519,7 @@ export default class ClanWebService extends BaseWebService {
 
       this.debugEndpoint('GetMyClanId', authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -563,7 +564,7 @@ export default class ClanWebService extends BaseWebService {
 
       this.debugEndpoint('GetOwnClan', authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -610,7 +611,7 @@ export default class ClanWebService extends BaseWebService {
 
       this.debugEndpoint('GetPendingGroupInvitations', authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -651,7 +652,7 @@ export default class ClanWebService extends BaseWebService {
 
       this.debugEndpoint('InviteMemberToJoinAGroup', authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -708,7 +709,7 @@ export default class ClanWebService extends BaseWebService {
 
       this.debugEndpoint('KickMemberFromClan', groupId, authToken, cmidToKick);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -780,7 +781,7 @@ export default class ClanWebService extends BaseWebService {
 
       this.debugEndpoint('LeaveAClan', groupId, authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -845,7 +846,7 @@ export default class ClanWebService extends BaseWebService {
 
       this.debugEndpoint('TransferOwnership', groupId, authToken, newLeaderCmid);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -947,7 +948,9 @@ export default class ClanWebService extends BaseWebService {
 
       this.debugEndpoint('UpdateMemberPosition', updateMemberPositionData);
 
-      const session = await global.SessionManager.findSessionForSteamUser(updateMemberPositionData.AuthToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(
+        updateMemberPositionData.AuthToken,
+      );
       if (session) {
         const steamMember = await session.SteamMember;
 

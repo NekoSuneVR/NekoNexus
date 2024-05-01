@@ -72,12 +72,13 @@ export default class ShopGearItem extends Model<ShopGearItemAttributes> {
       },
       {
         sequelize,
+        tableName: 'ShopGearItems',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ ShopItemPrice }) {
+  public static associate({ ShopItemPrice }: any) {
     ShopGearItem.hasMany(ShopItemPrice, {
       as: 'Prices',
       constraints: false,
@@ -88,7 +89,7 @@ export default class ShopGearItem extends Model<ShopGearItemAttributes> {
     });
   }
 
-  public get IsForSale(): bool {
+  public get IsForSale(): boolean {
     return this.Prices?.length > 0;
   }
 }

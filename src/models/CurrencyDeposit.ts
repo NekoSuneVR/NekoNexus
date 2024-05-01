@@ -60,12 +60,13 @@ export default class CurrencyDeposit extends Model<CurrencyDepositAttributes> {
       },
       {
         sequelize,
+        tableName: 'CurrencyDeposits',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ PublicProfile }) {
+  public static associate({ PublicProfile }: any) {
     CurrencyDeposit.belongsTo(PublicProfile, {
       foreignKey: 'Cmid',
       targetKey: 'Cmid',

@@ -84,12 +84,13 @@ export default class ShopQuickItem extends Model<ShopGearItemAttributes> {
       },
       {
         sequelize,
+        tableName: 'ShopQuickItems',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ ShopItemPrice }) {
+  public static associate({ ShopItemPrice }: any) {
     ShopQuickItem.hasMany(ShopItemPrice, {
       as: 'Prices',
       constraints: false,
@@ -100,7 +101,7 @@ export default class ShopQuickItem extends Model<ShopGearItemAttributes> {
     });
   }
 
-  public get IsForSale(): bool {
+  public get IsForSale(): boolean {
     return this.Prices?.length > 0;
   }
 }

@@ -8,6 +8,8 @@ export enum ServerType {
 }
 
 export class WebSocketInfo {
+  [key: string]: any;
+
   public SocketId: string;
   public Type: ServerType;
   public PhotonId: number;
@@ -32,6 +34,8 @@ export enum WebSocketState {
 }
 
 export class WebSocketConnectionStatus {
+  [key: string]: any;
+
   public Connected: boolean;
   public Rejected: boolean;
   public DisconnectReason: string;
@@ -46,6 +50,8 @@ export class WebSocketConnectionStatus {
 }
 
 export class WebSocketChatMessage {
+  [key: string]: any;
+
   public Cmid: int;
   public Name: string;
   public Message: string;

@@ -1,3 +1,4 @@
+import ParadiseService from '@/ParadiseService';
 import { PrivateMessage, PublicProfile } from '@/models';
 import { ApiVersion } from '@/utils';
 import { MessageThreadView, PrivateMessageView } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
@@ -33,7 +34,7 @@ export default class PrivateMessageWebService extends BaseWebService {
 
       this.debugEndpoint('DeleteThread', authToken, otherCmid);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -87,7 +88,7 @@ export default class PrivateMessageWebService extends BaseWebService {
 
       this.debugEndpoint('GetAllMessageThreadsForUser', authToken, pageNumber);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -116,7 +117,7 @@ export default class PrivateMessageWebService extends BaseWebService {
 
           for (const messageGroup of Object.values(messages)) {
             const filteredMessages = (messageGroup as any).find(
-              (_) =>
+              (_: PrivateMessage) =>
                 (_.FromCmid === steamMember.Cmid && !_.IsDeletedBySender) ||
                 (_.ToCmid === steamMember.Cmid && !_.IsDeletedByReceiver),
             );
@@ -135,7 +136,9 @@ export default class PrivateMessageWebService extends BaseWebService {
                     MessageCount: filteredMessages.length,
                     LastMessagePreview: message.ContentText,
                     LastUpdate: message.DateSent,
-                    HasNewMessages: filteredMessages.some((_) => _.ToCmid === steamMember.Cmid && !_.IsRead),
+                    HasNewMessages: filteredMessages.some(
+                      (_: PrivateMessage) => _.ToCmid === steamMember.Cmid && !_.IsRead,
+                    ),
                   }),
                 );
               }
@@ -168,7 +171,7 @@ export default class PrivateMessageWebService extends BaseWebService {
 
       this.debugEndpoint('GetMessageWithIdForCmid', authToken, messageId);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -221,7 +224,7 @@ export default class PrivateMessageWebService extends BaseWebService {
 
       this.debugEndpoint('GetThreadMessages', authToken, otherCmid, pageNumber);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -273,7 +276,7 @@ export default class PrivateMessageWebService extends BaseWebService {
 
       this.debugEndpoint('MarkThreadAsRead', authToken, otherCmid);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -319,7 +322,7 @@ export default class PrivateMessageWebService extends BaseWebService {
 
       this.debugEndpoint('SendMessage', authToken, receiverCmid, content);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 

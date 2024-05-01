@@ -1,33 +1,36 @@
 {
-	"compilerOptions": {
-		"allowJs": true,
-		"baseUrl": "./",
-		"esModuleInterop": true,
-		"isolatedModules": true,
-		"lib": [
-			"ESNext",
-			"DOM",
-			"DOM.Iterable"
-		],
-		"module": "NodeNext",
-		"moduleDetection": "force",
-		"moduleResolution": "NodeNext",
-		"noImplicitAny": false,
-		"outDir": "dist",
-		"paths": {
-			"@/*": [
-				"src/*"
-			]
-		},
-		"resolveJsonModule": true,
-		"resolvePackageJsonExports": true,
-		"skipLibCheck": true,
-		"sourceMap": true,
-		"strict": true,
-		"strictPropertyInitialization": false,
-		"target": "ESNext"
-	},
-	"include": [
-		"src/**/*.ts"
-	]
+  "compilerOptions": {
+    // Enable latest features
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleDetection": "force",
+    "jsx": "react-jsx",
+    "allowJs": true,
+
+    // Bundler mode
+    "baseUrl": "./",
+    "outDir": "dist",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": false,
+    "noEmit": true,
+
+    // Best practices
+    "strict": true,
+    "skipLibCheck": true,
+    "noFallthroughCasesInSwitch": true,
+	"strictPropertyInitialization": false,
+	"noImplicitAny": true,
+
+    // Some stricter flags (disabled by default)
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noPropertyAccessFromIndexSignature": false
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/seed.ts"]
 }

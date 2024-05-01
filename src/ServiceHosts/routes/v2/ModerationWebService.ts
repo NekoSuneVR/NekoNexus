@@ -1,3 +1,4 @@
+import ParadiseService from '@/ParadiseService';
 import { Clan, ClanMember, ModerationAction, PublicProfile } from '@/models';
 import { ApiVersion, ModerationFlag } from '@/utils/';
 import {
@@ -66,7 +67,7 @@ export default class ModerationWebService extends BaseWebService {
 
       this.debugEndpoint('SetModerationFlag', authToken, targetCmid, moderationFlag, expireTime, reason);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -137,7 +138,7 @@ export default class ModerationWebService extends BaseWebService {
 
       this.debugEndpoint('UnsetModerationFlag', authToken, targetCmid, moderationFlag);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -194,7 +195,7 @@ export default class ModerationWebService extends BaseWebService {
 
       this.debugEndpoint('ClearModerationFlags', authToken, targetCmid);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -250,7 +251,7 @@ export default class ModerationWebService extends BaseWebService {
 
       this.debugEndpoint('GetNaughtyList', authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 

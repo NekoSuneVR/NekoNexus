@@ -1,9 +1,9 @@
+import { ServerType } from '@/ServiceHosts/WebSocket';
 import { DiscordSettings } from '@/discord/DiscordSettings';
 import { Log } from '@/utils';
 import fs from 'fs';
 import path from 'path';
 import YAML from 'yaml';
-import { ServerType } from './ServiceHosts/WebSocket';
 
 export class ServerPassPhrase {
   public Name: string;
@@ -22,13 +22,15 @@ export class DatabaseSettings {
 }
 
 export class ParadiseServiceSettings {
+  [key: string]: any;
+
   public Hostname: string = '127.0.0.1';
 
   public WebServicePort: number = 8080;
   public FileServerPort: number = 8081;
   public SocketPort: number = 8082;
 
-  public DatabaseSettings: DatabaseSettings;
+  public DatabaseSettings: DatabaseSettings = new DatabaseSettings();
 
   public WebServicePrefix: string = 'UberStrike.DataCenter.WebService.CWS.';
   public WebServiceSuffix: string = 'Contract.svc';
@@ -41,16 +43,21 @@ export class ParadiseServiceSettings {
   /**
    * @deprecated Use a reverse proxy to provide SSL encryption
    */
-  public EnableSSL: bool = false;
+  public EnableSSL: boolean = false;
 
   /**
    * @deprecated Use a reverse proxy to provide SSL encryption
    */
-  public SSLCertificateName: string;
+  public SSLCertificateName: string = '';
 
-  public DiscordSettings: DiscordSettings;
+  public DiscordSettings: DiscordSettings = new DiscordSettings();
 
   constructor(path: string) {
+    if (!fs.existsSync(path)) {
+      Log.warn(`No config file found at ${path}, using fallback config.`);
+      return;
+    }
+
     try {
       const settings = YAML.parse(fs.readFileSync(path, 'utf-8'));
 

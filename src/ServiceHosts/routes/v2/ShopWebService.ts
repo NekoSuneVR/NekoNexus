@@ -1,3 +1,4 @@
+import ParadiseService from '@/ParadiseService';
 import {
   CurrencyDeposit,
   ItemTransaction,
@@ -89,7 +90,7 @@ export default class ShopWebService extends BaseWebService {
 
       this.debugEndpoint('BuyBundleSteam', bundleId, steamId, authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -218,7 +219,7 @@ export default class ShopWebService extends BaseWebService {
         recommendationType,
       );
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
 
       if (session) {
         const steamMember = await session.SteamMember;
@@ -321,7 +322,9 @@ export default class ShopWebService extends BaseWebService {
                     Int32Proxy.Serialize(outputStream, BuyItemResult.InvalidLevel);
                   } else {
                     if (currencyType === UberStrikeCurrencyType.Credits) {
-                      const price = item.Prices.find((_) => _.Currency === UberStrikeCurrencyType.Credits);
+                      const price = item.Prices.find(
+                        (_: ShopItemPrice) => _.Currency === UberStrikeCurrencyType.Credits,
+                      );
                       if (!price) {
                         Int32Proxy.Serialize(outputStream, BuyItemResult.IsNotForSale);
                       } else if (memberWallet.Credits! < price.Price) {
@@ -341,7 +344,9 @@ export default class ShopWebService extends BaseWebService {
                         });
                       }
                     } else if (currencyType === UberStrikeCurrencyType.Points) {
-                      const price = item.Prices.find((_) => _.Currency === UberStrikeCurrencyType.Points);
+                      const price = item.Prices.find(
+                        (_: ShopItemPrice) => _.Currency === UberStrikeCurrencyType.Points,
+                      );
                       if (!price) {
                         Int32Proxy.Serialize(outputStream, BuyItemResult.IsNotForSale);
                       } else if (memberWallet.Points! < price.Price) {

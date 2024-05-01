@@ -33,12 +33,13 @@ export default class PlayerInventoryItem extends Model<PlayerInventoryItemAttrib
       },
       {
         sequelize,
+        tableName: 'PlayerInventoryItems',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ PublicProfile }) {
+  public static associate({ PublicProfile }: any) {
     PlayerInventoryItem.belongsTo(PublicProfile, {
       foreignKey: 'Cmid',
       targetKey: 'Cmid',

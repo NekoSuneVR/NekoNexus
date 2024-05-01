@@ -237,7 +237,7 @@ export default class DiscordClient {
   public async CreateGameRoom(metadata: GameRoomData): Promise<[string | null, string | null]> {
     if (!this.discordSettings.Integrations.RoomChats) return [null, null];
 
-    let _resolve;
+    let _resolve: Function | undefined;
     this.roomChatCreationPromises[metadata.Number] = new Promise<void>((resolve, reject) => {
       _resolve = resolve;
     });
@@ -282,7 +282,7 @@ export default class DiscordClient {
 
     this.roomChatClients[metadata.Number] = new WebhookClient({ id: webhook.id, token: webhook.token! });
 
-    _resolve();
+    _resolve?.();
     delete this.roomChatCreationPromises[metadata.Number];
 
     return [channel.id, this.roomChatClients[metadata.Number].url];
@@ -478,7 +478,7 @@ export default class DiscordClient {
     }
   }
 
-  public async IsMemberLinked(cmid: number): Promise<bool> {
+  public async IsMemberLinked(cmid: number): Promise<boolean> {
     const link = await DiscordUser.findOne({
       where: {
         Cmid: cmid,

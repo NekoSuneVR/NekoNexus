@@ -44,12 +44,13 @@ export default class PrivateMessage extends Model<PrivateMessageAttributes> {
       },
       {
         sequelize,
+        tableName: 'PrivateMessages',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ PublicProfile }) {
+  public static associate({ PublicProfile }: any) {
     PrivateMessage.belongsTo(PublicProfile, {
       foreignKey: 'FromCmid',
       targetKey: 'Cmid',

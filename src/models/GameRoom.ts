@@ -68,10 +68,11 @@ export default class GameRoom extends Model<GameRoomAttributes> {
       },
       {
         sequelize,
+        tableName: 'GameRooms',
         timestamps: false,
       },
     );
   }
 
-  public static associate(_) {}
+  public static associate(_: any) {}
 }

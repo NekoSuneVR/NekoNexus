@@ -57,5 +57,5 @@ export default class MapSettings extends Model<MapSettingsAttributes> {
     );
   }
 
-  static associate(_) {}
+  static associate(_: any) {}
 }

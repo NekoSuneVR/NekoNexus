@@ -46,10 +46,11 @@ export default class ShopItemPrice extends Model<ShopItemPriceAttributes> {
       },
       {
         sequelize,
+        tableName: 'ShopItemPrices',
         timestamps: false,
       },
     );
   }
 
-  public static associate(_) {}
+  public static associate(_: any) {}
 }

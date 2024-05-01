@@ -32,12 +32,13 @@ export default class DiscordUser extends Model<DiscordUserAttributes> {
       },
       {
         sequelize,
+        tableName: 'DiscordUsers',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ PublicProfile }) {
+  public static associate({ PublicProfile }: any) {
     DiscordUser.belongsTo(PublicProfile, {
       foreignKey: 'Cmid',
       targetKey: 'Cmid',

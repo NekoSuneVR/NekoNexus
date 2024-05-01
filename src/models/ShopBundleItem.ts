@@ -1,5 +1,5 @@
-import { BuyingDurationType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { UberstrikeInventoryItem } from '@/utils';
+import { BuyingDurationType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { DataTypes, Model, type Sequelize } from 'sequelize';
 
 export interface ShopBundleItemAttributes {
@@ -41,12 +41,13 @@ export default class ShopBundleItem extends Model<ShopBundleItemAttributes> {
         defaultScope: {
           attributes: { exclude: ['id'] },
         },
+        tableName: 'ShopBundleItems',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ ShopBundle }) {
+  public static associate({ ShopBundle }: any) {
     ShopBundleItem.belongsTo(ShopBundle, {
       as: 'BundleItemViews',
       foreignKey: 'BundleId',

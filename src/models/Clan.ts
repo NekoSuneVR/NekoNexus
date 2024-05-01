@@ -1,5 +1,5 @@
-import { GroupColor, GroupFontStyle } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { ClanMember } from '@/models';
+import { GroupColor, GroupFontStyle } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { DataTypes, Model, type Sequelize } from 'sequelize';
 
 export interface ClanAttributes {
@@ -74,12 +74,13 @@ export default class Clan extends Model<ClanAttributes> {
       },
       {
         sequelize,
+        tableName: 'Clans',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ ClanMember, PublicProfile }) {
+  public static associate({ ClanMember, PublicProfile }: any) {
     Clan.hasMany(ClanMember, {
       as: 'Members',
       foreignKey: 'GroupId',

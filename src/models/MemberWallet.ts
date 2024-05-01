@@ -29,12 +29,13 @@ export default class MemberWallet extends Model<MemberWalletAttributes> {
       },
       {
         sequelize,
+        tableName: 'MemberWallets',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ PublicProfile }) {
+  public static associate({ PublicProfile }: any) {
     MemberWallet.belongsTo(PublicProfile, {
       foreignKey: 'Cmid',
       targetKey: 'Cmid',

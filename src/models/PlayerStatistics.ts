@@ -75,5 +75,5 @@ export default class PlayerStatistics extends Model<PlayerStatisticsAttributes> 
     );
   }
 
-  public static associate(_) {}
+  public static associate(_: any) {}
 }

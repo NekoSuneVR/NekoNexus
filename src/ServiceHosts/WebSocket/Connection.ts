@@ -13,6 +13,8 @@ const RECEIVE_TIMEOUT = 3;
 const PING_INTERVAL = 10;
 
 export default class WebSocketConnection {
+  [key: string]: any;
+
   public ConnectionId: string;
   public Socket: WebSocket;
   public Info: WebSocketInfo;
@@ -88,7 +90,7 @@ export default class WebSocketConnection {
   }
 
   public async SendPacket(type: PacketType) {
-    const bytes = [];
+    const bytes: byte[] = [];
 
     Int32Proxy.Serialize(bytes, 0x42);
     EnumProxy.Serialize<PacketType>(bytes, type);

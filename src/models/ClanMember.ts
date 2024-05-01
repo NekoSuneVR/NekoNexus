@@ -36,13 +36,14 @@ export default class ClanMember extends Model<ClanMemberAttributes> {
       },
       {
         sequelize,
-        timestamps: false,
         defaultScope: {
           attributes: { exclude: ['GroupId'] },
         },
+        tableName: 'ClanMembers',
+        timestamps: false,
       },
     );
   }
 
-  public static associate(_) {}
+  public static associate(_: any) {}
 }

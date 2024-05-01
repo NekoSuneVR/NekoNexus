@@ -7,6 +7,7 @@ import * as http from 'http';
 import httpStatus from 'http-status';
 import { AddressInfo } from 'net';
 import Routes, { ServiceVersions } from './routes';
+import BaseWebService from './routes/BaseWebService';
 
 export default class WebServiceHost {
   public readonly port: number;
@@ -67,7 +68,7 @@ export default class WebServiceHost {
         ParadiseService.Instance.ServiceSettings.Hostname ?? '0.0.0.0',
         () => {
           for (const services of Object.values(ServiceVersions)) {
-            for (const service of Object.values(services)) {
+            for (const service of Object.values(services) as (typeof BaseWebService)[]) {
               Log.debug(`Initializing ${service.ServiceName} (${service.ServiceVersion})...`);
             }
           }

@@ -37,12 +37,13 @@ export default class ContactRequest extends Model<ContactRequestAttributes> {
       },
       {
         sequelize,
+        tableName: 'ContactRequests',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ PublicProfile }) {
+  public static associate({ PublicProfile }: any) {
     ContactRequest.belongsTo(PublicProfile, {
       foreignKey: 'InitiatorCmid',
       targetKey: 'Cmid',

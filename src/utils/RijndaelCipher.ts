@@ -2,7 +2,7 @@
 import crypto, { Cipher } from 'crypto';
 import seedrandom from 'seedrandom';
 
-function passwordDeriveBytes(password, salt, iterations, len, hashAlgorithm) {
+function passwordDeriveBytes(password: string, salt: Buffer, iterations: number, len: number, hashAlgorithm: string) {
   let baseValue = Buffer.concat([Buffer.from(password, 'utf8'), salt]);
   baseValue = crypto.createHash(hashAlgorithm).update(baseValue).digest();
 
@@ -173,7 +173,7 @@ export default class RijndaelCipher {
     return array;
   }
 
-  private GenerateRandomNumber(minValue: int, maxValue: int): int {
+  private GenerateRandomNumber(minValue: number, maxValue: number): number {
     const array = crypto.randomBytes(4);
     const seed = ((array[0] & 127) << 24) | (array[1] << 16) | (array[2] << 8) | array[3];
     const random = seedrandom(String(seed));

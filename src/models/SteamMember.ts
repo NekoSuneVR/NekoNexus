@@ -26,12 +26,13 @@ export default class SteamMember extends Model<SteamMemberAttributes> {
       },
       {
         sequelize,
+        tableName: 'SteamMembers',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ PublicProfile }) {
+  public static associate({ PublicProfile }: any) {
     SteamMember.belongsTo(PublicProfile, {
       foreignKey: 'Cmid',
       targetKey: 'Cmid',

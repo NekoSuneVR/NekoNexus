@@ -16,7 +16,7 @@ export default class CommandHandler {
     for (const commandObj of this.Commands) {
       if (
         commandObj.Command.localeCompare(command, undefined, { sensitivity: 'base' }) === 0 ||
-        commandObj.Aliases.find((_) => _.localeCompare(command, undefined, { sensitivity: 'base' }) === 0)
+        commandObj.Aliases.find((_: string) => _.localeCompare(command, undefined, { sensitivity: 'base' }) === 0)
       ) {
         /* eslint-disable new-cap */
         const invoker = new commandObj(invocationId);

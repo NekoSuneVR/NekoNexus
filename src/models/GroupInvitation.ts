@@ -41,12 +41,13 @@ export default class GroupInvitation extends Model<GroupInvitationAttributes> {
       },
       {
         sequelize,
+        tableName: 'GroupInvitations',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ Clan, PublicProfile }) {
+  public static associate({ Clan, PublicProfile }: any) {
     GroupInvitation.belongsTo(Clan, {
       foreignKey: 'GroupId',
       targetKey: 'GroupId',

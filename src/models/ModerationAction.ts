@@ -43,12 +43,13 @@ export default class ModerationAction extends Model<ModerationActionAttributes> 
       },
       {
         sequelize,
+        tableName: 'ModerationActions',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ PublicProfile }) {
+  public static associate({ PublicProfile }: any) {
     ModerationAction.belongsTo(PublicProfile, {
       foreignKey: 'SourceCmid',
       targetKey: 'Cmid',

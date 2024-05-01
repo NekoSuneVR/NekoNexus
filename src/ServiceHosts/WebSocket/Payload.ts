@@ -24,6 +24,8 @@ enum PayloadFlags {
 }
 
 export default class WebSocketPayload {
+  [key: string]: any;
+
   public Type: WebSocketPacketType;
   public Data: string;
   public ServerType: ServerType;

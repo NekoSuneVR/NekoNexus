@@ -1,3 +1,4 @@
+import ParadiseService from '@/ParadiseService';
 import { ProfanityFilter } from '@/ProfanityFilter';
 import {
   Clan,
@@ -372,7 +373,7 @@ export default class AuthenticationWebService extends BaseWebService {
           WeaponStatistics: new PlayerWeaponStatisticsView(),
         });
 
-        const session = await global.SessionManager.findOrCreateSessionForSteamUser(
+        const session = await ParadiseService.Instance.SessionManager.findOrCreateSessionForSteamUser(
           publicProfile as PublicProfileView,
           machineId,
           steamMember,
@@ -424,7 +425,7 @@ export default class AuthenticationWebService extends BaseWebService {
             const memberWallet = await MemberWallet.findOne({ where: { Cmid: steamMember.Cmid } });
             const playerStatistics = await PlayerStatistics.findOne({ where: { Cmid: steamMember.Cmid } });
 
-            const session = await global.SessionManager.findOrCreateSessionForSteamUser(
+            const session = await ParadiseService.Instance.SessionManager.findOrCreateSessionForSteamUser(
               publicProfile as PublicProfileView,
               machineId,
               steamMember,
@@ -500,7 +501,7 @@ export default class AuthenticationWebService extends BaseWebService {
 
       this.debugEndpoint('VerifyAuthToken', authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (!session) {
         MemberAuthenticationResultViewProxy.Serialize(
           outputStream,

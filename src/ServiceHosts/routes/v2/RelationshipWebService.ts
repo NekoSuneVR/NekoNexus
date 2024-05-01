@@ -1,3 +1,4 @@
+import ParadiseService from '@/ParadiseService';
 import { ContactRequest, PublicProfile } from '@/models';
 import { ApiVersion } from '@/utils';
 import {
@@ -41,7 +42,7 @@ export default class RelationshipWebService extends BaseWebService {
 
       this.debugEndpoint('AcceptContactRequest', authToken, contactRequestId);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -90,7 +91,7 @@ export default class RelationshipWebService extends BaseWebService {
 
       this.debugEndpoint('DeclineContactRequest', authToken, contactRequestId);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -131,7 +132,7 @@ export default class RelationshipWebService extends BaseWebService {
 
       this.debugEndpoint('DeleteContact', authToken, contactCmid);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -181,7 +182,7 @@ export default class RelationshipWebService extends BaseWebService {
 
       this.debugEndpoint('GetContactRequests', authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -223,7 +224,7 @@ export default class RelationshipWebService extends BaseWebService {
 
       this.debugEndpoint('GetContactsByGroups', authToken, populateFacebookIds);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -286,7 +287,7 @@ export default class RelationshipWebService extends BaseWebService {
 
       this.debugEndpoint('SendContactRequest', authToken, receiverCmid, message);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 

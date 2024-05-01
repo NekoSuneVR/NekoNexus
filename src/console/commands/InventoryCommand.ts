@@ -1,7 +1,7 @@
-import { MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
-import { LoadoutSlotType } from '@festivaldev/uberstrike-js/UberStrike/Core/Types';
 import { PlayerInventoryItem, PlayerLoadout, PublicProfile } from '@/models';
 import { UberstrikeInventoryItem } from '@/utils';
+import { MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
+import { LoadoutSlotType } from '@festivaldev/uberstrike-js/UberStrike/Core/Types';
 import { Op } from 'sequelize';
 import ParadiseCommand from '../ParadiseCommand';
 
@@ -160,7 +160,7 @@ export default class InventoryCommand extends ParadiseCommand {
           return;
         }
 
-        const forbiddenSlots = [
+        const forbiddenSlots: string[] = [
           'LoadoutID',
           'Backpack',
           'Cmid',
@@ -176,7 +176,7 @@ export default class InventoryCommand extends ParadiseCommand {
           'Weapon3Mod3',
         ];
 
-        if (forbiddenSlots.includes[args[2]] || !LoadoutSlotType[args[2]]) {
+        if (forbiddenSlots.includes(args[2] as string) || !LoadoutSlotType[args[2] as keyof typeof LoadoutSlotType]) {
           this.WriteLine('Invalid parameter: slot');
           return;
         }
@@ -194,7 +194,7 @@ export default class InventoryCommand extends ParadiseCommand {
 
         const playerLoadout = await PlayerLoadout.findOne({ where: { Cmid: publicProfile.Cmid } });
 
-        const slot = !isNaN(Number(args[2])) ? LoadoutSlotType[args[2]] : args[2];
+        const slot = !isNaN(Number(args[2])) ? LoadoutSlotType[args[2] as keyof typeof LoadoutSlotType] : args[2];
         await playerLoadout!.update({
           [slot]: itemId,
         });

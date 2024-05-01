@@ -48,12 +48,13 @@ export default class PublicProfile extends Model<PublicProfileAttributes> {
       },
       {
         sequelize,
+        tableName: 'PublicProfiles',
         timestamps: false,
       },
     );
   }
 
-  public static associate(_) {}
+  public static associate(_: any) {}
 
   static async getProfile(search: string): Promise<PublicProfile | null> {
     return PublicProfile.findOne({

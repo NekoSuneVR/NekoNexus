@@ -39,12 +39,13 @@ export default class GameSession extends Model<GameSessionAttributes> {
       },
       {
         sequelize,
+        tableName: 'GameSessions',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ PublicProfile }) {
+  public static associate({ PublicProfile }: any) {
     GameSession.belongsTo(PublicProfile, {
       foreignKey: 'Cmid',
       targetKey: 'Cmid',

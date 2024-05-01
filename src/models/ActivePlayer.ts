@@ -33,12 +33,13 @@ export default class ActivePlayer extends Model<ActivePlayerAttributes> {
       },
       {
         sequelize,
+        tableName: 'ActivePlayers',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ PublicProfile }) {
+  public static associate({ PublicProfile }: any) {
     ActivePlayer.belongsTo(PublicProfile, {
       foreignKey: 'Cmid',
       targetKey: 'Cmid',

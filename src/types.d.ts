@@ -1,3 +1,14 @@
+// Pretend to write stream to other stream
+interface Array<T> {
+  WriteTo(stream: Array<T>): void;
+}
+
+// Math function
+interface Math {
+  clamp(value, min, max): number;
+  randomInt(min = 1, max = 2147483647): number;
+}
+
 // Type aliases for easier C# interoperability
 type byte = number;
 type decimal = number;
@@ -15,17 +26,6 @@ type MemoryStream = byte[];
 
 type List<T> = T[];
 type Dictionary<S extends string | number, T> = { [key: S]: T };
-
-// Pretend to write stream to other stream
-interface Array<T> {
-  WriteTo(stream: Array<T>): void;
-}
-
-// Math function
-interface Math {
-  clamp(value, min, max): number;
-  randomInt(min = 1, max = 2147483647): number;
-}
 
 // Unity Types
 class Color {

@@ -1,3 +1,4 @@
+import ParadiseService from '@/ParadiseService';
 import { ProfanityFilter } from '@/ProfanityFilter';
 import {
   Clan,
@@ -42,7 +43,7 @@ import {
   PlayerStatisticsView,
   PlayerWeaponStatisticsView,
 } from '@festivaldev/uberstrike-js/UberStrike/DataCenter/Common/Entities';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { Sequelize } from 'sequelize';
 import BaseWebService from '../BaseWebService';
 
@@ -358,7 +359,7 @@ export default class AuthenticationWebService extends BaseWebService {
                 WeaponStatistics: new PlayerWeaponStatisticsView(),
               });
 
-              const session = await global.SessionManager.findOrCreateSession(
+              const session = await ParadiseService.Instance.SessionManager.findOrCreateSession(
                 publicProfile as PublicProfileView,
                 machineId,
                 userAccount,
@@ -387,7 +388,7 @@ export default class AuthenticationWebService extends BaseWebService {
               const memberWallet = await MemberWallet.findOne({ where: { Cmid: userAccount.Cmid } });
               const playerStatistics = await PlayerStatistics.findOne({ where: { Cmid: userAccount.Cmid } });
 
-              const session = await global.SessionManager.findOrCreateSession(
+              const session = await ParadiseService.Instance.SessionManager.findOrCreateSession(
                 publicProfile as PublicProfileView,
                 machineId,
                 userAccount,

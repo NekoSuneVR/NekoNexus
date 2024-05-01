@@ -1,7 +1,6 @@
 // eslint-disable-next-line import/no-named-default
-import { default as DefaultSettings, type ParadiseServiceSettings } from '@/ParadiseServiceSettings';
-import FileServerHost from '@/ServiceHosts/FileServerHost';
-import WebServiceHost from '@/ServiceHosts/WebServiceHost';
+import { ParadiseServiceSettings } from '@/ParadiseServiceSettings';
+import { FileServerHost, WebServiceHost } from '@/ServiceHosts';
 import {
   ServerType,
   WebSocketCommand,
@@ -14,23 +13,23 @@ import { CommandHandler, Commands, ConsoleHelper } from '@/console';
 import DiscordClient from '@/discord/DiscordClient';
 import models from '@/models';
 import { GameSessionManager, Log, XpPointsUtil } from '@/utils';
-import readline, { Interface } from 'readline';
-import { Dialect, Op, QueryOptions, QueryOptionsWithType, QueryTypes, Sequelize } from 'sequelize';
-
-const intToIPv4 = (ip: number): string => `${ip >>> 24}.${(ip >> 16) & 255}.${(ip >> 8) & 255}.${ip & 255}`;
+import path from 'path';
+import readline, { type Interface } from 'readline';
+import { Op, QueryTypes, Sequelize, type Dialect, type QueryOptions, type QueryOptionsWithType } from 'sequelize';
 
 export default class ParadiseService {
   // eslint-disable-next-line no-use-before-define
-  private static _instance: ParadiseService;
+  private static instance: ParadiseService;
 
   public static get Instance(): ParadiseService {
     // eslint-disable-next-line no-return-assign
-    return this._instance || (this._instance = new this());
+    return this.instance || (this.instance = new this());
   }
 
   private runApp: boolean = true;
 
-  public ServiceSettings: ParadiseServiceSettings = DefaultSettings;
+  public ServiceSettings: ParadiseServiceSettings;
+  public SessionManager: GameSessionManager;
 
   private fileServer: FileServerHost;
   private webServiceHost: WebServiceHost;
@@ -39,8 +38,15 @@ export default class ParadiseService {
 
   private stdin: Interface;
 
+  private intToIPv4(ip: number): string {
+    return `${ip >>> 24}.${(ip >> 16) & 255}.${(ip >> 8) & 255}.${ip & 255}`;
+  }
+
   public async Run() {
     ConsoleHelper.PrintConsoleHeader();
+
+    this.ServiceSettings = new ParadiseServiceSettings(path.join(process.cwd(), 'Paradise.Settings.WebServices.yml'));
+    this.SessionManager = new GameSessionManager();
 
     // #region Database Configuration
     const sequelize = new Sequelize(
@@ -51,6 +57,7 @@ export default class ParadiseService {
         host: this.ServiceSettings.DatabaseSettings.Server,
         port: Number(this.ServiceSettings.DatabaseSettings.Port),
         dialect: this.ServiceSettings.DatabaseSettings.Type as Dialect,
+        dialectModule: require('mysql2'),
         logging: false,
       },
     );
@@ -183,7 +190,7 @@ export default class ParadiseService {
 
               await GameRoom.create({
                 ...room.MetaData,
-                ServerIp: intToIPv4(room.MetaData.Server.Ipv4),
+                ServerIp: this.intToIPv4(room.MetaData.Server.Ipv4),
                 ServerPort: room.MetaData.Server.Port,
                 ChannelId: channelId,
                 WebhookUrl: webhookUrl,
@@ -283,7 +290,7 @@ export default class ParadiseService {
 
           await GameRoom.create({
             ...e.Data,
-            ServerIp: intToIPv4(e.Data.Server.Ipv4),
+            ServerIp: this.intToIPv4(e.Data.Server.Ipv4),
             ServerPort: e.Data.Server.Port,
             ChannelId: channelId,
             WebhookUrl: webhookUrl,
@@ -323,7 +330,6 @@ export default class ParadiseService {
     });
 
     CommandHandler.Commands.push(...Commands);
-    global.SessionManager = new GameSessionManager();
     XpPointsUtil._initialize();
 
     ConsoleHelper.PrintConsoleHeaderSubtitle();
@@ -361,25 +367,27 @@ export default class ParadiseService {
       const cmdArgs =
         cmd.match(/[a-zA-Z0-9-]+|"(?:\\"|[^"])+"/g)?.map((_) => (_.match(/".+"/g) ? _.slice(1, -1) : _)) ?? [];
 
-      await CommandHandler.HandleCommand(
-        cmdArgs[0].toLocaleLowerCase(),
-        cmdArgs.slice(1),
-        undefined,
-        (output: string, inline: boolean) => {
-          if (!inline) {
-            console.log(output);
-          } else {
-            process.stdout.write(output);
-          }
-        },
-        (invoker: any, success: boolean, error?: string | undefined | null) => {
-          if (success && !error?.trim().length) {
-            // console.log(invoker.Output);
-          } else {
-            console.error(error);
-          }
-        },
-      );
+      if (cmdArgs.length) {
+        await CommandHandler.HandleCommand(
+          cmdArgs[0].toLocaleLowerCase(),
+          cmdArgs.slice(1),
+          undefined,
+          (output: string, inline: boolean) => {
+            if (!inline) {
+              console.log(output);
+            } else {
+              process.stdout.write(output);
+            }
+          },
+          (invoker: any, success: boolean, error?: string | undefined | null) => {
+            if (success && !error?.trim().length) {
+              // console.log(invoker.Output);
+            } else {
+              console.error(error);
+            }
+          },
+        );
+      }
 
       if (this.runApp) this.Prompt();
     });

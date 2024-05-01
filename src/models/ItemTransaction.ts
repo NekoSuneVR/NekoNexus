@@ -1,5 +1,5 @@
-import { BuyingDurationType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { UberstrikeInventoryItem } from '@/utils';
+import { BuyingDurationType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { DataTypes, Model, type Sequelize } from 'sequelize';
 
 export interface ItemTransactionAttributes {
@@ -40,12 +40,13 @@ export default class ItemTransaction extends Model<ItemTransactionAttributes> {
       },
       {
         sequelize,
+        tableName: 'ItemTransactions',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ PublicProfile }) {
+  public static associate({ PublicProfile }: any) {
     ItemTransaction.belongsTo(PublicProfile, {
       foreignKey: 'Cmid',
       targetKey: 'Cmid',

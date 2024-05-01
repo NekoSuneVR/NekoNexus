@@ -5,6 +5,8 @@ import WebSocketPayload from './Payload';
 import { ServerType, WebSocketInfo } from './WebSocket';
 
 export class WebSocketConnectedEventArgs {
+  [key: string]: any;
+
   public Socket: WebSocket;
 
   constructor(params: any = {}) {
@@ -17,6 +19,8 @@ export class WebSocketConnectedEventArgs {
 }
 
 export class WebSocketDisconnectedEventArgs {
+  [key: string]: any;
+
   public Info: WebSocketInfo;
   public Socket: WebSocket;
   public Code: number;
@@ -32,6 +36,8 @@ export class WebSocketDisconnectedEventArgs {
 }
 
 export class WebSocketDataReceivedEventArgs {
+  [key: string]: any;
+
   public Socket: WebSocketConnection;
   public BytesReceived: number;
 
@@ -53,6 +59,8 @@ export class WebSocketDataReceivedEventArgs {
 }
 
 export class WebSocketPacketReceivedEventArgs {
+  [key: string]: any;
+
   public Socket: WebSocketConnection;
   public PacketType: WebSocketPacketType;
 
@@ -66,6 +74,8 @@ export class WebSocketPacketReceivedEventArgs {
 }
 
 export class WebSocketDataSentEventArgs {
+  [key: string]: any;
+
   public Socket: WebSocket;
   public BytesSent: number;
 
@@ -79,6 +89,8 @@ export class WebSocketDataSentEventArgs {
 }
 
 export class WebSocketConnectionRejectedEventArgs {
+  [key: string]: any;
+
   public Info: WebSocketInfo;
   public Socket: WebSocket;
   public Reason: string;
@@ -93,6 +105,8 @@ export class WebSocketConnectionRejectedEventArgs {
 }
 
 export class WebSocketStateChangedEventArgs {
+  [key: string]: any;
+
   public Socket: WebSocket;
   // public State: SocketState;
 

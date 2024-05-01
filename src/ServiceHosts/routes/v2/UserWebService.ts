@@ -1,3 +1,4 @@
+import ParadiseService from '@/ParadiseService';
 import { ProfanityFilter } from '@/ProfanityFilter';
 import {
   CurrencyDeposit,
@@ -69,7 +70,7 @@ export default class UserWebService extends BaseWebService {
 
       this.debugEndpoint('ChangeMemberName', authToken, name, locale, machineId);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -129,7 +130,7 @@ export default class UserWebService extends BaseWebService {
 
       this.debugEndpoint('DepositCredits', depositTransaction, authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -174,7 +175,7 @@ export default class UserWebService extends BaseWebService {
 
       this.debugEndpoint('DepositPoints', depositTransaction, authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -258,7 +259,7 @@ export default class UserWebService extends BaseWebService {
 
       this.debugEndpoint('GetCurrencyDeposits', authToken, pageIndex, elementPerPage);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -304,7 +305,7 @@ export default class UserWebService extends BaseWebService {
 
       this.debugEndpoint('GetInventory', authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -348,7 +349,7 @@ export default class UserWebService extends BaseWebService {
 
       this.debugEndpoint('GetItemTransactions', authToken, pageIndex, elementPerPage);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -394,7 +395,7 @@ export default class UserWebService extends BaseWebService {
 
       this.debugEndpoint('GetLoadout', authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
 
       if (session) {
         const steamMember = await session.SteamMember;
@@ -445,7 +446,7 @@ export default class UserWebService extends BaseWebService {
 
       this.debugEndpoint('GetMember', authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -540,7 +541,7 @@ export default class UserWebService extends BaseWebService {
 
       this.debugEndpoint('GetMemberWallet', authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -583,7 +584,7 @@ export default class UserWebService extends BaseWebService {
 
       this.debugEndpoint('GetPointsDeposits', authToken, pageIndex, elementPerPage);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -653,7 +654,7 @@ export default class UserWebService extends BaseWebService {
 
       this.debugEndpoint('SetLoadout', authToken, loadoutView);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -720,7 +721,7 @@ export default class UserWebService extends BaseWebService {
 
       this.debugEndpoint('UpdatePlayerStatistics', authToken, playerStatistics);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 

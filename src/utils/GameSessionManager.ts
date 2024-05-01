@@ -7,7 +7,7 @@ const SESSION_EXPIRE_HOURS: number = 12;
 export default class GameSessionManager {
   private Seed: bigint = BigInt(new Date().getTime());
 
-  private static GarbageCollector: NodeJS.Timeout;
+  private static GarbageCollector: any;
 
   constructor() {
     if (!GameSessionManager.GarbageCollector) {

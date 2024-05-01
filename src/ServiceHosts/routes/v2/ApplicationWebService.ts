@@ -130,7 +130,7 @@ export default class ApplicationWebService extends BaseWebService {
             FileName: cur.FileName?.['4.7.1'],
             Settings: mapSettings
               .filter((_) => _.MapId === cur.MapId)
-              .reduce((acc, cur) => {
+              .reduce((acc: { [key: number]: any }, cur) => {
                 acc[cur.GameModeType!] = {
                   ...cur,
                   MapId: undefined,

@@ -60,5 +60,5 @@ export default class Map extends Model<MapAttributes> {
     );
   }
 
-  public static associate(_) {}
+  public static associate(_: any) {}
 }

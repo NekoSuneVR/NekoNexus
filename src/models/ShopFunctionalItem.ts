@@ -58,12 +58,13 @@ export default class ShopFunctionalItem extends Model<ShopFunctionalItemAttribut
       },
       {
         sequelize,
+        tableName: 'ShopFunctionalItems',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ ShopItemPrice }) {
+  public static associate({ ShopItemPrice }: any) {
     ShopFunctionalItem.hasMany(ShopItemPrice, {
       as: 'Prices',
       constraints: false,
@@ -74,7 +75,7 @@ export default class ShopFunctionalItem extends Model<ShopFunctionalItemAttribut
     });
   }
 
-  public get IsForSale(): bool {
+  public get IsForSale(): boolean {
     return this.Prices?.length > 0;
   }
 }

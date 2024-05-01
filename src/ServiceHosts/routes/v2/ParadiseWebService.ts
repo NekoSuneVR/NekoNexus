@@ -1,3 +1,4 @@
+import ParadiseService from '@/ParadiseService';
 import { ItemTransaction, Map, MapSettings, MemberWallet, PlayerInventoryItem, PublicProfile } from '@/models';
 import { ApiVersion } from '@/utils';
 import { BuyItemResult, ChannelType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
@@ -48,7 +49,7 @@ export default class ParadiseWebService extends BaseWebService {
             FileName: cur.FileName?.['4.7.1'],
             Settings: mapSettings
               .filter((_) => _.MapId === cur.MapId)
-              .reduce((acc, cur) => {
+              .reduce((acc: { [key: number]: any }, cur) => {
                 acc[cur.GameModeType!] = {
                   ...cur,
                   MapId: undefined,
@@ -167,7 +168,7 @@ export default class ParadiseWebService extends BaseWebService {
 
       this.debugEndpoint('RemoveItemFromInventory', itemId, authToken);
 
-      const session = await global.SessionManager.findSessionForSteamUser(authToken);
+      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 

@@ -85,5 +85,5 @@ export default class ApplicationConfiguration extends Model<ApplicationConfigura
     );
   }
 
-  public static associate(_) {}
+  public static associate(_: any) {}
 }

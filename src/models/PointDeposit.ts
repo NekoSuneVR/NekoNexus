@@ -33,12 +33,13 @@ export default class PointDeposit extends Model<PointDepositAttributes> {
       },
       {
         sequelize,
+        tableName: 'PointDeposits',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ PublicProfile }) {
+  public static associate({ PublicProfile }: any) {
     PointDeposit.belongsTo(PublicProfile, {
       foreignKey: 'Cmid',
       targetKey: 'Cmid',

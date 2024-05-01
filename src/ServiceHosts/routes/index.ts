@@ -6,7 +6,7 @@ import httpStatus from 'http-status';
 import * as ServicesV1_0_2 from './v102';
 import * as ServicesV2_0 from './v2';
 
-export const ServiceVersions = {
+export const ServiceVersions: { [key: string]: any } = {
   '1.0.2': ServicesV1_0_2,
   '2.0': ServicesV2_0,
 };

@@ -86,12 +86,13 @@ export default class ShopBundle extends Model<ShopBundleAttributes> {
       },
       {
         sequelize,
+        tableName: 'ShopBundles',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ ShopBundleItem }) {
+  public static associate({ ShopBundleItem }: any) {
     ShopBundle.hasMany(ShopBundleItem, {
       as: 'BundleItemViews',
       foreignKey: 'BundleId',

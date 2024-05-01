@@ -34,10 +34,11 @@ export default class UserAccount extends Model<UserAccountAttributes> {
       },
       {
         sequelize,
+        tableName: 'UserAccounts',
         timestamps: false,
       },
     );
   }
 
-  public static associate(_) {}
+  public static associate(_: any) {}
 }

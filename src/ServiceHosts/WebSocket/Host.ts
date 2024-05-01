@@ -14,6 +14,8 @@ import { ServerType, WebSocketConnectionStatus, WebSocketInfo } from './WebSocke
 const MAGIC_BYTES = [0x50, 0x61, 0x52, 0x61, 0x44, 0x69, 0x53, 0x65];
 
 export default class WebSocketHost extends EventEmitter {
+  [key: string]: any;
+
   public readonly port: number;
 
   public readonly socket: WebSocketServer;
@@ -286,10 +288,6 @@ export default class WebSocketHost extends EventEmitter {
           );
         }
       });
-    });
-
-    this.socket.on('close', (client) => {
-      console.log('close');
     });
   }
 

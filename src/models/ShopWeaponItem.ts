@@ -133,12 +133,13 @@ export default class ShopWeaponItem extends Model<ShopWeaponItemAttributes> {
       },
       {
         sequelize,
+        tableName: 'ShopWeaponItems',
         timestamps: false,
       },
     );
   }
 
-  public static associate({ ShopItemPrice }) {
+  public static associate({ ShopItemPrice }: any) {
     ShopWeaponItem.hasMany(ShopItemPrice, {
       as: 'Prices',
       constraints: false,
@@ -149,7 +150,7 @@ export default class ShopWeaponItem extends Model<ShopWeaponItemAttributes> {
     });
   }
 
-  public get IsForSale(): bool {
+  public get IsForSale(): boolean {
     return this.Prices?.length > 0;
   }
 }
