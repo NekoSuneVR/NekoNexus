@@ -176,7 +176,7 @@ export default class WebSocketPayload {
         Int32Proxy.Serialize(bytes, data);
         break;
       default:
-        Log.warn(`Rejecting to encode payload of type ${WebSocketPacketType[type]}: Unknown type.`);
+        Log.warn(`Rejecting to encode payload of type ${WebSocketPacketType[type]}(${type}): Unknown type.`);
         return [null, null];
     }
 
@@ -271,7 +271,9 @@ export default class WebSocketPayload {
         result = Int32Proxy.Deserialize(bytes);
         break;
       default:
-        Log.warn(`Rejecting to decode payload of type ${WebSocketPacketType[payloadObj.Type]}: Unknown type.`);
+        Log.warn(
+          `Rejecting to decode payload of type ${WebSocketPacketType[payloadObj.Type]}(${payloadObj.Type}): Unknown type.`,
+        );
         break;
     }
 

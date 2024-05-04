@@ -1,9 +1,10 @@
 import ParadiseService from '@/ParadiseService';
 import { Log } from '@/utils';
-import { ArrayProxy, ByteProxy, EnumProxy, Int32Proxy } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
+import { Server } from 'bun';
+import httpStatus from 'http-status';
 import { EventEmitter } from 'stream';
+import { ArrayProxy, ByteProxy, EnumProxy, Int32Proxy } from 'uberstrike-js/dist/UberStrike/Core/Serialization';
 import { v4 as uuid } from 'uuid';
-import { WebSocketServer } from 'ws';
 import WebSocketConnection from './Connection';
 import { WebSocketDataReceivedEventArgs, WebSocketPacketReceivedEventArgs } from './EventArgs';
 import PacketType from './PacketType';
@@ -18,7 +19,7 @@ export default class WebSocketHost extends EventEmitter {
 
   public readonly port: number;
 
-  public readonly socket: WebSocketServer;
+  public readonly socket: Server;
 
   private CommServer?: WebSocketConnection;
   private GameServers: WebSocketConnection[] = [];
@@ -29,266 +30,291 @@ export default class WebSocketHost extends EventEmitter {
   constructor(port: number = 8080) {
     super();
 
+    Log.info('Starting WebSocket...');
+
     this.port = port;
-    this.socket = new WebSocketServer({ port: this.port });
 
-    this.socket.on('connection', (client, req) => {
-      const socketClient = new WebSocketConnection({
-        ConnectionId: uuid(),
-        Socket: client,
-        MessageBuffer: [],
-        Info: new WebSocketInfo({
-          IsClient: true,
-        }),
-      });
-
-      socketClient.SendPacket(PacketType.MagicBytes);
-
-      client.on('close', () => {
-        try {
-          if (Object.keys(this.ConnectedSockets).includes(socketClient.ConnectionId)) {
-            socketClient.OnClose();
-
-            delete this.ConnectedSockets[socketClient.ConnectionId];
-
-            switch (socketClient.Type) {
-              case ServerType.Comm:
-                if (this.CommServer && this.CommServer.ConnectionId === socketClient.ConnectionId) {
-                  this.CommServer = undefined;
-                }
-                break;
-
-              case ServerType.Game:
-                if (this.GameServers.includes(socketClient)) {
-                  this.GameServers = this.GameServers.filter((_) => _ !== socketClient);
-                }
-                break;
-
-              default:
-                break;
-            }
-
-            if (Object.keys(this.CryptoProviders).includes(socketClient.ConnectionId)) {
-              delete this.CryptoProviders[socketClient.ConnectionId];
-            }
-          }
-
-          this.emit('ClientDisconnected', {
-            Info: socketClient.Info,
-            Socket: socketClient,
-            Reason: socketClient.DisconnectReason,
+    this.socket = Bun.serve<{ socketId: string }>({
+      hostname: ParadiseService.Instance.ServiceSettings.Hostname ?? '0.0.0.0',
+      port: this.port,
+      fetch: (req, server) =>
+        server.upgrade(req, {
+          data: {
+            socketId: uuid(),
+          },
+        })
+          ? undefined
+          : new Response(null, { status: httpStatus.BAD_REQUEST }),
+      websocket: {
+        open: (ws) => {
+          const socketClient = new WebSocketConnection({
+            ConnectionId: ws.data.socketId,
+            Socket: ws,
+            MessageBuffer: [],
+            Info: new WebSocketInfo({
+              IsClient: true,
+            }),
           });
 
-          client.close();
-        } catch (e: any) {
-          Log.error(e);
-        }
-      });
+          this.ConnectedSockets[socketClient.ConnectionId] = socketClient;
 
-      client.on('message', async (data) => {
-        const inputBytes = [...(data as Buffer)];
+          socketClient.SendPacket(PacketType.MagicBytes);
+        },
+        message: async (ws, message) => {
+          if (Object.keys(this.ConnectedSockets).includes(ws.data.socketId)) {
+            const socketClient = this.ConnectedSockets[ws.data.socketId];
+            const inputBytes = [...(message as Buffer)];
 
-        const payloadType = Int32Proxy.Deserialize(inputBytes);
-        if (payloadType === 0x42) {
-          // Packet / Raw Data
-          const packetType = EnumProxy.Deserialize<PacketType>(inputBytes);
-          switch (packetType) {
-            case PacketType.MagicBytes: {
-              const magicBytes = ArrayProxy.Deserialize<number>(inputBytes, ByteProxy.Deserialize);
+            const payloadType = Int32Proxy.Deserialize(inputBytes);
+            if (payloadType === 0x42) {
+              // Packet / Raw Data
+              const packetType = EnumProxy.Deserialize<PacketType>(inputBytes);
+              switch (packetType) {
+                case PacketType.MagicBytes: {
+                  const magicBytes = ArrayProxy.Deserialize<number>(inputBytes, ByteProxy.Deserialize);
 
-              if (!magicBytes.length || ![...magicBytes].reverse().every((val, index) => val === MAGIC_BYTES[index])) {
-                client.close();
-              }
-
-              socketClient.SendPacket(PacketType.ClientInfo);
-              break;
-            }
-            case PacketType.Pong:
-              socketClient.ResetPingTimeout();
-              break;
-            default:
-              break;
-          }
-
-          this.emit(
-            'PacketReceived',
-            new WebSocketPacketReceivedEventArgs({
-              Socket: socketClient,
-              PacketType: packetType,
-            }),
-          );
-        } else {
-          // JSON Object
-          const [payload, payloadObj] = WebSocketPayload.Decode<any>(
-            data.toString('utf-8'),
-            socketClient.CryptoProvider,
-          );
-
-          if (!payloadObj) return;
-
-          switch (payloadObj.Type) {
-            case PacketType.ClientInfo: {
-              const clientInfo = payload! as WebSocketInfo;
-
-              socketClient.Info = clientInfo;
-              socketClient.Info.IsClient = true;
-
-              const passphrase = ParadiseService.Instance.ServiceSettings.ServerCredentials.find(
-                (_) => _.Id.toLowerCase() === socketClient.Identifier.toLowerCase(),
-              )?.Passphrase.trim();
-
-              if (!passphrase || !passphrase.length) {
-                socketClient.DisconnectReason = 'Unknown server';
-
-                this.emit('ConnectionRejected', {
-                  Info: clientInfo,
-                  Socket: socketClient,
-                  Reason: socketClient.DisconnectReason,
-                });
-
-                await socketClient.Send(
-                  PacketType.ConnectionStatus,
-                  new WebSocketConnectionStatus({
-                    Connected: false,
-                    Rejected: true,
-                    DisconnectReason: socketClient.DisconnectReason,
-                  }),
-                  true,
-                  payloadObj.ConversationId,
-                );
-
-                return;
-              }
-
-              switch (clientInfo.Type) {
-                case ServerType.Comm:
-                  if (this.CommServer) {
-                    socketClient.DisconnectReason = 'Cannot register more than one Comm Server';
-
-                    this.emit('ConnectionRejected', {
-                      Info: clientInfo,
-                      Socket: socketClient,
-                      Reason: socketClient.DisconnectReason,
-                    });
-
-                    await socketClient.Send(
-                      PacketType.ConnectionStatus,
-                      new WebSocketConnectionStatus({
-                        Connected: false,
-                        Rejected: true,
-                        DisconnectReason: socketClient.DisconnectReason,
-                      }),
-                      true,
-                      payloadObj.ConversationId,
-                    );
-
-                    return;
+                  if (
+                    !magicBytes.length ||
+                    ![...magicBytes].reverse().every((val, index) => val === MAGIC_BYTES[index])
+                  ) {
+                    ws.close();
+                    delete this.ConnectedSockets[ws.data.socketId];
                   }
 
-                  this.CommServer = socketClient;
-
+                  socketClient.SendPacket(PacketType.ClientInfo);
                   break;
-                case ServerType.Game:
-                  if (this.GameServers.find((_) => _.Identifier === socketClient.Identifier)) {
-                    socketClient.DisconnectReason = 'Duplicate server identifier';
-
-                    this.emit('ConnectionRejected', {
-                      Info: clientInfo,
-                      Socket: socketClient,
-                      Reason: socketClient.DisconnectReason,
-                    });
-
-                    await socketClient.Send(
-                      PacketType.ConnectionStatus,
-                      new WebSocketConnectionStatus({
-                        Connected: false,
-                        Rejected: true,
-                        DisconnectReason: socketClient.DisconnectReason,
-                      }),
-                      true,
-                      payloadObj.ConversationId,
-                    );
-
-                    return;
-                  }
-
-                  this.GameServers.push(socketClient);
-
+                }
+                case PacketType.Pong:
+                  socketClient.ResetPingTimeout();
                   break;
                 default:
-                  socketClient.DisconnectReason = 'Invalid server type';
+                  break;
+              }
 
-                  this.emit('ConnectionRejected', {
-                    Info: clientInfo,
+              this.emit(
+                'PacketReceived',
+                new WebSocketPacketReceivedEventArgs({
+                  Socket: socketClient,
+                  PacketType: packetType,
+                }),
+              );
+            } else {
+              // JSON Object
+              const [payload, payloadObj] = WebSocketPayload.Decode<any>(
+                message.toString('utf-8'),
+                socketClient.CryptoProvider,
+              );
+
+              if (!payloadObj) return;
+
+              switch (payloadObj.Type) {
+                case PacketType.ClientInfo: {
+                  const clientInfo = payload! as WebSocketInfo;
+
+                  socketClient.Info = clientInfo;
+                  socketClient.Info.IsClient = true;
+
+                  const passphrase = ParadiseService.Instance.ServiceSettings.ServerCredentials.find(
+                    (_) => _.Id.toLowerCase() === socketClient.Identifier.toLowerCase(),
+                  )?.Passphrase.trim();
+
+                  if (!passphrase || !passphrase.length) {
+                    socketClient.DisconnectReason = 'Unknown server';
+
+                    this.emit('ConnectionRejected', {
+                      Info: clientInfo,
+                      Socket: socketClient,
+                      Reason: socketClient.DisconnectReason,
+                    });
+
+                    await socketClient.Send(
+                      PacketType.ConnectionStatus,
+                      new WebSocketConnectionStatus({
+                        Connected: false,
+                        Rejected: true,
+                        DisconnectReason: socketClient.DisconnectReason,
+                      }),
+                      true,
+                      payloadObj.ConversationId,
+                    );
+
+                    return;
+                  }
+
+                  switch (clientInfo.Type) {
+                    case ServerType.Comm:
+                      if (this.CommServer) {
+                        socketClient.DisconnectReason = 'Cannot register more than one Comm Server';
+
+                        this.emit('ConnectionRejected', {
+                          Info: clientInfo,
+                          Socket: socketClient,
+                          Reason: socketClient.DisconnectReason,
+                        });
+
+                        await socketClient.Send(
+                          PacketType.ConnectionStatus,
+                          new WebSocketConnectionStatus({
+                            Connected: false,
+                            Rejected: true,
+                            DisconnectReason: socketClient.DisconnectReason,
+                          }),
+                          true,
+                          payloadObj.ConversationId,
+                        );
+
+                        return;
+                      }
+
+                      this.CommServer = socketClient;
+
+                      break;
+                    case ServerType.Game:
+                      if (this.GameServers.find((_) => _.Identifier === socketClient.Identifier)) {
+                        socketClient.DisconnectReason = 'Duplicate server identifier';
+
+                        this.emit('ConnectionRejected', {
+                          Info: clientInfo,
+                          Socket: socketClient,
+                          Reason: socketClient.DisconnectReason,
+                        });
+
+                        await socketClient.Send(
+                          PacketType.ConnectionStatus,
+                          new WebSocketConnectionStatus({
+                            Connected: false,
+                            Rejected: true,
+                            DisconnectReason: socketClient.DisconnectReason,
+                          }),
+                          true,
+                          payloadObj.ConversationId,
+                        );
+
+                        return;
+                      }
+
+                      this.GameServers.push(socketClient);
+
+                      break;
+                    default:
+                      socketClient.DisconnectReason = 'Invalid server type';
+
+                      this.emit('ConnectionRejected', {
+                        Info: clientInfo,
+                        Socket: socketClient,
+                        Reason: socketClient.DisconnectReason,
+                      });
+
+                      await socketClient.Send(
+                        PacketType.ConnectionStatus,
+                        new WebSocketConnectionStatus({
+                          Connected: false,
+                          Rejected: true,
+                          DisconnectReason: socketClient.DisconnectReason,
+                        }),
+                        true,
+                        payloadObj.ConversationId,
+                      );
+
+                      return;
+                  }
+
+                  this.ConnectedSockets[socketClient.ConnectionId] = socketClient;
+
+                  const uuidByteArray = [...Buffer.from(socketClient.Info.SocketId.replaceAll('-', ''), 'hex')];
+                  const uuidBytes = Buffer.from(
+                    uuidByteArray
+                      .slice(0, 4)
+                      .reverse()
+                      .concat(uuidByteArray.slice(4, 6).reverse())
+                      .concat(uuidByteArray.slice(6, 8).reverse())
+                      .concat(uuidByteArray.slice(8)),
+                  );
+                  this.CryptoProviders[socketClient.ConnectionId] = new RijndaelCryptoProvider(
+                    Buffer.from(passphrase, 'utf-8'),
+                    uuidBytes,
+                    uuidBytes,
+                  );
+                  socketClient.CryptoProvider = this.CryptoProviders[socketClient.ConnectionId];
+
+                  this.emit('ClientConnected', {
                     Socket: socketClient,
-                    Reason: socketClient.DisconnectReason,
                   });
+
+                  socketClient.OnOpen();
 
                   await socketClient.Send(
                     PacketType.ConnectionStatus,
                     new WebSocketConnectionStatus({
-                      Connected: false,
-                      Rejected: true,
-                      DisconnectReason: socketClient.DisconnectReason,
+                      Connected: true,
                     }),
                     true,
                     payloadObj.ConversationId,
                   );
 
-                  return;
+                  break;
+                }
+                default:
+                  break;
               }
 
-              this.ConnectedSockets[socketClient.ConnectionId] = socketClient;
-
-              const uuidByteArray = [...Buffer.from(socketClient.Info.SocketId.replaceAll('-', ''), 'hex')];
-              const uuidBytes = Buffer.from(
-                uuidByteArray
-                  .slice(0, 4)
-                  .reverse()
-                  .concat(uuidByteArray.slice(4, 6).reverse())
-                  .concat(uuidByteArray.slice(6, 8).reverse())
-                  .concat(uuidByteArray.slice(8)),
+              this.emit(
+                'DataReceived',
+                new WebSocketDataReceivedEventArgs({
+                  Socket: socketClient,
+                  Payload: payloadObj,
+                  Data: payload,
+                  ServerType: socketClient.Info.Type,
+                }),
               );
-              this.CryptoProviders[socketClient.ConnectionId] = new RijndaelCryptoProvider(
-                Buffer.from(passphrase, 'utf-8'),
-                uuidBytes,
-                uuidBytes,
-              );
-              socketClient.CryptoProvider = this.CryptoProviders[socketClient.ConnectionId];
+            }
+          }
+        },
+        close: (ws, code, reason) => {
+          try {
+            if (Object.keys(this.ConnectedSockets).includes(ws.data.socketId)) {
+              const socketClient = this.ConnectedSockets[ws.data.socketId];
+              socketClient.OnClose();
 
-              this.emit('ClientConnected', {
+              delete this.ConnectedSockets[socketClient.ConnectionId];
+
+              switch (socketClient.Type) {
+                case ServerType.Comm:
+                  if (this.CommServer && this.CommServer.ConnectionId === socketClient.ConnectionId) {
+                    this.CommServer = undefined;
+                  }
+                  break;
+
+                case ServerType.Game:
+                  if (this.GameServers.includes(socketClient)) {
+                    this.GameServers = this.GameServers.filter((_) => _ !== socketClient);
+                  }
+                  break;
+
+                default:
+                  break;
+              }
+
+              if (Object.keys(this.CryptoProviders).includes(socketClient.ConnectionId)) {
+                delete this.CryptoProviders[socketClient.ConnectionId];
+              }
+
+              this.emit('ClientDisconnected', {
+                Info: socketClient.Info,
                 Socket: socketClient,
+                Reason: socketClient.DisconnectReason,
               });
 
-              socketClient.OnOpen();
-
-              await socketClient.Send(
-                PacketType.ConnectionStatus,
-                new WebSocketConnectionStatus({
-                  Connected: true,
-                }),
-                true,
-                payloadObj.ConversationId,
-              );
-
-              break;
+              ws.close();
             }
-            default:
-              break;
+          } catch (e: any) {
+            Log.error(e);
           }
-
-          this.emit(
-            'DataReceived',
-            new WebSocketDataReceivedEventArgs({
-              Socket: socketClient,
-              Payload: payloadObj,
-              Data: payload,
-              ServerType: socketClient.Info.Type,
-            }),
-          );
-        }
-      });
+        },
+      },
     });
+
+    Log.info(`WebSocket listening on ${this.socket.hostname}:${this.socket.port}.`);
   }
 
   // #region Send

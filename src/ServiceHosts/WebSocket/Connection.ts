@@ -1,4 +1,5 @@
 import { EnumProxy, Int32Proxy } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
+import { ServerWebSocket } from 'bun';
 import { WebSocket } from 'ws';
 import PacketType from './PacketType';
 import WebSocketPayload from './Payload';
@@ -16,7 +17,7 @@ export default class WebSocketConnection {
   [key: string]: any;
 
   public ConnectionId: string;
-  public Socket: WebSocket;
+  public Socket: ServerWebSocket;
   public Info: WebSocketInfo;
   public CryptoProvider: RijndaelCryptoProvider;
   public DisconnectReason: string;
@@ -46,7 +47,7 @@ export default class WebSocketConnection {
   }
 
   public get RemoteAddress(): string | undefined {
-    return this.Socket._socket.remoteAddress;
+    return this.Socket.remoteAddress || 'undefined';
   }
 
   public get Identifier(): string {
@@ -70,21 +71,23 @@ export default class WebSocketConnection {
     try {
       this.ConnectionState = WebSocketState.Sending;
 
-      this.sendTask = new Promise((resolve, reject) => {
-        const timer = setTimeout(() => {
-          this.sendTask = undefined;
-          reject(new Error(`Failed to send data within ${SEND_TIMEOUT} second(s).`));
-        }, SEND_TIMEOUT * 1000);
+      // this.sendTask = new Promise((resolve, reject) => {
+      //   const timer = setTimeout(() => {
+      //     this.sendTask = undefined;
+      //     reject(new Error(`Failed to send data within ${SEND_TIMEOUT} second(s).`));
+      //   }, SEND_TIMEOUT * 1000);
+      //   this.Socket.send(Buffer.from(bytes), {}, (error) => {
+      //     clearTimeout(timer);
+      //     if (error) return reject(error);
+      //     return resolve();
+      //   });
+      // });
 
-        this.Socket.send(bytes, (error) => {
-          clearTimeout(timer);
-          if (error) return reject(error);
-          return resolve();
-        });
-      });
+      // await this.sendTask;
+      // this.sendTask = undefined;
 
-      await this.sendTask;
-      this.sendTask = undefined;
+      this.Socket.sendBinary(Buffer.from(bytes));
+
       this.ConnectionState = WebSocketState.Connected;
     } catch {}
   }

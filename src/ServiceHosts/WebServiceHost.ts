@@ -62,6 +62,8 @@ export default class WebServiceHost {
   }
 
   public async start(): Promise<void> {
+    Log.info('Starting Web Service server...');
+
     return new Promise((resolve, reject) => {
       this.listener = this.expressApp.listen(
         this.port,
@@ -74,7 +76,7 @@ export default class WebServiceHost {
           }
 
           const address: AddressInfo = this.listener?.address() as AddressInfo;
-          Log.info(`HTTP server listening on ${address.address}:${address.port}.`);
+          Log.info(`Web Service server listening on ${address.address}:${address.port}.`);
 
           resolve();
         },
