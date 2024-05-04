@@ -133,7 +133,7 @@ export default class PlayersCommand extends ParadiseCommand {
           const steamMember = steamMembers.find((_) => _.Cmid === peer.Cmid);
 
           this.WriteLine(
-            `| ${profile!.Name.padEnd(18)} | ${String(profile!.Cmid).padEnd(10)} | ${String(steamMember!.SteamId).padEnd(17)} | ${MemberAccessLevel[profile!.AccessLevel].padEnd(15)} |`,
+            `| ${profile!.Name.padEnd(18)} | ${String(profile!.Cmid).padEnd(10)} | ${String(steamMember?.SteamId || 'N/A').padEnd(17)} | ${MemberAccessLevel[profile!.AccessLevel].padEnd(15)} |`,
           );
         }
 
@@ -166,7 +166,7 @@ export default class PlayersCommand extends ParadiseCommand {
           const peer = connectedPeers.find((_) => _.Cmid === profile.Cmid);
 
           this.WriteLine(
-            `| ${profile.Name.padEnd(18)} | ${String(profile.Cmid).padEnd(10)} | ${String(steamMember!.SteamId).padEnd(17)} | ${MemberAccessLevel[profile.AccessLevel].padEnd(15)} | ${String(peer === undefined ? 'No' : 'Yes').padEnd(6)} |`,
+            `| ${profile.Name.padEnd(18)} | ${String(profile.Cmid).padEnd(10)} | ${String(steamMember?.SteamId || 'N/A').padEnd(17)} | ${MemberAccessLevel[profile.AccessLevel].padEnd(15)} | ${String(peer === undefined ? 'No' : 'Yes').padEnd(6)} |`,
           );
         }
 
@@ -225,7 +225,7 @@ export default class PlayersCommand extends ParadiseCommand {
             const peer = connectedPeers?.find((_) => _.Cmid === profile.Cmid);
 
             this.WriteLine(
-              `| ${profile.Name.padEnd(18)} | ${String(profile.Cmid).padEnd(10)} | ${String(steamMember!.SteamId).padEnd(17)} | ${MemberAccessLevel[profile.AccessLevel].padEnd(15)} | ${String(peer === undefined ? 'No' : 'Yes').padEnd(6)} |`,
+              `| ${profile.Name.padEnd(18)} | ${String(profile.Cmid).padEnd(10)} | ${String(steamMember?.SteamId || 'N/A').padEnd(17)} | ${MemberAccessLevel[profile.AccessLevel].padEnd(15)} | ${String(peer === undefined ? 'No' : 'Yes').padEnd(6)} |`,
             );
           }
 
