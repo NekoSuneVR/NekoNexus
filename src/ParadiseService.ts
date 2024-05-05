@@ -112,11 +112,11 @@ export default class ParadiseService {
     } catch {}
     // #endregion
 
-    this.fileServer = new FileServerHost(+this.ServiceSettings.FileServerPort!);
-    await this.fileServer.start();
-
     this.webServiceHost = new WebServiceHost(+this.ServiceSettings.WebServicePort!);
     await this.webServiceHost.start();
+
+    this.fileServer = new FileServerHost(+this.ServiceSettings.FileServerPort!);
+    await this.fileServer.start();
 
     if (this.ServiceSettings.DiscordSettings.Enabled) {
       this.discordClient = new DiscordClient();
