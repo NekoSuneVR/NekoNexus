@@ -357,13 +357,15 @@ export default class AuthenticationWebService extends BaseWebService {
 
         await CurrencyDeposit.create({
           CreditsDepositId: Math.randomInt(),
-          BundleName: 'Signup Reward',
-          Cmid,
-          Credits: memberWallet.Credits,
-          CurrencyLabel: '$',
           DepositDate: new Date(),
+          Credits: memberWallet.Credits,
           Points: memberWallet.Points,
+          CurrencyLabel: '$',
+          Cmid,
           TransactionKey: transactionKey,
+          ApplicationId: 0,
+          ChannelId: ChannelType.Steam,
+          BundleName: 'Signup Reward',
         });
 
         const playerStatistics = await PlayerStatistics.create({
@@ -459,6 +461,10 @@ export default class AuthenticationWebService extends BaseWebService {
                   );
                 }
               }
+
+              await publicProfile.update({
+                LastLoginDate: new Date(),
+              });
 
               Log.info(`${publicProfile.Name}(${publicProfile.Cmid}) logged in.`);
             }

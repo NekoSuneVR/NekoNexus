@@ -423,6 +423,10 @@ export default class AuthenticationWebService extends BaseWebService {
                   }
                 }
 
+                await publicProfile.update({
+                  LastLoginDate: new Date(),
+                });
+
                 Log.info(`${publicProfile.Name}(${publicProfile.Cmid}) logged in.`);
               }
 
