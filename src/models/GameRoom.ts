@@ -51,7 +51,7 @@ export default class GameRoom extends Model<GameRoomAttributes> {
         },
         ServerIp: DataTypes.STRING,
         ServerPort: DataTypes.INTEGER,
-        Name: DataTypes.STRING(16),
+        Name: DataTypes.STRING(18),
         IsPasswordProtected: DataTypes.BOOLEAN,
         GameMode: DataTypes.INTEGER,
         PlayerLimit: DataTypes.INTEGER,
