@@ -1,5 +1,6 @@
 import ParadiseService from '@/ParadiseService';
 import { ProfanityFilter } from '@/ProfanityFilter';
+import { ApiVersion, Log, ModerationFlag, UberstrikeInventoryItem } from '@/utils';
 import {
   Clan,
   ClanMember,
@@ -12,8 +13,7 @@ import {
   PlayerStatistics,
   PublicProfile,
   SteamMember,
-} from '@/models';
-import { ApiVersion, Log, ModerationFlag, UberstrikeInventoryItem } from '@/utils';
+} from '@festivaldev/paradise-models';
 import {
   AccountCompletionResult,
   BuyingDurationType,

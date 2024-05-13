@@ -1,5 +1,5 @@
-import { PlayerInventoryItem, PlayerLoadout, PublicProfile } from '@/models';
 import { UberstrikeInventoryItem } from '@/utils';
+import { PlayerInventoryItem, PlayerLoadout, PublicProfile } from '@festivaldev/paradise-models';
 import { MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { LoadoutSlotType } from '@festivaldev/uberstrike-js/UberStrike/Core/Types';
 import { Op } from 'sequelize';

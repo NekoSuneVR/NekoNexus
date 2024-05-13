@@ -1,6 +1,13 @@
 import ParadiseService from '@/ParadiseService';
-import { ItemTransaction, Map, MapSettings, MemberWallet, PlayerInventoryItem, PublicProfile } from '@/models';
 import { ApiVersion } from '@/utils';
+import {
+  ItemTransaction,
+  Map,
+  MapSettings,
+  MemberWallet,
+  PlayerInventoryItem,
+  PublicProfile,
+} from '@festivaldev/paradise-models';
 import { BuyItemResult, ChannelType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
   EnumProxy,

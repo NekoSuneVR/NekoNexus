@@ -1,6 +1,6 @@
 import ParadiseService from '@/ParadiseService';
-import { PrivateMessage, PublicProfile } from '@/models';
 import { ApiVersion } from '@/utils';
+import { PrivateMessage, PublicProfile } from '@festivaldev/paradise-models';
 import { MessageThreadView, PrivateMessageView } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
   BooleanProxy,

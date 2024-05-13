@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-named-default
 import { default as ServiceSettings } from '@/ParadiseServiceSettings';
-import models from '@/models';
 import { Log } from '@/utils';
+import models from '@festivaldev/paradise-models';
 import { Dialect, Sequelize } from 'sequelize';
 
 (async () => {

@@ -1,6 +1,6 @@
 import ParadiseService from '@/ParadiseService';
-import { Clan, ClanMember, ModerationAction, PublicProfile } from '@/models';
 import { ApiVersion, ModerationFlag } from '@/utils/';
+import { Clan, ClanMember, ModerationAction, PublicProfile } from '@festivaldev/paradise-models';
 import {
   ChannelType,
   MemberAccessLevel,

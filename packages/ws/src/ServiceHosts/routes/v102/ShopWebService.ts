@@ -1,3 +1,4 @@
+import { ApiVersion, XpPointsUtil } from '@/utils';
 import {
   ItemTransaction,
   Map,
@@ -13,8 +14,7 @@ import {
   ShopQuickItem,
   ShopWeaponItem,
   UserAccount,
-} from '@/models';
-import { ApiVersion, XpPointsUtil } from '@/utils';
+} from '@festivaldev/paradise-models';
 import {
   BundleCategoryType,
   BundleView,

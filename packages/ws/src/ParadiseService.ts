@@ -11,8 +11,8 @@ import {
 } from '@/ServiceHosts/WebSocket';
 import { CommandHandler, Commands, ConsoleHelper } from '@/console';
 import DiscordClient from '@/discord/DiscordClient';
-import models from '@/models';
 import { GameSessionManager, Log, XpPointsUtil } from '@/utils';
+import models from '@festivaldev/paradise-models';
 import path from 'path';
 import readline, { type Interface } from 'readline';
 import { Op, QueryTypes, Sequelize, type Dialect, type QueryOptions, type QueryOptionsWithType } from 'sequelize';

@@ -1,6 +1,6 @@
 import ParadiseService from '@/ParadiseService';
-import { ContactRequest, PublicProfile } from '@/models';
 import { ApiVersion } from '@/utils';
+import { ContactRequest, PublicProfile } from '@festivaldev/paradise-models';
 import {
   ContactGroupView,
   ContactRequestStatus,

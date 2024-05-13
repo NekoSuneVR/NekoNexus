@@ -1,4 +1,4 @@
-import { PlayerInventoryItem, PlayerLoadout } from '@/models';
+import { PlayerInventoryItem, PlayerLoadout } from '@festivaldev/paradise-models';
 import { LoadoutView } from '@festivaldev/uberstrike-js/UberStrike/DataCenter/Common/Entities';
 
 export default class LoadoutFilter {

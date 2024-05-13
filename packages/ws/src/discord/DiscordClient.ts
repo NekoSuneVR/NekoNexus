@@ -2,8 +2,8 @@ import ParadiseService from '@/ParadiseService';
 import { RealtimeError, WebSocketChatMessage } from '@/ServiceHosts/WebSocket';
 import PacketType from '@/ServiceHosts/WebSocket/PacketType';
 import { CommandHandler } from '@/console';
-import models, { DiscordUser } from '@/models';
 import { Log } from '@/utils';
+import models, { DiscordUser } from '@festivaldev/paradise-models';
 import { MemberAccessLevel, PhotonUsageType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
   CommActorInfo,

@@ -1,5 +1,5 @@
-import { Clan, ClanMember, GroupInvitation, UserAccount } from '@/models';
 import { ApiVersion } from '@/utils';
+import { Clan, ClanMember, GroupInvitation, UserAccount } from '@festivaldev/paradise-models';
 import { GroupInvitationView } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
   BooleanProxy,

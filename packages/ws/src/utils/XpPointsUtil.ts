@@ -1,4 +1,4 @@
-import { ApplicationConfiguration } from '@/models';
+import { ApplicationConfiguration } from '@festivaldev/paradise-models';
 import { ApplicationConfigurationView } from '@festivaldev/uberstrike-js/UberStrike/Core/Models/Views';
 
 export default class XpPointsUtil {

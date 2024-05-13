@@ -1,4 +1,4 @@
-import { GameSession, SteamMember, UserAccount } from '@/models';
+import { GameSession, SteamMember, UserAccount } from '@festivaldev/paradise-models';
 import { PublicProfileView } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { Op } from 'sequelize';
 

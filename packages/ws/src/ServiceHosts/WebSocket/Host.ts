@@ -1,9 +1,9 @@
 import ParadiseService from '@/ParadiseService';
 import { Log } from '@/utils';
+import { ArrayProxy, ByteProxy, EnumProxy, Int32Proxy } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import { Server } from 'bun';
 import httpStatus from 'http-status';
 import { EventEmitter } from 'stream';
-import { ArrayProxy, ByteProxy, EnumProxy, Int32Proxy } from 'uberstrike-js/dist/UberStrike/Core/Serialization';
 import { v4 as uuid } from 'uuid';
 import WebSocketConnection from './Connection';
 import { WebSocketDataReceivedEventArgs, WebSocketPacketReceivedEventArgs } from './EventArgs';

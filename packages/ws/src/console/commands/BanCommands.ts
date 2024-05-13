@@ -1,7 +1,7 @@
 import ParadiseService from '@/ParadiseService';
 import { WebSocketPacketType } from '@/ServiceHosts/WebSocket';
-import { ModerationAction, PublicProfile } from '@/models';
 import { ModerationFlag } from '@/utils';
+import { ModerationAction, PublicProfile } from '@festivaldev/paradise-models';
 import { MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import moment from 'moment';
 import { Op } from 'sequelize';

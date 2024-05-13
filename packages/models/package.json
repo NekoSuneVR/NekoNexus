@@ -1,0 +1,16 @@
+{
+  "name": "@festivaldev/paradise-models",
+  "module": "src/index.ts",
+  "type": "module",
+  "exports": "./src/index.ts",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "sequelize": "^6.37.3",
+    "@festivaldev/uberstrike-js": "workspace:*"
+  }
+}

@@ -1,5 +1,5 @@
-import { Map, MapSettings, PhotonServer, UserAccount } from '@/models';
 import { ApiVersion } from '@/utils';
+import { Map, MapSettings, PhotonServer, UserAccount } from '@festivaldev/paradise-models';
 import { BuildType, ChannelType, PhotonUsageType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
   EnumProxy,

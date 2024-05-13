@@ -52,6 +52,8 @@
     "sequelize": "^6.37.3",
     "uuid": "^9.0.1",
     "ws": "^8.17.0",
-    "yaml": "^2.4.2"
+    "yaml": "^2.4.2",
+	"@festivaldev/paradise-models": "workspace:*",
+    "@festivaldev/uberstrike-js": "workspace:*"
   }
 }

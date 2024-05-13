@@ -1,4 +1,5 @@
 import ParadiseService from '@/ParadiseService';
+import { ApiVersion, XpPointsUtil } from '@/utils';
 import {
   CurrencyDeposit,
   ItemTransaction,
@@ -13,8 +14,7 @@ import {
   ShopItemPrice,
   ShopQuickItem,
   ShopWeaponItem,
-} from '@/models';
-import { ApiVersion, XpPointsUtil } from '@/utils';
+} from '@festivaldev/paradise-models';
 import {
   BundleCategoryType,
   BundleView,

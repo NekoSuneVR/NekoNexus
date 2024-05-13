@@ -1,6 +1,9 @@
-import { ClanMember } from '@/models';
-import { GroupColor, GroupFontStyle } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
-import { DataTypes, Model, type Sequelize } from 'sequelize';
+import { ClanMember } from "@festivaldev/paradise-models";
+import {
+  GroupColor,
+  GroupFontStyle,
+} from "@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities";
+import { DataTypes, Model, type Sequelize } from "sequelize";
 
 export interface ClanAttributes {
   GroupId?: number;
@@ -74,26 +77,26 @@ export default class Clan extends Model<ClanAttributes> {
       },
       {
         sequelize,
-        tableName: 'Clans',
+        tableName: "Clans",
         timestamps: false,
-      },
+      }
     );
   }
 
   public static associate({ ClanMember, PublicProfile }: any) {
     Clan.hasMany(ClanMember, {
-      as: 'Members',
-      foreignKey: 'GroupId',
-      sourceKey: 'GroupId',
-      onUpdate: 'CASCADE',
-      onDelete: 'CASCADE',
+      as: "Members",
+      foreignKey: "GroupId",
+      sourceKey: "GroupId",
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
     });
 
     Clan.belongsTo(PublicProfile, {
-      foreignKey: 'OwnerCmid',
-      targetKey: 'Cmid',
-      onUpdate: 'CASCADE',
-      onDelete: 'CASCADE',
+      foreignKey: "OwnerCmid",
+      targetKey: "Cmid",
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
     });
   }
 }

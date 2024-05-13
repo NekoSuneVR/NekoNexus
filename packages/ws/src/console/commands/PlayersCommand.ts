@@ -1,4 +1,4 @@
-import { ActivePlayer, Clan, ClanMember, PublicProfile, SteamMember } from '@/models';
+import { ActivePlayer, Clan, ClanMember, PublicProfile, SteamMember } from '@festivaldev/paradise-models';
 import { GroupPosition, MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { Op } from 'sequelize';
 import ParadiseCommand from '../ParadiseCommand';

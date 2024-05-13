@@ -1,4 +1,4 @@
-import { MemberWallet, PublicProfile } from '@/models';
+import { MemberWallet, PublicProfile } from '@festivaldev/paradise-models';
 import { MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import ParadiseCommand from '../ParadiseCommand';
 

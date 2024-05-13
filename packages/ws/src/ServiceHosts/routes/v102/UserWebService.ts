@@ -1,3 +1,4 @@
+import { ApiVersion, LoadoutFilter, UberstrikeInventoryItem } from '@/utils';
 import {
   CurrencyDeposit,
   ItemTransaction,
@@ -8,8 +9,7 @@ import {
   PointDeposit,
   PublicProfile,
   UserAccount,
-} from '@/models';
-import { ApiVersion, LoadoutFilter, UberstrikeInventoryItem } from '@/utils';
+} from '@festivaldev/paradise-models';
 import {
   ItemInventoryView,
   MemberOperationResult,

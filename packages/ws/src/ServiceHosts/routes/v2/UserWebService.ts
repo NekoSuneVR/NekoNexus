@@ -1,5 +1,6 @@
 import ParadiseService from '@/ParadiseService';
 import { ProfanityFilter } from '@/ProfanityFilter';
+import { ApiVersion, LoadoutFilter, UberstrikeInventoryItem } from '@/utils';
 import {
   CurrencyDeposit,
   ItemTransaction,
@@ -9,8 +10,7 @@ import {
   PlayerStatistics,
   PointDeposit,
   PublicProfile,
-} from '@/models';
-import { ApiVersion, LoadoutFilter, UberstrikeInventoryItem } from '@/utils';
+} from '@festivaldev/paradise-models';
 import {
   ItemInventoryView,
   MemberAccessLevel,

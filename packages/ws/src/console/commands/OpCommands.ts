@@ -1,5 +1,5 @@
+import { PublicProfile } from '@festivaldev/paradise-models';
 import { MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
-import { PublicProfile } from '@/models';
 import ParadiseCommand from '../ParadiseCommand';
 
 export class DeopCommand extends ParadiseCommand {

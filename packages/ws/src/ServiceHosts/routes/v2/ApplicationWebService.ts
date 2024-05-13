@@ -1,5 +1,5 @@
-import { ApplicationConfiguration, Map, MapSettings, PhotonServer } from '@/models';
 import { ApiVersion } from '@/utils';
+import { ApplicationConfiguration, Map, MapSettings, PhotonServer } from '@festivaldev/paradise-models';
 import { ChannelType, PhotonUsageType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { ApplicationConfigurationView } from '@festivaldev/uberstrike-js/UberStrike/Core/Models/Views';
 import {

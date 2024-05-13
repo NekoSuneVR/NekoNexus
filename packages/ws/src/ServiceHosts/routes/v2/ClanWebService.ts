@@ -1,5 +1,6 @@
 import ParadiseService from '@/ParadiseService';
 import { ProfanityFilter } from '@/ProfanityFilter';
+import { ApiVersion, UberstrikeInventoryItem, XpPointsUtil } from '@/utils';
 import {
   Clan,
   ClanMember,
@@ -8,8 +9,7 @@ import {
   PlayerInventoryItem,
   PlayerStatistics,
   PublicProfile,
-} from '@/models';
-import { ApiVersion, UberstrikeInventoryItem, XpPointsUtil } from '@/utils';
+} from '@festivaldev/paradise-models';
 import {
   ClanCreationReturnView,
   ClanRequestAcceptView,
