@@ -1,0 +1,40 @@
+{
+  "name": "@festivaldev/uberstrike-js",
+  "version": "4.7.1",
+  "homepage": "https://github.com/festivaldev/uberstrike-js",
+  "author": "Team FESTIVAL <weare@festival.tf>",
+  "license": "GPL-3.0-only",
+  "module": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "rimraf dist && tsc && tsc-alias"
+  },
+  "exports": {
+    "./Cmune/Core/Models/Views": "./dist/Cmune/Core/Models/Views/index.js",
+    "./Cmune/Core/Models": "./dist/Cmune/Core/Models/index.js",
+    "./Cmune/DataCenter/Common/Entities": "./dist/Cmune/DataCenter/Common/Entities/index.js",
+    "./UberStrike/Core/Models/Views": "./dist/UberStrike/Core/Models/Views/index.js",
+    "./UberStrike/Core/Models": "./dist/UberStrike/Core/Models/index.js",
+    "./UberStrike/Core/Serialization": "./dist/UberStrike/Core/Serialization/index.js",
+    "./UberStrike/Core/Serialization/Legacy": "./dist/UberStrike/Core/Serialization/Legacy/index.js",
+    "./UberStrike/Core/Types": "./dist/UberStrike/Core/Types/index.js",
+    "./UberStrike/Core/ViewModel": "./dist/UberStrike/Core/ViewModel/index.js",
+    "./UberStrike/DataCenter/Common/Entities": "./dist/UberStrike/DataCenter/Common/Entities/index.js"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
+    "eslint": "8.x",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-prettier": "^5.1.3",
+    "prettier": "^3.2.5",
+    "rimraf": "^5.0.5",
+    "tsc-alias": "^1.8.8"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
