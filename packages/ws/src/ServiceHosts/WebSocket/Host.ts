@@ -2,11 +2,17 @@ import ParadiseService from '@/ParadiseService';
 import { Log } from '@/utils';
 import { ArrayProxy, ByteProxy, EnumProxy, Int32Proxy } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import { Server } from 'bun';
+import { EventEmitter } from 'events';
 import httpStatus from 'http-status';
-import { EventEmitter } from 'stream';
 import { v4 as uuid } from 'uuid';
 import WebSocketConnection from './Connection';
-import { WebSocketDataReceivedEventArgs, WebSocketPacketReceivedEventArgs } from './EventArgs';
+import {
+  WebSocketConnectedEventArgs,
+  WebSocketConnectionRejectedEventArgs,
+  WebSocketDataReceivedEventArgs,
+  WebSocketDisconnectedEventArgs,
+  WebSocketPacketReceivedEventArgs,
+} from './EventArgs';
 import PacketType from './PacketType';
 import WebSocketPayload from './Payload';
 import RijndaelCryptoProvider from './RijndaelCryptoProvider';
@@ -121,11 +127,14 @@ export default class WebSocketHost extends EventEmitter {
                   if (!passphrase || !passphrase.length) {
                     socketClient.DisconnectReason = 'Unknown server';
 
-                    this.emit('ConnectionRejected', {
-                      Info: clientInfo,
-                      Socket: socketClient,
-                      Reason: socketClient.DisconnectReason,
-                    });
+                    this.emit(
+                      'ConnectionRejected',
+                      new WebSocketConnectionRejectedEventArgs({
+                        Info: clientInfo,
+                        Socket: socketClient,
+                        Reason: socketClient.DisconnectReason,
+                      }),
+                    );
 
                     await socketClient.Send(
                       PacketType.ConnectionStatus,
@@ -146,11 +155,14 @@ export default class WebSocketHost extends EventEmitter {
                       if (this.CommServer) {
                         socketClient.DisconnectReason = 'Cannot register more than one Comm Server';
 
-                        this.emit('ConnectionRejected', {
-                          Info: clientInfo,
-                          Socket: socketClient,
-                          Reason: socketClient.DisconnectReason,
-                        });
+                        this.emit(
+                          'ConnectionRejected',
+                          new WebSocketConnectionRejectedEventArgs({
+                            Info: clientInfo,
+                            Socket: socketClient,
+                            Reason: socketClient.DisconnectReason,
+                          }),
+                        );
 
                         await socketClient.Send(
                           PacketType.ConnectionStatus,
@@ -173,11 +185,14 @@ export default class WebSocketHost extends EventEmitter {
                       if (this.GameServers.find((_) => _.Identifier === socketClient.Identifier)) {
                         socketClient.DisconnectReason = 'Duplicate server identifier';
 
-                        this.emit('ConnectionRejected', {
-                          Info: clientInfo,
-                          Socket: socketClient,
-                          Reason: socketClient.DisconnectReason,
-                        });
+                        this.emit(
+                          'ConnectionRejected',
+                          new WebSocketConnectionRejectedEventArgs({
+                            Info: clientInfo,
+                            Socket: socketClient,
+                            Reason: socketClient.DisconnectReason,
+                          }),
+                        );
 
                         await socketClient.Send(
                           PacketType.ConnectionStatus,
@@ -199,11 +214,14 @@ export default class WebSocketHost extends EventEmitter {
                     default:
                       socketClient.DisconnectReason = 'Invalid server type';
 
-                      this.emit('ConnectionRejected', {
-                        Info: clientInfo,
-                        Socket: socketClient,
-                        Reason: socketClient.DisconnectReason,
-                      });
+                      this.emit(
+                        'ConnectionRejected',
+                        new WebSocketConnectionRejectedEventArgs({
+                          Info: clientInfo,
+                          Socket: socketClient,
+                          Reason: socketClient.DisconnectReason,
+                        }),
+                      );
 
                       await socketClient.Send(
                         PacketType.ConnectionStatus,
@@ -237,9 +255,12 @@ export default class WebSocketHost extends EventEmitter {
                   );
                   socketClient.CryptoProvider = this.CryptoProviders[socketClient.ConnectionId];
 
-                  this.emit('ClientConnected', {
-                    Socket: socketClient,
-                  });
+                  this.emit(
+                    'ClientConnected',
+                    new WebSocketConnectedEventArgs({
+                      Socket: socketClient,
+                    }),
+                  );
 
                   socketClient.OnOpen();
 
@@ -299,11 +320,14 @@ export default class WebSocketHost extends EventEmitter {
                 delete this.CryptoProviders[socketClient.ConnectionId];
               }
 
-              this.emit('ClientDisconnected', {
-                Info: socketClient.Info,
-                Socket: socketClient,
-                Reason: socketClient.DisconnectReason,
-              });
+              this.emit(
+                'ClientDisconnected',
+                new WebSocketDisconnectedEventArgs({
+                  Info: socketClient.Info,
+                  Socket: socketClient,
+                  Reason: socketClient.DisconnectReason,
+                }),
+              );
 
               ws.close();
             }

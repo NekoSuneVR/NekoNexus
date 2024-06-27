@@ -4,7 +4,10 @@ import { FileServerHost, WebServiceHost } from '@/ServiceHosts';
 import {
   ServerType,
   WebSocketCommand,
+  WebSocketConnectedEventArgs,
+  WebSocketConnectionRejectedEventArgs,
   WebSocketDataReceivedEventArgs,
+  WebSocketDisconnectedEventArgs,
   WebSocketHost,
   WebSocketPacketReceivedEventArgs,
   WebSocketPacketType,
@@ -124,19 +127,19 @@ export default class ParadiseService {
     }
 
     this.SocketHost = new WebSocketHost(+this.ServiceSettings.SocketPort!);
-    this.SocketHost.on('ConnectionRejected', (e) => {
+    this.SocketHost.on('ConnectionRejected', (e: WebSocketConnectionRejectedEventArgs) => {
       Log.warn(
         `[Socket] Rejecting ${ServerType[e.Socket.Type]}Server(${e.Socket.Identifier}) from ${e.Socket.RemoteAddress}. Reason: ${e.Reason}`,
       );
     });
 
-    this.SocketHost.on('ClientConnected', (e) => {
+    this.SocketHost.on('ClientConnected', (e: WebSocketConnectedEventArgs) => {
       Log.info(
         `[Socket] ${ServerType[e.Socket.Type]}Server(${e.Socket.Identifier}) connected from ${e.Socket.RemoteAddress}.`,
       );
     });
 
-    this.SocketHost.on('ClientDisconnected', (e) => {
+    this.SocketHost.on('ClientDisconnected', (e: WebSocketDisconnectedEventArgs) => {
       Log.info(
         `[Socket] ${ServerType[e.Socket.Type]}Server(${e.Socket.Identifier}) disconnected. Reason: ${e.Reason ?? 'Connection closed'}`,
       );
