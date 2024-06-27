@@ -9,6 +9,7 @@ module.exports = {
     'guard-for-in': 'warn',
     'import/extensions': 'off',
     'import/no-dynamic-require': 'off',
+    'import/no-extraneous-dependencies': 'off',
     'import/no-unresolved': 'off',
     'import/order': 'warn',
     'import/prefer-default-export': 'warn',
