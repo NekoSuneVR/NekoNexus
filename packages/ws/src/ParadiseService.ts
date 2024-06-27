@@ -18,7 +18,8 @@ import { GameSessionManager, Log, XpPointsUtil } from '@/utils';
 import models from '@festivaldev/paradise-models';
 import path from 'path';
 import readline, { type Interface } from 'readline';
-import { Op, QueryTypes, Sequelize, type Dialect, type QueryOptions, type QueryOptionsWithType } from 'sequelize';
+import { Op } from 'sequelize';
+import Database from './Database';
 
 export default class ParadiseService {
   // eslint-disable-next-line no-use-before-define
@@ -52,46 +53,8 @@ export default class ParadiseService {
     this.SessionManager = new GameSessionManager();
 
     // #region Database Configuration
-    const sequelize = new Sequelize(
-      this.ServiceSettings.DatabaseSettings.DatabaseName!,
-      this.ServiceSettings.DatabaseSettings.Username!,
-      this.ServiceSettings.DatabaseSettings.Password,
-      {
-        host: this.ServiceSettings.DatabaseSettings.Server,
-        port: Number(this.ServiceSettings.DatabaseSettings.Port),
-        dialect: this.ServiceSettings.DatabaseSettings.Type as Dialect,
-        dialectModule: require('mysql2'),
-        logging: false,
-      },
-    );
-
-    sequelize.query = async function (
-      sql: string | { query: string; values: unknown[] },
-      options?: QueryOptions | QueryOptionsWithType<QueryTypes.RAW> | undefined,
-    ): Promise<any> {
-      try {
-        return await Sequelize.prototype.query.apply(this, [sql, options]);
-      } catch (err: any) {
-        Log.error(err);
-      }
-
-      return null;
-    };
-
-    Log.info('Connecting to database...');
-    Log.debug(
-      `Type:${this.ServiceSettings.DatabaseSettings.Type} Database:${this.ServiceSettings.DatabaseSettings.DatabaseName} Auth:'${this.ServiceSettings.DatabaseSettings.Username}'@'${this.ServiceSettings.DatabaseSettings.Server}:${this.ServiceSettings.DatabaseSettings.Port}' (using password: ${this.ServiceSettings.DatabaseSettings.Password?.length! > 0 ? 'YES' : 'NO'})`,
-    );
-    for (const [modelName, model] of Object.entries(models)) {
-      model.initialize(sequelize);
-    }
-
-    for (const [modelName, model] of Object.entries(models)) {
-      model.associate?.(models);
-    }
-
     try {
-      await sequelize.sync();
+      await Database.initialize(this.ServiceSettings.DatabaseSettings);
       Log.info('Database opened.');
 
       const { ActivePlayer, GameRoom, PublicProfile } = models;
