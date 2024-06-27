@@ -21,15 +21,12 @@ export default class ClanMember extends Model<ClanMemberAttributes> {
   public static initialize(sequelize: Sequelize) {
     ClanMember.init(
       {
-        GroupId: {
+        Cmid: {
           type: DataTypes.INTEGER,
           primaryKey: true,
         },
         Name: DataTypes.STRING(18),
-        Cmid: {
-          type: DataTypes.INTEGER,
-          unique: true,
-        },
+        GroupId: DataTypes.INTEGER,
         Position: DataTypes.INTEGER,
         JoiningDate: DataTypes.DATE,
         Lastlogin: DataTypes.DATE,
