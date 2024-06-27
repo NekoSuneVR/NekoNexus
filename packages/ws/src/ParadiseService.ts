@@ -40,7 +40,7 @@ export default class ParadiseService {
   private discordClient: DiscordClient;
   public SocketHost: WebSocketHost;
 
-  private stdin: Interface;
+  private readlineInterface: Interface;
 
   private intToIPv4(ip: number): string {
     return `${ip >>> 24}.${(ip >> 16) & 255}.${(ip >> 8) & 255}.${ip & 255}`;
@@ -300,14 +300,14 @@ export default class ParadiseService {
 
     ConsoleHelper.PrintConsoleHeaderSubtitle();
 
-    this.stdin = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
+    this.readlineInterface = readline.createInterface({
+      input: process.stdin as any,
+      output: process.stdout as any,
     });
 
-    this.stdin.on('SIGINT', () => {
-      this.stdin.removeAllListeners();
-      this.stdin.close();
+    this.readlineInterface.on('SIGINT', () => {
+      this.readlineInterface.close();
+
       process.stdout.write('\n');
       this.Teardown();
     });
@@ -329,7 +329,7 @@ export default class ParadiseService {
   }
 
   private Prompt(): void {
-    this.stdin.question('> ', async (cmd) => {
+    this.readlineInterface.question('> ', async (cmd) => {
       const cmdArgs =
         cmd.match(/[a-zA-Z0-9-]+|"(?:\\"|[^"])+"/g)?.map((_) => (_.match(/".+"/g) ? _.slice(1, -1) : _)) ?? [];
 
