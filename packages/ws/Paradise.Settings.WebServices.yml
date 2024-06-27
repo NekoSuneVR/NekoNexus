@@ -5,7 +5,7 @@ Hostname: '0.0.0.0'
 # Port Settings
 WebServicePort: 8080
 FileServerPort: 8081
-TCPCommPort: 8082
+SocketPort: 8082
 
 # Database Settings
 DatabaseSettings:
