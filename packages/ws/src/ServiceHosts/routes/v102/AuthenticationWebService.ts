@@ -45,6 +45,7 @@ import {
   PlayerWeaponStatisticsView,
 } from '@festivaldev/uberstrike-js/UberStrike/DataCenter/Common/Entities';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { Sequelize } from 'sequelize';
 import BaseWebService from '../BaseWebService';
 
@@ -340,18 +341,20 @@ export default class AuthenticationWebService extends BaseWebService {
                 CreditsExpiration: new Date('9999-12-31T23:59:59.999Z'),
               });
 
-              // const transactionKey = crypto.randomBytes(32).toString('hex');
+              const transactionKey = crypto.randomBytes(32).toString('hex');
 
-              // await CurrencyDeposit.create({
-              //   CreditsDepositId: Math.randomInt(),
-              //   BundleName: 'Signup Reward',
-              //   Cmid,
-              //   Credits: memberWallet.Credits,
-              //   CurrencyLabel: '$',
-              //   DepositDate: new Date(),
-              //   Points: memberWallet.Points,
-              //   TransactionKey: transactionKey,
-              // });
+              await CurrencyDeposit.create({
+                CreditsDepositId: Math.randomInt(),
+                DepositDate: new Date(),
+                Credits: memberWallet.Credits,
+                Points: memberWallet.Points,
+                CurrencyLabel: '$',
+                Cmid: userAccount.Cmid,
+                TransactionKey: transactionKey,
+                ApplicationId: 0,
+                ChannelId: channelType,
+                BundleName: 'Signup Reward',
+              });
 
               const playerStatistics = await PlayerStatistics.create({
                 Cmid: publicProfile.Cmid,
