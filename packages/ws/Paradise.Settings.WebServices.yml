@@ -9,7 +9,7 @@ SocketPort: 8082
 
 # Database Settings
 DatabaseSettings:
-  Server: '1'
+  Server: '127.0.0.1'
   Type: 'mysql'
   Port: 3306 # MySQL/MariaDB
   Username: ''
@@ -20,6 +20,7 @@ DatabaseSettings:
 WebServicePrefix: 'UberStrike.DataCenter.WebService.CWS.'
 WebServiceSuffix: 'Contract.svc'
 EncryptionInitVector: 'aaaaBBBBccccDDDD' # Must be 16 characters
+EncryptionPassPhtase: 'mysupersecretkey'
 ServerCredentials:
   - Name: 'Example Server'
     Type: 2 # 2 = Comm, 3 = Game
