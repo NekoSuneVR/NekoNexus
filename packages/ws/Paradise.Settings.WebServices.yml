@@ -54,7 +54,7 @@ DiscordSettings:
   GuildId: ''
   ChatChannelId: ''
   CommandChannelId: ''
-  RoomChatCagetory: ''
+  RoomChatCategory: ''
   WebHooks:
     LobbyChat: ''
     PlayerAnnouncements: ''
