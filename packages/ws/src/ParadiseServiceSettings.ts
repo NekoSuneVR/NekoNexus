@@ -59,13 +59,7 @@ export class ParadiseServiceSettings {
     }
 
     try {
-      let settings;
-
-      if (Bun.env.PARADISE_SETTINGS) {
-        settings = YAML.parse(Bun.env.PARADISE_SETTINGS);
-      } else {
-        settings = YAML.parse(fs.readFileSync(path, 'utf-8'));
-      }
+      const settings = YAML.parse(fs.readFileSync(path, 'utf-8'));
 
       for (const key of Object.keys(settings)) {
         if (key in this) {
