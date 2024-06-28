@@ -37,6 +37,8 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@festivaldev/paradise-models": "workspace:*",
+    "@festivaldev/uberstrike-js": "workspace:*",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "body-parser-xml": "^2.0.5",
@@ -47,13 +49,13 @@
     "http-status": "^1.7.4",
     "moment": "^2.30.1",
     "morgan": "^1.10.0",
-    "mysql2": "^3.9.7",
+    "mysql2": "^3.10.1",
     "seedrandom": "^3.0.5",
     "sequelize": "^6.37.3",
     "uuid": "^9.0.1",
+    "winston": "^3.13.0",
+    "winston-daily-rotate-file": "^5.0.0",
     "ws": "^8.17.0",
-    "yaml": "^2.4.2",
-	"@festivaldev/paradise-models": "workspace:*",
-    "@festivaldev/uberstrike-js": "workspace:*"
+    "yaml": "^2.4.2"
   }
 }

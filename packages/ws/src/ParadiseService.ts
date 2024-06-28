@@ -75,7 +75,10 @@ export default class ParadiseService {
       await GameRoom.destroy({
         truncate: true,
       });
-    } catch {}
+    } catch (error) {
+      Log.fatal('Failed to connect to database. Please check the log for errors and try again.');
+      process.exit(1);
+    }
     // #endregion
 
     this.webServiceHost = new WebServiceHost(+this.ServiceSettings.WebServicePort!);
