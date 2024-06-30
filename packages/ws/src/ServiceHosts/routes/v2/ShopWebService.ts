@@ -325,6 +325,7 @@ export default class ShopWebService extends BaseWebService {
                       const price = item.Prices.find(
                         (_: ShopItemPrice) => _.Currency === UberStrikeCurrencyType.Credits,
                       );
+
                       if (!price) {
                         Int32Proxy.Serialize(outputStream, BuyItemResult.IsNotForSale);
                       } else if (memberWallet.Credits! < price.Price) {
@@ -347,6 +348,7 @@ export default class ShopWebService extends BaseWebService {
                       const price = item.Prices.find(
                         (_: ShopItemPrice) => _.Currency === UberStrikeCurrencyType.Points,
                       );
+
                       if (!price) {
                         Int32Proxy.Serialize(outputStream, BuyItemResult.IsNotForSale);
                       } else if (memberWallet.Points! < price.Price) {
@@ -370,35 +372,35 @@ export default class ShopWebService extends BaseWebService {
                       UberStrikeCurrencyType[currencyType] === undefined
                     ) {
                       Int32Proxy.Serialize(outputStream, BuyItemResult.InvalidData);
-                    } else {
-                      let expirationDate;
-
-                      switch (durationType) {
-                        case BuyingDurationType.OneDay:
-                          expirationDate = moment(new Date()).add(1, 'day').toDate();
-                          break;
-                        case BuyingDurationType.SevenDays:
-                          expirationDate = moment(new Date()).add(7, 'days').toDate();
-                          break;
-                        case BuyingDurationType.ThirtyDays:
-                          expirationDate = moment(new Date()).add(30, 'days').toDate();
-                          break;
-                        case BuyingDurationType.NinetyDays:
-                          expirationDate = moment(new Date()).add(90, 'days').toDate();
-                          break;
-                        default:
-                          break;
-                      }
-
-                      await PlayerInventoryItem.create({
-                        Cmid: publicProfile.Cmid,
-                        ItemId: itemId,
-                        AmountRemaining: -1,
-                        ExpirationDate: expirationDate,
-                      });
-
-                      Int32Proxy.Serialize(outputStream, BuyItemResult.OK);
                     }
+
+                    let expirationDate;
+
+                    switch (durationType) {
+                      case BuyingDurationType.OneDay:
+                        expirationDate = moment(new Date()).add(1, 'day').toDate();
+                        break;
+                      case BuyingDurationType.SevenDays:
+                        expirationDate = moment(new Date()).add(7, 'days').toDate();
+                        break;
+                      case BuyingDurationType.ThirtyDays:
+                        expirationDate = moment(new Date()).add(30, 'days').toDate();
+                        break;
+                      case BuyingDurationType.NinetyDays:
+                        expirationDate = moment(new Date()).add(90, 'days').toDate();
+                        break;
+                      default:
+                        break;
+                    }
+
+                    await PlayerInventoryItem.create({
+                      Cmid: publicProfile.Cmid,
+                      ItemId: itemId,
+                      AmountRemaining: -1,
+                      ExpirationDate: expirationDate,
+                    });
+
+                    Int32Proxy.Serialize(outputStream, BuyItemResult.OK);
                   }
                 }
               }
