@@ -23,12 +23,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\..\build\client\4.7.1\Managed\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowedReferenceRelatedFileExtensions>
+      <!-- Prevent default XML and PDB files copied to output in RELEASE.
+           Only *.allowedextension files will be included, which doesn't exist in my case.
+      -->
+      .allowedextension
+    </AllowedReferenceRelatedFileExtensions>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony, Version=2.2.2.0, Culture=neutral, processorArchitecture=MSIL">
@@ -66,6 +72,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Paradise.Client.DiscordRPC\IRichPresenceServiceContract.cs">
+      <Link>Plugins\RichPresence\IRichPresenceServiceContract.cs</Link>
+    </Compile>
     <Compile Include="Cryptography\RijndaelCipher.cs" />
     <Compile Include="Cryptography\RijndaelCryptographyPolicy.cs" />
     <Compile Include="GUI\Console\ConsolePanelGUI.cs" />
@@ -132,6 +141,7 @@
     <Compile Include="Plugins\Maps\ParadiseMapView.cs" />
     <Compile Include="Plugins\Maps\ParadiseMapViewProxy.cs" />
     <Compile Include="Plugins\ParadiseMainMenuMusicManager.cs" />
+    <Compile Include="Plugins\RichPresence\RichPresenceClient.cs" />
     <Compile Include="Plugins\Update\HTTPStatusParser.cs" />
     <Compile Include="Plugins\Update\ParadiseUpdater.cs" />
     <Compile Include="ServiceClients\ParadiseWebServiceClient.cs" />

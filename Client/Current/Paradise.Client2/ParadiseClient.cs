@@ -50,7 +50,7 @@ namespace Paradise.Client {
 			Log.Info($"Initializing Paradise (Version {Assembly.GetExecutingAssembly().GetName().Version}) ({Application.platform})");
 
 			ParadiseMainMenuMusicManager.LoadMainMenuMusic();
-			//RichPresenceClient.Initialize();
+			RichPresenceClient.Initialize();
 		}
 
 		private static void OnUnityDebugCallback(string logString, string stackTrace, LogType logType) {
