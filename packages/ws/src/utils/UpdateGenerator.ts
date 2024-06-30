@@ -76,6 +76,8 @@ export class UpdateGenerator {
   }
 
   public static async generate(outputDir: string): Promise<void> {
+    console.log('Generating V2 updates...');
+
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
     }
@@ -141,11 +143,15 @@ export class UpdateGenerator {
         );
       }
     }
+
+    console.log('OK');
   }
 }
 
 export class FallbackUpdateGenerator extends UpdateGenerator {
   public static async generate(outputDir: string): Promise<void> {
+    console.log('Generating pre-V2 updates...');
+
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
     }
@@ -210,5 +216,7 @@ export class FallbackUpdateGenerator extends UpdateGenerator {
         );
       }
     }
+
+    console.log('OK');
   }
 }
