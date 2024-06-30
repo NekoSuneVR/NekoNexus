@@ -41,9 +41,9 @@ namespace Paradise.Client {
 
 			var color = GUI.contentColor;
 			GUI.contentColor = ColorScheme.UberStrikeRed;
-			GUI.enabled = ItemManager.Instance.TryGetDefaultItem(item.View.ItemClass, out var defaultItem) && defaultItem.View.ID != item.View.ID;
+			GUI.enabled = (ItemManager.Instance.TryGetDefaultItem(item.View.ItemClass, out var defaultItem) && defaultItem.View.ID != item.View.ID) || defaultItem == null;
 
-			if (GUITools.Button(new Rect(rect.width - (50f + 4f + 50f + 8f), 7f, 54f, 46f), new GUIContent("Remove"), BlueStonez.buttondark_medium)) {
+			if (GUITools.Button(new Rect(rect.width - (50f + 4f + 50f + 8f), 7f, 54f, 46f), new GUIContent("Remove", defaultItem?.View.ID == item.View.ID ? "You can't remove default items." : null), BlueStonez.buttondark_medium)) {
 				PopupSystem.ShowMessage("Delete Item", $"Are you sure you want to remove \"{item.Name}\" from your inventory? To use it, you'll need to purchase it from the shop again.", PopupSystem.AlertType.OKCancel, () => {
 					ParadiseWebServiceClient.RemoveItemFromInventory(item.View.ID, PlayerDataManager.AuthToken, delegate (int result) {
 						UnityRuntime.StartRoutine(UpdateInventoryAndWallet());
