@@ -63,33 +63,31 @@ winston.addColors({
 });
 
 export default class Log {
-  static success(message: string): void {
+  static success(message: any): void {
     this.write(message, LogLevel.OK);
   }
 
-  static info(message: string): void {
+  static info(message: any): void {
     this.write(message, LogLevel.INFO);
   }
 
-  static warn(message: string): void {
+  static warn(message: any): void {
     this.write(message, LogLevel.WARN);
   }
 
-  static error(message: string, error?: any): void {
+  static error(message: any, error?: any): void {
     this.write(message, LogLevel.ERROR, error);
   }
 
-  static fatal(message: string): void {
+  static fatal(message: any): void {
     this.write(message, LogLevel.FATAL);
   }
 
-  static debug(message: string): void {
-    if (process.env.NODE_ENV !== 'production') {
-      this.write(message, LogLevel.DEBUG);
-    }
+  static debug(message: any): void {
+    this.write(message, LogLevel.DEBUG);
   }
 
-  static write(message: string, level: LogLevel = LogLevel.INFO, error?: any): void {
+  static write(message: any, level: LogLevel = LogLevel.INFO, error?: any): void {
     logger.log(LogLevel[level], message);
 
     if (error) console.error(error);
