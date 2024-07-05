@@ -13,7 +13,9 @@
     "build:linux-x64": "bun build --compile --minify --target=bun-linux-x64 src/index.ts --outfile build/linux-x64/Paradise.WebServices",
     "build:linux-arm64": "bun build --compile --minify --sourcemap --target=bun-linux-arm64 src/index.ts --outfile build/linux-arm64/Paradise.WebServices",
     "build:darwin-x64": "bun build --compile --minify --sourcemap --target=bun-darwin-x64 src/index.ts --outfile build/darwin-x64/Paradise.WebServices",
-    "build:darwin-arm64": "bun build --compile --minify --sourcemap --target=bun-darwin-arm64 src/index.ts --outfile build/darwin-arm64/Paradise.WebServices"
+    "build:darwin-arm64": "bun build --compile --minify --sourcemap --target=bun-darwin-arm64 src/index.ts --outfile build/darwin-arm64/Paradise.WebServices",
+	"updates": "bun src/index.ts gen-updates",
+	"updates:fallback": "bun src/index.ts gen-updates --fallback"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
