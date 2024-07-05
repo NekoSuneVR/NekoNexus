@@ -5,7 +5,7 @@ import YAML from 'yaml';
 
 const FILE_NAME = 'updates';
 const FILE_SUFFIX = 'yml';
-const VERSION = '2.1.2';
+const VERSION = '2.1.2.1';
 
 const CHANNELS = ['stable', 'beta'];
 const PLATFORMS: string[] = ['win', 'darwin', 'universal'];
@@ -72,7 +72,7 @@ export class UpdateGenerator {
   }
 
   public static normalizePath(pth: string): string {
-    return path.normalize(pth).replace(path.sep, '/');
+    return path.normalize(pth).split(path.sep).join('/');
   }
 
   public static async generate(outputDir: string): Promise<void> {
