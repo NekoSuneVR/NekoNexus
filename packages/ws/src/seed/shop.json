@@ -138,10 +138,7 @@
 				}
 			],
 			"ArmorPoints": 300,
-			"ArmorWeight": 0,
-			"CustomProperties": {
-				"MinimumRank": "Admin"
-			}
+			"ArmorWeight": 0
 		},
 		{
 			"ItemClass": 12,
@@ -2699,10 +2696,7 @@
 				}
 			],
 			"ArmorPoints": 50,
-			"ArmorWeight": 0,
-			"CustomProperties": {
-				"MinimumRank": "SeniorModerator"
-			}
+			"ArmorWeight": 0
 		},
 		{
 			"ItemClass": 15,
@@ -4494,10 +4488,7 @@
 				}
 			],
 			"ArmorPoints": 50,
-			"ArmorWeight": 0,
-			"CustomProperties": {
-				"MinimumRank": "Moderator"
-			}
+			"ArmorWeight": 0
 		},
 		{
 			"ItemClass": 12,
@@ -5149,10 +5140,7 @@
 				}
 			],
 			"ArmorPoints": 100,
-			"ArmorWeight": 0,
-			"CustomProperties": {
-				"MinimumRank": "QA"
-			}
+			"ArmorWeight": 0
 		},
 		{
 			"ItemClass": 17,
@@ -13240,10 +13228,7 @@
 			"SplashRadius": 0,
 			"StartAmmo": 120,
 			"Tier": 1,
-			"WeaponSecondaryAction": 0,
-			"CustomProperties": {
-				"MinimumRank": "Admin"
-			}
+			"WeaponSecondaryAction": 0
 		},
 		{
 			"ItemClass": 3,
@@ -13735,10 +13720,7 @@
 			"SplashRadius": 5000,
 			"StartAmmo": 100,
 			"Tier": 1,
-			"WeaponSecondaryAction": 0,
-			"CustomProperties": {
-				"MinimumRank": "Admin"
-			}
+			"WeaponSecondaryAction": 0
 		}
 	]
 }
