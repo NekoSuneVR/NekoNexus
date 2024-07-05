@@ -1,0 +1,4 @@
+[submodule "packages/Core"]
+	path = packages/Core
+	url = https://github.com/festivaldev/UberStrike-Reverse-Engineered
+	branch = master

@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net35</TargetFramework>
+	<OutputPath>bin\$(Configuration)</OutputPath>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<GenerateSupportedRuntime>False</GenerateSupportedRuntime>
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+	<DebugSymbols>False</DebugSymbols>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowedReferenceRelatedFileExtensions>
+      <!-- Prevent default XML and PDB files copied to output in RELEASE.
+           Only *.allowedextension files will be included, which doesn't exist in my case.
+      -->
+      .allowedextension
+	</AllowedReferenceRelatedFileExtensions>
+    <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=C:\buildroot\$(MSBuildProjectName)</PathMap>
+	<GenerateDocumentationFile>False</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Paradise.Client\Paradise.Client.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lib.Harmony" Version="2.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\AssemblyReferences\4.7.1\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <PropertyGroup>
+	<PreBuildEvent>taskkill /f /im UberStrike.exe 2>nul 1>nul
+exit 0</PreBuildEvent>
+    <PostBuildEvent>XCOPY /Y /R /Q "$(MSBuildProjectDirectory)\$(OutputPath)\*.dll" "$(MSBuildProjectDirectory)\..\..\..\ws\wwwroot\updates\v2\beta\universal\UberStrike_Data\Managed\" > nul</PostBuildEvent>
+  </PropertyGroup>
+
+</Project>

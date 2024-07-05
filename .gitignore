@@ -181,3 +181,11 @@ build/
 *.old/
 **/wwwroot/updates
 migration
+
+bin
+obj
+packages/AssemblyReferences/**/*.dll
+packages/Realtime/photon/*
+*.csproj.user
+*.DotSettings.user
+.vs

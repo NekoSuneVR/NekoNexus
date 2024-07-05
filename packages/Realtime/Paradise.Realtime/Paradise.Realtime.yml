@@ -1,0 +1,40 @@
+﻿MasterHostname: '127.0.0.1'
+
+WebServicePort: 8080
+FileServerPort: 8081
+SocketPort: 8082
+
+WebServiceEndpoint: '/2.0'
+WebServicePrefix: 'UberStrike.DataCenter.WebService.CWS.'
+WebServiceSuffix: 'Contract.svc'
+WebServiceUseTLS: false
+
+CommApplicationSettings:
+  ApplicationIdentifier: # Add GUID here
+  PhotonId: 0
+  EncryptionPassPhrase: # Add passphrase here
+  MaxPlayerCount: 100
+
+GameApplicationSettings:
+  ApplicationIdentifier: # Add GUID here
+  PhotonId: 1
+  EncryptionPassPhrase: # Add passphrase here
+  MaxPlayerCount: 100
+
+EnableChatLog: true
+
+HeartbeatInterval: 5
+HeartbeatTimeout: 5
+EnableHashVerification: false
+
+CompositeHashes:
+  -
+
+JunkHashes:
+  -
+
+GameplaySettings:
+  MatchCountdownTime: 5
+  PlayerRespawnTime: 5
+  AllowFriendlyFire: false
+  MatchEndTimeout: 3

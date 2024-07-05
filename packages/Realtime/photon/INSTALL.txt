@@ -1,0 +1,2 @@
+Download the Photon OnPremise Server SDK (v4.0.29-11263) from https://dashboard.photonengine.com/en-US/download/photon-server-sdk_v4-0-29-11263.exe
+and extract the contents of `Photon-OnPremise-Server-SDK_v4-0-29-11263\deploy\bin_Win64` in this directory.

@@ -1,4 +1,9 @@
 {
-	"private": true,
-	"workspaces": ["./packages/*"]
+  "private": true,
+  "workspaces": ["./packages/*"],
+  "scripts": {
+	"build:client": "cd packages/Client/Current/Paradise.Client.Bootstrap; dotnet build -c Release",
+	"build:realtime": "cd packages/Realtime/Paradise.Realtime; dotnet build -c Release",
+	"start:ws": "cd packages/ws; bun start"
+  }
 }
