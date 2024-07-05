@@ -49,6 +49,8 @@ export default class ParadiseService {
   public async Run() {
     ConsoleHelper.PrintConsoleHeader();
 
+    Log.info(`Using environment: ${Bun.env.NODE_ENV || 'development'}`);
+
     this.ServiceSettings = new ParadiseServiceSettings(path.join(process.cwd(), 'Paradise.Settings.WebServices.yml'));
     this.SessionManager = new GameSessionManager();
 
