@@ -272,7 +272,7 @@ export default class ShopWebService extends BaseWebService {
                     });
                     break;
                   case UberstrikeItemType.Gear:
-                    item = await ShopWeaponItem.findOne({
+                    item = await ShopGearItem.findOne({
                       where: { ID: itemId },
                       include: [
                         {
@@ -284,7 +284,7 @@ export default class ShopWebService extends BaseWebService {
                     });
                     break;
                   case UberstrikeItemType.QuickUse:
-                    item = await ShopWeaponItem.findOne({
+                    item = await ShopQuickItem.findOne({
                       where: { ID: itemId },
                       include: [
                         {
@@ -296,7 +296,7 @@ export default class ShopWebService extends BaseWebService {
                     });
                     break;
                   case UberstrikeItemType.Functional:
-                    item = await ShopWeaponItem.findOne({
+                    item = await ShopFunctionalItem.findOne({
                       where: { ID: itemId },
                       include: [
                         {
