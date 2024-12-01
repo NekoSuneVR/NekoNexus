@@ -1,17 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net481</TargetFramework>
     <OutputPath>..\..\..\build\server\Paradise.Realtime\bin</OutputPath>
-	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-	<GenerateSupportedRuntime>False</GenerateSupportedRuntime>
-	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateSupportedRuntime>False</GenerateSupportedRuntime>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
-	<DebugSymbols>False</DebugSymbols>
+    <DebugSymbols>False</DebugSymbols>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -21,9 +21,11 @@
            Only *.allowedextension files will be included, which doesn't exist in my case.
       -->
       .allowedextension
-	</AllowedReferenceRelatedFileExtensions>
-    <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=C:\buildroot\$(MSBuildProjectName)</PathMap>
-	<GenerateDocumentationFile>False</GenerateDocumentationFile>
+    </AllowedReferenceRelatedFileExtensions>
+    <PathMap>
+      $([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=C:\buildroot\$(MSBuildProjectName)
+    </PathMap>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -56,8 +58,8 @@
   </ItemGroup>
 
   <ItemGroup>
-	<ProjectReference Include="..\..\Core\Cmune\Cmune.dotnet.csproj" />
-	<ProjectReference Include="..\..\Core\UberStrike.Core.Types\UberStrike.Core.Types.dotnet.csproj" />
+    <ProjectReference Include="..\..\Core\Cmune\Cmune.dotnet.csproj" />
+    <ProjectReference Include="..\..\Core\UberStrike.Core.Types\UberStrike.Core.Types.dotnet.csproj" />
     <ProjectReference Include="..\..\Core\UberStrike.Core\UberStrike.Core.dotnet.csproj" />
     <ProjectReference Include="..\..\Core\UberStrike.DataCenter.Common\UberStrike.DataCenter.Common.dotnet.csproj" />
     <ProjectReference Include="..\..\Core\UberStrike.Realtime.Client\UberStrike.Realtime.Client.dotnet.csproj" />
@@ -66,9 +68,8 @@
 
   <ItemGroup>
     <EmbeddedResource Include="log4net.config" />
-	<None Include="Paradise.Realtime.yml">
+    <None Include="Paradise.Realtime.yml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
 </Project>

@@ -1,16 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net35</TargetFramework>
     <OutputPath>..\..\..\..\build\client\Managed</OutputPath>
-	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-	<GenerateSupportedRuntime>False</GenerateSupportedRuntime>
-	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateSupportedRuntime>False</GenerateSupportedRuntime>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
-	<DebugSymbols>False</DebugSymbols>
+    <DebugSymbols>False</DebugSymbols>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -20,9 +20,11 @@
            Only *.allowedextension files will be included, which doesn't exist in my case.
       -->
       .allowedextension
-	</AllowedReferenceRelatedFileExtensions>
-    <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=C:\buildroot\$(MSBuildProjectName)</PathMap>
-	<GenerateDocumentationFile>False</GenerateDocumentationFile>
+    </AllowedReferenceRelatedFileExtensions>
+    <PathMap>
+      $([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=C:\buildroot\$(MSBuildProjectName)
+    </PathMap>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -63,9 +65,10 @@
     </Compile>
   </ItemGroup>
 
-  <PropertyGroup>
-	<PreBuildEvent>taskkill /f /im UberStrike.exe 2>nul 1>nul
-exit 0</PreBuildEvent>
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <PreBuildEvent>
+      taskkill /f /im UberStrike.exe 2>nul 1>nul
+exit 0
+    </PreBuildEvent>
   </PropertyGroup>
-
 </Project>
