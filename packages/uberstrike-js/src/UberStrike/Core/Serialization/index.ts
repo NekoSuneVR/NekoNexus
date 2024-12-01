@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 export { default as AccountCompletionResultViewProxy } from './AccountCompletionResultViewProxy';
 export { default as ApplicationConfigurationViewProxy } from './ApplicationConfigurationViewProxy';
 export { default as ApplicationViewProxy } from './ApplicationViewProxy';
@@ -22,8 +39,8 @@ export { default as CommActorInfoProxy } from './CommActorInfoProxy';
 export { default as ConnectionAddressProxy } from './ConnectionAddressProxy';
 export { default as ContactGroupViewProxy } from './ContactGroupViewProxy';
 export { default as ContactRequestViewProxy } from './ContactRequestViewProxy';
-export { default as CurrencyDepositViewProxy } from './CurrencyDepositViewProxy';
 export { default as CurrencyDepositsViewModelProxy } from './CurrencyDepositsViewModelProxy';
+export { default as CurrencyDepositViewProxy } from './CurrencyDepositViewProxy';
 export { default as DailyPointsViewProxy } from './DailyPointsViewProxy';
 export { default as DamageEventProxy } from './DamageEventProxy';
 export { default as DateTimeProxy } from './DateTimeProxy';
@@ -45,8 +62,8 @@ export { default as ItemAssetBundleViewProxy } from './ItemAssetBundleViewProxy'
 export { default as ItemInventoryViewProxy } from './ItemInventoryViewProxy';
 export { default as ItemPriceProxy } from './ItemPriceProxy';
 export { default as ItemQuickUseConfigViewProxy } from './ItemQuickUseConfigViewProxy';
-export { default as ItemTransactionViewProxy } from './ItemTransactionViewProxy';
 export { default as ItemTransactionsViewModelProxy } from './ItemTransactionsViewModelProxy';
+export { default as ItemTransactionViewProxy } from './ItemTransactionViewProxy';
 export { default as ListProxy } from './ListProxy';
 export { default as LiveFeedViewProxy } from './LiveFeedViewProxy';
 export { default as LoadoutViewProxy } from './LoadoutViewProxy';
@@ -69,7 +86,6 @@ export { default as PackageViewProxy } from './PackageViewProxy';
 export { default as ParadiseMapViewProxy } from './ParadiseMapViewProxy';
 export { default as PhotonServerLoadProxy } from './PhotonServerLoadProxy';
 export { default as PhotonViewProxy } from './PhotonViewProxy';
-export { default as PlaySpanHashesViewModelProxy } from './PlaySpanHashesViewModelProxy';
 export { default as PlayerCardViewProxy } from './PlayerCardViewProxy';
 export { default as PlayerLevelCapViewProxy } from './PlayerLevelCapViewProxy';
 export { default as PlayerMatchStatsProxy } from './PlayerMatchStatsProxy';
@@ -78,8 +94,9 @@ export { default as PlayerPersonalRecordStatisticsViewProxy } from './PlayerPers
 export { default as PlayerStatisticsViewProxy } from './PlayerStatisticsViewProxy';
 export { default as PlayerWeaponStatisticsViewProxy } from './PlayerWeaponStatisticsViewProxy';
 export { default as PlayerXPEventViewProxy } from './PlayerXPEventViewProxy';
-export { default as PointDepositViewProxy } from './PointDepositViewProxy';
+export { default as PlaySpanHashesViewModelProxy } from './PlaySpanHashesViewModelProxy';
 export { default as PointDepositsViewModelProxy } from './PointDepositsViewModelProxy';
+export { default as PointDepositViewProxy } from './PointDepositViewProxy';
 export { default as PrivateMessageViewProxy } from './PrivateMessageViewProxy';
 export { default as PublicProfileViewProxy } from './PublicProfileViewProxy';
 export { default as QuaternionProxy } from './QuaternionProxy';
@@ -91,8 +108,6 @@ export { default as SingleProxy } from './SingleProxy';
 export { default as StatsCollectionProxy } from './StatsCollectionProxy';
 export { default as StatsSummaryProxy } from './StatsSummaryProxy';
 export { default as StringProxy } from './StringProxy';
-export { default as UInt16Proxy } from './UInt16Proxy';
-export { default as UShortProxy } from './UShortProxy';
 export { default as UberStrikeItemFunctionalViewProxy } from './UberStrikeItemFunctionalViewProxy';
 export { default as UberStrikeItemGearViewProxy } from './UberStrikeItemGearViewProxy';
 export { default as UberStrikeItemQuickViewProxy } from './UberStrikeItemQuickViewProxy';
@@ -101,4 +116,6 @@ export { default as UberStrikeItemWeaponViewProxy } from './UberStrikeItemWeapon
 export { default as UberstrikeLevelViewModelProxy } from './UberstrikeLevelViewModelProxy';
 export { default as UberstrikeMemberViewProxy } from './UberstrikeMemberViewProxy';
 export { default as UberstrikeUserViewModelProxy } from './UberstrikeUserViewModelProxy';
+export { default as UInt16Proxy } from './UInt16Proxy';
+export { default as UShortProxy } from './UShortProxy';
 export { default as Vector3Proxy } from './Vector3Proxy';

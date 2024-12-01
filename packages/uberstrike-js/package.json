@@ -1,35 +1,33 @@
 {
   "name": "@festivaldev/uberstrike-js",
-  "version": "4.7.1",
-  "homepage": "https://github.com/festivaldev/uberstrike-js",
-  "author": "Team FESTIVAL <weare@festival.tf>",
-  "license": "GPL-3.0-only",
   "module": "src/index.ts",
-  "type": "module",
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "@types/bun": "latest",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^8.0.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "^3.3.3",
+    "typescript-eslint": "^8.0.0"
+  },
   "exports": {
-    "./Cmune/Core/Models/Views": "./src/Cmune/Core/Models/Views/index.ts",
     "./Cmune/Core/Models": "./src/Cmune/Core/Models/index.ts",
+    "./Cmune/Core/Models/Views": "./src/Cmune/Core/Models/Views/index.ts",
     "./Cmune/DataCenter/Common/Entities": "./src/Cmune/DataCenter/Common/Entities/index.ts",
     "./UberStrike/Core/Models/Views": "./src/UberStrike/Core/Models/Views/index.ts",
     "./UberStrike/Core/Models": "./src/UberStrike/Core/Models/index.ts",
     "./UberStrike/Core/Serialization": "./src/UberStrike/Core/Serialization/index.ts",
     "./UberStrike/Core/Serialization/Legacy": "./src/UberStrike/Core/Serialization/Legacy/index.ts",
-    "./UberStrike/Core/Types": "./src/UberStrike/Core/Types/index.ts",
+    "./UberStrike/Core/Types": "./src/UberStrike/Core/Types.ts",
     "./UberStrike/Core/ViewModel": "./src/UberStrike/Core/ViewModel/index.ts",
-    "./UberStrike/DataCenter/Common/Entities": "./src/UberStrike/DataCenter/Common/Entities/index.ts"
+    "./UberStrike/DataCenter/Common/Entities": "./src/UberStrike/DataCenter/Common/Entities/index.ts",
+    "./UnityEngine": "./src/UnityEngine/index.ts"
   },
-  "devDependencies": {
-    "@types/bun": "latest",
-    "@typescript-eslint/eslint-plugin": "^7.8.0",
-    "@typescript-eslint/parser": "^7.8.0",
-    "eslint": "8.x",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-prettier": "^5.1.3",
-    "prettier": "^3.2.5"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  }
+  "type": "module"
 }

@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { ItemPropertyType } from '@/Cmune/DataCenter/Common/Entities';
 import { ItemPrice, UberStrikeItemGearView } from '@/UberStrike/Core/Models/Views';
 import { ItemShopHighlightType, UberstrikeItemClass } from '@/UberStrike/Core/Types';
@@ -10,10 +27,10 @@ import ListProxy from './ListProxy';
 import StringProxy from './StringProxy';
 
 export default class UberStrikeItemGearViewProxy {
-  public static Serialize(stream: Stream, instance: UberStrikeItemGearView) {
+  static Serialize(stream: number[], instance: UberStrikeItemGearView) {
     let num = 0;
 
-    const memoryStream: MemoryStream = [];
+    const memoryStream: number[] = [];
     Int32Proxy.Serialize(memoryStream, instance.ArmorPoints);
     Int32Proxy.Serialize(memoryStream, instance.ArmorWeight);
 
@@ -39,7 +56,7 @@ export default class UberStrikeItemGearViewProxy {
     EnumProxy.Serialize<UberstrikeItemClass>(memoryStream, instance.ItemClass);
 
     if (instance.ItemProperties) {
-      DictionaryProxy.Serialize<ItemPropertyType, int>(
+      DictionaryProxy.Serialize<ItemPropertyType, number>(
         memoryStream,
         instance.ItemProperties,
         EnumProxy.Serialize<ItemPropertyType>,
@@ -72,10 +89,10 @@ export default class UberStrikeItemGearViewProxy {
 
     EnumProxy.Serialize<ItemShopHighlightType>(memoryStream, instance.ShopHighlightType);
     Int32Proxy.Serialize(stream, ~num);
-    memoryStream.WriteTo(stream);
+    memoryStream.writeTo(stream);
   }
 
-  public static Deserialize(bytes: Stream): UberStrikeItemGearView {
+  static Deserialize(bytes: number[]): UberStrikeItemGearView {
     const num = Int32Proxy.Deserialize(bytes);
     const uberStrikeItemGearView = new UberStrikeItemGearView();
     uberStrikeItemGearView.ArmorPoints = Int32Proxy.Deserialize(bytes);
@@ -98,7 +115,7 @@ export default class UberStrikeItemGearViewProxy {
     uberStrikeItemGearView.ItemClass = EnumProxy.Deserialize<UberstrikeItemClass>(bytes);
 
     if ((num & 4) !== 0) {
-      uberStrikeItemGearView.ItemProperties = DictionaryProxy.Deserialize<ItemPropertyType, int>(
+      uberStrikeItemGearView.ItemProperties = DictionaryProxy.Deserialize<ItemPropertyType, number>(
         bytes,
         EnumProxy.Deserialize<ItemPropertyType>,
         Int32Proxy.Deserialize,

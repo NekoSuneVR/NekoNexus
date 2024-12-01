@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import {
   UberStrikeItemFunctionalView,
   UberStrikeItemGearView,
@@ -14,10 +31,10 @@ import UberStrikeItemQuickViewProxy from './UberStrikeItemQuickViewProxy';
 import UberStrikeItemWeaponViewProxy from './UberStrikeItemWeaponViewProxy';
 
 export default class UberStrikeItemShopClientViewProxy {
-  public static Serialize(stream: Stream, instance: UberStrikeItemShopClientView): void {
+  static Serialize(stream: number[], instance: UberStrikeItemShopClientView): void {
     let num = 0;
     if (instance) {
-      const memoryStream: MemoryStream = [];
+      const memoryStream: number[] = [];
       if (instance.FunctionalItems) {
         ListProxy.Serialize<UberStrikeItemFunctionalView>(
           memoryStream,
@@ -37,7 +54,7 @@ export default class UberStrikeItemShopClientViewProxy {
         num |= 2;
       }
       if (instance.ItemsRecommendationPerMap) {
-        DictionaryProxy.Serialize<int, int>(
+        DictionaryProxy.Serialize<number, number>(
           memoryStream,
           instance.ItemsRecommendationPerMap,
           Int32Proxy.Serialize,
@@ -65,13 +82,13 @@ export default class UberStrikeItemShopClientViewProxy {
         num |= 16;
       }
       Int32Proxy.Serialize(stream, ~num);
-      memoryStream.WriteTo(stream);
+      memoryStream.writeTo(stream);
       return;
     }
     Int32Proxy.Serialize(stream, 0);
   }
 
-  public static Deserialize(bytes: Stream): UberStrikeItemShopClientView | null {
+  static Deserialize(bytes: number[]): UberStrikeItemShopClientView | null {
     const num = Int32Proxy.Deserialize(bytes);
     let uberStrikeItemShopClientView: UberStrikeItemShopClientView | null = null;
     if (num !== 0) {
@@ -89,7 +106,7 @@ export default class UberStrikeItemShopClientViewProxy {
         );
       }
       if ((num & 4) !== 0) {
-        uberStrikeItemShopClientView.ItemsRecommendationPerMap = DictionaryProxy.Deserialize<int, int>(
+        uberStrikeItemShopClientView.ItemsRecommendationPerMap = DictionaryProxy.Deserialize<number, number>(
           bytes,
           Int32Proxy.Deserialize,
           Int32Proxy.Deserialize,

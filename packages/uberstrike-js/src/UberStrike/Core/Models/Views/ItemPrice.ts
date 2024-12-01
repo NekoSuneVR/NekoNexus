@@ -1,24 +1,18 @@
 import { BuyingDurationType, PackType, UberStrikeCurrencyType } from '@/Cmune/DataCenter/Common/Entities';
 
 export default class ItemPrice {
-  [key: string]: any;
+  Price: number;
+  Currency: UberStrikeCurrencyType;
+  Discount: number;
+  Amount: number;
+  PackType: PackType;
+  Duration: BuyingDurationType;
 
-  public Price: int;
-  public Currency: UberStrikeCurrencyType;
-  public Discount: int;
-  public Amount: int;
-  public PackType: PackType;
-  public Duration: BuyingDurationType;
-
-  constructor(params: any = {}) {
-    Object.keys(params)
-      .filter((key) => key in this)
-      .forEach((key) => {
-        this[key] = params[key];
-      });
+  constructor(params: Partial<ItemPrice> = {}) {
+    Object.assign(this, params);
   }
 
-  public get IsConsumable(): bool {
+  get IsConsumable(): boolean {
     return this.Amount > 0;
   }
 }

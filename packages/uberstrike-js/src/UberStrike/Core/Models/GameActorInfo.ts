@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { ChannelType, MemberAccessLevel } from '@/Cmune/DataCenter/Common/Entities';
 import BodyPart from './BodyPart';
 import FireMode from './FireMode';
@@ -6,76 +23,73 @@ import SurfaceType from './SurfaceType';
 import TeamID from './TeamID';
 
 export default class GameActorInfo {
-  [key: string]: any;
+  Cmid: number;
+  PlayerName: string;
+  AccessLevel: MemberAccessLevel;
+  Channel: ChannelType;
+  ClanTag: string;
+  Rank: number;
+  PlayerId: number;
+  PlayerState: PlayerStates;
+  Health: number;
+  TeamID: TeamID;
+  Level: number;
+  Ping: number;
+  CurrentWeaponSlot: number;
+  CurrentFiringMode: FireMode;
+  ArmorPoints: number;
+  ArmorPointCapacity: number;
+  SkinColor: Color;
+  Kills: number;
+  Deaths: number;
+  Weapons: number[] = [0, 0, 0, 0];
+  Gear: number[] = [0, 0, 0, 0, 0, 0, 0];
+  FunctionalItems: number[] = [0, 0, 0];
+  QuickItems: number[] = [0, 0, 0];
+  StepSound: SurfaceType;
 
-  public Cmid: int;
-  public PlayerName: string;
-  public AccessLevel: MemberAccessLevel;
-  public Channel: ChannelType;
-  public ClanTag: string;
-  public Rank: byte;
-  public PlayerId: byte;
-  public PlayerState: PlayerStates;
-  public Health: byte;
-  public TeamID: TeamID;
-  public Level: int;
-  public Ping: ushort;
-  public CurrentWeaponSlot: byte;
-  public CurrentFiringMode: FireMode;
-  public ArmorPoints: byte;
-  public ArmorPointCapacity: byte;
-  public SkinColor: Color;
-  public Kills: short;
-  public Deaths: short;
-  public Weapons: int[] = [0, 0, 0, 0];
-  public Gear: int[] = [0, 0, 0, 0, 0, 0, 0];
-  public FunctionalItems: int[] = [0, 0, 0];
-  public QuickItems: int[] = [0, 0, 0];
-  public StepSound: SurfaceType;
-
-  public get IsFiring(): bool {
+  get IsFiring(): boolean {
     return this.Is(PlayerStates.Shooting);
   }
 
-  public get IsReadyForGame(): bool {
+  get IsReadyForGame(): boolean {
     return this.Is(PlayerStates.Ready);
   }
 
-  public get IsOnline(): bool {
+  get IsOnline(): boolean {
     return !this.Is(PlayerStates.Offline);
   }
 
-  public CurrentWeaponID(): int {
+  CurrentWeaponID(): number {
     return this.Weapons == null || this.Weapons.length <= this.CurrentWeaponSlot
       ? 0
       : this.Weapons[this.CurrentWeaponSlot];
   }
 
-  public get IsAlive(): bool {
+  get IsAlive(): boolean {
     return (this.PlayerState & PlayerStates.Dead) === 0;
   }
 
-  public get IsSpectator(): bool {
+  get IsSpectator(): boolean {
     return (this.PlayerState & PlayerStates.Spectator) !== 0;
   }
 
-  constructor(params: any = {}) {
-    Object.keys(params)
-      .filter((key) => key in this)
-      .forEach((key) => {
-        this[key] = params[key];
-      });
+  constructor(params: Partial<GameActorInfo> = {}) {
+    Object.assign(this, params);
   }
 
-  public Is(state: PlayerStates): bool {
+  Is(state: PlayerStates): boolean {
     return (this.PlayerState & state) !== 0;
   }
 
-  public GetAbsorptionRate(): float {
+  GetAbsorptionRate(): number {
     return 0.66;
   }
 
-  public Damage(damage: short, part: BodyPart, healthDamage: short, armorDamage: short): void {
+  Damage(damage: number, part: BodyPart): { healthDamage: number; armorDamage: number } {
+    let healthDamage = 0;
+    let armorDamage = 0;
+
     if (this.ArmorPoints > 0) {
       const num = Math.ceil(this.GetAbsorptionRate() * damage);
       armorDamage = Math.clamp(num, 0, this.ArmorPoints);
@@ -84,5 +98,7 @@ export default class GameActorInfo {
       armorDamage = 0;
       healthDamage = damage;
     }
+
+    return { healthDamage, armorDamage };
   }
 }

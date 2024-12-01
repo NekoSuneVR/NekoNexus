@@ -1,33 +1,44 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 export default class PlayerPersonalRecordStatisticsView {
-  [key: string]: any;
+  MostHeadshots: number;
+  MostNutshots: number;
+  MostConsecutiveSnipes: number;
+  MostXPEarned: number;
+  MostSplats: number;
+  MostDamageDealt: number;
+  MostDamageReceived: number;
+  MostArmorPickedUp: number;
+  MostHealthPickedUp: number;
+  MostMeleeSplats: number;
+  MostHandgunSplats: number; // # LEGACY # //
+  MostMachinegunSplats: number;
+  MostShotgunSplats: number;
+  MostSniperSplats: number;
+  MostSplattergunSplats: number;
+  MostCannonSplats: number;
+  MostLauncherSplats: number;
 
-  public MostHeadshots: int;
-  public MostNutshots: int;
-  public MostConsecutiveSnipes: int;
-  public MostXPEarned: int;
-  public MostSplats: int;
-  public MostDamageDealt: int;
-  public MostDamageReceived: int;
-  public MostArmorPickedUp: int;
-  public MostHealthPickedUp: int;
-  public MostMeleeSplats: int;
-  public MostHandgunSplats: int; // # LEGACY # //
-  public MostMachinegunSplats: int;
-  public MostShotgunSplats: int;
-  public MostSniperSplats: int;
-  public MostSplattergunSplats: int;
-  public MostCannonSplats: int;
-  public MostLauncherSplats: int;
-
-  constructor(params: any = {}) {
-    Object.keys(params)
-      .filter((key) => key in this)
-      .forEach((key) => {
-        this[key] = params[key];
-      });
+  constructor(params: Partial<PlayerPersonalRecordStatisticsView> = {}) {
+    Object.assign(this, params);
   }
 
-  public toString(): string {
+  toString(): string {
     return `[PlayerPersonalRecordStatisticsView: [MostArmorPickedUp: ${this.MostArmorPickedUp}][MostCannonSplats: ${this.MostCannonSplats}][MostConsecutiveSnipes: ${this.MostConsecutiveSnipes}][MostDamageDealt: ${this.MostDamageDealt}][MostDamageReceived: ${this.MostDamageReceived}][MostHandgunSplats: ${this.MostHandgunSplats}][MostHeadshots: ${this.MostHeadshots}][MostHealthPickedUp: ${this.MostHealthPickedUp}][MostLauncherSplats: ${this.MostLauncherSplats}][MostMachinegunSplats: ${this.MostMachinegunSplats}][MostMeleeSplats: ${this.MostMeleeSplats}][MostNutshots: ${this.MostNutshots}][MostShotgunSplats: ${this.MostShotgunSplats}][MostSniperSplats: ${this.MostSniperSplats}][MostSplats: ${this.MostSplats}][MostSplattergunSplats: ${this.MostSplattergunSplats}][MostXPEarned: ${this.MostXPEarned}]]`;
   }
 }

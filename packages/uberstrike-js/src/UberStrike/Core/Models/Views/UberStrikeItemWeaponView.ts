@@ -1,197 +1,214 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { UberstrikeItemType } from '@/UberStrike/Core/Types';
 import BaseUberStrikeItemView from './BaseUberStrikeItemView';
 
 export default class UberStrikeItemWeaponView extends BaseUberStrikeItemView {
-  private _accuracySpread: int;
-  private _combatRange: int;
-  private _criticalStrikeBonus: int;
-  private _damageKnockback: int;
-  private _damagePerProjectile: int;
-  private _defaultZoomMultiplier: int;
-  private _hasAutoFire: bool;
-  private _maxAmmo: int;
-  private _maxZoomMultiplier: int;
-  private _minZoomMultiplier: int;
-  private _missileBounciness: int;
-  private _missileForceImpulse: int;
-  private _missileTimeToDetonate: int;
-  private _projectileSpeed: int;
-  private _projectilesPerShot: int;
-  private _rateOfFire: int;
-  private _recoilKickback: int;
-  private _recoilMovement: int;
-  private _secondaryActionReticle: int;
-  private _splashRadius: int;
-  private _startAmmo: int;
-  private _tier: int;
-  private _weaponSecondaryAction: int;
+  private _accuracySpread: number;
+  private _combatRange: number;
+  private _criticalStrikeBonus: number;
+  private _damageKnockback: number;
+  private _damagePerProjectile: number;
+  private _defaultZoomMultiplier: number;
+  private _hasAutoFire: boolean;
+  private _maxAmmo: number;
+  private _maxZoomMultiplier: number;
+  private _minZoomMultiplier: number;
+  private _missileBounciness: number;
+  private _missileForceImpulse: number;
+  private _missileTimeToDetonate: number;
+  private _projectileSpeed: number;
+  private _projectilesPerShot: number;
+  private _rateOfFire: number;
+  private _recoilKickback: number;
+  private _recoilMovement: number;
+  private _secondaryActionReticle: number;
+  private _splashRadius: number;
+  private _startAmmo: number;
+  private _tier: number;
+  private _weaponSecondaryAction: number;
 
-  public override get ItemType(): UberstrikeItemType {
+  override get ItemType(): UberstrikeItemType {
     return UberstrikeItemType.Weapon;
   }
 
-  public get DamageKnockback(): int {
+  get DamageKnockback(): number {
     return this._damageKnockback;
   }
-  public set DamageKnockback(value: int) {
+  set DamageKnockback(value: number) {
     this._damageKnockback = value;
   }
 
-  public get DamagePerProjectile(): int {
+  get DamagePerProjectile(): number {
     return this._damagePerProjectile;
   }
-  public set DamagePerProjectile(value: int) {
+  set DamagePerProjectile(value: number) {
     this._damagePerProjectile = value;
   }
 
-  public get AccuracySpread(): int {
+  get AccuracySpread(): number {
     return this._accuracySpread;
   }
-  public set AccuracySpread(value: int) {
+  set AccuracySpread(value: number) {
     this._accuracySpread = value;
   }
 
-  public get RecoilKickback(): int {
+  get RecoilKickback(): number {
     return this._recoilKickback;
   }
-  public set RecoilKickback(value: int) {
+  set RecoilKickback(value: number) {
     this._recoilKickback = value;
   }
 
-  public get StartAmmo(): int {
+  get StartAmmo(): number {
     return this._startAmmo;
   }
-  public set StartAmmo(value: int) {
+  set StartAmmo(value: number) {
     this._startAmmo = value;
   }
 
-  public get MaxAmmo(): int {
+  get MaxAmmo(): number {
     return this._maxAmmo;
   }
-  public set MaxAmmo(value: int) {
+  set MaxAmmo(value: number) {
     this._maxAmmo = value;
   }
 
-  public get MissileTimeToDetonate(): int {
+  get MissileTimeToDetonate(): number {
     return this._missileTimeToDetonate;
   }
-  public set MissileTimeToDetonate(value: int) {
+  set MissileTimeToDetonate(value: number) {
     this._missileTimeToDetonate = value;
   }
 
-  public get MissileForceImpulse(): int {
+  get MissileForceImpulse(): number {
     return this._missileForceImpulse;
   }
-  public set MissileForceImpulse(value: int) {
+  set MissileForceImpulse(value: number) {
     this._missileForceImpulse = value;
   }
 
-  public get MissileBounciness(): int {
+  get MissileBounciness(): number {
     return this._missileBounciness;
   }
-  public set MissileBounciness(value: int) {
+  set MissileBounciness(value: number) {
     this._missileBounciness = value;
   }
 
-  public get SplashRadius(): int {
+  get SplashRadius(): number {
     return this._splashRadius;
   }
-  public set SplashRadius(value: int) {
+  set SplashRadius(value: number) {
     this._splashRadius = value;
   }
 
-  public get ProjectilesPerShot(): int {
+  get ProjectilesPerShot(): number {
     return this._projectilesPerShot;
   }
-  public set ProjectilesPerShot(value: int) {
+  set ProjectilesPerShot(value: number) {
     this._projectilesPerShot = value;
   }
 
-  public get ProjectileSpeed(): int {
+  get ProjectileSpeed(): number {
     return this._projectileSpeed;
   }
-  public set ProjectileSpeed(value: int) {
+  set ProjectileSpeed(value: number) {
     this._projectileSpeed = value;
   }
 
-  public get RateOfFire(): int {
+  get RateOfFire(): number {
     return this._rateOfFire;
   }
-  public set RateOfFire(value: int) {
+  set RateOfFire(value: number) {
     this._rateOfFire = value;
   }
 
-  public get RecoilMovement(): int {
+  get RecoilMovement(): number {
     return this._recoilMovement;
   }
-  public set RecoilMovement(value: int) {
+  set RecoilMovement(value: number) {
     this._recoilMovement = value;
   }
 
-  public get CombatRange(): int {
+  get CombatRange(): number {
     return this._combatRange;
   }
-  public set CombatRange(value: int) {
+  set CombatRange(value: number) {
     this._combatRange = value;
   }
 
-  public get Tier(): int {
+  get Tier(): number {
     return this._tier;
   }
-  public set Tier(value: int) {
+  set Tier(value: number) {
     this._tier = value;
   }
 
-  public get SecondaryActionReticle(): int {
+  get SecondaryActionReticle(): number {
     return this._secondaryActionReticle;
   }
-  public set SecondaryActionReticle(value: int) {
+  set SecondaryActionReticle(value: number) {
     this._secondaryActionReticle = value;
   }
 
-  public get WeaponSecondaryAction(): int {
+  get WeaponSecondaryAction(): number {
     return this._weaponSecondaryAction;
   }
-  public set WeaponSecondaryAction(value: int) {
+  set WeaponSecondaryAction(value: number) {
     this._weaponSecondaryAction = value;
   }
 
-  public get CriticalStrikeBonus(): int {
+  get CriticalStrikeBonus(): number {
     return this._criticalStrikeBonus;
   }
-  public set CriticalStrikeBonus(value: int) {
+  set CriticalStrikeBonus(value: number) {
     this._criticalStrikeBonus = value;
   }
 
-  public get DamagePerSecond(): float {
+  get DamagePerSecond(): number {
     return this.RateOfFire === 0 ? 0 : (this.DamagePerProjectile * this.ProjectilesPerShot) / this.RateOfFire;
   }
 
-  public get HasAutomaticFire(): bool {
+  get HasAutomaticFire(): boolean {
     return this._hasAutoFire;
   }
-  public set HasAutomaticFire(value: bool) {
+  set HasAutomaticFire(value: boolean) {
     this._hasAutoFire = value;
   }
 
-  public get DefaultZoomMultiplier(): int {
+  get DefaultZoomMultiplier(): number {
     return this._defaultZoomMultiplier;
   }
-  public set DefaultZoomMultiplier(value: int) {
+  set DefaultZoomMultiplier(value: number) {
     this._defaultZoomMultiplier = value;
   }
 
-  public get MinZoomMultiplier(): int {
+  get MinZoomMultiplier(): number {
     return this._minZoomMultiplier;
   }
-  public set MinZoomMultiplier(value: int) {
+  set MinZoomMultiplier(value: number) {
     this._minZoomMultiplier = value;
   }
 
-  public get MaxZoomMultiplier(): int {
+  get MaxZoomMultiplier(): number {
     return this._maxZoomMultiplier;
   }
-  public set MaxZoomMultiplier(value: int) {
+  set MaxZoomMultiplier(value: number) {
     this._maxZoomMultiplier = value;
   }
 }

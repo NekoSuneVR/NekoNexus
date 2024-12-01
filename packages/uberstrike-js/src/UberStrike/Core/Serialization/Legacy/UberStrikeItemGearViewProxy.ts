@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { ItemPrice, UberStrikeItemGearView } from '@/UberStrike/Core/Models/Views';
 import { ItemShopHighlightType, UberstrikeItemClass } from '@/UberStrike/Core/Types';
 import BooleanProxy from '../BooleanProxy';
@@ -9,10 +26,10 @@ import StringProxy from '../StringProxy';
 import ItemPriceProxy from './ItemPriceProxy';
 
 export default class UberStrikeItemGearViewProxy {
-  public static Serialize(stream: Stream, instance: UberStrikeItemGearView): void {
+  static Serialize(stream: number[], instance: UberStrikeItemGearView): void {
     let num = 0;
     if (instance) {
-      const memoryStream: MemoryStream = [];
+      const memoryStream: number[] = [];
       Int32Proxy.Serialize(memoryStream, instance.ArmorAbsorptionPercent);
       Int32Proxy.Serialize(memoryStream, instance.ArmorPoints);
       Int32Proxy.Serialize(memoryStream, instance.ArmorWeight);
@@ -52,13 +69,13 @@ export default class UberStrikeItemGearViewProxy {
       }
       EnumProxy.Serialize<ItemShopHighlightType>(memoryStream, instance.ShopHighlightType);
       Int32Proxy.Serialize(stream, ~num);
-      memoryStream.WriteTo(stream);
+      memoryStream.writeTo(stream);
       return;
     }
     Int32Proxy.Serialize(stream, 0);
   }
 
-  public static Deserialize(bytes: Stream): UberStrikeItemGearView | null {
+  static Deserialize(bytes: number[]): UberStrikeItemGearView | null {
     const num = Int32Proxy.Deserialize(bytes);
     let uberStrikeItemGearView: UberStrikeItemGearView | null = null;
     if (num !== 0) {

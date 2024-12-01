@@ -8,9 +8,9 @@ import ListProxy from './ListProxy';
 import StringProxy from './StringProxy';
 
 export default class BundleViewProxy {
-  public static Serialize(stream: Stream, instance: BundleView): void {
+  static Serialize(stream: number[], instance: BundleView): void {
     let num = 0;
-    const memoryStream: MemoryStream = [];
+    const memoryStream: number[] = [];
 
     if (instance.AndroidStoreUniqueId) {
       StringProxy.Serialize(memoryStream, instance.AndroidStoreUniqueId);
@@ -88,10 +88,10 @@ export default class BundleViewProxy {
     DecimalProxy.Serialize(memoryStream, instance.USDPrice);
     DecimalProxy.Serialize(memoryStream, instance.USDPromoPrice);
     Int32Proxy.Serialize(stream, ~num);
-    memoryStream.WriteTo(stream);
+    memoryStream.writeTo(stream);
   }
 
-  public static Deserialize(bytes: Stream): BundleView {
+  static Deserialize(bytes: number[]): BundleView {
     const num = Int32Proxy.Deserialize(bytes);
     const bundleView = new BundleView();
 

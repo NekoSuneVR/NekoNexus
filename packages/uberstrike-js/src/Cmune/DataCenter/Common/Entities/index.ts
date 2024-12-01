@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 export { default as AccountCompletionResult } from './AccountCompletionResult';
 export { default as ApplicationRegistrationResult } from './ApplicationRegistrationResult';
 export { default as ApplicationView } from './ApplicationView';
@@ -7,10 +24,10 @@ export { default as BuildType } from './BuildType';
 export { default as BundleCategoryType } from './BundleCategoryType';
 export { default as BundleItemView } from './BundleItemView';
 export { default as BundleView } from './BundleView';
-export { default as BuyItemResult } from './BuyItemResult';
 export { default as BuyingDurationType } from './BuyingDurationType';
 export { default as BuyingLocationType } from './BuyingLocationType';
 export { default as BuyingRecommendationType } from './BuyingRecommendationType';
+export { default as BuyItemResult } from './BuyItemResult';
 export { default as ChannelType } from './ChannelType';
 export { default as CheckApplicationVersionView } from './CheckApplicationVersionView';
 export { default as ClaimFacebookGiftResult } from './ClaimFacebookGiftResult';
@@ -51,8 +68,8 @@ export { default as MemberWalletView } from './MemberWalletView';
 export { default as MessageThreadView } from './MessageThreadView';
 export { default as MysteryBoxUnityView } from './MysteryBoxUnityView';
 export { default as MysteryBoxWonItemUnityView } from './MysteryBoxWonItemUnityView';
-export { default as PackType } from './PackType';
 export { default as PackageView } from './PackageView';
+export { default as PackType } from './PackType';
 export { default as PaymentProviderType } from './PaymentProviderType';
 export { default as PhotonUsageType } from './PhotonUsageType';
 export { default as PointDepositView } from './PointDepositView';

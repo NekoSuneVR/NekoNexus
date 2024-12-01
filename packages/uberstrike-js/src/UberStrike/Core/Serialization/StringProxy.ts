@@ -1,7 +1,24 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import UShortProxy from './UShortProxy';
 
 export default class StringProxy {
-  public static Serialize(bytes: Stream, instance: string): void {
+  static Serialize(bytes: number[], instance: string): void {
     if (!instance?.length) {
       UShortProxy.Serialize(bytes, 0);
     } else {
@@ -11,7 +28,7 @@ export default class StringProxy {
     }
   }
 
-  public static Deserialize(bytes: Stream): string {
+  static Deserialize(bytes: number[]): string {
     const num = UShortProxy.Deserialize(bytes);
 
     if (num > 0) {

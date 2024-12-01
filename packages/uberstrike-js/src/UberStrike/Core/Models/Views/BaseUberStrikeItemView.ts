@@ -1,42 +1,54 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { ItemPropertyType } from '@/Cmune/DataCenter/Common/Entities';
 import { ItemShopHighlightType, UberstrikeItemClass, UberstrikeItemType } from '@/UberStrike/Core/Types';
 import ItemPrice from './ItemPrice';
 
 export default abstract class BaseUberStrikeItemView {
-  [key: string]: any;
-
   private _itemClass: UberstrikeItemClass;
-  public abstract get ItemType(): UberstrikeItemType;
+  abstract get ItemType(): UberstrikeItemType;
 
-  public get ItemClass(): UberstrikeItemClass {
+  get ItemClass(): UberstrikeItemClass {
     return this._itemClass;
   }
-  public set ItemClass(value: UberstrikeItemClass) {
+
+  set ItemClass(value: UberstrikeItemClass) {
     this._itemClass = value;
   }
 
-  public ID: int;
-  public Name: string;
-  public PrefabName: string;
-  public Description: string;
-  public LevelLock: int;
-  public MaxDurationDays: int;
-  public IsConsumable: bool;
-  public Prices: List<ItemPrice>;
+  ID: number;
+  Name: string;
+  PrefabName: string;
+  Description: string;
+  LevelLock: number;
+  MaxDurationDays: number;
+  IsConsumable: boolean;
+  Prices: ItemPrice[];
 
-  public get IsForSale(): bool {
+  get IsForSale(): boolean {
     return this.Prices != null && this.Prices.length > 0;
   }
 
-  public ShopHighlightType: ItemShopHighlightType;
-  public CustomProperties: Dictionary<string, string>;
-  public ItemProperties: Dictionary<ItemPropertyType, int>;
+  ShopHighlightType: ItemShopHighlightType;
+  CustomProperties: { [key: string]: string };
+  ItemProperties: Record<ItemPropertyType, number>;
 
-  constructor(params: any = {}) {
-    Object.keys(params)
-      .filter((key) => key in this)
-      .forEach((key) => {
-        this[key] = params[key];
-      });
+  constructor(params: Partial<BaseUberStrikeItemView> = {}) {
+    Object.assign(this, params);
   }
 }

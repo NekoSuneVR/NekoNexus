@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { StatsSummary, TeamID } from '@/UberStrike/Core/Models';
 import ByteProxy from './ByteProxy';
 import DictionaryProxy from './DictionaryProxy';
@@ -7,12 +24,12 @@ import StringProxy from './StringProxy';
 import UInt16Proxy from './UInt16Proxy';
 
 export default class StatsSummaryProxy {
-  public static Serialize(stream: Stream, instance: StatsSummary): void {
+  static Serialize(stream: number[], instance: StatsSummary): void {
     let num = 0;
-    const memoryStream: MemoryStream = [];
+    const memoryStream: number[] = [];
 
     if (instance.Achievements) {
-      DictionaryProxy.Serialize<byte, ushort>(
+      DictionaryProxy.Serialize<number, number>(
         memoryStream,
         instance.Achievements,
         ByteProxy.Serialize,
@@ -35,15 +52,15 @@ export default class StatsSummaryProxy {
 
     EnumProxy.Serialize<TeamID>(memoryStream, instance.Team);
     Int32Proxy.Serialize(stream, ~num);
-    memoryStream.WriteTo(stream);
+    memoryStream.writeTo(stream);
   }
 
-  public static Deserialize(bytes: Stream): StatsSummary {
+  static Deserialize(bytes: number[]): StatsSummary {
     const num = Int32Proxy.Deserialize(bytes);
     const statsSummary = new StatsSummary();
 
     if ((num & 1) !== 0) {
-      statsSummary.Achievements = DictionaryProxy.Deserialize<byte, ushort>(
+      statsSummary.Achievements = DictionaryProxy.Deserialize<number, number>(
         bytes,
         ByteProxy.Deserialize,
         UInt16Proxy.Deserialize,

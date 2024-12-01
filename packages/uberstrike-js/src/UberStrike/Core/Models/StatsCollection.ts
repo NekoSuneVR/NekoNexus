@@ -1,58 +1,69 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 export default class StatsCollection {
-  [key: string]: any;
+  Headshots: number;
+  Nutshots: number;
+  ConsecutiveSnipes: number;
+  Xp: number;
+  Deaths: number;
+  DamageReceived: number;
+  ArmorPickedUp: number;
+  HealthPickedUp: number;
+  MeleeKills: number;
+  MeleeShotsFired: number;
+  MeleeShotsHit: number;
+  MeleeDamageDone: number;
+  HandgunKills: number;
+  HandgunShotsFired: number;
+  HandgunShotsHit: number;
+  HandgunDamageDone: number;
+  MachineGunKills: number;
+  MachineGunShotsFired: number;
+  MachineGunShotsHit: number;
+  MachineGunDamageDone: number;
+  ShotgunSplats: number;
+  ShotgunShotsFired: number;
+  ShotgunShotsHit: number;
+  ShotgunDamageDone: number;
+  SniperKills: number;
+  SniperShotsFired: number;
+  SniperShotsHit: number;
+  SniperDamageDone: number;
+  SplattergunKills: number;
+  SplattergunShotsFired: number;
+  SplattergunShotsHit: number;
+  SplattergunDamageDone: number;
+  CannonKills: number;
+  CannonShotsFired: number;
+  CannonShotsHit: number;
+  CannonDamageDone: number;
+  LauncherKills: number;
+  LauncherShotsFired: number;
+  LauncherShotsHit: number;
+  LauncherDamageDone: number;
+  Suicides: number;
+  Points: number;
 
-  public Headshots: int;
-  public Nutshots: int;
-  public ConsecutiveSnipes: int;
-  public Xp: int;
-  public Deaths: int;
-  public DamageReceived: int;
-  public ArmorPickedUp: int;
-  public HealthPickedUp: int;
-  public MeleeKills: int;
-  public MeleeShotsFired: int;
-  public MeleeShotsHit: int;
-  public MeleeDamageDone: int;
-  public HandgunKills: int;
-  public HandgunShotsFired: int;
-  public HandgunShotsHit: int;
-  public HandgunDamageDone: int;
-  public MachineGunKills: int;
-  public MachineGunShotsFired: int;
-  public MachineGunShotsHit: int;
-  public MachineGunDamageDone: int;
-  public ShotgunSplats: int;
-  public ShotgunShotsFired: int;
-  public ShotgunShotsHit: int;
-  public ShotgunDamageDone: int;
-  public SniperKills: int;
-  public SniperShotsFired: int;
-  public SniperShotsHit: int;
-  public SniperDamageDone: int;
-  public SplattergunKills: int;
-  public SplattergunShotsFired: int;
-  public SplattergunShotsHit: int;
-  public SplattergunDamageDone: int;
-  public CannonKills: int;
-  public CannonShotsFired: int;
-  public CannonShotsHit: int;
-  public CannonDamageDone: int;
-  public LauncherKills: int;
-  public LauncherShotsFired: int;
-  public LauncherShotsHit: int;
-  public LauncherDamageDone: int;
-  public Suicides: int;
-  public Points: int;
-
-  constructor(params: any = {}) {
-    Object.keys(params)
-      .filter((key) => key in this)
-      .forEach((key) => {
-        this[key] = params[key];
-      });
+  constructor(params: Partial<StatsCollection> = {}) {
+    Object.assign(this, params);
   }
 
-  public GetKills(): int {
+  GetKills(): number {
     return (
       this.MeleeKills +
       this.HandgunKills +
@@ -66,7 +77,7 @@ export default class StatsCollection {
     );
   }
 
-  public GetShots(): int {
+  GetShots(): number {
     return (
       this.MeleeShotsFired +
       this.HandgunShotsFired +
@@ -79,7 +90,7 @@ export default class StatsCollection {
     );
   }
 
-  public GetHits(): int {
+  GetHits(): number {
     return (
       this.MeleeShotsHit +
       this.HandgunShotsHit +
@@ -92,7 +103,7 @@ export default class StatsCollection {
     );
   }
 
-  public GetDamageDealt(): int {
+  GetDamageDealt(): number {
     return (
       this.MeleeDamageDone +
       this.HandgunDamageDone +

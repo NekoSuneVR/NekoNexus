@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { PhotonView } from '@/Cmune/Core/Models/Views';
 import { ApplicationView, BuildType, ChannelType } from '@/Cmune/DataCenter/Common/Entities';
 import BooleanProxy from '../BooleanProxy';
@@ -9,10 +26,10 @@ import StringProxy from '../StringProxy';
 import PhotonViewProxy from './PhotonViewProxy';
 
 export default class ApplicationViewProxy {
-  public static Serialize(stream: Stream, instance: ApplicationView): void {
+  static Serialize(stream: number[], instance: ApplicationView): void {
     let num = 0;
     if (instance) {
-      const memoryStream: MemoryStream = [];
+      const memoryStream: number[] = [];
       Int32Proxy.Serialize(memoryStream, instance.ApplicationVersionId);
       EnumProxy.Serialize<BuildType>(memoryStream, instance.Build);
       EnumProxy.Serialize<ChannelType>(memoryStream, instance.Channel);
@@ -51,13 +68,13 @@ export default class ApplicationViewProxy {
         num |= 32;
       }
       Int32Proxy.Serialize(stream, ~num);
-      memoryStream.WriteTo(stream);
+      memoryStream.writeTo(stream);
     } else {
       Int32Proxy.Serialize(stream, 0);
     }
   }
 
-  public static Deserialize(bytes: Stream): ApplicationView | null {
+  static Deserialize(bytes: number[]): ApplicationView | null {
     const num = Int32Proxy.Deserialize(bytes);
     let applicationView: ApplicationView | null = null;
     if (num !== 0) {

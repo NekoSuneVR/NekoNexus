@@ -1,9 +1,26 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { ChannelType, MemberAccessLevel } from '@/Cmune/DataCenter/Common/Entities';
 import CommActorInfo from './CommActorInfo';
 import GameRoom from './GameRoom';
 
 /* eslint no-shadow: "off" */
-export enum Keys {
+enum Keys {
   AccessLevel,
   Channel,
   ClanTag,
@@ -15,21 +32,17 @@ export enum Keys {
 }
 
 export default class CommActorInfoDelta {
-  [key: string]: any;
+  static Keys = Keys;
 
-  public readonly Changes: { [key: int]: any };
-  public DeltaMask: int;
-  public Id: byte;
+  Changes: Record<Keys, any>;
+  DeltaMask: number;
+  Id: number;
 
-  constructor(params: any = {}) {
-    Object.keys(params)
-      .filter((key) => key in this)
-      .forEach((key) => {
-        this[key] = params[key];
-      });
+  constructor(params: Partial<CommActorInfoDelta> = {}) {
+    Object.assign(this, params);
   }
 
-  public Apply(instance: CommActorInfo) {
+  Apply(instance: CommActorInfo) {
     Object.entries(this.Changes).forEach(([key, value]) => {
       switch (key) {
         case `${Keys.AccessLevel}`:
@@ -45,7 +58,7 @@ export default class CommActorInfoDelta {
 
           break;
         case `${Keys.Cmid}`:
-          instance.Cmid = value as int;
+          instance.Cmid = value as number;
 
           break;
         case `${Keys.CurrentRoom}`:
@@ -53,7 +66,7 @@ export default class CommActorInfoDelta {
 
           break;
         case `${Keys.ModerationFlag}`:
-          instance.ModerationFlag = value as byte;
+          instance.ModerationFlag = value as number;
 
           break;
         case `${Keys.ModInformation}`:

@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import {
   BundleCategoryType,
   LuckyDrawSetUnityView,
@@ -12,10 +29,10 @@ import LuckyDrawSetUnityViewProxy from './LuckyDrawSetUnityViewProxy';
 import StringProxy from './StringProxy';
 
 export default class LuckyDrawUnityViewProxy {
-  public static Serialize(stream: Stream, instance: LuckyDrawUnityView): void {
+  static Serialize(stream: number[], instance: LuckyDrawUnityView): void {
     let num = 0;
 
-    const memoryStream: MemoryStream = [];
+    const memoryStream: number[] = [];
     EnumProxy.Serialize<BundleCategoryType>(memoryStream, instance.Category);
 
     if (instance.Description) {
@@ -52,10 +69,10 @@ export default class LuckyDrawUnityViewProxy {
     Int32Proxy.Serialize(memoryStream, instance.Price);
     EnumProxy.Serialize<UberStrikeCurrencyType>(memoryStream, instance.UberStrikeCurrencyType);
     Int32Proxy.Serialize(stream, ~num);
-    memoryStream.WriteTo(stream);
+    memoryStream.writeTo(stream);
   }
 
-  public static Deserialize(bytes: Stream): LuckyDrawUnityView {
+  static Deserialize(bytes: number[]): LuckyDrawUnityView {
     const num = Int32Proxy.Deserialize(bytes);
     const luckyDrawUnityView = new LuckyDrawUnityView();
     luckyDrawUnityView.Category = EnumProxy.Deserialize<BundleCategoryType>(bytes);

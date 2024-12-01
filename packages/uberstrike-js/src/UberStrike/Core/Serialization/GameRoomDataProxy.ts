@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { GameRoomData } from '@/UberStrike/Core/Models';
 import { GameModeType } from '@/UberStrike/Core/Types';
 import BooleanProxy from './BooleanProxy';
@@ -8,9 +25,9 @@ import Int32Proxy from './Int32Proxy';
 import StringProxy from './StringProxy';
 
 export default class GameRoomDataProxy {
-  public static Serialize(stream: Stream, instance: GameRoomData): void {
+  static Serialize(stream: number[], instance: GameRoomData): void {
     let num = 0;
-    const memoryStream: MemoryStream = [];
+    const memoryStream: number[] = [];
 
     Int32Proxy.Serialize(memoryStream, instance.ConnectedPlayers);
     Int32Proxy.Serialize(memoryStream, instance.GameFlags);
@@ -46,10 +63,10 @@ export default class GameRoomDataProxy {
 
     Int32Proxy.Serialize(memoryStream, instance.TimeLimit);
     Int32Proxy.Serialize(stream, ~num);
-    memoryStream.WriteTo(stream);
+    memoryStream.writeTo(stream);
   }
 
-  public static Deserialize(bytes: Stream): GameRoomData {
+  static Deserialize(bytes: number[]): GameRoomData {
     const num = Int32Proxy.Deserialize(bytes);
     const gameRoomData = new GameRoomData();
     gameRoomData.ConnectedPlayers = Int32Proxy.Deserialize(bytes);

@@ -1,24 +1,35 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 export default class DamageEvent {
-  [key: string]: any;
+  Damage: { [key: number]: number };
+  BodyPartFlag: number;
+  DamageEffectFlag: number;
+  DamgeEffectValue: number;
 
-  public Damage: Dictionary<byte, byte>;
-  public BodyPartFlag: byte;
-  public DamageEffectFlag: int;
-  public DamgeEffectValue: float;
-
-  constructor(params: any = {}) {
-    Object.keys(params)
-      .filter((key) => key in this)
-      .forEach((key) => {
-        this[key] = params[key];
-      });
+  constructor(params: Partial<DamageEvent> = {}) {
+    Object.assign(this, params);
   }
 
-  public get Count(): int {
+  get Count(): number {
     return this.Damage == null ? 0 : Object.keys(this.Damage).length;
   }
 
-  public Clear(): void {
+  Clear(): void {
     if (this.Damage == null) {
       this.Damage = {};
     }
@@ -30,7 +41,13 @@ export default class DamageEvent {
     }
   }
 
-  public AddDamage(angle: byte, damage: short, bodyPart: byte, damageEffectFlag: int, damageEffectValue: float): void {
+  AddDamage(
+    angle: number,
+    damage: number,
+    bodyPart: number,
+    damageEffectFlag: number,
+    damageEffectValue: number,
+  ): void {
     if (this.Damage == null) this.Damage = {};
 
     if ((this.Damage as any)[angle] !== undefined) {

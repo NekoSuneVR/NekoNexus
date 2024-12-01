@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { ChannelType, MemberAccessLevel } from '@/Cmune/DataCenter/Common/Entities';
 import FireMode from './FireMode';
 import GameActorInfo from './GameActorInfo';
@@ -6,7 +23,7 @@ import SurfaceType from './SurfaceType';
 import TeamID from './TeamID';
 
 /* eslint no-shadow: "off" */
-export enum Keys {
+enum Keys {
   AccessLevel,
   ArmorPointCapacity,
   ArmorPoints,
@@ -34,21 +51,17 @@ export enum Keys {
 }
 
 export default class GameActorInfoDelta {
-  [key: string]: any;
+  static Keys = Keys;
 
-  public readonly Changes: { [key: int]: any };
-  public DeltaMask: int;
-  public Id: byte;
+  Changes: Record<Keys, any>;
+  DeltaMask: number;
+  Id: number;
 
-  constructor(params: any = {}) {
-    Object.keys(params)
-      .filter((key) => key in this)
-      .forEach((key) => {
-        this[key] = params[key];
-      });
+  constructor(params: Partial<GameActorInfoDelta> = {}) {
+    Object.assign(this, params);
   }
 
-  public Apply(instance: GameActorInfo) {
+  Apply(instance: GameActorInfo) {
     Object.entries(this.Changes).forEach(([key, value]) => {
       switch (key) {
         case `${Keys.AccessLevel}`:
@@ -56,11 +69,11 @@ export default class GameActorInfoDelta {
 
           break;
         case `${Keys.ArmorPointCapacity}`:
-          instance.ArmorPointCapacity = value as byte;
+          instance.ArmorPointCapacity = value as number;
 
           break;
         case `${Keys.ArmorPoints}`:
-          instance.ArmorPoints = value as byte;
+          instance.ArmorPoints = value as number;
 
           break;
         case `${Keys.Channel}`:
@@ -72,7 +85,7 @@ export default class GameActorInfoDelta {
 
           break;
         case `${Keys.Cmid}`:
-          instance.Cmid = value as int;
+          instance.Cmid = value as number;
 
           break;
         case `${Keys.CurrentFiringMode}`:
@@ -80,39 +93,39 @@ export default class GameActorInfoDelta {
 
           break;
         case `${Keys.CurrentWeaponSlot}`:
-          instance.CurrentWeaponSlot = value as byte;
+          instance.CurrentWeaponSlot = value as number;
 
           break;
         case `${Keys.Deaths}`:
-          instance.Deaths = value as short;
+          instance.Deaths = value as number;
 
           break;
         case `${Keys.FunctionalItems}`:
-          instance.FunctionalItems = value as List<int>;
+          instance.FunctionalItems = value as number[];
 
           break;
         case `${Keys.Gear}`:
-          instance.Gear = value as List<int>;
+          instance.Gear = value as number[];
 
           break;
         case `${Keys.Health}`:
-          instance.Health = value as short;
+          instance.Health = value as number;
 
           break;
         case `${Keys.Kills}`:
-          instance.Kills = value as short;
+          instance.Kills = value as number;
 
           break;
         case `${Keys.Level}`:
-          instance.Level = value as int;
+          instance.Level = value as number;
 
           break;
         case `${Keys.Ping}`:
-          instance.Ping = value as ushort;
+          instance.Ping = value as number;
 
           break;
         case `${Keys.PlayerId}`:
-          instance.PlayerId = value as byte;
+          instance.PlayerId = value as number;
 
           break;
         case `${Keys.PlayerName}`:
@@ -124,11 +137,11 @@ export default class GameActorInfoDelta {
 
           break;
         case `${Keys.QuickItems}`:
-          instance.QuickItems = value as List<int>;
+          instance.QuickItems = value as number[];
 
           break;
         case `${Keys.Rank}`:
-          instance.Rank = value as byte;
+          instance.Rank = value as number;
 
           break;
         case `${Keys.SkinColor}`:
@@ -144,7 +157,7 @@ export default class GameActorInfoDelta {
 
           break;
         case `${Keys.Weapons}`:
-          instance.Weapons = value as List<int>;
+          instance.Weapons = value as number[];
 
           break;
         default:
@@ -153,7 +166,7 @@ export default class GameActorInfoDelta {
     });
   }
 
-  public UpdateDeltaMask(): void {
+  UpdateDeltaMask(): void {
     let mask = 0;
 
     for (const key of Object.keys(this.Changes)) {
@@ -163,11 +176,8 @@ export default class GameActorInfoDelta {
     this.DeltaMask = mask;
   }
 
-  public Reset(): void {
-    for (const key in this.Changes) {
-      delete this.Changes[key];
-    }
-
+  Reset(): void {
+    this.Changes = {} as Record<Keys, any>;
     this.UpdateDeltaMask();
   }
 }

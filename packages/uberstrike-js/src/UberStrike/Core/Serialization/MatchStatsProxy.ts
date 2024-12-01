@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { GameModeType } from '@/UberStrike/Core/Types';
 import { MatchStats, PlayerMatchStats } from '@/UberStrike/DataCenter/Common/Entities';
 import EnumProxy from './EnumProxy';
@@ -6,10 +23,10 @@ import ListProxy from './ListProxy';
 import PlayerMatchStatsProxy from './PlayerMatchStatsProxy';
 
 export default class MatchStatsProxy {
-  public static Serialize(stream: Stream, instance: MatchStats): void {
+  static Serialize(stream: number[], instance: MatchStats): void {
     let num = 0;
 
-    const memoryStream: MemoryStream = [];
+    const memoryStream: number[] = [];
     EnumProxy.Serialize<GameModeType>(memoryStream, instance.GameModeId);
     Int32Proxy.Serialize(memoryStream, instance.MapId);
 
@@ -22,10 +39,10 @@ export default class MatchStatsProxy {
     Int32Proxy.Serialize(memoryStream, instance.PlayersLimit);
     Int32Proxy.Serialize(memoryStream, instance.TimeLimit);
     Int32Proxy.Serialize(stream, ~num);
-    memoryStream.WriteTo(stream);
+    memoryStream.writeTo(stream);
   }
 
-  public static Deserialize(bytes: Stream): MatchStats {
+  static Deserialize(bytes: number[]): MatchStats {
     const num = Int32Proxy.Deserialize(bytes);
     const matchStats = new MatchStats();
     matchStats.GameModeId = EnumProxy.Deserialize<GameModeType>(bytes);
