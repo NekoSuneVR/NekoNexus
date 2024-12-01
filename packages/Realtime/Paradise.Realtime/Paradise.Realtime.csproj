@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net481</TargetFramework>
-	<OutputPath>bin\</OutputPath>
+    <OutputPath>..\..\..\build\server\Paradise.Realtime\bin</OutputPath>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	<GenerateSupportedRuntime>False</GenerateSupportedRuntime>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
