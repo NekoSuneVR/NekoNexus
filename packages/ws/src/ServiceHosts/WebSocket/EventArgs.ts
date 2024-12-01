@@ -1,120 +1,94 @@
-import { type WebSocket } from 'ws';
-import WebSocketConnection from './Connection';
-import WebSocketPacketType from './PacketType';
-import WebSocketPayload from './Payload';
-import { ServerType, WebSocketInfo } from './WebSocket';
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import type WebSocketConnection from './Connection';
+import type WebSocketPacketType from './PacketType';
+import type WebSocketPayload from './Payload';
+import type { ServerType, WebSocketInfo } from './WebSocket';
 
 export class WebSocketConnectedEventArgs {
-  [key: string]: any;
+  Socket: WebSocketConnection;
 
-  public Socket: WebSocketConnection;
-
-  constructor(params: any = {}) {
-    Object.keys(params)
-      .filter((key) => key in this)
-      .forEach((key) => {
-        this[key] = params[key];
-      });
+  constructor(params: Partial<WebSocketConnectedEventArgs> = {}) {
+    Object.assign(this, params);
   }
 }
 
 export class WebSocketDisconnectedEventArgs {
-  [key: string]: any;
+  Info: WebSocketInfo;
+  Socket: WebSocketConnection;
+  Code: number;
+  Reason: string;
 
-  public Info: WebSocketInfo;
-  public Socket: WebSocketConnection;
-  public Code: number;
-  public Reason: string;
-
-  constructor(params: any = {}) {
-    Object.keys(params)
-      .filter((key) => key in this)
-      .forEach((key) => {
-        this[key] = params[key];
-      });
+  constructor(params: Partial<WebSocketDisconnectedEventArgs> = {}) {
+    Object.assign(this, params);
   }
 }
 
 export class WebSocketDataReceivedEventArgs {
-  [key: string]: any;
+  Socket: WebSocketConnection;
+  BytesReceived: number;
 
-  public Socket: WebSocketConnection;
-  public BytesReceived: number;
+  Payload: WebSocketPayload;
+  Data: any;
+  ServerType: ServerType;
 
-  public Payload: WebSocketPayload;
-  public Data: any;
-  public ServerType: ServerType;
-
-  constructor(params: any = {}) {
-    Object.keys(params)
-      .filter((key) => key in this)
-      .forEach((key) => {
-        this[key] = params[key];
-      });
+  constructor(params: Partial<WebSocketDataReceivedEventArgs> = {}) {
+    Object.assign(this, params);
   }
 
-  public get Type(): WebSocketPacketType {
+  get Type(): WebSocketPacketType {
     return this.Payload.Type;
   }
 }
 
 export class WebSocketPacketReceivedEventArgs {
-  [key: string]: any;
+  Socket: WebSocketConnection;
+  PacketType: WebSocketPacketType;
 
-  public Socket: WebSocketConnection;
-  public PacketType: WebSocketPacketType;
-
-  constructor(params: any = {}) {
-    Object.keys(params)
-      .filter((key) => key in this)
-      .forEach((key) => {
-        this[key] = params[key];
-      });
+  constructor(params: Partial<WebSocketPacketReceivedEventArgs> = {}) {
+    Object.assign(this, params);
   }
 }
 
 export class WebSocketDataSentEventArgs {
-  [key: string]: any;
+  Socket: WebSocketConnection;
+  BytesSent: number;
 
-  public Socket: WebSocketConnection;
-  public BytesSent: number;
-
-  constructor(params: any = {}) {
-    Object.keys(params)
-      .filter((key) => key in this)
-      .forEach((key) => {
-        this[key] = params[key];
-      });
+  constructor(params: Partial<WebSocketDataSentEventArgs> = {}) {
+    Object.assign(this, params);
   }
 }
 
 export class WebSocketConnectionRejectedEventArgs {
-  [key: string]: any;
+  Info: WebSocketInfo;
+  Socket: WebSocketConnection;
+  Reason: string;
 
-  public Info: WebSocketInfo;
-  public Socket: WebSocketConnection;
-  public Reason: string;
-
-  constructor(params: any = {}) {
-    Object.keys(params)
-      .filter((key) => key in this)
-      .forEach((key) => {
-        this[key] = params[key];
-      });
+  constructor(params: Partial<WebSocketConnectionRejectedEventArgs> = {}) {
+    Object.assign(this, params);
   }
 }
 
 export class WebSocketStateChangedEventArgs {
-  [key: string]: any;
+  Socket: WebSocket;
+  // State: SocketState;
 
-  public Socket: WebSocket;
-  // public State: SocketState;
-
-  constructor(params: any = {}) {
-    Object.keys(params)
-      .filter((key) => key in this)
-      .forEach((key) => {
-        this[key] = params[key];
-      });
+  constructor(params: Partial<WebSocketStateChangedEventArgs> = {}) {
+    Object.assign(this, params);
   }
 }

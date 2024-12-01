@@ -1,8 +1,40 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 // eslint-disable-next-line import/no-named-default
 import { default as ServiceSettings } from '@/ParadiseServiceSettings';
 import { Log } from '@/utils';
-import models from '@festivaldev/paradise-models';
-import { Dialect, Sequelize } from 'sequelize';
+import models, {
+  type ApplicationConfiguration,
+  type Map,
+  type PhotonServer,
+  type PublicProfile,
+  type ShopFunctionalItem,
+  type ShopGearItem,
+  type ShopQuickItem,
+  type ShopWeaponItem,
+} from '@festivaldev/paradise-models';
+import { type Dialect, Sequelize } from 'sequelize';
+
+import applicationConfiguration from './applicationConfiguration.json';
+import maps from './maps.json';
+import photonServers from './photonServers.json';
+import shop from './shop.json';
+import users from './users.json';
 
 (async () => {
   const sequelize = new Sequelize(
@@ -35,59 +67,55 @@ import { Dialect, Sequelize } from 'sequelize';
   } catch {}
 
   // #region Application Configuration
-  const applicationConfiguration = require('./seed/applicationConfiguration.json');
   await models.ApplicationConfiguration.destroy({ where: {} });
-  await models.ApplicationConfiguration.bulkCreate(applicationConfiguration);
+  await models.ApplicationConfiguration.bulkCreate(applicationConfiguration as Partial<ApplicationConfiguration>[]);
   // #endregion
 
   // #region Users
-  const users = require('./seed/users.json');
   await models.PublicProfile.destroy({ where: {} });
-  await models.PublicProfile.bulkCreate(users);
+  await models.PublicProfile.bulkCreate(users as Partial<PublicProfile>[]);
   // #endregion
 
   // #region Photon Servers
-  const photonServers = require('./seed/photonServers.json');
   await models.PhotonServer.destroy({ where: {} });
-  await models.PhotonServer.bulkCreate(photonServers);
+  await models.PhotonServer.bulkCreate(photonServers as Partial<PhotonServer>[]);
   // #endregion
 
   // #region Shop
-  const shop = require('./seed/shop.json');
   await models.ShopFunctionalItem.destroy({ where: {} });
   await models.ShopGearItem.destroy({ where: {} });
   await models.ShopQuickItem.destroy({ where: {} });
   await models.ShopWeaponItem.destroy({ where: {} });
 
-  await models.ShopFunctionalItem.bulkCreate(shop.FunctionalItems);
-  await models.ShopGearItem.bulkCreate(shop.GearItems);
-  await models.ShopQuickItem.bulkCreate(shop.QuickItems);
-  await models.ShopWeaponItem.bulkCreate(shop.WeaponItems);
+  await models.ShopFunctionalItem.bulkCreate(shop.FunctionalItems as Partial<ShopFunctionalItem>[]);
+  await models.ShopGearItem.bulkCreate(shop.GearItems as Partial<ShopGearItem>[]);
+  await models.ShopQuickItem.bulkCreate(shop.QuickItems as any[] as Partial<ShopQuickItem>[]);
+  await models.ShopWeaponItem.bulkCreate(shop.WeaponItems as Partial<ShopWeaponItem>[]);
 
   await models.ShopItemPrice.destroy({ where: {} });
   await models.ShopItemPrice.bulkCreate(
-    shop.FunctionalItems.reduce((acc, item) => {
+    shop.FunctionalItems.reduce((acc: any[], item) => {
       if (!item.Prices || !item.Prices.length) return acc;
       acc.push(...item.Prices.map((price) => ({ ...price, ID: item.ID })));
       return acc;
     }, []),
   );
   await models.ShopItemPrice.bulkCreate(
-    shop.GearItems.reduce((acc, item) => {
+    shop.GearItems.reduce((acc: any[], item) => {
       if (!item.Prices || !item.Prices.length) return acc;
       acc.push(...item.Prices.map((price) => ({ ...price, ID: item.ID })));
       return acc;
     }, []),
   );
   await models.ShopItemPrice.bulkCreate(
-    shop.QuickItems.reduce((acc, item) => {
+    shop.QuickItems.reduce((acc: any[], item) => {
       if (!item.Prices || !item.Prices.length) return acc;
       acc.push(...item.Prices.map((price) => ({ ...price, ID: item.ID })));
       return acc;
     }, []),
   );
   await models.ShopItemPrice.bulkCreate(
-    shop.WeaponItems.reduce((acc, item) => {
+    shop.WeaponItems.reduce((acc: any[], item) => {
       if (!item.Prices || !item.Prices.length) return acc;
       acc.push(...item.Prices.map((price) => ({ ...price, ID: item.ID })));
       return acc;
@@ -96,12 +124,11 @@ import { Dialect, Sequelize } from 'sequelize';
   // #endregion
 
   // #region Maps
-  const maps = require('./seed/maps.json');
   await models.Map.destroy({ where: {} });
 
-  await models.Map.bulkCreate(maps);
+  await models.Map.bulkCreate(maps as Partial<Map>[]);
   await models.MapSettings.bulkCreate(
-    maps.reduce((acc, cur) => {
+    maps.reduce((acc: any[], cur) => {
       Object.entries(cur.Settings).forEach(([key, value]) => {
         acc.push({
           ...(value as object),

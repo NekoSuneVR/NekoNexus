@@ -1,5 +1,22 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { EnumProxy, Int32Proxy } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
-import { ServerWebSocket } from 'bun';
+import type { ServerWebSocket } from 'bun';
 import { WebSocket } from 'ws';
 import PacketType from './PacketType';
 import WebSocketPayload from './Payload';
@@ -14,14 +31,12 @@ const RECEIVE_TIMEOUT = 3;
 const PING_INTERVAL = 10;
 
 export default class WebSocketConnection {
-  [key: string]: any;
-
-  public ConnectionId: string;
-  public Socket: ServerWebSocket;
-  public Info: WebSocketInfo;
-  public CryptoProvider: RijndaelCryptoProvider;
-  public DisconnectReason: string;
-  public LastResponseTime: Date;
+  ConnectionId: string;
+  Socket: ServerWebSocket<{ socketId: string }>;
+  Info: WebSocketInfo;
+  CryptoProvider: RijndaelCryptoProvider;
+  DisconnectReason: string;
+  LastResponseTime: Date;
 
   private sendTask?: Promise<void>;
   private receiveTask?: Promise<void>;
@@ -29,16 +44,12 @@ export default class WebSocketConnection {
   private pingTask?: ReturnType<typeof setInterval>;
   private pingDisconnect?: ReturnType<typeof setTimeout>;
 
-  constructor(params: any = {}) {
-    Object.keys(params)
-      .filter((key) => key in this)
-      .forEach((key) => {
-        this[key] = params[key];
-      });
+  constructor(params: Partial<WebSocketConnection> = {}) {
+    Object.assign(this, params);
   }
 
   private connectionState: WebSocketState = WebSocketState.Disconnected;
-  public get ConnectionState(): WebSocketState {
+  get ConnectionState(): WebSocketState {
     return this.connectionState;
   }
 
@@ -46,23 +57,23 @@ export default class WebSocketConnection {
     this.connectionState = value;
   }
 
-  public get RemoteAddress(): string | undefined {
+  get RemoteAddress(): string | undefined {
     return this.Socket.remoteAddress || 'undefined';
   }
 
-  public get Identifier(): string {
+  get Identifier(): string {
     return this.Info.SocketId;
   }
 
-  public get Type(): ServerType {
+  get Type(): ServerType {
     return this.Info.Type;
   }
 
-  public get IsConnected(): boolean {
+  get IsConnected(): boolean {
     return this.Socket.readyState === WebSocket.OPEN;
   }
 
-  public async SendBytes(bytes: Buffer | byte[] | Uint8Array) {
+  async SendBytes(bytes: Buffer | number[] | Uint8Array) {
     if (!this.IsConnected) return;
 
     if (this.sendTask) await this.sendTask;
@@ -92,8 +103,8 @@ export default class WebSocketConnection {
     } catch {}
   }
 
-  public async SendPacket(type: PacketType) {
-    const bytes: byte[] = [];
+  async SendPacket(type: PacketType) {
+    const bytes: number[] = [];
 
     Int32Proxy.Serialize(bytes, 0x42);
     EnumProxy.Serialize<PacketType>(bytes, type);
@@ -101,7 +112,8 @@ export default class WebSocketConnection {
     await this.SendBytes(bytes);
   }
 
-  public async Send(
+  // eslint-disable-next-line consistent-return
+  async Send(
     type: PacketType,
     payload: any,
     oneWay: boolean = true,
@@ -121,7 +133,7 @@ export default class WebSocketConnection {
     if (oneWay) return null;
   }
 
-  public OnOpen(): void {
+  OnOpen(): void {
     this.pingTask = setInterval(() => {
       this.SendPacket(PacketType.Ping);
 
@@ -131,11 +143,11 @@ export default class WebSocketConnection {
     }, PING_INTERVAL * 1000);
   }
 
-  public OnClose(): void {
+  OnClose(): void {
     clearInterval(this.pingTask);
   }
 
-  public ResetPingTimeout(): void {
+  ResetPingTimeout(): void {
     this.LastResponseTime = new Date();
     clearTimeout(this.pingDisconnect);
   }

@@ -1,5 +1,22 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import ParadiseService from '@/ParadiseService';
-import { ApiVersion } from '@/utils';
+import { ApiVersion } from '@/utils/enums';
 import { ContactRequest, PublicProfile } from '@festivaldev/paradise-models';
 import {
   ContactGroupView,
@@ -22,15 +39,15 @@ import { Op } from 'sequelize';
 import BaseWebService from '../BaseWebService';
 
 export default class RelationshipWebService extends BaseWebService {
-  public static get ServiceName(): string {
+  static get ServiceName(): string {
     return 'RelationshipWebService';
   }
-  public static get ServiceVersion(): string {
+  static get ServiceVersion(): string {
     return ApiVersion.Current;
   }
   // protected static get ServiceInterface(): string { return 'IRelationshipWebServiceContract'; }
 
-  public static async AcceptContactRequest(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async AcceptContactRequest(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -62,7 +79,7 @@ export default class RelationshipWebService extends BaseWebService {
 
               PublicProfileViewProxy.Serialize(
                 outputStream,
-                new PublicProfileView({ ...initiatorProfile.get({ plain: true }) }),
+                new PublicProfileView({ ...(initiatorProfile.get({ plain: true }) as PublicProfileView) }),
               );
             }
           }
@@ -79,7 +96,7 @@ export default class RelationshipWebService extends BaseWebService {
     return null;
   }
 
-  public static async DeclineContactRequest(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async DeclineContactRequest(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -120,7 +137,7 @@ export default class RelationshipWebService extends BaseWebService {
     return null;
   }
 
-  public static async DeleteContact(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async DeleteContact(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -171,7 +188,7 @@ export default class RelationshipWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetContactRequests(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetContactRequests(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -212,7 +229,7 @@ export default class RelationshipWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetContactsByGroups(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetContactsByGroups(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -239,14 +256,14 @@ export default class RelationshipWebService extends BaseWebService {
             },
           });
 
-          const contacts: List<ContactGroupView> = [];
+          const contacts: ContactGroupView[] = [];
 
           for (const contactRequest of contactRequests) {
             contacts.push(
               new ContactGroupView({
                 GroupId: steamMember.Cmid,
                 Contacts: [
-                  await PublicProfile.findOne({
+                  (await PublicProfile.findOne({
                     where: {
                       Cmid:
                         contactRequest.InitiatorCmid !== steamMember.Cmid
@@ -254,7 +271,7 @@ export default class RelationshipWebService extends BaseWebService {
                           : contactRequest.ReceiverCmid,
                     },
                     raw: true,
-                  }),
+                  })) as PublicProfileView,
                 ],
               }),
             );
@@ -274,7 +291,7 @@ export default class RelationshipWebService extends BaseWebService {
     return null;
   }
 
-  public static async SendContactRequest(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async SendContactRequest(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)

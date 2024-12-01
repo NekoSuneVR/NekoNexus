@@ -1,5 +1,22 @@
-import { GameSession, SteamMember, UserAccount } from '@festivaldev/paradise-models';
-import { PublicProfileView } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import { GameSession, type SteamMember, type UserAccount } from '@festivaldev/paradise-models';
+import type { PublicProfileView } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { Op } from 'sequelize';
 
 const SESSION_EXPIRE_HOURS: number = 12;
@@ -26,11 +43,7 @@ export default class GameSessionManager {
     }
   }
 
-  public async findOrCreateSession(
-    profile: PublicProfileView,
-    machineId: string,
-    userAccount: UserAccount,
-  ): Promise<any> {
+  async findOrCreateSession(profile: PublicProfileView, machineId: string, userAccount: UserAccount): Promise<any> {
     const expireTime = new Date();
     expireTime.setHours(expireTime.getHours() + SESSION_EXPIRE_HOURS);
 
@@ -56,7 +69,7 @@ export default class GameSessionManager {
     return session;
   }
 
-  public async findOrCreateSessionForSteamUser(
+  async findOrCreateSessionForSteamUser(
     profile: PublicProfileView,
     machineId: string,
     steamMember: SteamMember,
@@ -86,7 +99,7 @@ export default class GameSessionManager {
     return session;
   }
 
-  public async findSessionByPlayerId(id: number): Promise<any> {
+  async findSessionByPlayerId(id: number): Promise<any> {
     const [session, isCreated] = await GameSession.findOrCreate({
       where: {
         Cmid: id,
@@ -103,7 +116,7 @@ export default class GameSessionManager {
     return session;
   }
 
-  public async findSessionForSteamUser(sessionId: string): Promise<any> {
+  async findSessionForSteamUser(sessionId: string): Promise<any> {
     return this.findSessionByPlayerId(GameSession.getCmidFromSessionId(sessionId));
   }
 

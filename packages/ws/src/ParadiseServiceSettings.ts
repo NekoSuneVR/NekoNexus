@@ -1,56 +1,71 @@
-import { ServerType } from '@/ServiceHosts/WebSocket';
-import { DiscordSettings } from '@/discord/DiscordSettings';
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import type { ServerType } from '@/ServiceHosts/WebSocket';
+import DiscordSettings from '@/discord/DiscordSettings';
 import { Log } from '@/utils';
 import fs from 'fs';
 import path from 'path';
 import YAML from 'yaml';
 
-export class ServerPassPhrase {
-  public Name: string;
-  public Type: ServerType;
-  public Id: string;
-  public Passphrase: string;
+class ServerPassPhrase {
+  Name: string;
+  Type: ServerType;
+  Id: string;
+  Passphrase: string;
 }
 
 export class DatabaseSettings {
-  public Server: string;
-  public Type: string = 'mysql';
-  public Port: number = 3306;
-  public Username: string;
-  public Password: string;
-  public DatabaseName: string = 'paradise';
+  Server: string;
+  Type: string = 'mysql';
+  Port: number = 3306;
+  Username: string;
+  Password: string;
+  DatabaseName: string = 'paradise';
 }
 
 export class ParadiseServiceSettings {
-  [key: string]: any;
+  Hostname: string = '127.0.0.1';
 
-  public Hostname: string = '127.0.0.1';
+  WebServicePort: number = 8080;
+  FileServerPort: number = 8081;
+  SocketPort: number = 8082;
 
-  public WebServicePort: number = 8080;
-  public FileServerPort: number = 8081;
-  public SocketPort: number = 8082;
+  DatabaseSettings: DatabaseSettings = new DatabaseSettings();
 
-  public DatabaseSettings: DatabaseSettings = new DatabaseSettings();
+  WebServicePrefix: string = 'UberStrike.DataCenter.WebService.CWS.';
+  WebServiceSuffix: string = 'Contract.svc';
+  EncryptionInitVector: string = 'aaaaBBBBccccDDDD'; // Must be 16 characters
+  EncryptionPassPhrase: string = 'mysupersecretpassphrase';
+  ServerCredentials: ServerPassPhrase[] = [];
 
-  public WebServicePrefix: string = 'UberStrike.DataCenter.WebService.CWS.';
-  public WebServiceSuffix: string = 'Contract.svc';
-  public EncryptionInitVector: string = 'aaaaBBBBccccDDDD'; // Must be 16 characters
-  public EncryptionPassPhrase: string = 'mysupersecretpassphrase';
-  public ServerCredentials: ServerPassPhrase[] = [];
-
-  public FileServerRoot: string = 'wwwroot';
+  FileServerRoot: string = 'wwwroot';
 
   /**
    * @deprecated Use a reverse proxy to provide SSL encryption
    */
-  public EnableSSL: boolean = false;
+  EnableSSL: boolean = false;
 
   /**
    * @deprecated Use a reverse proxy to provide SSL encryption
    */
-  public SSLCertificateName: string = '';
+  SSLCertificateName: string = '';
 
-  public DiscordSettings: DiscordSettings = new DiscordSettings();
+  DiscordSettings: DiscordSettings = new DiscordSettings();
 
   constructor(path: string) {
     if (!fs.existsSync(path)) {
@@ -61,11 +76,7 @@ export class ParadiseServiceSettings {
     try {
       const settings = YAML.parse(fs.readFileSync(path, 'utf-8'));
 
-      for (const key of Object.keys(settings)) {
-        if (key in this) {
-          this[key] = settings[key];
-        }
-      }
+      Object.assign(this, settings);
     } catch (error: any) {
       Log.error('There was an error parsing the settings file.', error);
     }

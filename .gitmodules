@@ -2,3 +2,6 @@
 	path = packages/Core
 	url = https://github.com/festivaldev/UberStrike-Reverse-Engineered
 	branch = master
+[submodule "packages/Patcher"]
+	path = packages/Patcher
+	url = https://github.com/festivaldev/UniversalUnityPatcher

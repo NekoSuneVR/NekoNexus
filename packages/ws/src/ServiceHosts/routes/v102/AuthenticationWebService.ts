@@ -1,6 +1,24 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import ParadiseService from '@/ParadiseService';
 import { ProfanityFilter } from '@/ProfanityFilter';
-import { ApiVersion, Log, ModerationFlag, UberstrikeInventoryItem } from '@/utils';
+import { Log } from '@/utils';
+import { ApiVersion, ModerationFlag, UberstrikeInventoryItem } from '@/utils/enums';
 import {
   Clan,
   ClanMember,
@@ -50,10 +68,10 @@ import { Sequelize } from 'sequelize';
 import BaseWebService from '../BaseWebService';
 
 export default class AuthenticationWebService extends BaseWebService {
-  public static get ServiceName(): string {
+  static get ServiceName(): string {
     return 'AuthenticationWebService';
   }
-  public static get ServiceVersion(): string {
+  static get ServiceVersion(): string {
     return ApiVersion.Legacy102;
   }
   // protected static get ServiceInterface(): string { return 'IAuthenticationWebServiceContract'; }
@@ -70,7 +88,7 @@ export default class AuthenticationWebService extends BaseWebService {
     ItemId: 1003,
   });
 
-  public static async CreateUser(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async CreateUser(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -115,7 +133,7 @@ export default class AuthenticationWebService extends BaseWebService {
     return null;
   }
 
-  public static async CompleteAccount(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async CompleteAccount(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -276,7 +294,7 @@ export default class AuthenticationWebService extends BaseWebService {
     return null;
   }
 
-  public static async LoginMemberEmail(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async LoginMemberEmail(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -372,9 +390,9 @@ export default class AuthenticationWebService extends BaseWebService {
               const memberAuth = new MemberAuthenticationResultView({
                 MemberAuthenticationResult: MemberAuthenticationResult.Ok,
                 MemberView: new MemberView({
-                  PublicProfile: publicProfile.get({ plain: true }),
+                  PublicProfile: publicProfile.get({ plain: true }) as PublicProfileView,
                   MemberWallet: {
-                    ...memberWallet.get({ plain: true }),
+                    ...(memberWallet.get({ plain: true }) as MemberWalletView),
                     Credits: Math.max(memberWallet.Credits, 0),
                     Points: Math.max(memberWallet.Points, 0),
                   },
@@ -439,8 +457,10 @@ export default class AuthenticationWebService extends BaseWebService {
                 new MemberAuthenticationResultView({
                   MemberAuthenticationResult: MemberAuthenticationResult.Ok,
                   MemberView: new MemberView({
-                    PublicProfile: new PublicProfileView({ ...publicProfile.get({ plain: true }) }),
-                    MemberWallet: new MemberWalletView({ ...memberWallet!.get({ plain: true }) }),
+                    PublicProfile: new PublicProfileView({
+                      ...(publicProfile.get({ plain: true }) as PublicProfileView),
+                    }),
+                    MemberWallet: new MemberWalletView({ ...(memberWallet!.get({ plain: true }) as MemberWalletView) }),
                   }),
                   PlayerStatisticsView: new PlayerStatisticsView({ ...playerStatistics!.get({ plain: true }) }),
                   IsAccountComplete: publicProfile.Name.trim().length > 0,
@@ -464,7 +484,7 @@ export default class AuthenticationWebService extends BaseWebService {
     return null;
   }
 
-  public static async LoginMemberCookie(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async LoginMemberCookie(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -491,7 +511,7 @@ export default class AuthenticationWebService extends BaseWebService {
     return null;
   }
 
-  public static async LoginMemberFacebook(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async LoginMemberFacebook(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -515,7 +535,7 @@ export default class AuthenticationWebService extends BaseWebService {
     return null;
   }
 
-  public static async FacebookSingleSignOn(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async FacebookSingleSignOn(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)

@@ -1,8 +1,30 @@
-/* eslint-disable no-use-before-define */
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import crypto, { Cipher } from 'crypto';
 import seedrandom from 'seedrandom';
 
-function passwordDeriveBytes(password: string, salt: Buffer, iterations: number, len: number, hashAlgorithm: string) {
+const passwordDeriveBytes = (
+  password: string,
+  salt: Buffer,
+  iterations: number,
+  len: number,
+  hashAlgorithm: string,
+) => {
   let baseValue = Buffer.concat([Buffer.from(password, 'utf8'), salt]);
   baseValue = crypto.createHash(hashAlgorithm).update(baseValue).digest();
 
@@ -34,7 +56,7 @@ function passwordDeriveBytes(password: string, salt: Buffer, iterations: number,
   }
 
   return key;
-}
+};
 
 export default class RijndaelCipher {
   private static DEFAULT_HASH_ALGORITHM: string = 'sha1';
@@ -95,19 +117,19 @@ export default class RijndaelCipher {
     this.decryptor = crypto.createDecipheriv(array.length ? 'aes-256-cbc' : 'aes-256-ecb', bytes, array);
   }
 
-  public Encrypt(plainText: string): string {
+  Encrypt(plainText: string): string {
     return this.Encrypt2(Buffer.from(plainText, 'utf-8'));
   }
 
-  public Encrypt2(plainTextBytes: Buffer): string {
+  Encrypt2(plainTextBytes: Buffer): string {
     return this.EncryptToBytes2(plainTextBytes).toString('base64');
   }
 
-  public EncryptToBytes(plainText: string): Buffer {
+  EncryptToBytes(plainText: string): Buffer {
     return this.EncryptToBytes2(Buffer.from(plainText, 'utf-8'));
   }
 
-  public EncryptToBytes2(plainTextBytes: Buffer): Buffer {
+  EncryptToBytes2(plainTextBytes: Buffer): Buffer {
     const array = this.AddSalt(plainTextBytes);
     const encrypted = this.encryptor.update(array);
     const result = Buffer.concat([encrypted, this.encryptor.final()]);
@@ -115,19 +137,19 @@ export default class RijndaelCipher {
     return result;
   }
 
-  public Decrypt(cipherText: string): string {
+  Decrypt(cipherText: string): string {
     return this.Decrypt2(Buffer.from(cipherText, 'base64'));
   }
 
-  public Decrypt2(cipherTextBytes: Buffer): string {
+  Decrypt2(cipherTextBytes: Buffer): string {
     return this.DecryptToBytes2(cipherTextBytes).toString('utf-8');
   }
 
-  public DecryptToBytes(cipherText: string): Buffer {
+  DecryptToBytes(cipherText: string): Buffer {
     return this.DecryptToBytes2(Buffer.from(cipherText, 'base64'));
   }
 
-  public DecryptToBytes2(cipherTextBytes: Buffer): Buffer {
+  DecryptToBytes2(cipherTextBytes: Buffer): Buffer {
     let array: any = null;
     let num = 0;
     let num2 = 0;

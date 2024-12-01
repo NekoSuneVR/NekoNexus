@@ -1,10 +1,26 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import ParadiseService from '@/ParadiseService';
 import { Log } from '@/utils';
 import { ArrayProxy, ByteProxy, EnumProxy, Int32Proxy } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
-import { Server } from 'bun';
-import { EventEmitter } from 'events';
+import type { Server } from 'bun';
+import EventEmitter from 'events';
 import httpStatus from 'http-status';
-import { v4 as uuid } from 'uuid';
 import WebSocketConnection from './Connection';
 import {
   WebSocketConnectedEventArgs,
@@ -21,11 +37,9 @@ import { ServerType, WebSocketConnectionStatus, WebSocketInfo } from './WebSocke
 const MAGIC_BYTES = [0x50, 0x61, 0x52, 0x61, 0x44, 0x69, 0x53, 0x65];
 
 export default class WebSocketHost extends EventEmitter {
-  [key: string]: any;
+  readonly port: number;
 
-  public readonly port: number;
-
-  public readonly socket: Server;
+  readonly socket: Server;
 
   private CommServer?: WebSocketConnection;
   private GameServers: WebSocketConnection[] = [];
@@ -46,7 +60,7 @@ export default class WebSocketHost extends EventEmitter {
       fetch: (req, server) =>
         server.upgrade(req, {
           data: {
-            socketId: uuid(),
+            socketId: crypto.randomUUID(),
           },
         })
           ? undefined
@@ -56,7 +70,6 @@ export default class WebSocketHost extends EventEmitter {
           const socketClient = new WebSocketConnection({
             ConnectionId: ws.data.socketId,
             Socket: ws,
-            MessageBuffer: [],
             Info: new WebSocketInfo({
               IsClient: true,
             }),
@@ -342,7 +355,7 @@ export default class WebSocketHost extends EventEmitter {
   }
 
   // #region Send
-  public async SendToCommServer(
+  async SendToCommServer(
     type: PacketType,
     payload: any,
     oneWay: boolean = true,
@@ -354,7 +367,7 @@ export default class WebSocketHost extends EventEmitter {
     return r;
   }
 
-  public async SendToGameServer(
+  async SendToGameServer(
     guid: string,
     type: PacketType,
     payload: any,
@@ -373,7 +386,7 @@ export default class WebSocketHost extends EventEmitter {
     return r;
   }
 
-  public SendToGameServers(type: PacketType, payload: any): void {
+  SendToGameServers(type: PacketType, payload: any): void {
     // Sending to game servers is one-way only
 
     for (const server of this.GameServers) {

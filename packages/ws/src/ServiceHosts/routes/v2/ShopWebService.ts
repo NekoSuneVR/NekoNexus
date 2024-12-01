@@ -1,5 +1,23 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import ParadiseService from '@/ParadiseService';
-import { ApiVersion, XpPointsUtil } from '@/utils';
+import { XpPointsUtil } from '@/utils';
+import { ApiVersion } from '@/utils/enums';
 import {
   CurrencyDeposit,
   ItemTransaction,
@@ -27,7 +45,13 @@ import {
   PaymentProviderType,
   UberStrikeCurrencyType,
 } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
-import { UberStrikeItemShopClientView } from '@festivaldev/uberstrike-js/UberStrike/Core/Models/Views';
+import {
+  UberStrikeItemShopClientView,
+  type UberStrikeItemFunctionalView,
+  type UberStrikeItemGearView,
+  type UberStrikeItemQuickView,
+  type UberStrikeItemWeaponView,
+} from '@festivaldev/uberstrike-js/UberStrike/Core/Models/Views';
 import {
   BooleanProxy,
   BundleViewProxy,
@@ -44,15 +68,15 @@ import { Op } from 'sequelize';
 import BaseWebService from '../BaseWebService';
 
 export default class ShopWebService extends BaseWebService {
-  public static get ServiceName(): string {
+  static get ServiceName(): string {
     return 'ShopWebService';
   }
-  public static get ServiceVersion(): string {
+  static get ServiceVersion(): string {
     return ApiVersion.Current;
   }
   // protected static get ServiceInterface(): string { return 'IShopWebServiceContract'; }
 
-  public static async BuyBundle(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async BuyBundle(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -77,7 +101,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  public static async BuyBundleSteam(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async BuyBundleSteam(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -193,7 +217,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  public static async BuyItem(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async BuyItem(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -419,7 +443,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  public static async BuyPack(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async BuyPack(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -456,7 +480,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  public static async FinishBuyBundleSteam(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async FinishBuyBundleSteam(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -479,7 +503,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetAllLuckyDraws_1(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetAllLuckyDraws_1(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -499,7 +523,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetAllLuckyDraws_2(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetAllLuckyDraws_2(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -521,7 +545,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetAllMysteryBoxs_1(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetAllMysteryBoxs_1(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -541,7 +565,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetAllMysteryBoxs_2(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetAllMysteryBoxs_2(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -563,7 +587,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetBundles(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetBundles(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -598,7 +622,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetLuckyDraw(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetLuckyDraw(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -620,7 +644,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetMysteryBox(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetMysteryBox(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -642,7 +666,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetShop(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetShop(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -654,16 +678,18 @@ export default class ShopWebService extends BaseWebService {
       UberStrikeItemShopClientViewProxy.Serialize(
         outputStream,
         new UberStrikeItemShopClientView({
-          FunctionalItems: await ShopFunctionalItem.findAll({
+          FunctionalItems: (await ShopFunctionalItem.findAll({
             include: [{ model: ShopItemPrice, as: 'Prices', required: false }],
-          }),
-          GearItems: await ShopGearItem.findAll({ include: [{ model: ShopItemPrice, as: 'Prices', required: false }] }),
-          QuickItems: await ShopQuickItem.findAll({
+          })) as unknown[] as UberStrikeItemFunctionalView[],
+          GearItems: (await ShopGearItem.findAll({
             include: [{ model: ShopItemPrice, as: 'Prices', required: false }],
-          }),
-          WeaponItems: await ShopWeaponItem.findAll({
+          })) as unknown[] as UberStrikeItemGearView[],
+          QuickItems: (await ShopQuickItem.findAll({
             include: [{ model: ShopItemPrice, as: 'Prices', required: false }],
-          }),
+          })) as unknown[] as UberStrikeItemQuickView[],
+          WeaponItems: (await ShopWeaponItem.findAll({
+            include: [{ model: ShopItemPrice, as: 'Prices', required: false }],
+          })) as unknown[] as UberStrikeItemWeaponView[],
         }),
       );
 
@@ -677,7 +703,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  public static async RollLuckyDraw(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async RollLuckyDraw(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -701,7 +727,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  public static async RollMysteryBox(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async RollMysteryBox(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -725,7 +751,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  public static async UseConsumableItem(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async UseConsumableItem(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -748,7 +774,7 @@ export default class ShopWebService extends BaseWebService {
     return null;
   }
 
-  public static async VerifyReceipt(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async VerifyReceipt(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)

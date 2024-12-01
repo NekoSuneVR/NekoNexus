@@ -1,9 +1,27 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import ParadiseService from '@/ParadiseService';
 import { RealtimeError, WebSocketChatMessage } from '@/ServiceHosts/WebSocket';
 import PacketType from '@/ServiceHosts/WebSocket/PacketType';
 import { CommandHandler } from '@/console';
 import { Log } from '@/utils';
-import models, { DiscordUser } from '@festivaldev/paradise-models';
+import * as models from '@festivaldev/paradise-models';
+import { DiscordUser } from '@festivaldev/paradise-models';
 import { MemberAccessLevel, PhotonUsageType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
   CommActorInfo,
@@ -28,7 +46,7 @@ import {
   WebhookClient,
 } from 'discord.js';
 import { Op } from 'sequelize';
-import { DiscordSettings } from './DiscordSettings';
+import type DiscordSettings from './DiscordSettings';
 
 enum GAME_FLAGS {
   None = 0x0,
@@ -53,7 +71,7 @@ export default class DiscordClient {
   private roomChatCreationPromises: { [key: string]: any } = {};
   private roomChatMap: { [key: string]: number } = {};
 
-  public async Connect(): Promise<void> {
+  async Connect(): Promise<void> {
     if (this.discordClient) return;
     Log.info('Connecting to Discord...');
 
@@ -130,11 +148,11 @@ export default class DiscordClient {
     }
   }
 
-  public async Disconnect(): Promise<void> {
+  async Disconnect(): Promise<void> {
     await this.discordClient.user?.setStatus('invisible');
   }
 
-  public async SendLobbyChatMessage(message: WebSocketChatMessage): Promise<void> {
+  async SendLobbyChatMessage(message: WebSocketChatMessage): Promise<void> {
     if (!this.discordSettings.Integrations.LobbyChat) return;
     if (!this.discordSettings.ChatChannelId) return;
 
@@ -167,7 +185,7 @@ export default class DiscordClient {
     });
   }
 
-  public async SendPlayerJoinMessage(player: CommActorInfo): Promise<void> {
+  async SendPlayerJoinMessage(player: CommActorInfo): Promise<void> {
     const { PublicProfile, SteamMember } = models;
 
     if (!this.discordSettings.Integrations.PlayerJoinAnnouncements) return;
@@ -207,7 +225,7 @@ export default class DiscordClient {
     });
   }
 
-  public async SendPlayerLeftMessage(player: CommActorInfo): Promise<void> {
+  async SendPlayerLeftMessage(player: CommActorInfo): Promise<void> {
     const { PublicProfile } = models;
 
     if (!this.discordSettings.Integrations.PlayerLeaveAnnouncements) return;
@@ -234,7 +252,7 @@ export default class DiscordClient {
     });
   }
 
-  public async CreateGameRoom(metadata: GameRoomData): Promise<[string | null, string | null]> {
+  async CreateGameRoom(metadata: GameRoomData): Promise<[string | null, string | null]> {
     if (!this.discordSettings.Integrations.RoomChats) return [null, null];
 
     let _resolve: Function | undefined;
@@ -288,7 +306,7 @@ export default class DiscordClient {
     return [channel.id, this.roomChatClients[metadata.Number].url];
   }
 
-  public async DestroyGameRoom(metadata: GameRoomData): Promise<void> {
+  async DestroyGameRoom(metadata: GameRoomData): Promise<void> {
     if (!this.discordSettings.Integrations.RoomChats) return;
 
     await this.roomChatChannels[metadata.Number]?.delete();
@@ -296,7 +314,7 @@ export default class DiscordClient {
     delete this.roomChatClients[metadata.Number];
   }
 
-  public async GrantRoomPermissions(playerInfo: GameActorInfo, metadata: GameRoomData): Promise<void> {
+  async GrantRoomPermissions(playerInfo: GameActorInfo, metadata: GameRoomData): Promise<void> {
     if (!this.discordSettings.Integrations.RoomChats) return;
 
     if (this.roomChatCreationPromises[metadata.Number]) {
@@ -312,7 +330,7 @@ export default class DiscordClient {
     this.roomChatChannels[metadata.Number]?.permissionOverwrites.create(discordMember, { ViewChannel: true });
   }
 
-  public async RevokeRoomPermissions(playerInfo: GameActorInfo, metadata: GameRoomData): Promise<void> {
+  async RevokeRoomPermissions(playerInfo: GameActorInfo, metadata: GameRoomData): Promise<void> {
     if (!this.discordSettings.Integrations.RoomChats) return;
 
     if (this.roomChatCreationPromises[metadata.Number]) {
@@ -328,7 +346,7 @@ export default class DiscordClient {
     this.roomChatChannels[metadata.Number]?.permissionOverwrites.delete(discordMember);
   }
 
-  public async SendGameRoomMessage(message: WebSocketChatMessage, metadata: GameRoomData): Promise<void> {
+  async SendGameRoomMessage(message: WebSocketChatMessage, metadata: GameRoomData): Promise<void> {
     if (!this.discordSettings.Integrations.RoomChats) return;
 
     if (this.roomChatCreationPromises[metadata.Number]) {
@@ -364,7 +382,7 @@ export default class DiscordClient {
     });
   }
 
-  public async SendGameRoomCreatedMessage(metadata: GameRoomData): Promise<void> {
+  async SendGameRoomCreatedMessage(metadata: GameRoomData): Promise<void> {
     if (!this.discordSettings.Integrations.RoomOpenAnnouncements) return;
 
     const embed = new EmbedBuilder({
@@ -416,7 +434,7 @@ export default class DiscordClient {
     }
   }
 
-  public async SendGameRoomDestroyedMessage(metadata: GameRoomData): Promise<void> {
+  async SendGameRoomDestroyedMessage(metadata: GameRoomData): Promise<void> {
     if (!this.discordSettings.Integrations.RoomCloseAnnouncements) return;
 
     const embed = new EmbedBuilder({
@@ -454,15 +472,15 @@ export default class DiscordClient {
     }
   }
 
-  public async SendRoundStartedMessage(metadata: GameRoomData): Promise<void> {
+  async SendRoundStartedMessage(metadata: GameRoomData): Promise<void> {
     Log.debug('Round start messages not implemented');
   }
 
-  public async SendRoundEndedMessage(metadata: GameRoomData, matchData: EndOfMatchData): Promise<void> {
+  async SendRoundEndedMessage(metadata: GameRoomData, matchData: EndOfMatchData): Promise<void> {
     Log.debug('Round end messages not implemented');
   }
 
-  public async LogError(error: Error | RealtimeError): Promise<void> {
+  async LogError(error: Error | RealtimeError): Promise<void> {
     if (!this.discordSettings.Integrations.ErrorLog) return;
 
     if (error instanceof Error) {
@@ -478,7 +496,7 @@ export default class DiscordClient {
     }
   }
 
-  public async IsMemberLinked(cmid: number): Promise<boolean> {
+  async IsMemberLinked(cmid: number): Promise<boolean> {
     const link = await DiscordUser.findOne({
       where: {
         Cmid: cmid,
@@ -492,7 +510,7 @@ export default class DiscordClient {
     return !!link;
   }
 
-  public async BeginLinkMember(cmid: number): Promise<string | null> {
+  async BeginLinkMember(cmid: number): Promise<string | null> {
     if (await this.IsMemberLinked(cmid)) return null;
 
     let link = await DiscordUser.findOne({
@@ -516,7 +534,7 @@ export default class DiscordClient {
     return link.Nonce;
   }
 
-  public async GetDiscordUserFromCmid(cmid: number): Promise<DiscordUser | null> {
+  async GetDiscordUserFromCmid(cmid: number): Promise<DiscordUser | null> {
     return DiscordUser.findOne({
       where: {
         Cmid: cmid,
@@ -527,7 +545,7 @@ export default class DiscordClient {
     });
   }
 
-  public async GetDiscordUserFromDiscordId(discordUserId: string): Promise<DiscordUser | null> {
+  async GetDiscordUserFromDiscordId(discordUserId: string): Promise<DiscordUser | null> {
     return DiscordUser.findOne({
       where: {
         Cmid: {

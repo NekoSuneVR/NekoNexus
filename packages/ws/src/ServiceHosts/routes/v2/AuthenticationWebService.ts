@@ -1,6 +1,7 @@
 import ParadiseService from '@/ParadiseService';
 import { ProfanityFilter } from '@/ProfanityFilter';
-import { ApiVersion, Log, ModerationFlag, UberstrikeInventoryItem } from '@/utils';
+import { Log } from '@/utils';
+import { ApiVersion, ModerationFlag, UberstrikeInventoryItem } from '@/utils/enums';
 import {
   Clan,
   ClanMember,
@@ -42,17 +43,17 @@ import crypto from 'crypto';
 import BaseWebService from '../BaseWebService';
 
 export default class AuthenticationWebService extends BaseWebService {
-  public static get ServiceName(): string {
+  static get ServiceName(): string {
     return 'AuthenticationWebService';
   }
-  public static get ServiceVersion(): string {
+  static get ServiceVersion(): string {
     return ApiVersion.Current;
   }
   // protected static get ServiceInterface(): string { return 'IAuthenticationWebServiceContract'; }
 
   private static readonly ProfanityFilter: ProfanityFilter = new ProfanityFilter();
 
-  public static async CompleteAccount(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async CompleteAccount(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -209,7 +210,7 @@ export default class AuthenticationWebService extends BaseWebService {
     return null;
   }
 
-  public static async CreateUser(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async CreateUser(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -235,7 +236,7 @@ export default class AuthenticationWebService extends BaseWebService {
     return null;
   }
 
-  public static async LinkSteamMember(bytes: byte[], outputStream: MemoryStream) {
+  static async LinkSteamMember(bytes: number[], outputStream: number[]) {
     try {
       const email = StringProxy.Deserialize(bytes);
       const password = StringProxy.Deserialize(bytes);
@@ -255,7 +256,7 @@ export default class AuthenticationWebService extends BaseWebService {
     return null;
   }
 
-  public static async LoginMemberEmail(bytes: byte[], outputStream: MemoryStream) {
+  static async LoginMemberEmail(bytes: number[], outputStream: number[]) {
     try {
       const email = StringProxy.Deserialize(bytes);
       const password = StringProxy.Deserialize(bytes);
@@ -275,7 +276,7 @@ export default class AuthenticationWebService extends BaseWebService {
     return null;
   }
 
-  public static async LoginMemberFacebookUnitySdk(bytes: byte[], outputStream: MemoryStream) {
+  static async LoginMemberFacebookUnitySdk(bytes: number[], outputStream: number[]) {
     try {
       const facebookPlayerAccessToken = StringProxy.Deserialize(bytes);
       const channel = EnumProxy.Deserialize<ChannelType>(bytes);
@@ -294,7 +295,7 @@ export default class AuthenticationWebService extends BaseWebService {
     return null;
   }
 
-  public static async LoginMemberPortal(bytes: byte[], outputStream: MemoryStream) {
+  static async LoginMemberPortal(bytes: number[], outputStream: number[]) {
     try {
       const cmid = Int32Proxy.Deserialize(bytes);
       const hash = StringProxy.Deserialize(bytes);
@@ -313,7 +314,7 @@ export default class AuthenticationWebService extends BaseWebService {
     return null;
   }
 
-  public static async LoginSteam(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async LoginSteam(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -384,9 +385,9 @@ export default class AuthenticationWebService extends BaseWebService {
         const memberAuth = new MemberAuthenticationResultView({
           MemberAuthenticationResult: MemberAuthenticationResult.Ok,
           MemberView: new MemberView({
-            PublicProfile: publicProfile.get({ plain: true }),
+            PublicProfile: publicProfile.get({ plain: true }) as PublicProfileView,
             MemberWallet: {
-              ...memberWallet.get({ plain: true }),
+              ...(memberWallet.get({ plain: true }) as MemberWalletView),
               Credits: Math.max(memberWallet.Credits, 0),
               Points: Math.max(memberWallet.Points, 0),
             },
@@ -474,8 +475,10 @@ export default class AuthenticationWebService extends BaseWebService {
               new MemberAuthenticationResultView({
                 MemberAuthenticationResult: MemberAuthenticationResult.Ok,
                 MemberView: new MemberView({
-                  PublicProfile: new PublicProfileView({ ...publicProfile.get({ plain: true }) }),
-                  MemberWallet: new MemberWalletView({ ...memberWallet!.get({ plain: true }) }),
+                  PublicProfile: new PublicProfileView({
+                    ...(publicProfile.get({ plain: true }) as PublicProfileView),
+                  }),
+                  MemberWallet: new MemberWalletView({ ...(memberWallet!.get({ plain: true }) as MemberWalletView) }),
                 }),
                 PlayerStatisticsView: new PlayerStatisticsView({ ...playerStatistics!.get({ plain: true }) }),
                 IsAccountComplete: publicProfile.Name.trim().length > 0,
@@ -496,7 +499,7 @@ export default class AuthenticationWebService extends BaseWebService {
     return null;
   }
 
-  public static async VerifyAuthToken(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async VerifyAuthToken(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -559,8 +562,10 @@ export default class AuthenticationWebService extends BaseWebService {
                 new MemberAuthenticationResultView({
                   MemberAuthenticationResult: MemberAuthenticationResult.Ok,
                   MemberView: new MemberView({
-                    PublicProfile: new PublicProfileView({ ...publicProfile.get({ plain: true }) }),
-                    MemberWallet: new MemberWalletView({ ...memberWallet!.get({ plain: true }) }),
+                    PublicProfile: new PublicProfileView({
+                      ...(publicProfile.get({ plain: true }) as PublicProfileView),
+                    }),
+                    MemberWallet: new MemberWalletView({ ...(memberWallet!.get({ plain: true }) as MemberWalletView) }),
                   }),
                   PlayerStatisticsView: new PlayerStatisticsView({ ...playerStatistics!.get({ plain: true }) }),
                   ServerTime: new Date(),

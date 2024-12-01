@@ -1,6 +1,22 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import ParadiseService from '@/ParadiseService';
 import { WebSocketPacketType } from '@/ServiceHosts/WebSocket';
-import { ModerationFlag } from '@/utils';
 import { ModerationAction, PublicProfile } from '@festivaldev/paradise-models';
 import { MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import moment from 'moment';
@@ -8,21 +24,21 @@ import { Op } from 'sequelize';
 import ParadiseCommand from '../ParadiseCommand';
 
 export class BanCommand extends ParadiseCommand {
-  public static override Command: string = 'ban';
-  public static override Aliases: string[] = [];
+  static override Command: string = 'ban';
+  static override Aliases: string[] = [];
 
-  public override Description: string = 'Bans a player for a specified duration.';
-  public override HelpString: string = `${BanCommand.Command}\t\t${this.Description}`;
+  override Description: string = 'Bans a player for a specified duration.';
+  override HelpString: string = `${BanCommand.Command}\t\t${this.Description}`;
 
-  public override UsageText: string[] = [
+  override UsageText: string[] = [
     `${BanCommand.Command}: ${this.Description}`,
     `Usage: ${BanCommand.Command} <name> <reason> [duration]`,
     '\nTo specify a multi-word reason, embed the \'reason\' parameter\nin quotation marks (eg. "very obvious reason")',
   ];
 
-  public override MinimumAccessLevel: MemberAccessLevel = MemberAccessLevel.Moderator;
+  override MinimumAccessLevel: MemberAccessLevel = MemberAccessLevel.Moderator;
 
-  public override async Run(args: string[]): Promise<any> {
+  override async Run(args: string[]): Promise<any> {
     if (args.length < 2) {
       this.PrintUsageText();
       return;
@@ -90,20 +106,20 @@ export class BanCommand extends ParadiseCommand {
 }
 
 export class UnbanCommand extends ParadiseCommand {
-  public static override Command: string = 'unban';
-  public static override Aliases: string[] = [];
+  static override Command: string = 'unban';
+  static override Aliases: string[] = [];
 
-  public override Description: string = 'Unbans a player.';
-  public override HelpString: string = `${UnbanCommand.Command}\t\t${this.Description}`;
+  override Description: string = 'Unbans a player.';
+  override HelpString: string = `${UnbanCommand.Command}\t\t${this.Description}`;
 
-  public override UsageText: string[] = [
+  override UsageText: string[] = [
     `${UnbanCommand.Command}: ${this.Description}`,
     `Usage: ${UnbanCommand.Command} <name>`,
   ];
 
-  public override MinimumAccessLevel: MemberAccessLevel = MemberAccessLevel.Moderator;
+  override MinimumAccessLevel: MemberAccessLevel = MemberAccessLevel.Moderator;
 
-  public override async Run(args: string[]): Promise<any> {
+  override async Run(args: string[]): Promise<any> {
     if (args.length < 1) {
       this.PrintUsageText();
       return;

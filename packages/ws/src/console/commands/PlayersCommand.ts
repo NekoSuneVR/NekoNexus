@@ -1,16 +1,34 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import { getDividerText } from '@/utils';
 import { ActivePlayer, Clan, ClanMember, PublicProfile, SteamMember } from '@festivaldev/paradise-models';
 import { GroupPosition, MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { Op } from 'sequelize';
 import ParadiseCommand from '../ParadiseCommand';
 
 export default class PlayersCommand extends ParadiseCommand {
-  public static override Command: string = 'players';
-  public static override Aliases: string[] = ['player', 'p'];
+  static override Command: string = 'players';
+  static override Aliases: string[] = ['player', 'p'];
 
-  public override Description: string = 'List and manage players.';
-  public override HelpString: string = `${PlayersCommand.Command}\t\t${this.Description}`;
+  override Description: string = 'List and manage players.';
+  override HelpString: string = `${PlayersCommand.Command}\t\t${this.Description}`;
 
-  public override UsageText: string[] = [
+  override UsageText: string[] = [
     `${PlayersCommand.Command}: ${this.Description}`,
     '  delete\tDeletes a player.',
     '  list\t\tLists all players that are currently online.',
@@ -18,9 +36,9 @@ export default class PlayersCommand extends ParadiseCommand {
     '  search <pattern>\t\tSearches a player by name, CMID, Steam ID or E-Mail address',
   ];
 
-  public override MinimumAccessLevel: MemberAccessLevel = MemberAccessLevel.Moderator;
+  override MinimumAccessLevel: MemberAccessLevel = MemberAccessLevel.Moderator;
 
-  public override async Run(args: string[]): Promise<any> {
+  override async Run(args: string[]): Promise<any> {
     if (args.length < 1) {
       this.PrintUsageText();
       return;
@@ -122,22 +140,22 @@ export default class PlayersCommand extends ParadiseCommand {
 
         this.WriteLine(`Players currently online: ${connectedPeers.length}\n`);
 
-        this.WriteLine(' ----------------------------------------------------------------------- ');
+        this.WriteLine(`┌${getDividerText(71)}┐`);
         this.WriteLine(
-          `| ${'Username'.padEnd(18)} | ${'CMID'.padEnd(10)} | ${'SteamID64'.padEnd(17)} | ${'Rank'.padEnd(15)} |`,
+          `│ ${'Username'.padEnd(18)} │ ${'CMID'.padEnd(10)} │ ${'SteamID64'.padEnd(17)} │ ${'Rank'.padEnd(15)} │`,
         );
-        this.WriteLine('|-----------------------------------------------------------------------|');
+        this.WriteLine(`├${getDividerText(71)}┤`);
 
         for (const peer of connectedPeers) {
           const profile = playerProfiles.find((_) => _.Cmid === peer.Cmid);
           const steamMember = steamMembers.find((_) => _.Cmid === peer.Cmid);
 
           this.WriteLine(
-            `| ${profile!.Name.padEnd(18)} | ${String(profile!.Cmid).padEnd(10)} | ${String(steamMember?.SteamId || 'N/A').padEnd(17)} | ${MemberAccessLevel[profile!.AccessLevel].padEnd(15)} |`,
+            `│ ${profile!.Name.padEnd(18)} │ ${String(profile!.Cmid).padEnd(10)} │ ${String(steamMember?.SteamId || 'N/A').padEnd(17)} │ ${MemberAccessLevel[profile!.AccessLevel].padEnd(15)} │`,
           );
         }
 
-        this.WriteLine('|-----------------------------------------------------------------------|');
+        this.WriteLine(`└${getDividerText(71)}┘`);
 
         break;
       }
@@ -155,22 +173,22 @@ export default class PlayersCommand extends ParadiseCommand {
 
         this.WriteLine(`Players currently online: ${connectedPeers.length}\n`);
 
-        this.WriteLine(' -------------------------------------------------------------------------------- ');
+        this.WriteLine(`┌${getDividerText(80)}┐`);
         this.WriteLine(
-          `| ${'Username'.padEnd(18)} | ${'CMID'.padEnd(10)} | ${'SteamID64'.padEnd(17)} | ${'Rank'.padEnd(15)} | ${'Online'.padEnd(6)} |`,
+          `│ ${'Username'.padEnd(18)} │ ${'CMID'.padEnd(10)} │ ${'SteamID64'.padEnd(17)} │ ${'Rank'.padEnd(15)} │ ${'Online'.padEnd(6)} │`,
         );
-        this.WriteLine('|--------------------------------------------------------------------------------|');
+        this.WriteLine(`├${getDividerText(80)}┤`);
 
         for (const profile of playerProfiles) {
           const steamMember = steamMembers.find((_) => _.Cmid === profile.Cmid);
           const peer = connectedPeers.find((_) => _.Cmid === profile.Cmid);
 
           this.WriteLine(
-            `| ${profile.Name.padEnd(18)} | ${String(profile.Cmid).padEnd(10)} | ${String(steamMember?.SteamId || 'N/A').padEnd(17)} | ${MemberAccessLevel[profile.AccessLevel].padEnd(15)} | ${String(peer === undefined ? 'No' : 'Yes').padEnd(6)} |`,
+            `│ ${profile.Name.padEnd(18)} │ ${String(profile.Cmid).padEnd(10)} │ ${String(steamMember?.SteamId || 'N/A').padEnd(17)} │ ${MemberAccessLevel[profile.AccessLevel].padEnd(15)} │ ${String(peer === undefined ? 'No' : 'Yes').padEnd(6)} │`,
           );
         }
 
-        this.WriteLine('|--------------------------------------------------------------------------------|');
+        this.WriteLine(`└${getDividerText(80)}┘`);
 
         break;
       }
@@ -214,22 +232,22 @@ export default class PlayersCommand extends ParadiseCommand {
         }
 
         if (players.length) {
-          this.WriteLine(' -------------------------------------------------------------------------------- ');
+          this.WriteLine(`┌${getDividerText(80)}┐`);
           this.WriteLine(
-            `| ${'Username'.padEnd(18)} | ${'CMID'.padEnd(10)} | ${'SteamID64'.padEnd(17)} | ${'Rank'.padEnd(15)} | ${'Online'.padEnd(6)} |`,
+            `│ ${'Username'.padEnd(18)} │ ${'CMID'.padEnd(10)} │ ${'SteamID64'.padEnd(17)} │ ${'Rank'.padEnd(15)} │ ${'Online'.padEnd(6)} │`,
           );
-          this.WriteLine('|--------------------------------------------------------------------------------|');
+          this.WriteLine(`├${getDividerText(80)}┤`);
 
           for (const profile of players) {
             const steamMember = steamMembers.find((_) => _.Cmid === profile.Cmid);
             const peer = connectedPeers?.find((_) => _.Cmid === profile.Cmid);
 
             this.WriteLine(
-              `| ${profile.Name.padEnd(18)} | ${String(profile.Cmid).padEnd(10)} | ${String(steamMember?.SteamId || 'N/A').padEnd(17)} | ${MemberAccessLevel[profile.AccessLevel].padEnd(15)} | ${String(peer === undefined ? 'No' : 'Yes').padEnd(6)} |`,
+              `│ ${profile.Name.padEnd(18)} │ ${String(profile.Cmid).padEnd(10)} │ ${String(steamMember?.SteamId || 'N/A').padEnd(17)} │ ${MemberAccessLevel[profile.AccessLevel].padEnd(15)} │ ${String(peer === undefined ? 'No' : 'Yes').padEnd(6)} │`,
             );
           }
 
-          this.WriteLine(' -------------------------------------------------------------------------------- ');
+          this.WriteLine(`└${getDividerText(80)}┘`);
         } else {
           this.WriteLine(`Could not find any player matching "${pattern}".`);
         }

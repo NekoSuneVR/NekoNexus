@@ -1,12 +1,29 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import RijndaelCipher from './RijndaelCipher';
 
 export default class RijndaelCryptographyPolicy {
-  public RijndaelEncrypt(inputClearText: number[], passPhrase: string, initVector: string): any {
+  RijndaelEncrypt(inputClearText: number[], passPhrase: string, initVector: string): any {
     const rijndaelCipher = new RijndaelCipher(passPhrase, initVector);
     return [...rijndaelCipher.EncryptToBytes2(Buffer.from(inputClearText))];
   }
 
-  public RijndaelDecrypt(inputCipherText: number[], passPhrase: string, initVector: string): any {
+  RijndaelDecrypt(inputCipherText: number[], passPhrase: string, initVector: string): any {
     const rijndaelCipher = new RijndaelCipher(passPhrase, initVector);
     return [...rijndaelCipher.DecryptToBytes2(Buffer.from(inputCipherText))];
   }

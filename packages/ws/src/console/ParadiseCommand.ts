@@ -1,46 +1,59 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 
 export class CommandOutputArgs {
-  [key: string]: any;
+  InvocationId: string;
+  Text: string;
+  Inline: boolean = false;
 
-  public InvocationId: string;
-  public Text: string;
-  public Inline: boolean = false;
-
-  constructor(params: any = {}) {
-    Object.keys(params)
-      .filter((key) => key in this)
-      .forEach((key) => {
-        this[key] = params[key];
-      });
+  constructor(params: Partial<CommandOutputArgs> = {}) {
+    Object.assign(this, params);
   }
 }
 
 export default abstract class ParadiseCommand {
-  public static readonly Command: string;
-  public static readonly Aliases: string[];
+  static readonly Command: string;
+  static readonly Aliases: string[];
 
-  public abstract Description: string;
-  public abstract HelpString: string;
-  public abstract UsageText: string[];
+  abstract Description: string;
+  abstract HelpString: string;
+  abstract UsageText: string[];
 
-  public MinimumAccessLevel: MemberAccessLevel = MemberAccessLevel.Admin;
+  MinimumAccessLevel: MemberAccessLevel = MemberAccessLevel.Admin;
 
-  public InvocationId?: string;
+  InvocationId?: string;
 
   constructor(invocationId?: string) {
     this.InvocationId = invocationId;
   }
 
-  public abstract Run(args: string[]): Promise<any>;
+  abstract Run(args: string[]): Promise<any>;
 
-  public CommandOutput: (sender: any, args: CommandOutputArgs) => void;
+  CommandOutput: (sender: any, args: CommandOutputArgs) => void;
+
   private readonly OutputBuffer: string[] = [];
-  public get Output(): string {
+
+  get Output(): string {
     return this.OutputBuffer.join('\n');
   }
 
-  public ClearOutputBuffer(): void {
+  ClearOutputBuffer(): void {
     this.OutputBuffer.length = 0;
   }
 

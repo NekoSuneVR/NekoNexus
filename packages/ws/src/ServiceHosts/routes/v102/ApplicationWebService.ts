@@ -1,4 +1,21 @@
-import { ApiVersion } from '@/utils';
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import { ApiVersion } from '@/utils/enums';
 import { Map, MapSettings, PhotonServer, UserAccount } from '@festivaldev/paradise-models';
 import { BuildType, ChannelType, PhotonUsageType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
@@ -18,18 +35,18 @@ import { AuthenticateApplicationView } from '@festivaldev/uberstrike-js/UberStri
 import BaseWebService from '../BaseWebService';
 
 export default class ApplicationWebService extends BaseWebService {
-  public static get ServiceName(): string {
+  static get ServiceName(): string {
     return 'ApplicationWebService';
   }
-  public static get ServiceVersion(): string {
+  static get ServiceVersion(): string {
     return ApiVersion.Legacy102;
   }
   // protected static get ServiceInterface(): string { return 'IApplicationWebServiceContract';
 
-  static supportedClientVersions: List<string> = ['4.3.10'];
-  static supportedClientChannels: List<ChannelType> = [ChannelType.WindowsStandalone, ChannelType.OSXStandalone];
+  static supportedClientVersions: string[] = ['4.3.10'];
+  static supportedClientChannels: ChannelType[] = [ChannelType.WindowsStandalone, ChannelType.OSXStandalone];
 
-  public static async GetPhotonServers(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetPhotonServers(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -51,7 +68,7 @@ export default class ApplicationWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetMyIP(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetMyIP(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -71,7 +88,7 @@ export default class ApplicationWebService extends BaseWebService {
     return null;
   }
 
-  public static async AuthenticateApplication(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async AuthenticateApplication(data: number[], outputStream: number[]): Promise<number[] | null> {
     const bytes = data;
 
     try {
@@ -117,7 +134,7 @@ export default class ApplicationWebService extends BaseWebService {
     return null;
   }
 
-  public static async RecordException(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async RecordException(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -155,7 +172,7 @@ export default class ApplicationWebService extends BaseWebService {
     return null;
   }
 
-  public static async RecordExceptionUnencrypted(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async RecordExceptionUnencrypted(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -181,7 +198,7 @@ export default class ApplicationWebService extends BaseWebService {
     return null;
   }
 
-  public static async RecordTutorialStep(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async RecordTutorialStep(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -211,7 +228,7 @@ export default class ApplicationWebService extends BaseWebService {
     return null;
   }
 
-  public static async ReportBug(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async ReportBug(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -233,7 +250,7 @@ export default class ApplicationWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetLiveFeed(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetLiveFeed(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -253,7 +270,7 @@ export default class ApplicationWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetMaps(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetMaps(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -309,7 +326,7 @@ export default class ApplicationWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetItemAssetBundles(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetItemAssetBundles(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -332,7 +349,7 @@ export default class ApplicationWebService extends BaseWebService {
     return null;
   }
 
-  public static async SetLevelVersion(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async SetLevelVersion(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -356,7 +373,7 @@ export default class ApplicationWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetPhotonServerName(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetPhotonServerName(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -380,7 +397,7 @@ export default class ApplicationWebService extends BaseWebService {
     return null;
   }
 
-  public static async IsAlive(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async IsAlive(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)

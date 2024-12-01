@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import ParadiseService from '@/ParadiseService';
 import { Log } from '@/utils';
 import bodyParser from 'body-parser';
@@ -5,14 +22,14 @@ import bodyParserXml from 'body-parser-xml';
 import express, { type Express } from 'express';
 import * as http from 'http';
 import httpStatus from 'http-status';
-import { AddressInfo } from 'net';
+import type { AddressInfo } from 'net';
 import Routes, { ServiceVersions } from './routes';
-import BaseWebService from './routes/BaseWebService';
+import type BaseWebService from './routes/BaseWebService';
 
 export default class WebServiceHost {
-  public readonly port: number;
+  readonly port: number;
 
-  public readonly expressApp: Express;
+  readonly expressApp: Express;
   private listener?: http.Server;
 
   constructor(port: number = 8080) {
@@ -41,7 +58,7 @@ export default class WebServiceHost {
 
     this.expressApp.use(Routes);
 
-    this.expressApp.use((req, res, next) =>
+    this.expressApp.use((req, res, next) => {
       res.status(httpStatus.NOT_FOUND)
         .send(`<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN""http://www.w3.org/TR/html4/strict.dtd">
 <HTML>
@@ -57,11 +74,11 @@ export default class WebServiceHost {
 \t<p>HTTP Error 404. The requested resource is not found.</p>
 </BODY>
 
-</HTML>`),
-    );
+</HTML>`);
+    });
   }
 
-  public async start(): Promise<void> {
+  async start(): Promise<void> {
     Log.info('Starting Web Service server...');
 
     return new Promise((resolve, reject) => {
@@ -84,7 +101,7 @@ export default class WebServiceHost {
     });
   }
 
-  public stop(): void {
+  stop(): void {
     this.listener?.close();
     this.listener = undefined;
   }

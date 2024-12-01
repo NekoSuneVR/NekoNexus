@@ -1,4 +1,20 @@
-import { UberstrikeInventoryItem } from '@/utils';
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { PlayerInventoryItem, PlayerLoadout, PublicProfile } from '@festivaldev/paradise-models';
 import { MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { LoadoutSlotType } from '@festivaldev/uberstrike-js/UberStrike/Core/Types';
@@ -6,22 +22,22 @@ import { Op } from 'sequelize';
 import ParadiseCommand from '../ParadiseCommand';
 
 export default class InventoryCommand extends ParadiseCommand {
-  public static override Command: string = 'inventory';
-  public static override Aliases: string[] = ['inv'];
+  static override Command: string = 'inventory';
+  static override Aliases: string[] = ['inv'];
 
-  public override Description: string = "Adds or removes items from a player's inventory.";
-  public override HelpString: string = `${InventoryCommand.Command}\t${this.Description}`;
+  override Description: string = "Adds or removes items from a player's inventory.";
+  override HelpString: string = `${InventoryCommand.Command}\t${this.Description}`;
 
-  public override UsageText: string[] = [
+  override UsageText: string[] = [
     `${InventoryCommand.Command}: ${this.Description}`,
     "  give <name> <item> [<amount>]\t\tAdds the specified item to a player's inventory.",
     "  take <name> <item>\t\tRemoves the specified item from a player's inventory.",
     '  set <name> <slot> <item>\tSets the specified inventory slot to a specific item.',
   ];
 
-  public override MinimumAccessLevel: MemberAccessLevel = MemberAccessLevel.Moderator;
+  override MinimumAccessLevel: MemberAccessLevel = MemberAccessLevel.Moderator;
 
-  public override async Run(args: string[]): Promise<any> {
+  override async Run(args: string[]): Promise<any> {
     if (args.length < 3) {
       this.PrintUsageText();
       return;

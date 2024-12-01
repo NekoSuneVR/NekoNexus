@@ -1,6 +1,24 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import ParadiseService from '@/ParadiseService';
 import { ProfanityFilter } from '@/ProfanityFilter';
-import { ApiVersion, LoadoutFilter, UberstrikeInventoryItem } from '@/utils';
+import { LoadoutFilter } from '@/utils';
+import { ApiVersion, UberstrikeInventoryItem } from '@/utils/enums';
 import {
   CurrencyDeposit,
   ItemTransaction,
@@ -17,6 +35,7 @@ import {
   MemberOperationResult,
   MemberView,
   MemberWalletView,
+  type PublicProfileView,
 } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
   BooleanProxy,
@@ -41,22 +60,26 @@ import {
   PointDepositsViewModel,
   UberstrikeUserViewModel,
 } from '@festivaldev/uberstrike-js/UberStrike/Core/ViewModel';
-import { LoadoutView, UberstrikeMemberView } from '@festivaldev/uberstrike-js/UberStrike/DataCenter/Common/Entities';
+import {
+  LoadoutView,
+  UberstrikeMemberView,
+  type PlayerStatisticsView,
+} from '@festivaldev/uberstrike-js/UberStrike/DataCenter/Common/Entities';
 import { Op } from 'sequelize';
 import BaseWebService from '../BaseWebService';
 
 export default class UserWebService extends BaseWebService {
-  public static get ServiceName(): string {
+  static get ServiceName(): string {
     return 'UserWebService';
   }
-  public static get ServiceVersion(): string {
+  static get ServiceVersion(): string {
     return ApiVersion.Current;
   }
   // protected static get ServiceInterface(): string { return 'IUserWebServiceContract'; }
 
   private static readonly ProfanityFilter: ProfanityFilter = new ProfanityFilter();
 
-  public static async ChangeMemberName(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async ChangeMemberName(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -118,7 +141,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  public static async DepositCredits(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async DepositCredits(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -163,7 +186,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  public static async DepositPoints(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async DepositPoints(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -208,10 +231,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  public static async GenerateNonDuplicatedMemberNames(
-    data: byte[],
-    outputStream: MemoryStream,
-  ): Promise<byte[] | null> {
+  static async GenerateNonDuplicatedMemberNames(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -246,7 +266,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetCurrencyDeposits(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetCurrencyDeposits(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -268,6 +288,7 @@ export default class UserWebService extends BaseWebService {
             where: {
               Cmid: steamMember.Cmid,
             },
+            order: [['DepositDate', 'DESC']],
             raw: true,
           });
 
@@ -294,7 +315,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetInventory(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetInventory(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -336,7 +357,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetItemTransactions(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetItemTransactions(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -358,6 +379,7 @@ export default class UserWebService extends BaseWebService {
             where: {
               Cmid: steamMember.Cmid,
             },
+            order: [['WithdrawalDate', 'DESC']],
             raw: true,
           });
 
@@ -384,7 +406,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetLoadout(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetLoadout(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -435,7 +457,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetMember(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetMember(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -463,12 +485,12 @@ export default class UserWebService extends BaseWebService {
               outputStream,
               new UberstrikeUserViewModel({
                 CmuneMemberView: new MemberView({
-                  PublicProfile: publicProfile.get({ plain: true }),
-                  MemberWallet: memberWallet.get({ plain: true }),
+                  PublicProfile: publicProfile.get({ plain: true }) as PublicProfileView,
+                  MemberWallet: memberWallet.get({ plain: true }) as MemberWalletView,
                   MemberItems: memberItems,
                 }),
                 UberstrikeMemberView: new UberstrikeMemberView({
-                  PlayerStatisticsView: playerStatistics.get({ plain: true }),
+                  PlayerStatisticsView: playerStatistics.get({ plain: true }) as PlayerStatisticsView,
                 }),
               }),
             );
@@ -486,7 +508,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetMemberListSessionData(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetMemberListSessionData(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -508,7 +530,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetMemberSessionData(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetMemberSessionData(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -530,7 +552,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetMemberWallet(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetMemberWallet(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -571,7 +593,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  public static async GetPointsDeposits(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async GetPointsDeposits(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -593,6 +615,7 @@ export default class UserWebService extends BaseWebService {
             where: {
               Cmid: steamMember.Cmid,
             },
+            order: [['DepositDate', 'DESC']],
             raw: true,
           });
 
@@ -619,7 +642,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  public static async IsDuplicateMemberName(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async IsDuplicateMemberName(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -642,7 +665,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  public static async SetLoadout(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async SetLoadout(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)
@@ -709,7 +732,7 @@ export default class UserWebService extends BaseWebService {
     return null;
   }
 
-  public static async UpdatePlayerStatistics(data: byte[], outputStream: MemoryStream): Promise<byte[] | null> {
+  static async UpdatePlayerStatistics(data: number[], outputStream: number[]): Promise<number[] | null> {
     const isEncrypted = this.isEncrypted(data);
     const bytes = isEncrypted
       ? this.CryptoPolicy.RijndaelDecrypt(data, this.EncryptionPassPhrase, this.EncryptionInitVector)

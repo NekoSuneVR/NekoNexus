@@ -1,71 +1,26 @@
-// Pretend to write stream to other stream
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 interface Array<T> {
-  WriteTo(stream: Array<T>): void;
+  writeTo(stream: Array<T>): void;
 }
 
-// Math function
+// Math functions
 interface Math {
   clamp(value, min, max): number;
-  randomInt(min = 1, max = 2147483647): number;
-}
-
-// Type aliases for easier C# interoperability
-type byte = number;
-type decimal = number;
-type float = number;
-type int = number;
-type long = bigint;
-type short = number;
-type ushort = number;
-
-type bool = boolean;
-
-type DateTime = Date;
-type Stream = byte[];
-type MemoryStream = byte[];
-
-type List<T> = T[];
-type Dictionary<S extends string | number, T> = { [key: S]: T };
-
-// Unity Types
-class Color {
-  public r: float;
-  public g: float;
-  public b: float;
-
-  constructor(r: float, g: float, b: float) {
-    this.r = r;
-    this.g = g;
-    this.b = b;
-  }
-}
-
-class Vector3 {
-  public x: float;
-  public y: float;
-  public z: float;
-
-  constructor(x: float, y: float, z: float) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-  }
-}
-
-class Quaternion {
-  public x: float;
-  public y: float;
-  public z: float;
-  public w: float;
-
-  constructor(x: float, y: float, z: float, w: float) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    this.w = w;
-  }
-
-  public static get Identity(): Quaternion {
-    return new Quaternion(0, 0, 0, 1);
-  }
+  randomInt(min?, max?): number;
 }

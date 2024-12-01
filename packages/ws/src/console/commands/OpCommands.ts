@@ -1,20 +1,37 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { PublicProfile } from '@festivaldev/paradise-models';
 import { MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import ParadiseCommand from '../ParadiseCommand';
 
 export class DeopCommand extends ParadiseCommand {
-  public static override Command: string = 'deop';
-  public static override Aliases: string[] = [];
+  static override Command: string = 'deop';
+  static override Aliases: string[] = [];
 
-  public override Description: string = "Resets a user's permission level.";
-  public override HelpString: string = `${DeopCommand.Command}\t\t${this.Description}`;
+  override Description: string = "Resets a user's permission level.";
+  override HelpString: string = `${DeopCommand.Command}\t\t${this.Description}`;
 
-  public override UsageText: string[] = [
+  override UsageText: string[] = [
     `${DeopCommand.Command}: ${this.Description}`,
     `Usage: ${DeopCommand.Command} <name>`,
   ];
 
-  public override async Run(args: string[]): Promise<any> {
+  override async Run(args: string[]): Promise<any> {
     if (args.length < 1) {
       this.PrintUsageText();
       return;
@@ -48,13 +65,13 @@ export class DeopCommand extends ParadiseCommand {
 }
 
 export class OpCommand extends ParadiseCommand {
-  public static override Command: string = 'op';
-  public static override Aliases: string[] = [];
+  static override Command: string = 'op';
+  static override Aliases: string[] = [];
 
-  public override Description: string = "Sets a user's permission level.";
-  public override HelpString: string = `${OpCommand.Command}\t\t${this.Description}`;
+  override Description: string = "Sets a user's permission level.";
+  override HelpString: string = `${OpCommand.Command}\t\t${this.Description}`;
 
-  public get UsageText(): string[] {
+  get UsageText(): string[] {
     const lines: any[] = [`${OpCommand.Command}: ${this.Description}`, `Usage: ${OpCommand.Command} <name> <level>`];
 
     const values: string[] = [];
@@ -69,7 +86,7 @@ export class OpCommand extends ParadiseCommand {
     return lines;
   }
 
-  public override async Run(args: string[]): Promise<any> {
+  override async Run(args: string[]): Promise<any> {
     if (args.length < 2) {
       this.PrintUsageText();
       return;

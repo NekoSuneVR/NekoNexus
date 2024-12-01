@@ -23,12 +23,12 @@ Ported to TypeScript by Team FESTIVAL.
 /* eslint-disable no-dupe-class-members */
 
 import AllowList from './AllowList';
-import IAllowList from './Interfaces/IAllowList';
-import IProfanityFilter from './Interfaces/IProfanityFilter';
+import type IAllowList from './Interfaces/IAllowList';
+import type IProfanityFilter from './Interfaces/IProfanityFilter';
 import ProfanityBase from './ProfanityBase';
 
 function IsPunctuation(c: string): boolean {
-  return !!c.match(/\p{Punctuation}/);
+  return !!c.match(/\p{Punctuation}/u);
 }
 
 /**

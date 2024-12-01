@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import fs from 'fs';
 import moment from 'moment';
 import path from 'path';
@@ -29,7 +46,7 @@ const REMOVED_FILES: { [key: string]: any[] } = {
 };
 
 export class UpdateGenerator {
-  public static listFiles(directory: string, extensions: string[] = ['.exe', '.dll', '.unity3d', '']): string[] {
+  static listFiles(directory: string, extensions: string[] = ['.exe', '.dll', '.unity3d', '']): string[] {
     const files: string[] = [];
 
     for (const file of (fs.readdirSync(directory, { recursive: true }) as string[]).sort()) {
@@ -41,7 +58,7 @@ export class UpdateGenerator {
     return files;
   }
 
-  public static md5(path: string): Promise<string> {
+  static md5(path: string): Promise<string> {
     return new Promise((resolve, reject) => {
       const hash = new Bun.CryptoHasher('md5');
       const stream = fs.createReadStream(path);
@@ -51,7 +68,7 @@ export class UpdateGenerator {
     });
   }
 
-  public static sha256(path: string): Promise<string> {
+  static sha256(path: string): Promise<string> {
     return new Promise((resolve, reject) => {
       const hash = new Bun.CryptoHasher('sha256');
       const stream = fs.createReadStream(path);
@@ -61,7 +78,7 @@ export class UpdateGenerator {
     });
   }
 
-  public static sha512(path: string): Promise<string> {
+  static sha512(path: string): Promise<string> {
     return new Promise((resolve, reject) => {
       const hash = new Bun.CryptoHasher('sha512');
       const stream = fs.createReadStream(path);
@@ -71,11 +88,11 @@ export class UpdateGenerator {
     });
   }
 
-  public static normalizePath(pth: string): string {
+  static normalizePath(pth: string): string {
     return path.normalize(pth).split(path.sep).join('/');
   }
 
-  public static async generate(outputDir: string): Promise<void> {
+  static async generate(outputDir: string): Promise<void> {
     console.log('Generating V2 updates...');
 
     if (!fs.existsSync(outputDir)) {
@@ -149,7 +166,7 @@ export class UpdateGenerator {
 }
 
 export class FallbackUpdateGenerator extends UpdateGenerator {
-  public static async generate(outputDir: string): Promise<void> {
+  static async generate(outputDir: string): Promise<void> {
     console.log('Generating pre-V2 updates...');
 
     if (!fs.existsSync(outputDir)) {

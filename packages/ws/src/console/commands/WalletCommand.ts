@@ -1,15 +1,33 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import { getDividerText } from '@/utils';
 import { MemberWallet, PublicProfile } from '@festivaldev/paradise-models';
 import { MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import ParadiseCommand from '../ParadiseCommand';
 
 export default class WalletCommand extends ParadiseCommand {
-  public static override Command: string = 'wallet';
-  public static override Aliases: string[] = [];
+  static override Command: string = 'wallet';
+  static override Aliases: string[] = [];
 
-  public override Description: string = "Manages credits and points in a player's wallet.";
-  public override HelpString: string = `${WalletCommand.Command}\t\t${this.Description}`;
+  override Description: string = "Manages credits and points in a player's wallet.";
+  override HelpString: string = `${WalletCommand.Command}\t\t${this.Description}`;
 
-  public override UsageText: string[] = [
+  override UsageText: string[] = [
     `${WalletCommand.Command}: ${this.Description}`,
     "  info <name>\t\t\tShows the current status of a player's wallet.",
     '  credits',
@@ -20,9 +38,9 @@ export default class WalletCommand extends ParadiseCommand {
     "    remove <name> <amount>\tRemoves the specified amount of points from a players's wallet.",
   ];
 
-  public override MinimumAccessLevel: MemberAccessLevel = MemberAccessLevel.Moderator;
+  override MinimumAccessLevel: MemberAccessLevel = MemberAccessLevel.Moderator;
 
-  public override async Run(args: string[]): Promise<any> {
+  override async Run(args: string[]): Promise<any> {
     if (args.length < 2) {
       this.PrintUsageText();
       return;
@@ -55,11 +73,11 @@ export default class WalletCommand extends ParadiseCommand {
         }
 
         if (profiles?.length && wallets?.length) {
-          this.WriteLine(' ----------------------------------------------------- ');
+          this.WriteLine(`┌${getDividerText(53)}┐`);
           this.WriteLine(
-            `| ${'Username'.padEnd(18)} | ${'CMID'.padEnd(10)} | ${'Credits'.padEnd(7)} | ${'Points'.padEnd(7)} |`,
+            `│ ${'Username'.padEnd(18)} │ ${'CMID'.padEnd(10)} │ ${'Credits'.padEnd(7)} │ ${'Points'.padEnd(7)} │`,
           );
-          this.WriteLine(' -----------------------------------------------------|');
+          this.WriteLine(`├${getDividerText(53)}┤`);
 
           for (const profile of profiles) {
             const wallet = wallets.find((_) => _.Cmid === profile.Cmid);
@@ -70,7 +88,7 @@ export default class WalletCommand extends ParadiseCommand {
             }
           }
 
-          this.WriteLine(' ----------------------------------------------------- ');
+          this.WriteLine(`└${getDividerText(53)}┘`);
         } else {
           this.WriteLine(`Could not find any player matching ${searchString}.`);
         }

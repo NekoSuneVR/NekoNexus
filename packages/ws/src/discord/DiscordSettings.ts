@@ -1,32 +1,49 @@
-export class DiscordIntegrationSettings {
-  public LobbyChat: boolean;
-  public RoomChats: boolean;
-  public Commands: boolean;
-  public PlayerJoinAnnouncements: boolean;
-  public PlayerLeaveAnnouncements: boolean;
-  public RoomOpenAnnouncements: boolean;
-  public RoomCloseAnnouncements: boolean;
-  public RoundStartAnnouncements: boolean;
-  public RoundEndAnnouncements: boolean;
-  public ErrorLog: boolean;
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+class DiscordIntegrationSettings {
+  LobbyChat: boolean;
+  RoomChats: boolean;
+  Commands: boolean;
+  PlayerJoinAnnouncements: boolean;
+  PlayerLeaveAnnouncements: boolean;
+  RoomOpenAnnouncements: boolean;
+  RoomCloseAnnouncements: boolean;
+  RoundStartAnnouncements: boolean;
+  RoundEndAnnouncements: boolean;
+  ErrorLog: boolean;
 }
 
-export class DiscordWebHookSettings {
-  public LobbyChat: string;
-  public PlayerAnnouncements: string;
-  public RoomAnnouncements: string;
-  public RoundAnnouncements: string;
-  public ErrorLog: string;
+class DiscordWebHookSettings {
+  LobbyChat: string;
+  PlayerAnnouncements: string;
+  RoomAnnouncements: string;
+  RoundAnnouncements: string;
+  ErrorLog: string;
 }
 
-export class DiscordSettings {
-  public Enabled: boolean;
-  public BotToken: string;
-  public Integrations: DiscordIntegrationSettings = new DiscordIntegrationSettings();
-  public GuildId: string;
-  public ChatChannelId: string;
-  public CommandChannelId: string;
-  public RoomChatCategory: string;
+export default class DiscordSettings {
+  Enabled: boolean;
+  BotToken: string;
+  Integrations: DiscordIntegrationSettings = new DiscordIntegrationSettings();
+  GuildId: string;
+  ChatChannelId: string;
+  CommandChannelId: string;
+  RoomChatCategory: string;
   WebHooks: DiscordWebHookSettings = new DiscordWebHookSettings();
   AnnouncementBlacklist: string[];
 }

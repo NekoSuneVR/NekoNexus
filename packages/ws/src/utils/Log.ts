@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2017, 2021-2024 Team FESTIVAL
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import chalk from 'chalk';
 import util from 'util';
 import winston from 'winston';
@@ -63,6 +80,12 @@ winston.addColors({
 });
 
 export default class Log {
+  private static maxLogLevel: LogLevel | undefined;
+
+  static set MaxLogLevel(level: LogLevel | undefined) {
+    this.maxLogLevel = level;
+  }
+
   static success(message: any): void {
     this.write(message, LogLevel.OK);
   }
@@ -88,7 +111,9 @@ export default class Log {
   }
 
   static write(message: any, level: LogLevel = LogLevel.INFO, error?: any): void {
-    logger.log(LogLevel[level], message);
+    if (this.maxLogLevel === undefined || level <= this.maxLogLevel) {
+      logger.log(LogLevel[level], message);
+    }
 
     if (error) console.error(error);
   }
