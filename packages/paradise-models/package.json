@@ -1,9 +1,9 @@
 {
   "name": "@festivaldev/paradise-models",
   "module": "src/index.ts",
-  "dependencies": {
-    "@festivaldev/uberstrike-js": "workspace:*",
-    "moment": "^2.0.0"
+  "type": "module",
+  "exports": {
+    "default": "./src/index.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
@@ -19,8 +19,8 @@
     "typescript": "~5.5.0",
     "typescript-eslint": "^8.0.0"
   },
-  "exports": {
-    "default": "./src/index.ts"
-  },
-  "type": "module"
+  "dependencies": {
+    "@festivaldev/uberstrike-js": "workspace:*",
+    "moment": "^2.0.0"
+  }
 }

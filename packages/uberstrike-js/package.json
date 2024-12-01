@@ -1,21 +1,11 @@
 {
   "name": "@festivaldev/uberstrike-js",
+  "version": "4.7.1",
+  "homepage": "https://github.com/festivaldev/uberstrike-js",
+  "author": "Team FESTIVAL <weare@festival.tf>",
+  "license": "GPL-3.0-only",
   "module": "src/index.ts",
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.15.0",
-    "@types/bun": "latest",
-    "@typescript-eslint/eslint-plugin": "^8.0.0",
-    "@typescript-eslint/parser": "^8.0.0",
-    "eslint": "^8.0.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "prettier": "^3.3.3",
-    "typescript-eslint": "^8.0.0"
-  },
+  "type": "module",
   "exports": {
     "./Cmune/Core/Models": "./src/Cmune/Core/Models/index.ts",
     "./Cmune/Core/Models/Views": "./src/Cmune/Core/Models/Views/index.ts",
@@ -29,5 +19,17 @@
     "./UberStrike/DataCenter/Common/Entities": "./src/UberStrike/DataCenter/Common/Entities/index.ts",
     "./UnityEngine": "./src/UnityEngine/index.ts"
   },
-  "type": "module"
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "@types/bun": "latest",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^8.0.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "^3.3.3",
+    "typescript": "~5.5.0",
+    "typescript-eslint": "^8.0.0"
+  }
 }
