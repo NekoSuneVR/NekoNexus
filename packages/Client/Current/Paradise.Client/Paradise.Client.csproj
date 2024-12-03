@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net35</TargetFramework>
-    <OutputPath>..\..\..\..\build\client\Managed</OutputPath>
+    <OutputPath>..\..\..\..\.release\client\_pak\UberStrike_Data\Managed</OutputPath>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateSupportedRuntime>False</GenerateSupportedRuntime>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -63,6 +63,13 @@
     <Compile Include="..\Paradise.Client.DiscordRPC\IRichPresenceServiceContract.cs">
       <Link>Plugins\RichPresence\IRichPresenceServiceContract.cs</Link>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\Paradise.Patch.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>..\%(Filename)%(Extension)</Link>
+    </Content>
   </ItemGroup>
 
   <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">

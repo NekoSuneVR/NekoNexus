@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net35</TargetFramework>
-    <OutputPath>..\..\..\..\build\client\Managed</OutputPath>
+    <OutputPath>..\..\..\..\.release\client\_pak\UberStrike_Data\Managed</OutputPath>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateSupportedRuntime>False</GenerateSupportedRuntime>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net481</TargetFramework>
-    <OutputPath>..\..\..\..\build\client\Plugins</OutputPath>
+    <OutputPath>..\..\..\..\.release\client\_pak\UberStrike_Data\Plugins</OutputPath>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateSupportedRuntime>False</GenerateSupportedRuntime>
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
