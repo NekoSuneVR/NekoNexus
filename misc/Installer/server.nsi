@@ -7,7 +7,6 @@
 
 Name "Paradise Server (Update ${VERSION})"
 BrandingText "${U+A9} 2017, 2022-2024 Team FESTIVAL"
-OutFile "build\Paradise-server-win-x86_64.exe"
 OutFile "..\..\.release\server\Paradise-server-win-x86_64.exe"
 InstallDir "$PROGRAMFILES\Paradise"
 ShowInstDetails show
@@ -147,13 +146,40 @@ SectionGroup /e "Setup Windows Services" Services
 		InitPluginsDir
 
 		SetOutPath "$PLUGINSDIR"
-		File "/oname=$PLUGINSDIR\nssm.exe" "..\nssm.exe"
+		DetailPrint 'Downloading NSSM'
+    NSISdl::download "https://nssm.cc/ci/nssm-2.24-103-gdee49fc.zip" "$PLUGINSDIR\nssm-2.24-103-gdee49fc.zip"
 
-		DetailPrint "Creating service for Paradise.WebServices"
-		nsExec::Exec "$PLUGINSDIR\nssm.exe install NewParadise.WebServices $INSTDIR\Paradise.WebServices\Paradise.WebServices.exe"
-		nsExec::Exec "$PLUGINSDIR\nssm.exe set NewParadise.WebServices DisplayName $\"Paradise Web Services$\""
-		nsExec::Exec "$PLUGINSDIR\nssm.exe set NewParadise.WebServices Description $\"Service for running the Web Services API and File Server used by Paradise, a UberStrike Server implementation.$\""
-		nsExec::Exec "$PLUGINSDIR\nssm.exe set NewParadise.WebServices AppEnvironmentExtra NODE_ENV=$\"production$\""
+    DetailPrint 'Extracting NSSM'
+    ; Nsis7z::Extract "$PLUGINSDIR\nssm-2.24-103-gdee49fc.zip"
+
+    Var /GLOBAL NSSMPath
+
+    ${If} ${RunningX64}
+      StrCpy $NSSMPath "nssm-2.24-103-gdee49fc\win64\nssm.exe"
+    ${Else}
+      StrCpy $NSSMPath "nssm-2.24-103-gdee49fc\win32\nssm.exe"
+    ${EndIf}
+
+    nsisunz::Unzip /noextractpath /file "$NSSMPath" "$PLUGINSDIR\nssm-2.24-103-gdee49fc.zip" "$INSTDIR"
+
+    ;DetailPrint "$PLUGINSDIR\$NSSMPath"
+    ;DetailPrint "$INSTDIR"
+    ;CopyFiles /SILENT "$PLUGINSDIR\$NSSMPath" "$INSTDIR"
+
+    DetailPrint "Creating service for Paradise.WebServices"
+
+    Var /GLOBAL ParadiseExe
+
+    ${If} ${RunningX64}
+      StrCpy $ParadiseExe "Paradise.WebServices_x64.exe"
+    ${Else}
+      StrCpy $ParadiseExe "Paradise.WebServices.exe"
+    ${EndIf}
+
+    nsExec::Exec "$INSTDIR\nssm.exe install NewParadise.WebServices $INSTDIR\Paradise.WebServices\$ParadiseExe"
+    nsExec::Exec "$INSTDIR\nssm.exe set NewParadise.WebServices DisplayName $\"Paradise Web Services$\""
+    nsExec::Exec "$INSTDIR\nssm.exe set NewParadise.WebServices Description $\"Service for running the Web Services API and File Server used by Paradise, a UberStrike Server implementation.$\""
+    nsExec::Exec "$INSTDIR\nssm.exe set NewParadise.WebServices AppEnvironmentExtra NODE_ENV=$\"production$\""
 
 		; DetailPrint 'Starting service "Paradise Web Services" (this might take a moment)'
 		; nsExec::Exec 'net start NewParadise.WebServices'
@@ -204,7 +230,8 @@ Section "Uninstall"
 	nsExec::Exec "$INSTDIR\photon\PhotonSocketServer.exe /noMessages /remove ParadiseApplication /configPath $INSTDIR\photon"
 
 	DetailPrint "Removing service for Paradise.WebServices"
-	nsExec::Exec "$INSTDIR\Paradise.WebServices\Paradise.WebServices.exe --uninstall --silent"
+	nsExec::Exec "$INSTDIR\nssm.exe stop NewParadise.WebServices"
+	nsExec::Exec "$INSTDIR\nssm.exe remove NewParadise.WebServices confirm"
 
 	RMDir /r "$INSTDIR"
 
