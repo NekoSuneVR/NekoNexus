@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "scripts": {
+    "build:client:win-x86": "source .env && \"$MAKENSIS\" client.nsi",
+    "build:server:win-x64": "source .env && \"$MAKENSIS\" server.nsi"
+  }
+}

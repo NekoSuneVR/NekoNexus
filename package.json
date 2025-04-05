@@ -1,0 +1,36 @@
+{
+  "private": true,
+  "workspaces": [
+    "./packages/paradise-models",
+    "./packages/uberstrike-js",
+    "./packages/ws"
+  ],
+  "scripts": {
+    "start:ws": "bun --cwd=./packages/ws start",
+    "build": "bun run build:client:all && bun run build:uberdaemon:all && bun run build:realtime && bun run build:ws",
+    "build:client:bootstrap": "bun --cwd=./packages/Client/Current/Paradise.Client.Bootstrap run build",
+    "build:client:rpc": "bun --cwd=./packages/Client/Current/Paradise.Client.DiscordRPC run build",
+    "build:client:all": "bun run build:client:bootstrap && bun run build:client:rpc",
+    "build:uberdaemon:win-x86": "bun --cwd=./misc/uberdaemon run build:win-x86",
+    "build:uberdaemon:darwin-x86": "bun --cwd=./misc/uberdaemon run build:darwin-x86",
+    "build:uberdaemon:all": "bun run build:uberdaemon:win-x86 && bun run build:uberdaemon:darwin-x86",
+    "build:realtime": "bun --cwd=./packages/Realtime/Paradise.Realtime run build",
+    "build:ws": "bun --cwd=./packages/ws run build-all",
+    "build:installer:client": "bun --cwd=./misc/Installer run build:client:win-x86",
+    "build:installer:server": "bun --cwd=./misc/Installer run build:server:win-x64",
+    "build:installer:all": "bun run build:installer:client && bun run build:installer:server",
+    "bundle": "bun run bundle:client:all && bun run bundle:server:all",
+    "bundle:client:win-x86": "bun --cwd=./.release/client run bundle:win-x86",
+    "bundle:client:darwin-x86": "bun --cwd=./.release/client run bundle:darwin-x86",
+    "bundle:client:all": "bun run bundle:client:win-x86 && bun run bundle:client:darwin-x86",
+    "bundle:server:win-x64": "bun --cwd=./.release/server run bundle:win-x64",
+    "bundle:server:darwin-x64": "bun --cwd=./.release/server run bundle:darwin-x64",
+    "bundle:server:darwin-arm64": "bun --cwd=./.release/server run bundle:darwin-arm64",
+    "bundle:server:linux-x64": "bun --cwd=./.release/server run bundle:linux-x64",
+    "bundle:server:linux-arm64": "bun --cwd=./.release/server run bundle:linux-arm64",
+    "bundle:server:all": "bun run bundle:server:win-x64 && bun run bundle:server:darwin-x64 && bun run bundle:server:darwin-arm64 && bun run bundle:server:linux-x64 && bun run bundle:server:linux-arm64"
+  },
+  "devDependencies": {
+    "@prettier/plugin-xml": "^3.4.1"
+  }
+}
