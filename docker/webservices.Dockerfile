@@ -4,11 +4,14 @@
 FROM oven/bun:1 AS base
 WORKDIR /app
 
-# Install workspace deps (cache layer): copy manifests first.
+# Install workspace deps (cache layer): copy EVERY workspace manifest first.
+# bun resolves all members declared in the root package.json "workspaces", so a missing
+# manifest (e.g. packages/admin) makes `bun install` fail even though we don't run it here.
 COPY package.json bun.lockb ./
 COPY packages/paradise-models/package.json packages/paradise-models/
 COPY packages/uberstrike-js/package.json   packages/uberstrike-js/
 COPY packages/ws/package.json              packages/ws/
+COPY packages/admin/package.json           packages/admin/
 RUN bun install --frozen-lockfile || bun install
 
 # Copy the workspace sources.
