@@ -4,6 +4,10 @@ A single native installer (Inno Setup) that auto-detects UberStrike from Steam a
 to play on the Paradise free server (`paradisetest.nekosunevr.co.uk`). No `.cmd`, no PowerShell,
 no typing — the user just runs the EXE, clicks Next, done.
 
+If the machine is missing **.NET Framework 4.7.2+** (the patcher's dependency — Windows 10/11
+already have it), the installer **downloads and installs .NET 4.8 automatically** at the Ready
+step (with a progress bar), then continues. Only users who lack .NET pay that one-time download.
+
 ## Build it
 ```powershell
 # one-time: install the compiler (free)

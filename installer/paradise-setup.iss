@@ -47,6 +47,7 @@ Source: "{#Payload}\Paradise.Settings.Client.template.xml"; DestDir: "{tmp}\p"; 
 var
   GamePage: TInputDirWizardPage;
   DetectedGame: string;
+  DownloadPage: TDownloadWizardPage;
 
 { ---- locate UberStrike via Steam (registry -> libraryfolders.vdf -> fallbacks) ---- }
 function NormSlashes(S: string): string;
@@ -130,24 +131,49 @@ begin
   Result := RegQueryDWordValue(HKLM, 'SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full', 'Release', Rel) and (Rel >= 461808);
 end;
 
-function InitializeSetup(): Boolean;
-var
-  EC: Integer;
+function OnDownloadProgress(const Url, FileName: String; const Progress, ProgressMax: Int64): Boolean;
 begin
-  Result := True;
-  if not NetFx472Present() then
-  begin
-    if MsgBox('This patch needs Microsoft .NET Framework 4.7.2 or newer.' + #13#10 +
-              '(Windows 10/11 normally include it; yours appears not to.)' + #13#10 + #13#10 +
-              'Open the download page now? Install .NET, then run this installer again.',
-              mbConfirmation, MB_YESNO) = IDYES then
-      ShellExec('open', 'https://dotnet.microsoft.com/download/dotnet-framework', '', '', SW_SHOWNORMAL, ewNoWait, EC);
-    Result := False;
+  Result := True;   { keep going (Cancel handled by the page) }
+end;
+
+{ Download + silently install .NET Framework 4.8 (covers the 4.7.2 requirement). Returns True
+  on success. Only called when .NET is missing. }
+function InstallDotNet(): Boolean;
+var
+  RC: Integer;
+begin
+  Result := False;
+  DownloadPage.Clear;
+  DownloadPage.Add('https://go.microsoft.com/fwlink/?linkid=2088631', 'ndp48.exe', '');
+  DownloadPage.Show;
+  try
+    try
+      DownloadPage.Download;
+    except
+      MsgBox('Could not download .NET Framework:' + #13#10 + GetExceptionMessage + #13#10 + #13#10 +
+             'Install it manually from https://dotnet.microsoft.com/download/dotnet-framework, then run this again.',
+             mbError, MB_OK);
+      Exit;
+    end;
+  finally
+    DownloadPage.Hide;
   end;
+  { /passive shows Microsoft's own progress with no prompts; /norestart so we control reboot. }
+  if not Exec(ExpandConstant('{tmp}\ndp48.exe'), '/passive /norestart', '', SW_SHOWNORMAL, ewWaitUntilTerminated, RC) then
+  begin
+    MsgBox('Could not start the .NET Framework installer.', mbError, MB_OK);
+    Exit;
+  end;
+  { 0 = ok, 3010 = ok but reboot needed; otherwise re-check the registry to be sure. }
+  Result := (RC = 0) or (RC = 3010) or NetFx472Present();
+  if not Result then
+    MsgBox('.NET Framework install did not complete (code ' + IntToStr(RC) + ').' + #13#10 +
+           'Install it manually and run this installer again.', mbError, MB_OK);
 end;
 
 procedure InitializeWizard();
 begin
+  DownloadPage := CreateDownloadPage(SetupMessage(msgWizardPreparing), SetupMessage(msgPreparingDesc), @OnDownloadProgress);
   DetectedGame := FindUberStrike();
   GamePage := CreateInputDirPage(wpWelcome,
     'UberStrike location',
@@ -173,6 +199,12 @@ begin
              'Pick your UberStrike folder and try again.', mbError, MB_OK);
       Result := False;
     end;
+  end
+  else if CurPageID = wpReady then
+  begin
+    { The patcher needs .NET Framework 4.7.2+. If it's missing, download + install it now. }
+    if not NetFx472Present() then
+      Result := InstallDotNet();
   end;
 end;
 
