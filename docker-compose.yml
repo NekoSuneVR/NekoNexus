@@ -1,9 +1,12 @@
 # Full Paradise stack: MySQL + Bun web services + free LiteNetLib realtime (Comm + Game).
 # No Photon SDK, no licence, no CCU cap. Multi-arch (amd64 + arm64) — see docker/README.md.
 #
-# Quick start:
-#   git submodule update --init packages/Core
-#   docker compose up --build
+# Quick start (uses the prebuilt images published to GHCR — no source/build needed):
+#   docker compose pull
+#   docker compose up -d
+#
+# To BUILD from source instead of pulling, comment out the `image:` line on a service and
+# uncomment its `build:` block (you'll need the Core submodule: git submodule update --init packages/Core).
 #
 # Client connects to:  web services :8080/:8081/:8082, Comm UDP :5055, Game UDP :5155
 
@@ -27,9 +30,11 @@ services:
       retries: 12
 
   webservices:
-    build:
-      context: .
-      dockerfile: docker/webservices.Dockerfile
+    image: ghcr.io/nekosunevr/paradise-webservices:latest
+    pull_policy: always
+    # build:
+    #   context: .
+    #   dockerfile: docker/webservices.Dockerfile
     restart: unless-stopped
     depends_on:
       db:
@@ -42,9 +47,11 @@ services:
       - ./docker/config/Paradise.Settings.WebServices.yml:/app/packages/ws/Paradise.Settings.WebServices.yml:ro
 
   realtime-comm:
-    build:
-      context: .
-      dockerfile: docker/realtime.Dockerfile
+    image: ghcr.io/nekosunevr/paradise-realtime:latest
+    pull_policy: always
+    # build:
+    #   context: .
+    #   dockerfile: docker/realtime.Dockerfile
     restart: unless-stopped
     depends_on:
       - webservices
@@ -55,9 +62,11 @@ services:
       - "5055:5055/udp"
 
   realtime-game:
-    build:
-      context: .
-      dockerfile: docker/realtime.Dockerfile
+    image: ghcr.io/nekosunevr/paradise-realtime:latest
+    pull_policy: always
+    # build:
+    #   context: .
+    #   dockerfile: docker/realtime.Dockerfile
     restart: unless-stopped
     depends_on:
       - webservices
