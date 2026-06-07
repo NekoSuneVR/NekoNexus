@@ -35,8 +35,10 @@ if ($haveMod) {
   New-Item -ItemType Directory -Force -Path (Join-Path $Out "mod") | Out-Null
   foreach ($m in $mods) { $src = Join-Path $ModDir $m; if (Test-Path $src) { Copy-Item $src (Join-Path $Out "mod") -Force } }
   Copy-Item (Join-Path $RepoRoot "packages\Client\install-paradise.ps1") $Out -Force
+  Copy-Item (Join-Path $RepoRoot "packages\Client\paradise-target.json") $Out -Force
+  Copy-Item (Join-Path $RepoRoot "packages\Client\Install.cmd")          $Out -Force
   Copy-Item (Join-Path $RepoRoot "packages\Client\INSTALL.md")           $Out -Force
-  Write-Host "    + self-contained installer (prebuilt mod DLLs included)" -ForegroundColor Green
+  Write-Host "    + self-contained installer (double-click Install.cmd, Steam auto-detect)" -ForegroundColor Green
 } else {
   Write-Host "    ! mod DLLs not built - zip will require a repo checkout (make-client-patch.ps1)" -ForegroundColor Yellow
 }

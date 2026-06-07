@@ -8,29 +8,34 @@ No game files are included or redistributed; the patch runs against *your* insta
 - A Steam copy of **UberStrike** installed.
 - **Windows** with PowerShell (built in).
 
-## Install
+## Install (easy — double-click)
 
 1. **Fully close UberStrike** (and quit it in Steam) — the patch can't replace files while it runs.
 2. Unzip this folder somewhere.
-3. Open **PowerShell** in this folder (Shift-right-click → *Open PowerShell window here*).
-4. Run one of these:
+3. Double-click **`Install.cmd`**.
 
-   **Behind an HTTPS domain / reverse proxy** (recommended):
-   ```powershell
-   .\install-paradise.ps1 -UberStrikePath "C:\Program Files (x86)\Steam\steamapps\common\UberStrike" -ServerHost play.example.com -Https
-   ```
+That's it. The game is found automatically from Steam, and the server is read from
+`paradise-target.json` (already set to the right server). Then launch UberStrike.
 
-   **Plain IP + ports** (no domain):
-   ```powershell
-   .\install-paradise.ps1 -UberStrikePath "C:\Program Files (x86)\Steam\steamapps\common\UberStrike" -ServerHost 203.0.113.10
-   ```
+## Install (manual / non-standard setup)
 
-   If PowerShell blocks the script, run it once as:
-   ```powershell
-   powershell -ExecutionPolicy Bypass -File .\install-paradise.ps1 -UberStrikePath "C:\...\UberStrike" -ServerHost play.example.com -Https
-   ```
+If your game isn't in a normal Steam library, open **PowerShell** in this folder and point at it:
+```powershell
+.\install-paradise.ps1 -UberStrikePath "D:\Games\UberStrike"
+```
+You can also override the server: `-ServerHost play.example.com -Https` (or `-ServerHost 203.0.113.10` for plain IP + ports).
 
-5. Launch UberStrike. You can add/switch servers anytime in **Paradise Settings → Web Service URLs**.
+If PowerShell blocks the script, prefix it with `powershell -ExecutionPolicy Bypass -File `.
+
+After patching, launch UberStrike — you can add/switch servers anytime in **Paradise Settings → Web Service URLs**.
+
+## For server owners — make this YOUR installer
+Edit **`paradise-target.json`** before sharing the zip:
+```json
+{ "ServerHost": "play.yourdomain.com", "Https": true, "WebPort": 8080, "FilePort": 8081 }
+```
+Set `Https` to `false` and fill `WebPort`/`FilePort` if you serve plain HTTP on IP+ports. Then your
+users just double-click `Install.cmd` — no typing.
 
 ## Undo / revert to the original game
 The patch keeps backups:
@@ -51,7 +56,9 @@ or use Steam → UberStrike → Properties → Installed Files → **Verify inte
   server owner to confirm UDP **5055/5155** are open and the server list IP is their public IP/domain.
 
 ## What's in this zip
-- `install-paradise.ps1` — the installer.
+- `Install.cmd` — double-click installer (calls the script below).
+- `install-paradise.ps1` — the installer (Steam auto-detect + config).
+- `paradise-target.json` — the server this installer points at (owners edit this).
 - `patcher\` — UniversalUnityPatcher (injects the Paradise bootstrap).
 - `mod\` — prebuilt Paradise client DLLs.
 - `Photon3Unity3D.dll` — the free LiteNetLib transport (replaces Photon).

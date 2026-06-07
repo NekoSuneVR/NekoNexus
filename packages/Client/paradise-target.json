@@ -1,0 +1,6 @@
+{
+  "ServerHost": "paradisetest.nekosunevr.co.uk",
+  "Https": true,
+  "WebPort": 8080,
+  "FilePort": 8081
+}
