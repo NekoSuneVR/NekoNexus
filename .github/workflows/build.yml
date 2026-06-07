@@ -36,15 +36,21 @@ jobs:
       - name: Install workspace deps
         run: bun install
 
+      - name: Prepare release output dirs
+        shell: pwsh
+        run: New-Item -ItemType Directory -Force -Path ".release/server/_pak/Paradise.WebServices", ".release/server/_pak/Paradise.Admin", ".release/server/_pak/Paradise.Realtime/bin" | Out-Null
+
       # Separate steps so a failure points at the exact build that broke.
       - name: Build free shims
         run: bun run build:shims
       - name: Build realtime self-host
         run: bun run build:host
       - name: Build Web Services exe (win-x64)
-        run: bun --cwd packages/ws run build:win-x64
+        working-directory: packages/ws
+        run: bun run build:win-x64
       - name: Build Admin dashboard exe (win-x64)
-        run: bun --cwd packages/admin run build:win-x64
+        working-directory: packages/admin
+        run: bun run build:win-x64
 
       - name: Build patcher (UniversalUnityPatcher)
         run: |
@@ -88,16 +94,20 @@ jobs:
           submodules: recursive
       - uses: oven-sh/setup-bun@v2
       - run: bun install
+      - name: Prepare release output dirs
+        run: mkdir -p .release/server/_pak/Paradise.WebServices .release/server/_pak/Paradise.Admin
       - name: Build Web Services (linux + darwin, amd64 + arm64)
+        working-directory: packages/ws
         run: |
-          bun --cwd packages/ws run build:linux-x64
-          bun --cwd packages/ws run build:linux-arm64
-          bun --cwd packages/ws run build:darwin-x64
-          bun --cwd packages/ws run build:darwin-arm64
+          bun run build:linux-x64
+          bun run build:linux-arm64
+          bun run build:darwin-x64
+          bun run build:darwin-arm64
       - name: Build Admin (linux amd64 + arm64)
+        working-directory: packages/admin
         run: |
-          bun --cwd packages/admin run build:linux-x64
-          bun --cwd packages/admin run build:linux-arm64
+          bun run build:linux-x64
+          bun run build:linux-arm64
       - uses: actions/upload-artifact@v4
         with:
           name: paradise-webservices-unix
