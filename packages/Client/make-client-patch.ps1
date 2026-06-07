@@ -98,7 +98,26 @@ if (-not (Test-Path (Join-Path $BootstrapBin "Paradise.Client.Bootstrap.dll"))) 
   throw "Built mod DLLs not found in $BootstrapBin. Build may have failed; re-run without -SkipBuild."
 }
 
-# 4) Inject the bootstrap into Assembly-CSharp.dll (creates a backup first).
+# 4) Install the Paradise runtime + our free transport into the game FIRST. The patch injects a
+#    Call into Paradise.Client.Bootstrap, so that DLL must already be in Managed for the patcher
+#    to resolve it - otherwise the patch fails (exit 1, stops at "patch method Awake").
+Step "Installing Paradise runtime + free transport into the game"
+$installs = @(
+  (Join-Path $BootstrapBin "Paradise.Client.Bootstrap.dll"),
+  (Join-Path $BootstrapBin "Paradise.Client.dll"),
+  (Join-Path $BootstrapBin "0Harmony.dll"),
+  (Join-Path $BootstrapBin "log4net.dll"),
+  (Join-Path $BootstrapBin "YamlDotNet.dll")
+)
+foreach ($f in $installs) { if (Test-Path $f) { Copy-Item $f $Managed -Force; Write-Host "    + $(Split-Path $f -Leaf)" } }
+
+# Our free Photon3Unity3D.dll REPLACES the game's Photon transport (back it up once).
+$gamePhoton = Join-Path $Managed "Photon3Unity3D.dll"
+if ((Test-Path $gamePhoton) -and -not (Test-Path "$gamePhoton.orig")) { Copy-Item $gamePhoton "$gamePhoton.orig" -Force }
+Copy-Item $ShimDll $gamePhoton -Force
+Write-Host "    + Photon3Unity3D.dll (free LiteNetLib transport)"
+
+# 5) Inject the bootstrap into Assembly-CSharp.dll (now resolvable). Creates a backup first.
 if (-not $NoPatch) {
   Need $PatcherExe "UniversalUnityPatcher.exe (build packages/Patcher first)"
   # If a backup exists, the game was patched before — restore the original first so we always
@@ -117,23 +136,6 @@ if (-not $NoPatch) {
   $p = Start-Process -FilePath $PatcherExe -ArgumentList $pargs -NoNewWindow -Wait -PassThru
   if ($p.ExitCode -ne 0) { throw "UniversalUnityPatcher failed (exit $($p.ExitCode)). Is Assembly-CSharp.dll an unmodified, supported build?" }
 }
-
-# 5) Install the Paradise runtime + our free transport into the game.
-Step "Installing Paradise runtime + free transport into the game"
-$installs = @(
-  (Join-Path $BootstrapBin "Paradise.Client.Bootstrap.dll"),
-  (Join-Path $BootstrapBin "Paradise.Client.dll"),
-  (Join-Path $BootstrapBin "0Harmony.dll"),
-  (Join-Path $BootstrapBin "log4net.dll"),
-  (Join-Path $BootstrapBin "YamlDotNet.dll")
-)
-foreach ($f in $installs) { if (Test-Path $f) { Copy-Item $f $Managed -Force; Write-Host "    + $(Split-Path $f -Leaf)" } }
-
-# Our free Photon3Unity3D.dll REPLACES the game's Photon transport (back it up once).
-$gamePhoton = Join-Path $Managed "Photon3Unity3D.dll"
-if ((Test-Path $gamePhoton) -and -not (Test-Path "$gamePhoton.orig")) { Copy-Item $gamePhoton "$gamePhoton.orig" -Force }
-Copy-Item $ShimDll $gamePhoton -Force
-Write-Host "    + Photon3Unity3D.dll (free LiteNetLib transport)"
 
 # 6) Write the settings file pointing at your server.
 #    -Https: one HTTPS domain (no ports). Otherwise http://host:port.

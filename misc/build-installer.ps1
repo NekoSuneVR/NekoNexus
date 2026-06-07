@@ -33,7 +33,7 @@ if (-not $iscc) { throw "Inno Setup not found. Install it:  winget install --id 
 $exe = Join-Path $Repo ".release\installer\ParadiseSetup.exe"
 if (Test-Path $exe) {
   Write-Host "==> Built: $exe" -ForegroundColor Green
-  Write-Host "    (Unsigned — Windows SmartScreen will warn until code-signed. See installer\README.md.)"
+  Write-Host "    (Unsigned - Windows SmartScreen will warn until code-signed. See installer\README.md.)"
 } else {
   throw "Compile finished but ParadiseSetup.exe not found."
 }

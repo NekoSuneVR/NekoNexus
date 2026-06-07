@@ -173,35 +173,16 @@ begin
   PatchXml := Tmp + '\Paradise.Patch.xml';
   Shim     := Tmp + '\Photon3Unity3D.dll';
 
-  { 1) restore a clean Assembly-CSharp from backup (so re-running is safe) }
-  BackupDll := AddBackslash(Managed) + 'backup\Assembly-CSharp.dll';
-  if FileExists(BackupDll) then
-    FileCopy(BackupDll, AddBackslash(Managed) + 'Assembly-CSharp.dll', False);
-
-  { 2) patch Assembly-CSharp with UniversalUnityPatcher, capturing its output via cmd.exe so a
-       failure shows the real reason (AV removed the exe, wrong path, or a genuine patch error). }
-  LogFile := ExpandConstant('{tmp}\paradise-patch.log');
-  if not Exec(ExpandConstant('{cmd}'),
-       '/C ""' + Tmp + '\patcher\UniversalUnityPatcher.exe" --backup --no-gui --silent --ignore-duplicate-patch -i "' + Managed + '" -p "' + PatchXml + '" > "' + LogFile + '" 2>&1"',
-       Tmp + '\patcher', SW_HIDE, ewWaitUntilTerminated, RC) then
-  begin
-    MsgBox('Could not run the patch step.', mbError, MB_OK);
-    Exit;
-  end;
-  if RC <> 0 then
-  begin
-    LogA := '';
-    LoadStringFromFile(LogFile, LogA);
-    MsgBox('Patching failed (exit code ' + IntToStr(RC) + ').' + #13#10 +
-           'Game folder: ' + Managed + #13#10 + #13#10 +
-           'Patcher output:' + #13#10 + String(LogA) + #13#10 +
-           'If your antivirus removed the patcher, allow it and retry. Make sure UberStrike is closed.',
-           mbError, MB_OK);
-    Exit;
-  end;
-
-  { 3) install prebuilt mod DLLs }
   Mgd := AddBackslash(Managed);
+
+  { 1) restore a clean Assembly-CSharp from backup (so re-running is safe) }
+  BackupDll := Mgd + 'backup\Assembly-CSharp.dll';
+  if FileExists(BackupDll) then
+    FileCopy(BackupDll, Mgd + 'Assembly-CSharp.dll', False);
+
+  { 2) install the prebuilt mod DLLs FIRST. The patch injects a Call into
+       Paradise.Client.Bootstrap, so that assembly must already be in Managed for the patcher to
+       resolve it - otherwise the patcher fails (exit code 1, stops at "patch method Awake"). }
   SetArrayLength(Mods, 5);
   Mods[0] := 'Paradise.Client.Bootstrap.dll';
   Mods[1] := 'Paradise.Client.dll';
@@ -220,13 +201,34 @@ begin
     end;
   end;
 
-  { 4) replace the Photon transport with our free shim (back up the original once) }
+  { 3) replace the Photon transport with our free shim (back up the original once) }
   GamePhoton := Mgd + 'Photon3Unity3D.dll';
   if FileExists(GamePhoton) and not FileExists(GamePhoton + '.orig') then
     FileCopy(GamePhoton, GamePhoton + '.orig', False);
   if not CopyOrFail(Shim, GamePhoton) then
   begin
     MsgBox('Could not install the free transport (is UberStrike still running?).', mbError, MB_OK);
+    Exit;
+  end;
+
+  { 4) NOW patch Assembly-CSharp (bootstrap present -> the Call resolves), capturing output. }
+  LogFile := ExpandConstant('{tmp}\paradise-patch.log');
+  if not Exec(ExpandConstant('{cmd}'),
+       '/C ""' + Tmp + '\patcher\UniversalUnityPatcher.exe" --backup --no-gui --silent --ignore-duplicate-patch -i "' + Managed + '" -p "' + PatchXml + '" > "' + LogFile + '" 2>&1"',
+       Tmp + '\patcher', SW_HIDE, ewWaitUntilTerminated, RC) then
+  begin
+    MsgBox('Could not run the patch step.', mbError, MB_OK);
+    Exit;
+  end;
+  if RC <> 0 then
+  begin
+    LogA := '';
+    LoadStringFromFile(LogFile, LogA);
+    MsgBox('Patching failed (exit code ' + IntToStr(RC) + ').' + #13#10 +
+           'Game folder: ' + Managed + #13#10 + #13#10 +
+           'Patcher output:' + #13#10 + String(LogA) + #13#10 +
+           'Make sure UberStrike is fully closed, then run this installer again.',
+           mbError, MB_OK);
     Exit;
   end;
 
