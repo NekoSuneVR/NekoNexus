@@ -72,6 +72,15 @@ namespace Paradise.Realtime.Server {
 				Configuration = new ApplicationConfiguration();
 			}
 
+			// Allow overriding the master host without editing the yml (handy for Docker /
+			// running the same build against different servers). Set by the host launcher's
+			// --master-host flag, or directly via the environment.
+			var masterHostOverride = Environment.GetEnvironmentVariable("PARADISE_MASTER_HOST");
+			if (!string.IsNullOrWhiteSpace(masterHostOverride)) {
+				Log.Info($"Overriding MasterHostname -> {masterHostOverride} (PARADISE_MASTER_HOST)");
+				Configuration.MasterHostname = masterHostOverride;
+			}
+
 			OnBeforeSetup();
 
 			PeerConfiguration = new PeerConfiguration(

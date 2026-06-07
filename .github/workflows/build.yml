@@ -1,0 +1,133 @@
+name: Build Paradise (server exes, client patch, docker images)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [dev, main, master]
+    tags: ['v*']
+
+permissions:
+  contents: write       # create releases / upload assets
+  packages: write       # push docker images to GHCR
+
+jobs:
+  # ------------------------------------------------------------------ Windows
+  # Builds the realtime server + self-host, the Web Services exe, the patcher,
+  # and packages the click-and-run server + the client patch toolkit.
+  server-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Ensure patcher submodule
+        shell: pwsh
+        run: |
+          if (-not (Test-Path packages/Patcher/UniversalUnityPatcher.csproj)) {
+            git clone --depth 1 https://github.com/festivaldev/UniversalUnityPatcher packages/Patcher
+          }
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      - uses: oven-sh/setup-bun@v2
+      - uses: microsoft/setup-msbuild@v2
+      - uses: nuget/setup-nuget@v2
+
+      - name: Install workspace deps
+        run: bun install
+
+      - name: Build free shims + realtime self-host
+        run: |
+          bun run build:shims
+          bun run build:host
+
+      - name: Build Web Services exe (win-x64)
+        run: bun --cwd packages/ws run build:win-x64
+
+      - name: Build patcher (UniversalUnityPatcher)
+        run: |
+          nuget restore packages/Patcher/UniversalUnityPatcher.sln
+          msbuild packages/Patcher/UniversalUnityPatcher.sln /p:Configuration=Release
+
+      - name: Package server (click-and-run) + client patch toolkit
+        shell: pwsh
+        run: |
+          ./misc/bundle-server.ps1
+          ./misc/bundle-client.ps1
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: paradise-server-win-x64
+          path: .release/server/Paradise-server-win-x64.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: paradise-client-patch
+          path: .release/client/Paradise-free-server-client.zip
+
+  # ----------------------------------------------------------- Cross-platform WS
+  # Standalone Web Services exes for Linux + macOS (amd64/arm64) via Bun.
+  webservices-unix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - name: Build Web Services (linux + darwin, amd64 + arm64)
+        run: |
+          bun --cwd packages/ws run build:linux-x64
+          bun --cwd packages/ws run build:linux-arm64
+          bun --cwd packages/ws run build:darwin-x64
+          bun --cwd packages/ws run build:darwin-arm64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: paradise-webservices-unix
+          path: .release/server/_pak/Paradise.WebServices/paradise-*
+
+  # ----------------------------------------------------------------- Docker
+  # Multi-arch (amd64 + arm64) images pushed to GHCR.
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build & push realtime image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/realtime.Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ghcr.io/${{ github.repository }}-realtime:latest
+      - name: Build & push web services image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/webservices.Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ghcr.io/${{ github.repository }}-webservices:latest
+
+  # ----------------------------------------------------------------- Release
+  # On a v* tag, attach the packaged zips to a GitHub Release.
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [server-windows, webservices-unix]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/**/*

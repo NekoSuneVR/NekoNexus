@@ -17,6 +17,10 @@ namespace Paradise.Realtime.Server.Comm {
 
 		private static readonly ProfanityFilter.ProfanityFilter ProfanityFilter = new ProfanityFilter.ProfanityFilter();
 
+		// Periodically pushes the live lobby roster to the master so the online-player list and
+		// admin dashboard update in realtime (not just once on connect).
+		private System.Threading.Timer monitoringTimer;
+
 		public override int Peers {
 			get {
 				return LobbyManager.Instance.Peers.Count;
@@ -104,6 +108,10 @@ namespace Paradise.Realtime.Server.Comm {
 				SocketClient.Connect(tcpAddress, Configuration.SocketPort);
 			}
 
+			monitoringTimer = new System.Threading.Timer(_ => {
+				try { PublishMonitoringData(); } catch { }
+			}, null, 5000, 5000);
+
 			Log.Info($"Started CommServer[{Identifier}].");
 		}
 
@@ -112,6 +120,7 @@ namespace Paradise.Realtime.Server.Comm {
 		}
 
 		protected override void OnTearDown() {
+			monitoringTimer?.Dispose();
 			Log.Info($"Stopped CommServer[{Identifier}].");
 		}
 

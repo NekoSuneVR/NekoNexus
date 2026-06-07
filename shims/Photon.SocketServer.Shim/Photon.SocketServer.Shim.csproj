@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Free, managed drop-in replacement for Photon.SocketServer.dll.
+    Provides the small Photon.SocketServer API surface that Paradise.Realtime uses,
+    backed by a LiteNetLib (vendored, MIT) reliable-UDP transport instead of the
+    proprietary, Windows-only, slot-capped Photon Server SDK.
+
+    Output copied to packages/AssemblyReferences/Photon.SocketServer.dll so the
+    existing <HintPath> in Paradise.Realtime.csproj resolves with no edits.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Photon.SocketServer</AssemblyName>
+    <RootNamespace>Photon.SocketServer</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Deterministic>true</Deterministic>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Nullable>disable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>CS1591;CS0660;CS0661;CS0618;IDE0019</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PhotonHostRuntimeInterfaces.Shim\PhotonHostRuntimeInterfaces.Shim.csproj" />
+  </ItemGroup>
+
+  <!-- Shared wire codec (identical bytes on client + server). -->
+  <ItemGroup>
+    <Compile Include="..\_shared\ParadiseWire.cs" Link="Shared\ParadiseWire.cs" />
+  </ItemGroup>
+
+  <!-- Vendored LiteNetLib 0.9.5.2 source, compiled directly into this assembly. -->
+  <ItemGroup>
+    <Compile Include="..\_vendor\LiteNetLib\LiteNetLib\**\*.cs" Link="LiteNetLib\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ShimTargetDir Include="$(MSBuildThisFileDirectory)..\..\packages\AssemblyReferences\" />
+  </ItemGroup>
+
+  <Target Name="CopyShimToAssemblyReferences" AfterTargets="Build">
+    <MakeDir Directories="@(ShimTargetDir)" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="%(ShimTargetDir.Identity)" SkipUnchangedFiles="false" />
+    <!-- LiteNetLib is ILMerged-by-source (compiled in), so no extra runtime DLL is needed. -->
+  </Target>
+
+</Project>

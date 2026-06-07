@@ -1,0 +1,36 @@
+# One-domain reverse proxy for Paradise (automatic HTTPS via Caddy).
+# Put your real domain below and run:  caddy run --config ./Caddyfile
+#
+# This fronts the three internal web ports behind ONE domain so the client only needs a
+# single URL. The realtime<->master WebSocket (8082) stays internal and is NOT exposed.
+#
+# After this is up, point the client (Paradise Settings -> Web Service URLs) at:
+#     https://paradise.example.com
+# (web service endpoint /2.0 and file paths /images, /updates resolve under it).
+
+paradise.example.com {
+	encode gzip
+
+	# SOAP web service (UberStrike.DataCenter.WebService.CWS...Contract.svc) lives under /2.0
+	handle_path /2.0/* {
+		reverse_proxy 127.0.0.1:8080
+	}
+
+	# File server: images + game update files
+	handle /images/* {
+		reverse_proxy 127.0.0.1:8081
+	}
+	handle /updates/* {
+		reverse_proxy 127.0.0.1:8081
+	}
+
+	# (Optional) admin dashboard at /admin — protect this at the network/VPN level too.
+	handle_path /admin/* {
+		reverse_proxy 127.0.0.1:8088
+	}
+
+	# Everything else -> file server root
+	handle {
+		reverse_proxy 127.0.0.1:8081
+	}
+}

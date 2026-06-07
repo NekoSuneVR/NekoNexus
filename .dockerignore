@@ -1,0 +1,12 @@
+# Keep the build context small. NOTE: packages/Core (submodule) and shims/ MUST be kept.
+.git
+**/node_modules
+.release
+**/bin
+**/obj
+**/*.user
+**/.vs
+misc/Installer
+docs
+*.md
+!shims/README.md

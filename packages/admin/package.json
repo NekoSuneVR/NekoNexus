@@ -1,0 +1,25 @@
+{
+  "name": "@festivaldev/paradise-admin",
+  "version": "0.1.0",
+  "description": "Paradise admin dashboard (server management, players, store)",
+  "type": "module",
+  "module": "src/index.ts",
+  "scripts": {
+    "start": "bun src/index.ts",
+    "build:win-x64": "bun build ./src/index.ts --compile --minify --target=bun-windows-x64 --outfile=../../.release/server/_pak/Paradise.Admin/Paradise.Admin_x64.exe",
+    "build:linux-x64": "bun build ./src/index.ts --compile --minify --target=bun-linux-x64 --outfile=../../.release/server/_pak/Paradise.Admin/paradise-admin-linux-amd64",
+    "build:linux-arm64": "bun build ./src/index.ts --compile --minify --target=bun-linux-arm64 --outfile=../../.release/server/_pak/Paradise.Admin/paradise-admin-linux-arm64"
+  },
+  "dependencies": {
+    "@festivaldev/paradise-models": "workspace:*",
+    "@festivaldev/uberstrike-js": "workspace:*",
+    "bcryptjs": "^2.0.0",
+    "mysql2": "^3.0.0",
+    "sequelize": "^6.0.0",
+    "yaml": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.0.0",
+    "@types/bun": "latest"
+  }
+}

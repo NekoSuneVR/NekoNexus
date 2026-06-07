@@ -43,12 +43,8 @@
     <Reference Include="UnityEngine">
       <HintPath>..\..\AssemblyReferences\4.7.1\UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="ExitGames.Logging.Log4Net">
-      <HintPath>..\..\AssemblyReferences\ExitGames.Logging.Log4Net.dll</HintPath>
-    </Reference>
-    <Reference Include="ExitGamesLibs">
-      <HintPath>..\..\AssemblyReferences\ExitGamesLibs.dll</HintPath>
-    </Reference>
+    <!-- ExitGames.Logging.Log4Net / ExitGamesLibs were Photon SDK deps, unused in code;
+         removed while de-Photoning. Logging uses standard log4net (NuGet PackageReference). -->
     <Reference Include="Photon.SocketServer">
       <HintPath>..\..\AssemblyReferences\Photon.SocketServer.dll</HintPath>
     </Reference>

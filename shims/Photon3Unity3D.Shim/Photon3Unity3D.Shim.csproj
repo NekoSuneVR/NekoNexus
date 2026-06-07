@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Free, managed drop-in replacement for Photon3Unity3D.dll (the ExitGames.Client.Photon
+    Unity client library). Same LiteNetLib transport + wire codec as the server shim, so a
+    repatched UberStrike client talks to the free Paradise server with no Photon SDK at all.
+
+    net35 to match the Unity (Mono 2.0/3.5) client runtime. Output copied to
+    packages/Core/AssemblyReferences/Photon3Unity3D.dll so existing <HintPath>s resolve.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net35</TargetFramework>
+    <AssemblyName>Photon3Unity3D</AssemblyName>
+    <RootNamespace>ExitGames.Client.Photon</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Deterministic>true</Deterministic>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Nullable>disable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>CS1591;CS0660;CS0661;CS0618</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net35" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\_shared\ParadiseWire.cs" Link="Shared\ParadiseWire.cs" />
+    <Compile Include="..\_vendor\LiteNetLib\LiteNetLib\**\*.cs" Link="LiteNetLib\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ShimTargetDir Include="$(MSBuildThisFileDirectory)..\..\packages\Core\AssemblyReferences\" />
+  </ItemGroup>
+
+  <Target Name="CopyShimToAssemblyReferences" AfterTargets="Build">
+    <MakeDir Directories="@(ShimTargetDir)" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="%(ShimTargetDir.Identity)" SkipUnchangedFiles="false" />
+  </Target>
+
+</Project>

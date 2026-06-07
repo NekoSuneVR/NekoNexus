@@ -164,16 +164,26 @@ export default class ParadiseService {
         switch (e.Type) {
           case WebSocketPacketType.Monitoring:
             if (e.ServerType === ServerType.Comm) {
+              // Monitoring is a FULL snapshot of who's on this comm server. Rebuild the live
+              // set: drop players that are no longer here, upsert the current ones. This is
+              // published periodically so the lobby/online list stays current in realtime.
+              const commId = e.Socket.Info.PhotonId;
+              const cmids = e.Data.Peers.map((p: any) => p.Cmid);
+              await ActivePlayer.destroy({ where: { CommServerId: commId, Cmid: { [Op.notIn]: cmids.length ? cmids : [-1] } } });
               for (const peer of e.Data.Peers) {
                 await ActivePlayer.upsert({
                   Cmid: peer.Cmid,
                   IPAddress: peer.RemoteIP,
                   Channel: peer.Channel,
-                  CommServerId: (await PhotonServer.findOne({ where: { IP: peer.LocalIP, Port: peer.LocalPort } }))
-                    ?.PhotonId,
+                  CommServerId: commId,
                 });
               }
             } else if (e.ServerType === ServerType.Game) {
+              // Full snapshot of this game server's rooms: clear its rooms, then re-add the
+              // current ones (avoids the duplicates that periodic publishing would otherwise
+              // create).
+              const gameServer = await PhotonServer.findByPk(e.Socket.Info.PhotonId);
+              if (gameServer) await GameRoom.destroy({ where: { ServerIp: gameServer.IP, ServerPort: gameServer.Port } });
               for (const room of e.Data.Rooms) {
                 const [channelId, webhookUrl] = (await this.discordClient?.CreateGameRoom(room.MetaData)) || [
                   null,

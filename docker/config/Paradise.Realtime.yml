@@ -1,0 +1,45 @@
+# Paradise Realtime — Docker config.
+# MasterHostname points at the "webservices" container. ApplicationIdentifier /
+# EncryptionPassPhrase must match the ServerCredentials in
+# docker/config/Paradise.Settings.WebServices.yml.
+
+MasterHostname: 'webservices'
+
+WebServicePort: 8080
+FileServerPort: 8081
+SocketPort: 8082
+
+WebServiceEndpoint: '/2.0'
+WebServicePrefix: 'UberStrike.DataCenter.WebService.CWS.'
+WebServiceSuffix: 'Contract.svc'
+WebServiceUseTLS: false
+
+CommApplicationSettings:
+  ApplicationIdentifier: '11111111-1111-1111-1111-111111111111'
+  PhotonId: 1            # must be non-zero
+  EncryptionPassPhrase: 'paradise-comm-secret'
+  MaxPlayerCount: 100   # slot count for Comm (overridable with --max-peers)
+
+GameApplicationSettings:
+  ApplicationIdentifier: '22222222-2222-2222-2222-222222222222'
+  PhotonId: 2            # must be non-zero, unique
+  EncryptionPassPhrase: 'paradise-game-secret'
+  MaxPlayerCount: 100   # slot count for Game (overridable with --max-peers)
+
+EnableChatLog: true
+
+HeartbeatInterval: 5
+HeartbeatTimeout: 5
+EnableHashVerification: false
+
+CompositeHashes:
+  -
+
+JunkHashes:
+  -
+
+GameplaySettings:
+  MatchCountdownTime: 5
+  PlayerRespawnTime: 5
+  AllowFriendlyFire: false
+  MatchEndTimeout: 3

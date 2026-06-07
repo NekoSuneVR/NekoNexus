@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <AssemblyName>conntest</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- The exact client transport shim the game uses. -->
+    <Reference Include="Photon3Unity3D">
+      <HintPath>..\..\packages\Core\AssemblyReferences\Photon3Unity3D.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

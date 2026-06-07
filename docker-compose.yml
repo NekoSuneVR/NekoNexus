@@ -1,0 +1,69 @@
+# Full Paradise stack: MySQL + Bun web services + free LiteNetLib realtime (Comm + Game).
+# No Photon SDK, no licence, no CCU cap. Multi-arch (amd64 + arm64) — see docker/README.md.
+#
+# Quick start:
+#   git submodule update --init packages/Core
+#   docker compose up --build
+#
+# Client connects to:  web services :8080/:8081/:8082, Comm UDP :5055, Game UDP :5155
+
+name: paradise
+
+services:
+  db:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: paradise
+      MARIADB_USER: paradise
+      MARIADB_PASSWORD: paradise
+      MARIADB_ROOT_PASSWORD: paradise-root
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  webservices:
+    build:
+      context: .
+      dockerfile: docker/webservices.Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"   # SOAP web service
+      - "8081:8081"   # file server
+      - "8082:8082"   # realtime <-> master socket
+    volumes:
+      - ./docker/config/Paradise.Settings.WebServices.yml:/app/packages/ws/Paradise.Settings.WebServices.yml:ro
+
+  realtime-comm:
+    build:
+      context: .
+      dockerfile: docker/realtime.Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - webservices
+    # The image ships a ready-to-run config; --master-host points it at the webservices
+    # container. Add flags, e.g. ["Comm", "--master-host", "webservices", "--max-peers", "200"].
+    command: ["Comm", "--master-host", "webservices"]
+    ports:
+      - "5055:5055/udp"
+
+  realtime-game:
+    build:
+      context: .
+      dockerfile: docker/realtime.Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - webservices
+    command: ["Game", "--master-host", "webservices"]
+    ports:
+      - "5155:5155/udp"
+
+volumes:
+  db-data:

@@ -65,6 +65,14 @@ program
   });
 
 program
+  .command('seed')
+  .description('Initialize the database with default data (run once before first start)')
+  .action(async () => {
+    const { default: runSeed } = await import('./seed/seed');
+    await runSeed();
+  });
+
+program
   .command('gen-updates')
   .description('Generates YAML definitions for automatic game updates')
   .option('--fallback', 'Generate fallback definitions for pre-v2 update clients')

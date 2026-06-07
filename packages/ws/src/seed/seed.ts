@@ -28,6 +28,7 @@ import models, {
   type ShopQuickItem,
   type ShopWeaponItem,
 } from '@festivaldev/paradise-models';
+import mysql from 'mysql2';
 import { type Dialect, Sequelize } from 'sequelize';
 
 import applicationConfiguration from './applicationConfiguration.json';
@@ -36,7 +37,7 @@ import photonServers from './photonServers.json';
 import shop from './shop.json';
 import users from './users.json';
 
-(async () => {
+export default async function runSeed() {
   const sequelize = new Sequelize(
     ServiceSettings.DatabaseSettings.DatabaseName!,
     ServiceSettings.DatabaseSettings.Username!,
@@ -45,7 +46,10 @@ import users from './users.json';
       host: ServiceSettings.DatabaseSettings.Server,
       port: Number(ServiceSettings.DatabaseSettings.Port),
       dialect: ServiceSettings.DatabaseSettings.Type as Dialect,
+      dialectModule: mysql, // bundle mysql2 into the compiled exe (no dynamic require)
       logging: false,
+      // Single connection so SET FOREIGN_KEY_CHECKS below applies to every query.
+      pool: { max: 1, min: 0 },
     },
   );
 
@@ -61,10 +65,18 @@ import users from './users.json';
     model.associate?.(models);
   }
 
+  // Seeding (re)creates the schema and inserts rows across tables with cross-referencing
+  // foreign keys (e.g. shop item prices reference several item tables). Disable FK checks,
+  // drop + recreate all tables cleanly (force), seed, then re-enable integrity checks.
+  await sequelize.query('SET FOREIGN_KEY_CHECKS = 0');
   try {
-    await sequelize.sync();
-    Log.info('Database opened.');
-  } catch {}
+    await sequelize.sync({ force: true });
+    Log.info('Database schema created.');
+  } catch (e) {
+    Log.error('Failed to create database schema (check the DB user has CREATE/DROP rights).');
+    Log.error(String(e));
+    process.exit(1);
+  }
 
   // #region Application Configuration
   await models.ApplicationConfiguration.destroy({ where: {} });
@@ -142,5 +154,13 @@ import users from './users.json';
   );
   // #endregion
 
+  await sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
+
+  Log.info('Database seeded successfully.');
   process.exit(0);
-})();
+}
+
+// Allow running directly: `bun src/seed/seed.ts`
+if (import.meta.main) {
+  runSeed();
+}

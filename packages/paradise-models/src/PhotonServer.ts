@@ -28,6 +28,7 @@ interface PhotonServerAttributes {
   MinLatency?: number;
   LastResponseTime?: Date;
   Guid?: string;
+  Enabled?: boolean;
 }
 
 export default class PhotonServer extends Model<PhotonServerAttributes> {
@@ -40,6 +41,7 @@ export default class PhotonServer extends Model<PhotonServerAttributes> {
   declare MinLatency: number;
   declare LastReponseTime: Date;
   declare Guid: string;
+  declare Enabled: boolean;
 
   static initialize(sequelize: Sequelize) {
     PhotonServer.init(
@@ -56,6 +58,7 @@ export default class PhotonServer extends Model<PhotonServerAttributes> {
         MinLatency: DataTypes.INTEGER,
         LastResponseTime: DataTypes.DATE,
         Guid: DataTypes.STRING(36),
+        Enabled: { type: DataTypes.BOOLEAN, defaultValue: true },
       },
       {
         sequelize,

@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Free drop-in replacement for PhotonHostRuntimeInterfaces.dll. Only the
+       DisconnectReason enum is actually referenced by Paradise.Realtime. -->
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>PhotonHostRuntimeInterfaces</AssemblyName>
+    <RootNamespace>PhotonHostRuntimeInterfaces</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Deterministic>true</Deterministic>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Nullable>disable</Nullable>
+    <NoWarn>CS1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ShimTargetDir Include="$(MSBuildThisFileDirectory)..\..\packages\AssemblyReferences\" />
+  </ItemGroup>
+
+  <Target Name="CopyShimToAssemblyReferences" AfterTargets="Build">
+    <MakeDir Directories="@(ShimTargetDir)" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="%(ShimTargetDir.Identity)" SkipUnchangedFiles="false" />
+  </Target>
+
+</Project>

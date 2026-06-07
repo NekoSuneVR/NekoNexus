@@ -3,7 +3,8 @@
   "workspaces": [
     "./packages/paradise-models",
     "./packages/uberstrike-js",
-    "./packages/ws"
+    "./packages/ws",
+    "./packages/admin"
   ],
   "scripts": {
     "start:ws": "bun --cwd=./packages/ws start",
@@ -15,6 +16,10 @@
     "build:uberdaemon:darwin-x86": "bun --cwd=./misc/uberdaemon run build:darwin-x86",
     "build:uberdaemon:all": "bun run build:uberdaemon:win-x86 && bun run build:uberdaemon:darwin-x86",
     "build:realtime": "bun --cwd=./packages/Realtime/Paradise.Realtime run build",
+    "build:shims": "dotnet build shims/UnityEngine.Shim/UnityEngine.Shim.csproj -c Release && dotnet build shims/PhotonHostRuntimeInterfaces.Shim/PhotonHostRuntimeInterfaces.Shim.csproj -c Release && dotnet build shims/Photon.SocketServer.Shim/Photon.SocketServer.Shim.csproj -c Release && dotnet build shims/Photon3Unity3D.Shim/Photon3Unity3D.Shim.csproj -c Release",
+    "build:host": "dotnet build packages/Realtime/Paradise.Realtime.Host/Paradise.Realtime.Host.csproj -c Release",
+    "build:patcher": "nuget restore packages/Patcher/UniversalUnityPatcher.sln && msbuild packages/Patcher/UniversalUnityPatcher.sln /p:Configuration=Release",
+    "bundle:client:free-server": "powershell -ExecutionPolicy Bypass -File misc/bundle-client.ps1",
     "build:ws": "bun --cwd=./packages/ws run build-all",
     "build:installer:client": "bun --cwd=./misc/Installer run build:client:win-x86",
     "build:installer:server": "bun --cwd=./misc/Installer run build:server:win-x64",

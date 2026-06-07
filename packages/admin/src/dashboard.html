@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paradise Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: { brand: { 400:'#34d399',500:'#10b981',600:'#059669',700:'#047857' } } } }
+    };
+  </script>
+  <style>
+    body{background:#0b1220}
+    .glass{background:rgba(17,24,39,.7);backdrop-filter:blur(8px)}
+    ::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:#1f2937;border-radius:8px}
+    .toggle{transition:.2s}
+  </style>
+</head>
+<body class="text-slate-200 min-h-screen">
+  <!-- LOGIN -->
+  <div id="login" class="min-h-screen flex items-center justify-center p-4">
+    <div class="glass w-full max-w-sm rounded-2xl border border-slate-800 p-8 shadow-2xl">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="h-10 w-10 rounded-xl bg-brand-500 grid place-items-center text-slate-900 font-black">P</div>
+        <div><div class="text-lg font-bold">Paradise Admin</div><div class="text-xs text-slate-400">Server control panel</div></div>
+      </div>
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label class="text-xs text-slate-400">Username</label>
+          <input id="lUser" autocomplete="username" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 focus:border-brand-500 outline-none" value="admin" />
+        </div>
+        <div>
+          <label class="text-xs text-slate-400">Password</label>
+          <input id="lPass" type="password" autocomplete="current-password" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 focus:border-brand-500 outline-none" value="" />
+        </div>
+        <div id="loginErr" class="text-sm text-red-400 hidden"></div>
+        <button class="w-full rounded-lg bg-brand-600 hover:bg-brand-500 text-slate-900 font-semibold py-2 transition">Sign in</button>
+        <p class="text-[11px] text-slate-500 text-center">Default login is <b>admin / admin</b> — change it after signing in.</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="app" class="hidden min-h-screen md:grid md:grid-cols-[240px_1fr]">
+    <aside class="glass border-r border-slate-800 p-4 md:min-h-screen">
+      <div class="flex items-center gap-3 mb-8 px-2">
+        <div class="h-9 w-9 rounded-xl bg-brand-500 grid place-items-center text-slate-900 font-black">P</div>
+        <div class="font-bold">Paradise</div>
+      </div>
+      <nav class="space-y-1">
+        <button data-page="dashboard" class="nav w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800/70 flex items-center gap-2">▦ Dashboard</button>
+        <button data-page="servers" class="nav w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800/70 flex items-center gap-2">🖧 Servers</button>
+        <button data-page="players" class="nav w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800/70 flex items-center gap-2">👤 Players</button>
+        <button data-page="leaderboard" class="nav w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800/70 flex items-center gap-2">🏆 Leaderboard</button>
+        <button data-page="reports" class="nav w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800/70 flex items-center gap-2">🚩 Reports</button>
+        <button data-page="store" class="nav w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800/70 flex items-center gap-2">🛒 Store</button>
+      </nav>
+      <div class="mt-8 border-t border-slate-800 pt-4">
+        <button data-page="account" class="nav w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800/70 flex items-center gap-2">⚙ Account</button>
+        <button id="logout" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800/70 text-red-400 flex items-center gap-2">⏻ Sign out</button>
+      </div>
+    </aside>
+
+    <main class="p-6 md:p-8 max-w-6xl">
+      <!-- DASHBOARD -->
+      <section data-view="dashboard">
+        <h1 class="text-2xl font-bold mb-1">Dashboard</h1>
+        <p class="text-slate-400 text-sm mb-6">Overview of your Paradise server.</p>
+        <div id="stats" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
+      </section>
+
+      <!-- SERVERS -->
+      <section data-view="servers" class="hidden">
+        <div class="flex items-center justify-between mb-6">
+          <div><h1 class="text-2xl font-bold">Servers</h1><p class="text-slate-400 text-sm">Add servers, set their IPs, enable/disable, see who's online.</p></div>
+          <button id="addServer" class="rounded-lg bg-brand-600 hover:bg-brand-500 text-slate-900 font-semibold px-4 py-2 transition">+ Add server</button>
+        </div>
+        <div class="glass rounded-xl border border-slate-800 overflow-hidden">
+          <table class="w-full text-sm">
+            <thead class="text-slate-400 text-left border-b border-slate-800">
+              <tr><th class="p-3">Status</th><th class="p-3">Name</th><th class="p-3">Address</th><th class="p-3">Type</th><th class="p-3">Enabled</th><th class="p-3 text-right">Actions</th></tr>
+            </thead>
+            <tbody id="serverRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PLAYERS -->
+      <section data-view="players" class="hidden">
+        <h1 class="text-2xl font-bold mb-1">Players</h1>
+        <p class="text-slate-400 text-sm mb-4">Search by name or CMID. Click a player to manage them.</p>
+        <input id="playerSearch" placeholder="Search players…" class="w-full max-w-md rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 mb-4 outline-none focus:border-brand-500" />
+        <div class="grid lg:grid-cols-[1fr_1.2fr] gap-4">
+          <div class="glass rounded-xl border border-slate-800 overflow-hidden">
+            <table class="w-full text-sm"><tbody id="playerRows"></tbody></table>
+          </div>
+          <div id="playerDetail" class="glass rounded-xl border border-slate-800 p-5 hidden"></div>
+        </div>
+      </section>
+
+      <!-- LEADERBOARD -->
+      <section data-view="leaderboard" class="hidden">
+        <div class="flex items-center justify-between mb-4">
+          <div><h1 class="text-2xl font-bold">Leaderboard</h1><p class="text-slate-400 text-sm">Top 50 players.</p></div>
+          <select id="lbSort" class="rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 outline-none focus:border-brand-500">
+            <option value="xp">By XP</option><option value="level">By Level</option><option value="points">By Points</option><option value="splats">By Splats</option>
+          </select>
+        </div>
+        <div class="glass rounded-xl border border-slate-800 overflow-hidden">
+          <table class="w-full text-sm"><thead class="text-slate-400 text-left border-b border-slate-800"><tr><th class="p-3">#</th><th class="p-3">Player</th><th class="p-3">Level</th><th class="p-3">XP</th><th class="p-3">Points</th><th class="p-3">Splats</th></tr></thead><tbody id="lbRows"></tbody></table>
+        </div>
+      </section>
+
+      <!-- REPORTS / MODERATION LOG -->
+      <section data-view="reports" class="hidden">
+        <h1 class="text-2xl font-bold mb-1">Reports &amp; moderation log</h1>
+        <p class="text-slate-400 text-sm mb-4">Recent moderation actions.</p>
+        <div class="glass rounded-xl border border-slate-800 overflow-hidden">
+          <table class="w-full text-sm"><thead class="text-slate-400 text-left border-b border-slate-800"><tr><th class="p-3">When</th><th class="p-3">Action</th><th class="p-3">Target</th><th class="p-3">By</th><th class="p-3">Reason</th><th class="p-3">Expires</th></tr></thead><tbody id="modRows"></tbody></table>
+        </div>
+      </section>
+
+      <!-- ACCOUNT -->
+      <section data-view="account" class="hidden max-w-md">
+        <h1 class="text-2xl font-bold mb-1">Account</h1>
+        <p class="text-slate-400 text-sm mb-6">Change your admin username and password.</p>
+        <form id="accountForm" class="glass rounded-xl border border-slate-800 p-6 space-y-4">
+          <div><label class="text-xs text-slate-400">Username</label><input id="aUser" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 focus:border-brand-500 outline-none" /></div>
+          <div><label class="text-xs text-slate-400">Current password</label><input id="aCur" type="password" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 focus:border-brand-500 outline-none" /></div>
+          <div><label class="text-xs text-slate-400">New password (optional)</label><input id="aNew" type="password" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 focus:border-brand-500 outline-none" /></div>
+          <div id="accMsg" class="text-sm hidden"></div>
+          <button class="rounded-lg bg-brand-600 hover:bg-brand-500 text-slate-900 font-semibold px-4 py-2 transition">Save changes</button>
+        </form>
+      </section>
+
+      <!-- STORE -->
+      <section data-view="store" class="hidden">
+        <h1 class="text-2xl font-bold mb-1">Store &amp; payments</h1>
+        <p class="text-slate-400 text-sm mb-6">Credit packages (real money → in-game credits via NekoPay), orders, and shop pricing.</p>
+
+        <div id="payStatus" class="mb-6"></div>
+
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="font-semibold">Credit packages</h2>
+          <div class="flex gap-2">
+            <button id="freeItems" class="text-xs rounded-lg bg-slate-700 hover:bg-slate-600 px-3 py-2">Set all shop items FREE</button>
+            <button id="addPkg" class="text-sm rounded-lg bg-brand-600 hover:bg-brand-500 text-slate-900 font-semibold px-4 py-2">+ Package</button>
+          </div>
+        </div>
+        <div class="glass rounded-xl border border-slate-800 overflow-hidden mb-8">
+          <table class="w-full text-sm"><thead class="text-slate-400 text-left border-b border-slate-800"><tr><th class="p-3">Name</th><th class="p-3">Credits</th><th class="p-3">Price</th><th class="p-3">Enabled</th><th class="p-3 text-right">Actions</th></tr></thead><tbody id="pkgRows"></tbody></table>
+        </div>
+
+        <h2 class="font-semibold mb-3">Recent orders</h2>
+        <div class="glass rounded-xl border border-slate-800 overflow-hidden">
+          <table class="w-full text-sm"><thead class="text-slate-400 text-left border-b border-slate-800"><tr><th class="p-3">When</th><th class="p-3">CMID</th><th class="p-3">Credits</th><th class="p-3">Amount</th><th class="p-3">Status</th></tr></thead><tbody id="orderRows"></tbody></table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- SERVER MODAL -->
+  <div id="serverModal" class="hidden fixed inset-0 bg-black/60 grid place-items-center p-4 z-50">
+    <div class="glass w-full max-w-md rounded-2xl border border-slate-800 p-6">
+      <h2 id="serverModalTitle" class="text-lg font-bold mb-4">Add server</h2>
+      <div class="space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="text-xs text-slate-400">PhotonId</label><input id="sId" type="number" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 outline-none focus:border-brand-500" /></div>
+          <div><label class="text-xs text-slate-400">Type</label><select id="sType" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 outline-none focus:border-brand-500"><option value="6">Comm (lobby)</option><option value="1">Game</option></select></div>
+        </div>
+        <div><label class="text-xs text-slate-400">Name</label><input id="sName" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 outline-none focus:border-brand-500" /></div>
+        <div class="grid grid-cols-[1fr_120px] gap-3">
+          <div><label class="text-xs text-slate-400">IP / hostname</label><input id="sIp" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 outline-none focus:border-brand-500" value="127.0.0.1" /></div>
+          <div><label class="text-xs text-slate-400">Port</label><input id="sPort" type="number" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 outline-none focus:border-brand-500" value="5055" /></div>
+        </div>
+        <div>
+          <label class="text-xs text-slate-400">Region <button id="sDetect" type="button" class="text-brand-400 hover:underline ml-1">detect from IP</button></label>
+          <select id="sRegion" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 outline-none focus:border-brand-500">
+            <option value="0">US East</option><option value="1">EU West</option><option value="2">Asia Pacific</option><option value="3">US West</option><option value="4">South Korea</option><option value="5">Japan</option>
+          </select>
+        </div>
+        <div id="serverModalErr" class="text-sm text-red-400 hidden"></div>
+      </div>
+      <div class="flex justify-end gap-2 mt-6">
+        <button id="serverCancel" class="px-4 py-2 rounded-lg hover:bg-slate-800">Cancel</button>
+        <button id="serverSave" class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-slate-900 font-semibold">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PACKAGE MODAL -->
+  <div id="pkgModal" class="hidden fixed inset-0 bg-black/60 grid place-items-center p-4 z-50">
+    <div class="glass w-full max-w-md rounded-2xl border border-slate-800 p-6">
+      <h2 class="text-lg font-bold mb-4">Credit package</h2>
+      <input id="pkgId" type="hidden" />
+      <div class="space-y-3">
+        <div><label class="text-xs text-slate-400">Name</label><input id="pkgName" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 outline-none focus:border-brand-500" /></div>
+        <div class="grid grid-cols-3 gap-3">
+          <div><label class="text-xs text-slate-400">Credits</label><input id="pkgCredits" type="number" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 outline-none focus:border-brand-500" /></div>
+          <div><label class="text-xs text-slate-400">Price</label><input id="pkgPrice" type="number" step="0.01" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 outline-none focus:border-brand-500" /></div>
+          <div><label class="text-xs text-slate-400">Currency</label><input id="pkgCur" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 outline-none focus:border-brand-500" value="USD" /></div>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 mt-6"><button id="pkgCancel" class="px-4 py-2 rounded-lg hover:bg-slate-800">Cancel</button><button id="pkgSave" class="px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-slate-900 font-semibold">Save</button></div>
+    </div>
+  </div>
+
+  <script>
+    const api = async (path, opts = {}) => {
+      const token = localStorage.getItem('paradise_admin_token');
+      const res = await fetch(path, { ...opts, headers: { 'content-type': 'application/json', ...(token ? { authorization: 'Bearer ' + token } : {}), ...(opts.headers||{}) } });
+      if (res.status === 401 && !path.endsWith('/login')) { logout(); throw new Error('Session expired'); }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Request failed');
+      return data;
+    };
+    const $ = (s) => document.querySelector(s);
+    const show = (id) => { $('#login').classList.toggle('hidden', id !== 'login'); $('#app').classList.toggle('hidden', id === 'login'); };
+
+    function logout() { localStorage.removeItem('paradise_admin_token'); show('login'); }
+    $('#logout').onclick = logout;
+
+    // ---- login ----
+    $('#loginForm').onsubmit = async (e) => {
+      e.preventDefault();
+      try {
+        const d = await api('/api/login', { method: 'POST', body: JSON.stringify({ username: $('#lUser').value, password: $('#lPass').value }) });
+        localStorage.setItem('paradise_admin_token', d.token);
+        $('#aUser').value = d.username;
+        enter();
+      } catch (err) { const e2 = $('#loginErr'); e2.textContent = err.message; e2.classList.remove('hidden'); }
+    };
+
+    // ---- nav ----
+    document.querySelectorAll('.nav').forEach(b => b.addEventListener('click', () => nav(b.dataset.page)));
+    function nav(page) {
+      document.querySelectorAll('[data-view]').forEach(v => v.classList.toggle('hidden', v.dataset.view !== page));
+      document.querySelectorAll('.nav').forEach(n => n.classList.toggle('bg-slate-800/70', n.dataset.page === page));
+      if (page === 'dashboard') loadStats();
+      if (page === 'servers') loadServers();
+      if (page === 'players') loadPlayers('');
+      if (page === 'leaderboard') loadLeaderboard();
+      if (page === 'reports') loadReports();
+      if (page === 'store') loadStore();
+    }
+
+    async function enter() { show('app'); nav('dashboard'); }
+
+    // ---- dashboard ----
+    async function loadStats() {
+      const s = await api('/api/stats');
+      const card = (label, val, accent) => `<div class="glass rounded-xl border border-slate-800 p-5"><div class="text-slate-400 text-xs">${label}</div><div class="text-3xl font-bold mt-1 ${accent||''}">${val}</div></div>`;
+      $('#stats').innerHTML = card('Total players', s.totalPlayers) + card('Active now', s.activePlayers, 'text-brand-400') + card('Servers', s.servers) + card('Online', s.serversOnline + ' / ' + s.servers, s.serversOnline ? 'text-brand-400' : 'text-red-400');
+    }
+
+    // ---- servers ----
+    async function loadServers() {
+      const list = await api('/api/servers');
+      const typeName = (t) => t === 6 ? 'Comm' : t === 1 ? 'Game' : ('Type ' + t);
+      $('#serverRows').innerHTML = list.map(s => `
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30">
+          <td class="p-3"><span class="inline-flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full ${s.Online?'bg-brand-500 animate-pulse':'bg-red-500'}"></span>${s.Online?'Online':'Offline'}</span></td>
+          <td class="p-3 font-medium">${s.Name||''}</td>
+          <td class="p-3 font-mono text-slate-300">${s.IP}:${s.Port}</td>
+          <td class="p-3">${typeName(s.UsageType)}</td>
+          <td class="p-3"><button data-toggle="${s.PhotonId}" class="px-2 py-1 rounded text-xs ${s.Enabled?'bg-brand-600/20 text-brand-400':'bg-slate-700 text-slate-400'}">${s.Enabled?'Enabled':'Disabled'}</button></td>
+          <td class="p-3 text-right space-x-1">
+            <button data-edit='${JSON.stringify(s)}' class="px-2 py-1 rounded hover:bg-slate-700 text-xs">Edit</button>
+            <button data-del="${s.PhotonId}" class="px-2 py-1 rounded hover:bg-red-600/30 text-red-400 text-xs">Delete</button>
+          </td>
+        </tr>`).join('') || `<tr><td colspan="6" class="p-6 text-center text-slate-500">No servers yet. Click "Add server".</td></tr>`;
+      $('#serverRows').querySelectorAll('[data-toggle]').forEach(b => b.onclick = async () => { await api('/api/servers/'+b.dataset.toggle+'/toggle',{method:'POST'}); loadServers(); });
+      $('#serverRows').querySelectorAll('[data-del]').forEach(b => b.onclick = async () => { if(confirm('Delete this server?')){ await api('/api/servers/'+b.dataset.del,{method:'DELETE'}); loadServers(); } });
+      $('#serverRows').querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openServer(JSON.parse(b.dataset.edit)));
+    }
+
+    function openServer(s) {
+      $('#serverModalTitle').textContent = s ? 'Edit server' : 'Add server';
+      $('#sId').value = s?.PhotonId ?? '';
+      $('#sType').value = s?.UsageType ?? 6;
+      $('#sName').value = s?.Name ?? 'My Server';
+      $('#sIp').value = s?.IP ?? '127.0.0.1';
+      $('#sPort').value = s?.Port ?? (s?.UsageType === 1 ? 5155 : 5055);
+      $('#sRegion').value = s?.Region ?? 0;
+      $('#serverModalErr').classList.add('hidden');
+      $('#serverModal').classList.remove('hidden');
+    }
+    $('#sDetect').onclick = async () => {
+      const ip = $('#sIp').value.trim(); if (!ip) return;
+      try { const g = await api('/api/geo?ip=' + encodeURIComponent(ip)); if (g.region !== undefined && g.region !== null) { $('#sRegion').value = g.region; } } catch {}
+    };
+    $('#addServer').onclick = () => openServer(null);
+    $('#serverCancel').onclick = () => $('#serverModal').classList.add('hidden');
+    $('#serverSave').onclick = async () => {
+      try {
+        await api('/api/servers', { method: 'POST', body: JSON.stringify({
+          PhotonId: Number($('#sId').value), UsageType: Number($('#sType').value), Name: $('#sName').value, IP: $('#sIp').value, Port: Number($('#sPort').value), Region: Number($('#sRegion').value)
+        }) });
+        $('#serverModal').classList.add('hidden'); loadServers();
+      } catch (err) { const e = $('#serverModalErr'); e.textContent = err.message; e.classList.remove('hidden'); }
+    };
+
+    // ---- players ----
+    const ACCESS = {0:'Default',3:'QA',4:'Moderator',6:'Senior QA',7:'Senior Mod',10:'Admin'};
+    let searchTimer;
+    $('#playerSearch').oninput = (e) => { clearTimeout(searchTimer); searchTimer = setTimeout(() => loadPlayers(e.target.value), 250); };
+    async function loadPlayers(q) {
+      const list = await api('/api/players?q=' + encodeURIComponent(q||''));
+      $('#playerRows').innerHTML = list.map(p => `
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/40 cursor-pointer" data-cmid="${p.Cmid}">
+          <td class="p-3"><div class="font-medium">${p.Name||'(no name)'} ${p.Banned?'<span class="text-[10px] bg-red-600/30 text-red-400 px-1.5 py-0.5 rounded ml-1">BANNED</span>':''}</div><div class="text-xs text-slate-500">CMID ${p.Cmid} · ${ACCESS[p.AccessLevel]||p.AccessLevel}</div></td>
+        </tr>`).join('') || `<tr><td class="p-6 text-center text-slate-500">No players found.</td></tr>`;
+      $('#playerRows').querySelectorAll('[data-cmid]').forEach(r => r.onclick = () => openPlayer(r.dataset.cmid));
+    }
+    async function openPlayer(cmid) {
+      const d = await api('/api/players/' + cmid);
+      const p = d.profile, s = d.stats||{}, w = d.wallet||{};
+      const fld = (label,id,val) => `<div><label class="text-xs text-slate-400">${label}</label><input id="${id}" value="${val??0}" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-2 py-1.5 text-sm outline-none focus:border-brand-500"></div>`;
+      const el = $('#playerDetail'); el.classList.remove('hidden');
+      el.innerHTML = `
+        <div class="flex items-center justify-between mb-4">
+          <div><div class="text-lg font-bold">${p.Name||'(no name)'}</div><div class="text-xs text-slate-500">CMID ${p.Cmid}</div></div>
+          ${d.ban ? '<span class="text-xs bg-red-600/30 text-red-400 px-2 py-1 rounded">Banned</span>' : '<span class="text-xs bg-brand-600/20 text-brand-400 px-2 py-1 rounded">Active</span>'}
+        </div>
+        <div class="grid grid-cols-3 gap-3 mb-3">${fld('Level','pLevel',s.Level)}${fld('XP','pXp',s.Xp)}${fld('Points','pPoints',s.Points)}</div>
+        <button id="saveStats" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded mb-4">Save level / xp / points</button>
+        <div class="grid grid-cols-2 gap-3 mb-3">${fld('Credits','pCredits',w.Credits)}${fld('Game Points','pWpoints',w.Points)}</div>
+        <button id="saveWallet" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded mb-4">Save wallet</button>
+        <div class="border-t border-slate-800 pt-4 mb-3">
+          <label class="text-xs text-slate-400">Access level</label>
+          <div class="flex gap-2 mt-1"><select id="pAccess" class="flex-1 rounded-lg bg-slate-900 border border-slate-700 px-2 py-1.5 text-sm">${Object.entries(ACCESS).map(([v,n])=>`<option value="${v}" ${p.AccessLevel==v?'selected':''}>${n}</option>`).join('')}</select><button id="saveAccess" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded">Set</button></div>
+        </div>
+        <div class="border-t border-slate-800 pt-4 mb-3">
+          <label class="text-xs text-slate-400">Give item — type a name (weapon / gear / skin…)</label>
+          <div class="relative mt-1">
+            <div class="flex gap-2">
+              <input id="itemSearch" placeholder="Search items by name…" autocomplete="off" class="flex-1 rounded-lg bg-slate-900 border border-slate-700 px-2 py-1.5 text-sm outline-none focus:border-brand-500">
+              <button id="doGive" class="text-xs bg-brand-600 hover:bg-brand-500 text-slate-900 font-semibold px-3 py-1.5 rounded disabled:opacity-40" disabled>Give</button>
+            </div>
+            <div id="itemResults" class="hidden absolute z-10 left-0 right-0 mt-1 max-h-56 overflow-auto rounded-lg bg-slate-900 border border-slate-700 shadow-xl"></div>
+            <div id="itemPicked" class="hidden text-xs text-brand-400 mt-1"></div>
+          </div>
+        </div>
+        <div class="border-t border-slate-800 pt-4">
+          ${d.ban
+            ? '<button id="unban" class="w-full text-sm bg-brand-600 hover:bg-brand-500 text-slate-900 font-semibold py-2 rounded">Unban player</button>'
+            : '<div class="flex gap-2"><input id="banReason" placeholder="Reason" class="flex-1 rounded-lg bg-slate-900 border border-slate-700 px-2 py-1.5 text-sm"><input id="banMins" type="number" placeholder="mins (0=perm)" class="w-28 rounded-lg bg-slate-900 border border-slate-700 px-2 py-1.5 text-sm"><button id="ban" class="text-sm bg-red-600 hover:bg-red-500 text-white font-semibold px-3 py-1.5 rounded">Ban</button></div>'}
+        </div>`;
+      const act = async (path, body) => { await api('/api/players/'+cmid+'/'+path, {method:'POST', body: JSON.stringify(body||{})}); openPlayer(cmid); if(['ban','unban'].includes(path)) loadPlayers($('#playerSearch').value); };
+      $('#saveStats').onclick = () => act('stats', { Level:+$('#pLevel').value, Xp:+$('#pXp').value, Points:+$('#pPoints').value });
+      $('#saveWallet').onclick = () => act('wallet', { Credits:+$('#pCredits').value, Points:+$('#pWpoints').value });
+      $('#saveAccess').onclick = () => act('access', { AccessLevel:+$('#pAccess').value });
+      // searchable item picker
+      let pickedItem = null, itemTimer;
+      const results = $('#itemResults'), giveBtn = $('#doGive');
+      $('#itemSearch').oninput = (e) => {
+        pickedItem = null; giveBtn.disabled = true; $('#itemPicked').classList.add('hidden');
+        const q = e.target.value.trim();
+        clearTimeout(itemTimer);
+        if (q.length < 2) { results.classList.add('hidden'); return; }
+        itemTimer = setTimeout(async () => {
+          const list = await api('/api/items?q=' + encodeURIComponent(q));
+          results.innerHTML = list.map(it => `<div data-item='${JSON.stringify(it)}' class="px-3 py-2 hover:bg-slate-800 cursor-pointer text-sm flex justify-between"><span>${it.Name}</span><span class="text-slate-500 text-xs">${it.Type} · ${it.ItemId}</span></div>`).join('') || '<div class="px-3 py-2 text-slate-500 text-sm">No items found</div>';
+          results.classList.remove('hidden');
+          results.querySelectorAll('[data-item]').forEach(d => d.onclick = () => {
+            pickedItem = JSON.parse(d.dataset.item);
+            $('#itemSearch').value = pickedItem.Name;
+            $('#itemPicked').textContent = `Selected: ${pickedItem.Name} (${pickedItem.Type}, ID ${pickedItem.ItemId})`;
+            $('#itemPicked').classList.remove('hidden');
+            results.classList.add('hidden'); giveBtn.disabled = false;
+          });
+        }, 200);
+      };
+      giveBtn.onclick = () => { if (pickedItem) act('give-item', { ItemId: pickedItem.ItemId }); };
+      if ($('#unban')) $('#unban').onclick = () => act('unban');
+      if ($('#ban')) $('#ban').onclick = () => act('ban', { reason:$('#banReason').value||'Banned by admin', duration:+$('#banMins').value||0 });
+    }
+
+    // ---- leaderboard ----
+    $('#lbSort').onchange = loadLeaderboard;
+    async function loadLeaderboard() {
+      const list = await api('/api/leaderboard?sort=' + $('#lbSort').value);
+      $('#lbRows').innerHTML = list.map(r => `<tr class="border-b border-slate-800/60 hover:bg-slate-800/30"><td class="p-3 font-bold ${r.rank<=3?'text-brand-400':''}">${r.rank}</td><td class="p-3">${r.Name}</td><td class="p-3">${r.Level||0}</td><td class="p-3">${(r.Xp||0).toLocaleString()}</td><td class="p-3">${(r.Points||0).toLocaleString()}</td><td class="p-3">${r.Splats||0}</td></tr>`).join('') || `<tr><td colspan="6" class="p-6 text-center text-slate-500">No data.</td></tr>`;
+    }
+
+    // ---- reports / moderation ----
+    async function loadReports() {
+      const log = await api('/api/moderation');
+      const flag = (f) => ({1:'Muted',2:'Ghosted',4:'Banned',8:'Speed',16:'Spamming',32:'Crude'}[f] || ('Flag '+f));
+      const fmt = (d) => d ? new Date(d).toLocaleString() : '—';
+      $('#modRows').innerHTML = log.map(m => `<tr class="border-b border-slate-800/60"><td class="p-3 text-slate-400">${fmt(m.ActionDate)}</td><td class="p-3">${flag(m.ModerationFlag)}</td><td class="p-3">${m.TargetName||''} <span class="text-slate-500">(${m.TargetCmid})</span></td><td class="p-3">${m.SourceName||'—'}</td><td class="p-3 text-slate-300">${m.Reason||''}</td><td class="p-3 text-slate-400">${m.ExpireTime?fmt(m.ExpireTime):'permanent'}</td></tr>`).join('') || `<tr><td colspan="6" class="p-6 text-center text-slate-500">No moderation actions yet.</td></tr>`;
+    }
+
+    // ---- store ----
+    async function loadStore() {
+      const st = await api('/api/store/admin/payment-status');
+      $('#payStatus').innerHTML = `<div class="glass rounded-xl border ${st.configured?'border-brand-600/40':'border-amber-600/40'} p-4 text-sm">
+        <div class="flex items-center gap-2 font-medium ${st.configured?'text-brand-400':'text-amber-400'}">${st.configured?'● NekoPay connected':'● NekoPay not configured'}</div>
+        <div class="text-slate-400 mt-1">Endpoint: <span class="font-mono">${st.endpoint}</span></div>
+        <div class="text-slate-400">Webhook URL (set as notificationUrl): <span class="font-mono text-slate-300">${st.webhookUrl}</span></div>
+        ${st.configured?'':'<div class="text-amber-400/80 mt-2">Add your store secret to a <span class="font-mono">.nekopay.env</span> file: <span class="font-mono">NEKOPAY_SECRET=sk_live_…</span> and <span class="font-mono">PUBLIC_BASE_URL=https://your-domain</span>, then restart.</div>'}
+      </div>`;
+      const pkgs = await api('/api/store/admin/packages');
+      $('#pkgRows').innerHTML = pkgs.map(p => `<tr class="border-b border-slate-800/60">
+        <td class="p-3 font-medium">${p.Name}</td><td class="p-3">${p.Credits.toLocaleString()}</td><td class="p-3">${(p.PriceCents/100).toFixed(2)} ${p.Currency}</td>
+        <td class="p-3">${p.Enabled?'<span class="text-brand-400">Yes</span>':'<span class="text-slate-500">No</span>'}</td>
+        <td class="p-3 text-right"><button data-epkg='${JSON.stringify(p)}' class="px-2 py-1 rounded hover:bg-slate-700 text-xs">Edit</button> <button data-dpkg="${p.Id}" class="px-2 py-1 rounded hover:bg-red-600/30 text-red-400 text-xs">Delete</button></td></tr>`).join('') || `<tr><td colspan="5" class="p-6 text-center text-slate-500">No packages yet.</td></tr>`;
+      $('#pkgRows').querySelectorAll('[data-epkg]').forEach(b => b.onclick = () => openPkg(JSON.parse(b.dataset.epkg)));
+      $('#pkgRows').querySelectorAll('[data-dpkg]').forEach(b => b.onclick = async () => { if(confirm('Delete package?')){ await api('/api/store/admin/packages/'+b.dataset.dpkg,{method:'DELETE'}); loadStore(); } });
+      const orders = await api('/api/store/admin/orders');
+      const badge = (s) => ({completed:'text-brand-400',pending:'text-amber-400',failed:'text-red-400',cancelled:'text-slate-500'}[s]||'text-slate-400');
+      $('#orderRows').innerHTML = orders.map(o => `<tr class="border-b border-slate-800/60"><td class="p-3 text-slate-400">${new Date(o.createdAt).toLocaleString()}</td><td class="p-3">${o.Cmid}</td><td class="p-3">${o.Credits}</td><td class="p-3">${(o.PriceCents/100).toFixed(2)} ${o.Currency}</td><td class="p-3 ${badge(o.Status)}">${o.Status}${o.Fulfilled?' ✓':''}</td></tr>`).join('') || `<tr><td colspan="5" class="p-6 text-center text-slate-500">No orders yet.</td></tr>`;
+    }
+    function openPkg(p) {
+      $('#pkgId').value = p?.Id ?? ''; $('#pkgName').value = p?.Name ?? 'Starter Pack'; $('#pkgCredits').value = p?.Credits ?? 1000; $('#pkgPrice').value = p ? (p.PriceCents/100) : 4.99; $('#pkgCur').value = p?.Currency ?? 'USD';
+      $('#pkgModal').classList.remove('hidden');
+    }
+    $('#addPkg').onclick = () => openPkg(null);
+    $('#pkgCancel').onclick = () => $('#pkgModal').classList.add('hidden');
+    $('#pkgSave').onclick = async () => {
+      await api('/api/store/admin/packages', { method:'POST', body: JSON.stringify({ Id: $('#pkgId').value||undefined, Name:$('#pkgName').value, Credits:+$('#pkgCredits').value, PriceCents: Math.round(parseFloat($('#pkgPrice').value)*100), Currency:$('#pkgCur').value }) });
+      $('#pkgModal').classList.add('hidden'); loadStore();
+    };
+    $('#freeItems').onclick = async () => { if(confirm('Set ALL shop item prices to 0? (re-seed restores them)')){ const r = await api('/api/store/admin/free-items',{method:'POST',body:'{"free":true}'}); alert('Done. '+(r.note||'')); } };
+
+    // ---- account ----
+    $('#accountForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const msg = $('#accMsg');
+      try {
+        const d = await api('/api/account', { method: 'POST', body: JSON.stringify({ username: $('#aUser').value, currentPassword: $('#aCur').value, newPassword: $('#aNew').value || undefined }) });
+        if (d.token) localStorage.setItem('paradise_admin_token', d.token);
+        $('#aCur').value = ''; $('#aNew').value = '';
+        msg.textContent = 'Saved.'; msg.className = 'text-sm text-brand-400';
+      } catch (err) { msg.textContent = err.message; msg.className = 'text-sm text-red-400'; }
+      msg.classList.remove('hidden');
+    };
+
+    // boot
+    if (localStorage.getItem('paradise_admin_token')) {
+      api('/api/me').then(d => { $('#aUser').value = d.username; enter(); }).catch(logout);
+    } else show('login');
+  </script>
+</body>
+</html>

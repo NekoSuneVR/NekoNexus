@@ -18,6 +18,10 @@ namespace Paradise.Realtime.Server.Game {
 
 		private static readonly ProfanityFilter.ProfanityFilter ProfanityFilter = new ProfanityFilter.ProfanityFilter();
 
+		// Periodically pushes the live room/player list to the master so the in-game server
+		// browser and admin dashboard update in realtime (not just once on connect).
+		private System.Threading.Timer monitoringTimer;
+
 		public override int Peers {
 			get {
 				var count = 0;
@@ -110,6 +114,10 @@ namespace Paradise.Realtime.Server.Game {
 				SocketClient.Connect(tcpAddress, Configuration.SocketPort);
 			}
 
+			monitoringTimer = new System.Threading.Timer(_ => {
+				try { PublishMonitoringData(); } catch { }
+			}, null, 5000, 5000);
+
 			Log.Info($"Started GameServer[{Identifier}].");
 		}
 
@@ -118,6 +126,7 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnTearDown() {
+			monitoringTimer?.Dispose();
 			Log.Info($"Stopped GameServer[{Identifier}].");
 		}
 

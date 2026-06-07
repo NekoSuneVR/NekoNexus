@@ -18,6 +18,7 @@
 import { ApiVersion } from '@/utils/enums';
 import { ApplicationConfiguration, Map, MapSettings, PhotonServer } from '@festivaldev/paradise-models';
 import { ChannelType, PhotonUsageType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
+import { Op } from 'sequelize';
 import { ApplicationConfigurationView } from '@festivaldev/uberstrike-js/UberStrike/Core/Models/Views';
 import {
   ApplicationConfigurationViewProxy,
@@ -65,11 +66,15 @@ export default class ApplicationWebService extends BaseWebService {
           outputStream,
           new AuthenticateApplicationView({
             IsEnabled: true,
-            GameServers: await PhotonServer.findAll({ where: { UsageType: PhotonUsageType.All }, raw: true }),
+            // Only advertise servers that admins have left enabled (Enabled !== false).
+            GameServers: await PhotonServer.findAll({
+              where: { UsageType: PhotonUsageType.All, Enabled: { [Op.ne]: false } },
+              raw: true,
+            }),
             CommServer:
               (
                 await PhotonServer.findAll({
-                  where: { UsageType: PhotonUsageType.CommServer },
+                  where: { UsageType: PhotonUsageType.CommServer, Enabled: { [Op.ne]: false } },
                   order: [['MinLatency', 'ASC']],
                   raw: true,
                 })

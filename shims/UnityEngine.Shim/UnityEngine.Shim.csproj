@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Free, managed drop-in replacement for the subset of UnityEngine.dll that the
+    Paradise / UberStrike *server-side* and shared Core assemblies actually use
+    (math types + a few stubs). This removes the need for the proprietary
+    UnityEngine.dll drop-in. See shims/README.md.
+
+    Output is copied to packages/AssemblyReferences/4.7.1/UnityEngine.dll so the
+    existing <HintPath> references across the solution resolve with no csproj edits.
+  -->
+
+  <PropertyGroup>
+    <!-- net35 so the .NET Framework 3.5 Core projects (and net481 Realtime) can
+         reference it. Built on the modern SDK via reference assemblies below. -->
+    <TargetFramework>net35</TargetFramework>
+    <AssemblyName>UnityEngine</AssemblyName>
+    <RootNamespace>UnityEngine</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Deterministic>true</Deterministic>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Nullable>disable</Nullable>
+    <NoWarn>CS1591;CS0660;CS0661</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Lets the modern .NET SDK compile against net35 without the legacy targeting pack. -->
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net35" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- The solution references UnityEngine.dll from two different folders:
+       - packages/AssemblyReferences/4.7.1/  (Paradise.Realtime)
+       - packages/Core/AssemblyReferences/   (all UberStrike.* Core submodule projects) -->
+  <ItemGroup>
+    <ShimTargetDir Include="$(MSBuildThisFileDirectory)..\..\packages\AssemblyReferences\4.7.1\" />
+    <ShimTargetDir Include="$(MSBuildThisFileDirectory)..\..\packages\Core\AssemblyReferences\" />
+  </ItemGroup>
+
+  <Target Name="CopyShimToAssemblyReferences" AfterTargets="Build">
+    <MakeDir Directories="@(ShimTargetDir)" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="%(ShimTargetDir.Identity)" SkipUnchangedFiles="false" />
+  </Target>
+
+</Project>

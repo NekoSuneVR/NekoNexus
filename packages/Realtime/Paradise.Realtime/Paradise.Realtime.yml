@@ -1,4 +1,12 @@
-﻿MasterHostname: '127.0.0.1'
+# Paradise Realtime config. Ready to run as-is for local testing.
+# For production: change the GUIDs + passphrases, and make them match the
+# ServerCredentials in the web service's Paradise.Settings.WebServices.yml.
+#
+# Override the master host without editing this file:
+#   Paradise.Realtime.Host Game --master-host 192.168.1.50
+#   (or set env PARADISE_MASTER_HOST)
+
+MasterHostname: '127.0.0.1'
 
 WebServicePort: 8080
 FileServerPort: 8081
@@ -9,17 +17,19 @@ WebServicePrefix: 'UberStrike.DataCenter.WebService.CWS.'
 WebServiceSuffix: 'Contract.svc'
 WebServiceUseTLS: false
 
+# ApplicationIdentifier + EncryptionPassPhrase must match a ServerCredentials entry in
+# the web service. PhotonId must be non-zero and unique per realtime instance.
 CommApplicationSettings:
-  ApplicationIdentifier: # Add GUID here
-  PhotonId: 0
-  EncryptionPassPhrase: # Add passphrase here
-  MaxPlayerCount: 100
+  ApplicationIdentifier: '11111111-1111-1111-1111-111111111111'
+  PhotonId: 1
+  EncryptionPassPhrase: 'paradise-comm-secret'
+  MaxPlayerCount: 100   # default slot count (override with --max-peers)
 
 GameApplicationSettings:
-  ApplicationIdentifier: # Add GUID here
-  PhotonId: 1
-  EncryptionPassPhrase: # Add passphrase here
-  MaxPlayerCount: 100
+  ApplicationIdentifier: '22222222-2222-2222-2222-222222222222'
+  PhotonId: 2
+  EncryptionPassPhrase: 'paradise-game-secret'
+  MaxPlayerCount: 100   # default slot count (override with --max-peers)
 
 EnableChatLog: true
 

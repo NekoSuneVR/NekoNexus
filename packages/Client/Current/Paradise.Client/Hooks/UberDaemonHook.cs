@@ -28,9 +28,14 @@ namespace Paradise.Client {
 				processStartInfo.Arguments = $"uberdaemon_paradise.sh {authToken}";
 			}
 
-			var process = Process.Start(processStartInfo);
-
-			__result = process.StandardOutput.ReadToEnd().Trim();
+			try {
+				var process = Process.Start(processStartInfo);
+				__result = process.StandardOutput.ReadToEnd().Trim();
+			} catch {
+				// uberdaemon helper not present. The magic hash is only checked by servers with
+				// EnableHashVerification on; fall back to empty so authentication still proceeds.
+				__result = string.Empty;
+			}
 		}
 	}
 }
