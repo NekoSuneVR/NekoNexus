@@ -4,11 +4,19 @@
 # Quick start (uses the prebuilt images published to GHCR — no source/build needed):
 #   docker compose pull
 #   docker compose up -d
+#   # then seed the DB ONCE with the IP players will use to reach this host:
+#   PARADISE_PUBLIC_HOST=<your-LAN-or-public-IP> docker compose run --rm seed
+#
+# PARADISE_PUBLIC_HOST is written into the in-game server list — it MUST be an address the
+# player's machine can reach (your LAN IP like 192.168.x.x, your public IP, or a domain).
+# 127.0.0.1 only works if the game runs on this same host. Change it later in the admin UI.
 #
 # To BUILD from source instead of pulling, comment out the `image:` line on a service and
 # uncomment its `build:` block (you'll need the Core submodule: git submodule update --init packages/Core).
 #
-# Client connects to:  web services :8080/:8081/:8082, Comm UDP :5055, Game UDP :5155
+# Client connects to (open/forward these on the host):
+#   8080 TCP (web), 8081 TCP (files), 5055 UDP (Comm), 5155 UDP (Game).
+#   8082 is realtime<->master only — internal to the compose network, NOT needed by clients.
 
 name: paradise
 
@@ -28,6 +36,23 @@ services:
       interval: 10s
       timeout: 5s
       retries: 12
+
+  # One-shot DB initializer. Run ONCE after the first `up` — it DROPS + recreates all tables
+  # and seeds defaults (app config, shop, maps, the realtime server list, admin user):
+  #   PARADISE_PUBLIC_HOST=192.168.1.50 docker compose run --rm seed
+  # It does NOT start with `docker compose up` (it's behind the "tools" profile).
+  seed:
+    image: ghcr.io/nekosunevr/paradise-webservices:latest
+    profiles: ["tools"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # The address PLAYERS use to reach the realtime servers (goes into the server list).
+      PARADISE_PUBLIC_HOST: ${PARADISE_PUBLIC_HOST:-127.0.0.1}
+    volumes:
+      - ./docker/config/Paradise.Settings.WebServices.yml:/app/packages/ws/Paradise.Settings.WebServices.yml:ro
+    command: ["bun", "src/index.ts", "seed"]
 
   webservices:
     image: ghcr.io/nekosunevr/paradise-webservices:latest

@@ -89,8 +89,17 @@ export default async function runSeed() {
   // #endregion
 
   // #region Photon Servers
+  // The IP stored here is what the GAME CLIENT connects to, so it must be reachable from
+  // the player's machine — NOT 127.0.0.1 unless the client runs on this same host. Override
+  // the seeded IP with PARADISE_PUBLIC_HOST (your LAN/public IP or domain) for real/Docker
+  // deployments. You can also change it later in the admin dashboard (Servers page).
+  const publicHost = process.env.PARADISE_PUBLIC_HOST?.trim();
+  const photonRows = (photonServers as Partial<PhotonServer>[]).map((s) =>
+    publicHost ? { ...s, IP: publicHost } : s,
+  );
+  if (publicHost) Log.info(`Seeding realtime server list with public host: ${publicHost}`);
   await models.PhotonServer.destroy({ where: {} });
-  await models.PhotonServer.bulkCreate(photonServers as Partial<PhotonServer>[]);
+  await models.PhotonServer.bulkCreate(photonRows);
   // #endregion
 
   // #region Shop
