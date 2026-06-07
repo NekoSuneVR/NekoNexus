@@ -231,3 +231,6 @@ docker/config/*.local.yml
 packages/Patcher/
 # conntest dev tool: copied transport dll (build artifact)
 misc/conntest/*.dll
+
+# Bun compile temp artifacts
+*.bun-build
