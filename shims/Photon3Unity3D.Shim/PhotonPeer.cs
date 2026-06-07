@@ -31,6 +31,10 @@ namespace ExitGames.Client.Photon {
 				UnconnectedMessagesEnabled = false,
 				ChannelsCount = 4,
 				UpdateTime = 10,
+				// Bind IPv4-only. Many players have IPv6 disabled/broken, where creating the
+				// IPv6 socket throws "An address incompatible with the requested protocol was
+				// used" and kills the connect. The realtime servers are IPv4, so we never need v6.
+				IPv6Enabled = IPv6Mode.Disabled,
 			};
 		}
 
