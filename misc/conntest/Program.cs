@@ -26,11 +26,15 @@ class Program {
             peer.Service();
             if (peer.PeerState != last) { Console.WriteLine($"  peerState: {peer.PeerState}"); last = peer.PeerState; }
             if (peer.PeerState == PeerStateValue.Connected) {
-                Console.WriteLine("CONNECTED — sending a test operation (op 1, like the auth request)...");
-                var dict = new System.Collections.Generic.Dictionary<byte, object> { { 0, new byte[] { 1, 2, 3, 4 } } };
-                bool sent = peer.OpCustom(1, dict, true, 0, false);
-                Console.WriteLine("  OpCustom returned: " + sent);
-                for (int j = 0; j < 50; j++) { peer.Service(); Thread.Sleep(20); }  // ~1s to let server process + reply
+                // Mimic the game's ServerLoadRequest: op 2 (GetServerLoad), empty payload.
+                // Try both handler-id keys (0 = GameRoom, 1 = GamePeer) to find which routes.
+                foreach (byte handlerKey in new byte[] { 1, 0 }) {
+                    var dict = new System.Collections.Generic.Dictionary<byte, object> { { handlerKey, new byte[0] } };
+                    bool sent = peer.OpCustom(2, dict, true, 0, false);
+                    Console.WriteLine($"  sent GetServerLoad (op 2, key {handlerKey}) -> {sent}");
+                    for (int j = 0; j < 40; j++) { peer.Service(); Thread.Sleep(20); }  // ~0.8s wait for reply
+                }
+                Thread.Sleep(300);
                 peer.Disconnect();
                 return 0;
             }

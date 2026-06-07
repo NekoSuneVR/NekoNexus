@@ -18,6 +18,9 @@ param(
   [Parameter(Mandatory)][string]$ServerHost,
   [int]$WebPort = 8080,
   [int]$FilePort = 8081,
+  # Use this when the web service is behind ONE HTTPS domain (e.g. a Cloudflare tunnel /
+  # nginx proxy): the client uses https://<ServerHost>/2.0, /images, /updates (no ports).
+  [switch]$Https,
   [string]$RepoRoot,
   [switch]$SkipBuild,
   [switch]$NoPatch
@@ -98,10 +101,19 @@ if (-not (Test-Path (Join-Path $BootstrapBin "Paradise.Client.Bootstrap.dll"))) 
 # 4) Inject the bootstrap into Assembly-CSharp.dll (creates a backup first).
 if (-not $NoPatch) {
   Need $PatcherExe "UniversalUnityPatcher.exe (build packages/Patcher first)"
+  # If a backup exists, the game was patched before — restore the original first so we always
+  # patch a clean Assembly-CSharp.dll (re-patching an already-patched DLL crashes the patcher).
+  $backupDll = Join-Path $Managed "backup\Assembly-CSharp.dll"
+  if (Test-Path $backupDll) {
+    Copy-Item $backupDll (Join-Path $Managed "Assembly-CSharp.dll") -Force
+    Write-Host "    restored clean Assembly-CSharp.dll from backup before patching"
+  }
   Step "Patching Assembly-CSharp.dll (backup kept in Managed\backup)"
   # UniversalUnityPatcher is a WinForms exe; use Start-Process -Wait so we don't continue
   # before it finishes (a plain call can return immediately and skip the patch).
-  $pargs = @("--backup","--no-gui","--silent","--ignore-duplicate-patch","-i","$Managed","-p","$PatchXml")
+  # NOTE: -ArgumentList does NOT auto-quote elements with spaces, so quote the paths
+  # ourselves (game installs live under "C:\Program Files (x86)\...").
+  $pargs = @("--backup", "--no-gui", "--silent", "--ignore-duplicate-patch", "-i", "`"$Managed`"", "-p", "`"$PatchXml`"")
   $p = Start-Process -FilePath $PatcherExe -ArgumentList $pargs -NoNewWindow -Wait -PassThru
   if ($p.ExitCode -ne 0) { throw "UniversalUnityPatcher failed (exit $($p.ExitCode)). Is Assembly-CSharp.dll an unmodified, supported build?" }
 }
@@ -124,11 +136,16 @@ Copy-Item $ShimDll $gamePhoton -Force
 Write-Host "    + Photon3Unity3D.dll (free LiteNetLib transport)"
 
 # 6) Write the settings file pointing at your server.
-Step "Writing Paradise.Settings.Client.xml -> $ServerHost"
+#    -Https: one HTTPS domain (no ports). Otherwise http://host:port.
+if ($Https) { $webBase = "https://$ServerHost"; $fileBase = "https://$ServerHost" }
+else        { $webBase = "http://${ServerHost}:${WebPort}"; $fileBase = "http://${ServerHost}:${FilePort}" }
+Step "Writing Paradise.Settings.Client.xml -> $webBase"
 $tpl = Get-Content (Join-Path $PSScriptRoot "Paradise.Settings.Client.template.xml") -Raw
-$tpl = $tpl -replace "SERVER_HOST:8080", "${ServerHost}:${WebPort}" -replace "SERVER_HOST:8081", "${ServerHost}:${FilePort}"
+$tpl = $tpl -replace 'http://SERVER_HOST:8080/2\.0/', "$webBase/2.0/" `
+            -replace 'http://SERVER_HOST:8081/images/', "$fileBase/images/" `
+            -replace 'http://SERVER_HOST:8081/updates/', "$fileBase/updates/"
 Set-Content -Path (Join-Path $DataDir "Paradise.Settings.Client.xml") -Value $tpl -Encoding UTF8
 
 Write-Host ""
-Write-Host "Done. UberStrike is patched for the free Paradise server at $ServerHost." -ForegroundColor Green
+Write-Host "Done. UberStrike is patched for the free Paradise server at $webBase." -ForegroundColor Green
 Write-Host "Launch the game; add or switch servers anytime in Paradise Settings -> Web Service URLs."

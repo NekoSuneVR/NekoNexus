@@ -234,3 +234,7 @@ misc/conntest/*.dll
 
 # Bun compile temp artifacts
 *.bun-build
+
+# admin test/run output
+packages/admin/*.out
+packages/admin/*.err
