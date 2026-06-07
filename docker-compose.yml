@@ -74,5 +74,36 @@ services:
     ports:
       - "5155:5155/udp"
 
+  # Admin dashboard (server/player/store management). Open http://<host>:8088 — default
+  # login admin/admin; change it on the Account page on first run.
+  admin:
+    image: ghcr.io/nekosunevr/paradise-admin:latest
+    pull_policy: always
+    # build:
+    #   context: .
+    #   dockerfile: docker/admin.Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ADMIN_PORT: "8088"
+      # Share the stack's DB (same creds as the db service above).
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_USER: paradise
+      DB_PASS: paradise
+      DB_NAME: paradise
+      # CHANGE THIS — keeps admin login tokens valid across restarts and unguessable.
+      ADMIN_JWT_SECRET: "change-me-paradise-admin"
+      # For NekoPay webhooks, set your public URL here (or in docker/.nekopay.env):
+      # PUBLIC_BASE_URL: https://admin.yourdomain.com
+    # NekoPay secret (optional). Create docker/.nekopay.env from docker/.nekopay.env.example.
+    env_file:
+      - path: ./docker/.nekopay.env
+        required: false
+    ports:
+      - "8088:8088"
+
 volumes:
   db-data:

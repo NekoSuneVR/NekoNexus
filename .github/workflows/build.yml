@@ -148,6 +148,14 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ env.IMG }}-webservices:latest
+      - name: Build & push admin image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/admin.Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ env.IMG }}-admin:latest
 
   # ----------------------------------------------------------------- Release
   # On a v* tag, attach the packaged zips to a GitHub Release.
