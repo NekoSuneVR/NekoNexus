@@ -121,6 +121,31 @@ begin
   end;
 end;
 
+{ The patcher (UniversalUnityPatcher) needs .NET Framework 4.7.2+. Win10/11 ship 4.8;
+  only older/stripped Windows lacks it. Check the standard NDP\v4\Full Release value. }
+function NetFx472Present(): Boolean;
+var
+  Rel: Cardinal;
+begin
+  Result := RegQueryDWordValue(HKLM, 'SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full', 'Release', Rel) and (Rel >= 461808);
+end;
+
+function InitializeSetup(): Boolean;
+var
+  EC: Integer;
+begin
+  Result := True;
+  if not NetFx472Present() then
+  begin
+    if MsgBox('This patch needs Microsoft .NET Framework 4.7.2 or newer.' + #13#10 +
+              '(Windows 10/11 normally include it; yours appears not to.)' + #13#10 + #13#10 +
+              'Open the download page now? Install .NET, then run this installer again.',
+              mbConfirmation, MB_YESNO) = IDYES then
+      ShellExec('open', 'https://dotnet.microsoft.com/download/dotnet-framework', '', '', SW_SHOWNORMAL, ewNoWait, EC);
+    Result := False;
+  end;
+end;
+
 procedure InitializeWizard();
 begin
   DetectedGame := FindUberStrike();
