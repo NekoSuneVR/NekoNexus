@@ -159,8 +159,8 @@ end;
 
 function DoPatch(): Boolean;
 var
-  Game, Managed, DataDir, Tmp, Mgd, PatchXml, Shim, BackupDll, GamePhoton, Tpl: string;
-  TplA: AnsiString;
+  Game, Managed, DataDir, Tmp, Mgd, PatchXml, Shim, BackupDll, GamePhoton, Tpl, LogFile: string;
+  TplA, LogA: AnsiString;
   RC: Integer;
   Mods: TArrayOfString;
   I: Integer;
@@ -178,13 +178,24 @@ begin
   if FileExists(BackupDll) then
     FileCopy(BackupDll, AddBackslash(Managed) + 'Assembly-CSharp.dll', False);
 
-  { 2) patch Assembly-CSharp with UniversalUnityPatcher }
-  if not Exec(Tmp + '\patcher\UniversalUnityPatcher.exe',
-       '--backup --no-gui --silent --ignore-duplicate-patch -i "' + Managed + '" -p "' + PatchXml + '"',
-       '', SW_HIDE, ewWaitUntilTerminated, RC) or (RC <> 0) then
+  { 2) patch Assembly-CSharp with UniversalUnityPatcher, capturing its output via cmd.exe so a
+       failure shows the real reason (AV removed the exe, wrong path, or a genuine patch error). }
+  LogFile := ExpandConstant('{tmp}\paradise-patch.log');
+  if not Exec(ExpandConstant('{cmd}'),
+       '/C ""' + Tmp + '\patcher\UniversalUnityPatcher.exe" --backup --no-gui --silent --ignore-duplicate-patch -i "' + Managed + '" -p "' + PatchXml + '" > "' + LogFile + '" 2>&1"',
+       Tmp + '\patcher', SW_HIDE, ewWaitUntilTerminated, RC) then
   begin
-    MsgBox('Patching failed.' + #13#10 +
-           'Make sure UberStrike is fully CLOSED (and not running via Steam), then run this installer again.',
+    MsgBox('Could not run the patch step.', mbError, MB_OK);
+    Exit;
+  end;
+  if RC <> 0 then
+  begin
+    LogA := '';
+    LoadStringFromFile(LogFile, LogA);
+    MsgBox('Patching failed (exit code ' + IntToStr(RC) + ').' + #13#10 +
+           'Game folder: ' + Managed + #13#10 + #13#10 +
+           'Patcher output:' + #13#10 + String(LogA) + #13#10 +
+           'If your antivirus removed the patcher, allow it and retry. Make sure UberStrike is closed.',
            mbError, MB_OK);
     Exit;
   end;
