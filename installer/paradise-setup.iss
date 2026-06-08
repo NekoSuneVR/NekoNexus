@@ -6,7 +6,7 @@
 ;         self-contained toolkit in .release\client\_pak\free-server\).
 
 #define AppName    "Paradise for UberStrike"
-#define AppVer     "4.7.1"
+#define AppVer     "4.7.2"
 #define Publisher  "NekoSuneVR"
 #define ServerHost "paradisetest.nekosunevr.co.uk"
 ; payload produced by misc\bundle-client.ps1

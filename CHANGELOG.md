@@ -1,5 +1,50 @@
 # Changelog
 
+## 4.7.2 — Connectivity, friends/mail, in-game store, one-click installer
+
+Fixes that get players actually online + talking, an antivirus-friendly one-click installer,
+a NekoPay-powered in-game store, and a safer (non-destructive) database seed.
+
+### Client / connectivity
+- **Realtime now connects** — the LiteNetLib client shim binds **IPv4-only** (`IPv6Mode.Disabled`).
+  Fixes `SocketException: An address incompatible with the requested protocol was used` on PCs
+  with IPv6 disabled, which broke the server browser / lobby with "Couldn't connect to server".
+- **"Get Credits" no longer freezes the game.** Hooked `ApplicationDataManager.OpenBuyCredits` to
+  open the Paradise **web store** in the browser instead of the native credit-bundle page (which
+  has no bundles here and threw every frame, locking the UI).
+
+### One-click installer + patcher
+- **`ParadiseSetup.exe`** (Inno Setup) — single native installer: auto-detects UberStrike from
+  Steam (registry + `libraryfolders.vdf`), patches, and **auto-downloads/installs .NET 4.8** if
+  missing. No `.cmd`, no PowerShell. Built via `misc/build-installer.ps1`.
+- **Self-contained patch zip** with a double-click `Install.cmd`, Steam auto-detect, and a baked
+  `paradise-target.json` (server owners set their domain once). Ships prebuilt mod DLLs — no repo
+  or .NET SDK needed by players.
+- **Patch-order fix**: install the mod DLLs **before** patching — the patch injects a call into
+  `Paradise.Client.Bootstrap`, which must be resolvable, or the patcher failed (exit 1).
+- Dedicated **`patcher` branch** holds the ready-to-download toolkit.
+
+### Friends, mail, presence (server-side)
+- **Add friend** now works: `SendContactRequest` sets `Status: Pending` (the column had no DB
+  default, so requests were invisible) and **re-sends/repairs** an existing non-accepted request.
+- **Private messages**: fixed the inbox thread list (`.filter` not `.find`), the send-message
+  response serialization, and a `cmid` casing typo.
+- Disconnect now reliably leaves the lobby (handled in `LobbyRoom`), keeping presence accurate.
+
+### In-game store + payments
+- Admin serves a public **`/store`** page (opened by Get Credits): lists credit packages, **Buy**
+  creates a **NekoPay** checkout, webhook grants credits. `/pay/success|cancel` return pages.
+- Seeds 4 starter credit packages on first run (edit in **Store → Packages**).
+
+### Docker / CI / database
+- **Non-destructive seed**: `sync({ alter: true })` + seed-only-if-empty — re-running the seed
+  never wipes players, wallets, stats, friends, or customizations (was `force: true`).
+- Admin **Docker image** + compose service (`:8088`); compose pulls prebuilt **GHCR** images.
+- `PARADISE_PUBLIC_HOST` seeds the realtime server list with a reachable IP (not `127.0.0.1`).
+- CI: lowercase GHCR tags, `working-directory` bun builds, `Directory.Build.props` so the net35/
+  net481 server compiles on Linux, copy all workspace manifests for `bun install`.
+- Reverse-proxy reference: forwarded headers, body size, `/store` + `/pay`, UDP/TLS caveats.
+
 ## 4.7.1 — Free, cross-platform server + admin platform
 
 This release removes the proprietary Photon Server SDK, makes the whole stack free and
