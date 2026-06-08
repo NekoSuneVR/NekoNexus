@@ -113,9 +113,42 @@ namespace Paradise.Client {
 
 		public string ParadiseVersion => Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
+		// Server host renames: existing clients keep the OLD host in their saved settings (the
+		// settings XML is imported only once), so when a server moves domains we rewrite it here.
+		// Delivered via auto-update, this migrates everyone without a re-patch. Add pairs as needed.
+		private static readonly Dictionary<string, string> HostMigrations = new Dictionary<string, string> {
+			{ "paradisetest.nekosunevr.co.uk", "paradise.nekosunevr.co.uk" },
+		};
+
 		public ParadisePrefs() {
 			MigrateSettingsIfNeeded();
 			ReloadSettings();
+			MigrateServerHosts();
+		}
+
+		private void MigrateServerHosts() {
+			var changed = false;
+
+			List<string> Rewrite(List<string> urls) {
+				if (urls == null) return urls;
+				for (var i = 0; i < urls.Count; i++) {
+					foreach (var map in HostMigrations) {
+						if (!string.IsNullOrEmpty(urls[i]) && urls[i].Contains(map.Key)) {
+							urls[i] = urls[i].Replace(map.Key, map.Value);
+							changed = true;
+						}
+					}
+				}
+				return urls;
+			}
+
+			WebServiceBaseUrls = Rewrite(WebServiceBaseUrls);
+			FileServerUrls = Rewrite(FileServerUrls);
+
+			if (changed) {
+				SetKey(Key.WebServiceBaseUrls, WebServiceBaseUrls);
+				SetKey(Key.FileServerUrls, FileServerUrls);
+			}
 		}
 
 		public void SaveSettings() {
