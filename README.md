@@ -1,67 +1,52 @@
-# Paradise — UberStrike free-server client patch
+# Paradise client patch — connect UberStrike to the FREE server
 
-This patches your own copy of **UberStrike** to play on a Paradise free server (no Photon
-SDK). It is **self-contained** — you only need this folder, Windows PowerShell, and your game.
-No game files are included or redistributed; the patch runs against *your* install.
+This patches your UberStrike client to run Paradise on the **free LiteNetLib server**
+(no Photon SDK), and points it at **your** server. The in-game *Paradise Settings → Web
+Service URLs* list is your **server browser** — add as many servers as you like and switch
+between them.
 
-## Requirements
-- A Steam copy of **UberStrike** installed.
-- **Windows** with PowerShell (built in).
-- **.NET Framework 4.7.2+** (the patcher needs it). Windows 10/11 already include 4.8 — only
-  older/stripped Windows may need it: https://dotnet.microsoft.com/download/dotnet-framework
+> You must own a copy of UberStrike. The patch is applied to *your* game files; UberStrike
+> game assemblies are never redistributed here.
 
-## Install (easy — double-click)
+## What makes the connection work
 
-1. **Fully close UberStrike** (and quit it in Steam) — the patch can't replace files while it runs.
-2. Unzip this folder somewhere.
-3. Double-click **`Install.cmd`**.
+1. **Free transport** — our `Photon3Unity3D.dll` shim replaces the game's Photon client, so
+   the game speaks LiteNetLib to the free Paradise server (`shims/Photon3Unity3D.Shim`).
+2. **Server address** — `Paradise.Settings.Client.xml` (or the in-game URL list) points the
+   client at your web service, which hands back the realtime server list.
 
-That's it. The game is found automatically from Steam, and the server is read from
-`paradise-target.json` (already set to the right server). Then launch UberStrike.
+## One-command patch (from a repo checkout)
 
-## Install (manual / non-standard setup)
-
-If your game isn't in a normal Steam library, open **PowerShell** in this folder and point at it:
 ```powershell
-.\install-paradise.ps1 -UberStrikePath "D:\Games\UberStrike"
+# Build the patcher once (Visual Studio Build Tools / MSBuild + nuget):
+#   nuget restore packages/Patcher/UniversalUnityPatcher.sln
+#   msbuild packages/Patcher/UniversalUnityPatcher.sln /p:Configuration=Release
+
+packages\Client\make-client-patch.ps1 `
+  -UberStrikePath "C:\Program Files (x86)\Steam\steamapps\common\UberStrike" `
+  -ServerHost 127.0.0.1
 ```
-You can also override the server: `-ServerHost play.example.com -Https` (or `-ServerHost 203.0.113.10` for plain IP + ports).
 
-If PowerShell blocks the script, prefix it with `powershell -ExecutionPolicy Bypass -File `.
+This builds the Paradise client mod against your game, injects the bootstrap, installs our
+free transport, and writes a settings file. Re-run after `git pull` to update.
 
-After patching, launch UberStrike — you can add/switch servers anytime in **Paradise Settings → Web Service URLs**.
+## From the packaged release (`.release/client/_pak/free-server/`)
 
-## For server owners — make this YOUR installer
-Edit **`paradise-target.json`** before sharing the zip:
-```json
-{ "ServerHost": "play.yourdomain.com", "Https": true, "WebPort": 8080, "FilePort": 8081 }
-```
-Set `Https` to `false` and fill `WebPort`/`FilePort` if you serve plain HTTP on IP+ports. Then your
-users just double-click `Install.cmd` — no typing.
+The release bundle contains the prebuilt patcher, our free `Photon3Unity3D.dll`, the patch
+definition, a settings template, and `make-client-patch.ps1`. Unzip it next to a repo
+checkout (it reuses the build) and run the command above.
 
-## Undo / revert to the original game
-The patch keeps backups:
-- `UberStrike_Data\Managed\backup\Assembly-CSharp.dll` — the original game code.
-- `UberStrike_Data\Managed\Photon3Unity3D.dll.orig` — the original Photon transport.
+## Already running official Paradise?
 
-To revert, copy each backup back over its file (and delete `Paradise.Settings.Client.xml`),
-or use Steam → UberStrike → Properties → Installed Files → **Verify integrity**.
+You only need to (a) drop our `Photon3Unity3D.dll` into `UberStrike_Data\Managed\`
+(back up the original first) and (b) add your server's web-service URL in
+*Paradise Settings → Web Service URLs*. No re-patch required.
 
-## Troubleshooting
-- **"UberStrike is running"** — close the game (and quit Steam's copy), then re-run.
-- **Still connecting to an old/local server** — you patched before against another address; the
-  client caches the URL. Change it in-game (Paradise Settings → Web Service URLs), or reset once:
-  ```powershell
-  Remove-Item 'HKCU:\Software\Cmune\UberStrike' -Recurse
-  ```
-- **"Couldn't connect to server"** — the web service works but realtime (UDP) doesn't. Ask the
-  server owner to confirm UDP **5055/5155** are open and the server list IP is their public IP/domain.
+## Notes / caveats
 
-## What's in this zip
-- `Install.cmd` — double-click installer (calls the script below).
-- `install-paradise.ps1` — the installer (Steam auto-detect + config).
-- `paradise-target.json` — the server this installer points at (owners edit this).
-- `patcher\` — UniversalUnityPatcher (injects the Paradise bootstrap).
-- `mod\` — prebuilt Paradise client DLLs.
-- `Photon3Unity3D.dll` — the free LiteNetLib transport (replaces Photon).
-- `Paradise.Patch.xml`, `Paradise.Settings.Client.template.xml` — patch definition + settings template.
+- The mod build temporarily overwrites `packages/AssemblyReferences/4.7.1/UnityEngine.dll`
+  with your game's real one. Rebuilding the **server** restores the headless shim there.
+- `EncryptWebServiceTraffic` is on by default and must match the server's
+  `EncryptionPassPhtase` / `EncryptionInitVector` (already set in the Docker config).
+- This client patch has not been auto-tested end-to-end here (it needs a real UberStrike
+  install). If anything errors, capture the output and it can be fixed quickly.
