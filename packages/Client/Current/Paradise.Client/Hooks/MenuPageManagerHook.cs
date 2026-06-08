@@ -22,7 +22,11 @@ namespace Paradise.Client {
 
 			if (pageType == PageType.Home) {
 				AutoMonoBehaviour<BackgroundMusicPlayer>.Instance.Stop();
-				AutoMonoBehaviour<BackgroundMusicPlayer>.Instance.Play(ParadiseMainMenuMusicManager.MenuAudio[ParadiseClient.Settings.MainMenuMusic]);
+
+				var menuClip = ParadiseMainMenuMusicManager.GetClip(ParadiseClient.Settings.MainMenuMusic);
+				if (menuClip != null) {
+					AutoMonoBehaviour<BackgroundMusicPlayer>.Instance.Play(menuClip);
+				}
 
 				if (!HasSubmittedMachineData && ParadiseClient.Settings.AllowTelemetry) {
 					HasSubmittedMachineData = true;

@@ -12,8 +12,26 @@ namespace Paradise.Client {
 			[MainMenuMusicType.Default] = GameAudio.HomeSceneBackground
 		};
 
+		// Safe lookup. The themed tracks load from loose .ogg files in UberStrike_Data/Resources/;
+		// if one was never shipped (or fails to load) its dictionary key is missing, and a raw
+		// MenuAudio[type] lookup throws KeyNotFoundException - which is what made every theme appear
+		// "broken". Fall back to the default menu track instead so selection always works.
+		public static AudioClip GetClip(MainMenuMusicType type) {
+			if (type == MainMenuMusicType.None) {
+				return null;
+			}
+
+			return MenuAudio.TryGetValue(type, out var clip) && clip != null ? clip : GameAudio.HomeSceneBackground;
+		}
+
 		public static void LoadMainMenuMusic() {
 			foreach (MainMenuMusicType type in Enum.GetValues(typeof(MainMenuMusicType))) {
+				// Guarantee every theme has an entry up-front so selection never crashes; the real
+				// track (when its .ogg is present in Resources/) overwrites this once it loads.
+				if (!MenuAudio.ContainsKey(type)) {
+					MenuAudio[type] = type == MainMenuMusicType.None ? null : GameAudio.HomeSceneBackground;
+				}
+
 				var resource = string.Empty;
 
 				switch (type) {
@@ -36,7 +54,10 @@ namespace Paradise.Client {
 
 				if (!string.IsNullOrEmpty(resource)) {
 					UnityRuntime.StartRoutine(GetAudio(resource, (AudioClip clip) => {
-						MenuAudio[type] = clip;
+						// Only overwrite the fallback when the real track actually loaded.
+						if (clip != null) {
+							MenuAudio[type] = clip;
+						}
 					}));
 				}
 			}

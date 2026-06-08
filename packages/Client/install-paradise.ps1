@@ -121,6 +121,18 @@ if ((Test-Path $gamePhoton) -and -not (Test-Path "$gamePhoton.orig")) { Copy-Ite
 Copy-Item $ShimDll $gamePhoton -Force
 Write-Host "    + Photon3Unity3D.dll (free LiteNetLib transport)"
 
+# Optional plugins (Discord Rich Presence helper exe) -> UberStrike_Data\Plugins. The mod launches
+# this as a child process; without it Discord Rich Presence silently does nothing.
+$PluginsSrc = Join-Path $Here "plugins"
+if (Test-Path $PluginsSrc) {
+  $gamePlugins = Join-Path $DataDir "Plugins"
+  New-Item -ItemType Directory -Force -Path $gamePlugins | Out-Null
+  Get-ChildItem $PluginsSrc -File | ForEach-Object {
+    Copy-Item $_.FullName $gamePlugins -Force
+    Write-Host "    + Plugins\$($_.Name)"
+  }
+}
+
 # 2) Patch Assembly-CSharp to load the bootstrap (now resolvable). Restore a clean copy from the
 #    backup first so re-running is safe (re-patching an already-patched DLL crashes).
 if (-not $NoPatch) {

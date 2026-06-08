@@ -110,7 +110,11 @@ namespace Paradise.Client {
 					ParadiseClient.Settings.MainMenuMusic = mainMenuMusic;
 
 					AutoMonoBehaviour<BackgroundMusicPlayer>.Instance.Stop();
-					AutoMonoBehaviour<BackgroundMusicPlayer>.Instance.Play(ParadiseMainMenuMusicManager.MenuAudio[mainMenuMusic]);
+
+					var clip = ParadiseMainMenuMusicManager.GetClip(mainMenuMusic);
+					if (clip != null) {
+						AutoMonoBehaviour<BackgroundMusicPlayer>.Instance.Play(clip);
+					}
 				}
 			});
 			#endregion

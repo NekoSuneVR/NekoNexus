@@ -285,8 +285,11 @@ namespace Paradise.Client {
 
 			CachedUpdates = updateCatalog;
 
-			var universalUpdates = updateCatalog.Platforms["universal"];
-			var platformUpdates = updateCatalog.Platforms[UpdatePlatform];
+			// TryGetValue, not indexer: a manifest that only ships some platforms (e.g. "universal"
+			// but no "win") would otherwise throw KeyNotFoundException here and hang the game. The
+			// downstream code already null-checks both.
+			updateCatalog.Platforms.TryGetValue("universal", out var universalUpdates);
+			updateCatalog.Platforms.TryGetValue(UpdatePlatform, out var platformUpdates);
 
 			var totalFiles = (universalUpdates?.Files.Count ?? 0) + (platformUpdates?.Files.Count ?? 0);
 

@@ -27,6 +27,8 @@ $Repo = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 Step 'Building transport shim + client mod'
 dotnet build (Join-Path $Repo 'shims\Photon3Unity3D.Shim\Photon3Unity3D.Shim.csproj') -c Release | Out-Null
 dotnet build (Join-Path $Repo 'packages\Client\Current\Paradise.Client.Bootstrap\Paradise.Client.Bootstrap.csproj') -c Release | Out-Null
+dotnet build (Join-Path $Repo 'packages\Client\Current\Paradise.Client\Paradise.Client.csproj') -c Release | Out-Null
+dotnet build (Join-Path $Repo 'packages\Client\Current\Paradise.Client.DiscordRPC\Paradise.Client.DiscordRPC.csproj') -c Release | Out-Null
 
 # 2) Stage the files the client should receive, matching the in-game folder layout.
 $ModSrc = Join-Path $Repo '.release\client\_pak\UberStrike_Data\Managed'
@@ -41,6 +43,17 @@ foreach ($f in 'Paradise.Client.Bootstrap.dll', 'Paradise.Client.dll', '0Harmony
 }
 Copy-Item $Shim (Join-Path $Dest 'Photon3Unity3D.dll') -Force
 Write-Host '    + Photon3Unity3D.dll'
+
+# Discord Rich Presence helper is Windows-only -> goes in the 'win' platform tree and lands in
+# UberStrike_Data\Plugins on the client. The manifest marks it optional, so the auto-updater keeps
+# it fresh when present (the installer is what first puts it there).
+$RpcExe  = Join-Path $Repo '.release\client\_pak\UberStrike_Data\Plugins\Paradise.Client.DiscordRPC.exe'
+if (Test-Path $RpcExe) {
+  $RpcDest = Join-Path $Base "updates\v2\$Channel\win\UberStrike_Data\Plugins"
+  New-Item -ItemType Directory -Force -Path $RpcDest | Out-Null
+  Copy-Item $RpcExe $RpcDest -Force
+  Write-Host '    + Paradise.Client.DiscordRPC.exe (win)'
+}
 
 # 3) Regenerate the manifest (hashes every file in every channel that exists under server-data).
 Step "Generating update manifest"

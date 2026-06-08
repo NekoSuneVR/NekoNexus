@@ -39,6 +39,7 @@ WelcomeLabel2=This will patch your UberStrike to play on the Paradise free serve
 ; The whole self-contained toolkit is extracted to a temp folder during install.
 Source: "{#Payload}\patcher\*";                          DestDir: "{tmp}\p\patcher"; Flags: recursesubdirs ignoreversion deleteafterinstall
 Source: "{#Payload}\mod\*";                              DestDir: "{tmp}\p\mod";     Flags: ignoreversion deleteafterinstall
+Source: "{#Payload}\plugins\*";                          DestDir: "{tmp}\p\plugins"; Flags: ignoreversion deleteafterinstall skipifsourcedoesntexist
 Source: "{#Payload}\Photon3Unity3D.dll";                 DestDir: "{tmp}\p";         Flags: ignoreversion deleteafterinstall
 Source: "{#Payload}\Paradise.Patch.xml";                 DestDir: "{tmp}\p";         Flags: ignoreversion deleteafterinstall
 Source: "{#Payload}\Paradise.Settings.Client.template.xml"; DestDir: "{tmp}\p";      Flags: ignoreversion deleteafterinstall
@@ -216,7 +217,7 @@ end;
 
 function DoPatch(): Boolean;
 var
-  Game, Managed, DataDir, Tmp, Mgd, PatchXml, Shim, BackupDll, GamePhoton, Tpl, LogFile: string;
+  Game, Managed, DataDir, Tmp, Mgd, PatchXml, Shim, BackupDll, GamePhoton, Tpl, LogFile, Plugins: string;
   TplA, LogA: AnsiString;
   RC: Integer;
   Mods: TArrayOfString;
@@ -266,6 +267,16 @@ begin
   begin
     MsgBox('Could not install the free transport (is UberStrike still running?).', mbError, MB_OK);
     Exit;
+  end;
+
+  { 3b) install optional plugins (Discord Rich Presence helper) into UberStrike_Data\Plugins.
+       The mod launches this exe as a child process; without it Discord Rich Presence does nothing. }
+  Plugins := AddBackslash(DataDir) + 'Plugins';
+  if FileExists(Tmp + '\plugins\Paradise.Client.DiscordRPC.exe') then
+  begin
+    if not DirExists(Plugins) then
+      CreateDir(Plugins);
+    FileCopy(Tmp + '\plugins\Paradise.Client.DiscordRPC.exe', AddBackslash(Plugins) + 'Paradise.Client.DiscordRPC.exe', False);
   end;
 
   { 4) NOW patch Assembly-CSharp (bootstrap present -> the Call resolves), capturing output. }

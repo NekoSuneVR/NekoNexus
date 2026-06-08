@@ -34,6 +34,13 @@ $haveMod = (Test-Path $ModDir) -and (Test-Path (Join-Path $ModDir "Paradise.Clie
 if ($haveMod) {
   New-Item -ItemType Directory -Force -Path (Join-Path $Out "mod") | Out-Null
   foreach ($m in $mods) { $src = Join-Path $ModDir $m; if (Test-Path $src) { Copy-Item $src (Join-Path $Out "mod") -Force } }
+  # Discord Rich Presence helper (Windows-only) -> ships in plugins/ and lands in UberStrike_Data\Plugins.
+  $rpcExe = Join-Path $RepoRoot ".release\client\_pak\UberStrike_Data\Plugins\Paradise.Client.DiscordRPC.exe"
+  if (Test-Path $rpcExe) {
+    New-Item -ItemType Directory -Force -Path (Join-Path $Out "plugins") | Out-Null
+    Copy-Item $rpcExe (Join-Path $Out "plugins") -Force
+    Write-Host "    + Discord Rich Presence helper (plugins\Paradise.Client.DiscordRPC.exe)" -ForegroundColor Green
+  }
   Copy-Item (Join-Path $RepoRoot "packages\Client\install-paradise.ps1") $Out -Force
   Copy-Item (Join-Path $RepoRoot "packages\Client\paradise-target.json") $Out -Force
   Copy-Item (Join-Path $RepoRoot "packages\Client\Install.cmd")          $Out -Force
