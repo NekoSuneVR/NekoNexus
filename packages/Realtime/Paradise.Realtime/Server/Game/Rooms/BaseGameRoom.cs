@@ -559,7 +559,7 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		private void IncreaseHealthAndArmor(GamePeer peer, byte health, byte armor) {
-			throw new NotSupportedException();
+			// No-op (health/armor pickups go through PowerUpManager); previously threw.
 		}
 
 		private void OpenDoor(GamePeer peer, int doorId) {
@@ -788,7 +788,7 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		private void DirectDamage(GamePeer peer, ushort damage) {
-			throw new NotSupportedException();
+			// No-op (environmental/self damage not modelled); previously threw and aborted the op.
 		}
 
 		private void DirectDeath(GamePeer peer) {
@@ -882,7 +882,8 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		private void IsReadyForNextMatch(GamePeer peer, bool on) {
-			throw new NotImplementedException();
+			// No-op (the inter-round timer also advances the match); previously threw and failed
+			// the op. Full ready-state tracking + SendPlayersReadyUpdated can be added later.
 		}
 
 		private void IsPaused(GamePeer peer, bool on) {
@@ -952,12 +953,12 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected virtual void SwitchTeam(GamePeer peer) {
-			// Implemented on a per-gamemode basis
-			throw new NotImplementedException();
+			// Implemented per game mode (TDM/Elimination). Non-team modes have no teams, so the
+			// base is a safe no-op rather than throwing.
 		}
 
 		private void ChangeGear(GamePeer peer, int head, int face, int upperBody, int lowerBody, int gloves, int boots, int holo) {
-			throw new NotSupportedException();
+			// In-match gear swap (cosmetic): no-op instead of aborting the op with an exception.
 		}
 
 		private void EmitProjectile(GamePeer peer, Vector3 origin, Vector3 direction, byte slot, int projectileID, bool explode) {
@@ -986,11 +987,23 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		private void HitFeedback(GamePeer peer, int targetCmid, Vector3 force) {
-			throw new NotImplementedException();
+			// Relay the knockback force to the player that was hit.
+			foreach (var otherPeer in Peers) {
+				if (otherPeer.Actor.Cmid == targetCmid) {
+					otherPeer.GameEventSender.SendPlayerHit(force);
+					break;
+				}
+			}
 		}
 
 		private void ActivateQuickItem(GamePeer peer, QuickItemLogic logic, int robotLifeTime, int scrapsLifeTime, bool isInstant) {
-			throw new NotImplementedException();
+			// Broadcast the quick-item activation (heal, grenade-bot, scraps, etc.) to others.
+			foreach (var otherPeer in Peers) {
+				if (otherPeer.Actor.Cmid.CompareTo(peer.Actor.Cmid) == 0)
+					continue;
+
+				otherPeer.GameEventSender.SendActivateQuickItem(peer.Actor.Cmid, logic, robotLifeTime, scrapsLifeTime, isInstant);
+			}
 		}
 
 		private void ChatMessage(GamePeer peer, string message, byte context) {

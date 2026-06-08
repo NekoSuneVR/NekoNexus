@@ -389,7 +389,10 @@ namespace Paradise.Realtime.Server.Comm {
 					return;
 				}
 
-				if (FindPeerWithCmid(cmid) is var targetPeer && targetPeer.Actor.AccessLevel < peer.Actor.AccessLevel) {
+				// Explicit null check so an offline/absent target doesn't NullReference
+				// (the original `is var` always matched and dereferenced null).
+				var targetPeer = FindPeerWithCmid(cmid);
+				if (targetPeer != null && targetPeer.Actor.AccessLevel < peer.Actor.AccessLevel) {
 					targetPeer.SendError("You have been kicked from UberStrike.");
 				}
 			}
@@ -403,7 +406,8 @@ namespace Paradise.Realtime.Server.Comm {
 					return;
 				}
 
-				if (FindPeerWithCmid(cmid) is var targetPeer && targetPeer.Actor.AccessLevel < peer.Actor.AccessLevel) {
+				var targetPeer = FindPeerWithCmid(cmid);
+				if (targetPeer != null && targetPeer.Actor.AccessLevel < peer.Actor.AccessLevel) {
 					targetPeer.SendError("You have been kicked from the game.");
 				}
 			}
@@ -413,8 +417,12 @@ namespace Paradise.Realtime.Server.Comm {
 
 				DebugOperation(peer, cmid);
 
-				// Appears to be unused
-				throw new NotImplementedException();
+				if (peer.Actor.AccessLevel < MemberAccessLevel.Moderator) {
+					return;
+				}
+
+				// Clear the permanent-ban flag (mirrors ModerationPermanentBan's SetModerationFlag).
+				ModerationWebServiceClient.Instance.UnsetModerationFlag(peer.AuthToken, cmid, ModerationFlag.Banned);
 			}
 
 			private void ModerationCustomMessage(CommPeer peer, MemoryStream bytes) {

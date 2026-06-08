@@ -130,7 +130,7 @@ namespace Paradise.Realtime.Server.Game {
 
 				DebugOperation(peer, number);
 
-				throw new NotImplementedException();
+				// No-op: the client uses the full game-list updates; previously threw.
 			}
 
 			private void GetGameListUpdates(GamePeer peer, MemoryStream bytes) {
@@ -331,7 +331,7 @@ namespace Paradise.Realtime.Server.Game {
 
 				DebugOperation(peer, roomId, authToken);
 
-				throw new NotSupportedException();
+				// No-op (room preview not implemented) - don't abort the op with an exception.
 			}
 
 			private void ReportPlayer(GamePeer peer, MemoryStream bytes) {
@@ -340,7 +340,7 @@ namespace Paradise.Realtime.Server.Game {
 
 				DebugOperation(peer, cmid, authToken);
 
-				throw new NotImplementedException();
+				// Reporting isn't implemented yet; no-op instead of throwing (matches the lobby).
 			}
 
 			private void KickPlayer(GamePeer peer, MemoryStream bytes) {
@@ -420,7 +420,7 @@ namespace Paradise.Realtime.Server.Game {
 
 				DebugOperation(peer, authToken, magicHash);
 
-				throw new NotSupportedException();
+				// No-op: a loadout/shop refresh isn't required server-side here; previously threw.
 			}
 			#endregion
 
