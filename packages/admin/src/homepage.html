@@ -22,6 +22,7 @@
       <span class="font-bold text-lg">Paradise</span>
     </div>
     <nav class="flex items-center gap-5 text-sm text-neutral-300">
+      <a href="#download" class="hover:text-white">Download</a>
       <a href="#leaderboard" class="hover:text-white">Leaderboard</a>
       <a href="#about" class="hover:text-white">About</a>
       <a href="#updates" class="hover:text-white">Updates</a>
@@ -62,6 +63,39 @@
   <section class="max-w-6xl mx-auto px-5 py-6">
     <h2 class="text-lg font-bold mb-3">Server status</h2>
     <div id="serverList" class="grid sm:grid-cols-2 gap-3"></div>
+  </section>
+
+  <!-- downloads -->
+  <section id="download" class="max-w-6xl mx-auto px-5 py-10">
+    <h2 class="text-2xl font-bold mb-1">Download</h2>
+    <p class="text-neutral-400 text-sm mb-6">Play here, or host your own Paradise server.</p>
+    <div class="grid md:grid-cols-2 gap-5">
+
+      <!-- play on THIS server -->
+      <div class="glass rounded-2xl border border-neutral-800 p-6">
+        <div class="text-xs font-semibold text-brand-400 uppercase tracking-wide">Play on this server</div>
+        <h3 class="text-xl font-bold mt-1">Get the patcher</h3>
+        <p class="text-neutral-400 text-sm mt-2">Patches your own copy of UberStrike to play here. Auto-detects the game from Steam, installs .NET if needed, and keeps itself updated. You need to own UberStrike on Steam — no game files are included.</p>
+        <div class="mt-5 flex flex-wrap gap-3">
+          <a href="https://github.com/NekoSuneVR/Paradise/raw/patcher/ParadiseSetup.exe" class="rounded-xl bg-brand-600 hover:bg-brand-500 text-neutral-900 font-semibold px-4 py-2.5">⬇ ParadiseSetup.exe</a>
+          <a href="https://github.com/NekoSuneVR/Paradise/archive/refs/heads/patcher.zip" class="rounded-xl border border-neutral-700 hover:border-neutral-500 px-4 py-2.5 text-sm">Zip (Install.cmd)</a>
+        </div>
+        <p class="text-[11px] text-neutral-500 mt-3">1) Close UberStrike. 2) Run the installer / double-click Install.cmd. 3) Launch from Steam.</p>
+      </div>
+
+      <!-- host your own -->
+      <div class="glass rounded-2xl border border-neutral-800 p-6">
+        <div class="text-xs font-semibold text-neutral-400 uppercase tracking-wide">Host your own</div>
+        <h3 class="text-xl font-bold mt-1">Server files</h3>
+        <p class="text-neutral-400 text-sm mt-2">Run your own free Paradise server (realtime + web services + admin + store) on Windows, Linux or macOS. Multi-arch Docker images, or build from source — no Photon licence, no player cap.</p>
+        <div class="mt-5 flex flex-wrap gap-3">
+          <a href="https://github.com/NekoSuneVR/Paradise" class="rounded-xl bg-neutral-100 hover:bg-white text-neutral-900 font-semibold px-4 py-2.5">⬇ Server on GitHub</a>
+          <a href="https://github.com/NekoSuneVR/Paradise/releases" class="rounded-xl border border-neutral-700 hover:border-neutral-500 px-4 py-2.5 text-sm">Releases</a>
+        </div>
+        <p class="text-[11px] text-neutral-500 mt-3"><code>git clone</code> + <code>docker compose up -d</code>. Full guide in the repo README / DOMAIN-SETUP.md.</p>
+      </div>
+
+    </div>
   </section>
 
   <!-- leaderboard -->
