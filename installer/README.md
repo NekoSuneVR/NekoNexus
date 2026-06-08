@@ -1,7 +1,7 @@
 # ParadiseSetup.exe — one-click UberStrike patch installer
 
 A single native installer (Inno Setup) that auto-detects UberStrike from Steam and patches it
-to play on the Paradise free server (`paradisetest.nekosunevr.co.uk`). No `.cmd`, no PowerShell,
+to play on the Paradise free server (`paradise.nekosunevr.co.uk`). No `.cmd`, no PowerShell,
 no typing — the user just runs the EXE, clicks Next, done.
 
 If the machine is missing **.NET Framework 4.7.2+** (the patcher's dependency — Windows 10/11

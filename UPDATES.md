@@ -39,9 +39,9 @@ If your server is a separate box (e.g. your VPS), use the SSH helper to build, u
 in one go (Windows OpenSSH; uses your SSH key):
 
 ```powershell
-.\misc\sync-updates.ps1 -SshHost paradisetest.nekosunevr.co.uk -RemoteDir /opt/paradise -Publish beta
+.\misc\sync-updates.ps1 -SshHost paradise.nekosunevr.co.uk -RemoteDir /opt/paradise -Publish beta
 # promote later:
-.\misc\sync-updates.ps1 -SshHost paradisetest.nekosunevr.co.uk -RemoteDir /opt/paradise -Publish stable
+.\misc\sync-updates.ps1 -SshHost paradise.nekosunevr.co.uk -RemoteDir /opt/paradise -Publish stable
 ```
 
 `-RemoteDir` is the folder on the server that holds `docker-compose.yml`. It uploads

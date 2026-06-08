@@ -6,7 +6,7 @@
   Uses the OpenSSH client built into Windows 10/11 (scp/ssh). Auth uses your normal SSH key
   (or it'll prompt for a password). No credentials are stored in this repo.
 
-.PARAMETER SshHost   Your server, e.g. 75.119.148.51 or paradisetest.nekosunevr.co.uk
+.PARAMETER SshHost   Your server, e.g. 75.119.148.51 or paradise.nekosunevr.co.uk
 .PARAMETER SshUser   SSH user (default: root)
 .PARAMETER RemoteDir The folder on the server that contains docker-compose.yml
 .PARAMETER Port      SSH port (default: 22)
@@ -15,7 +15,7 @@
 
 .EXAMPLE
   # build the current code to beta, push it, and reload the web service:
-  .\misc\sync-updates.ps1 -SshHost paradisetest.nekosunevr.co.uk -RemoteDir /opt/paradise -Publish beta
+  .\misc\sync-updates.ps1 -SshHost paradise.nekosunevr.co.uk -RemoteDir /opt/paradise -Publish beta
 
 .EXAMPLE
   # just push whatever is already in server-data\updates:

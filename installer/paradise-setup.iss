@@ -8,7 +8,7 @@
 #define AppName    "Paradise for UberStrike"
 #define AppVer     "4.7.2"
 #define Publisher  "NekoSuneVR"
-#define ServerHost "paradisetest.nekosunevr.co.uk"
+#define ServerHost "paradise.nekosunevr.co.uk"
 ; payload produced by misc\bundle-client.ps1
 #define Payload    "..\.release\client\_pak\free-server"
 
