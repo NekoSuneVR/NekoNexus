@@ -4,6 +4,7 @@ import { Op } from 'sequelize';
 // Dashboard HTML is embedded at build time so the compiled exe is self-contained.
 import dashboardHtml from './dashboard.html' with { type: 'text' };
 import storeHtml from './store.html' with { type: 'text' };
+import homepageHtml from './homepage.html' with { type: 'text' };
 import { bearer, signToken, verifyToken } from './auth';
 import { loadConfig } from './config';
 import { initDatabase, sequelize } from './db';
@@ -69,7 +70,45 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
       return json({ error: 'Invalid username or password' }, 401);
     }
     await user.update({ LastLogin: new Date() });
-    return json({ token: signToken({ sub: user.Id, name: user.Username }, cfg.jwtSecret), username: user.Username });
+    return json({
+      token: signToken({ sub: user.Id, name: user.Username }, cfg.jwtSecret),
+      username: user.Username,
+      // Still on the factory admin/admin? The UI forces a change-credentials prompt.
+      mustChangeCredentials: username === 'admin' && password === 'admin',
+    });
+  }
+
+  // ---- PUBLIC homepage data (no auth) ----
+  if (pathname === '/api/public/summary' && method === 'GET') {
+    const servers = await models.PhotonServer.findAll({ raw: true, order: [['PhotonId', 'ASC']] });
+    const totalPlayers = await models.PublicProfile.count({ where: { Cmid: { [Op.ne]: 0 } } }).catch(() => 0);
+    const activePlayers = await models.ActivePlayer.count().catch(() => 0);
+    return json({
+      totalPlayers,
+      activePlayers,
+      serversTotal: servers.length,
+      serversOnline: servers.filter((s: any) => isOnline(s.LastResponseTime)).length,
+      servers: (servers as any[]).map((s) => ({ Name: s.Name, Region: s.Region, Online: isOnline(s.LastResponseTime) })),
+    });
+  }
+
+  if (pathname === '/api/public/leaderboard' && method === 'GET') {
+    const staff = await models.PublicProfile.findAll({ where: { [Op.or]: [{ AccessLevel: { [Op.gte]: 4 } }, { Cmid: 0 }] }, attributes: ['Cmid'], raw: true });
+    const hidden = (staff as any[]).map((s) => s.Cmid);
+    const top = await models.PlayerStatistics.findAll({
+      where: hidden.length ? { Cmid: { [Op.notIn]: hidden } } : {},
+      order: [['Xp', 'DESC']],
+      limit: 60,
+      raw: true,
+    });
+    const names = await models.PublicProfile.findAll({ where: { Cmid: { [Op.in]: (top as any[]).map((t) => t.Cmid) } }, raw: true });
+    const nameMap = new Map((names as any[]).map((n) => [n.Cmid, (n.Name ?? '').trim()]));
+    return json(
+      (top as any[])
+        .filter((t) => (nameMap.get(t.Cmid) ?? '') !== '')
+        .slice(0, 25)
+        .map((t, i) => ({ rank: i + 1, Name: nameMap.get(t.Cmid), Level: t.Level, Xp: t.Xp, Splats: t.Splats })),
+    );
   }
 
   // ---- PUBLIC store endpoints (no admin auth: players + NekoPay call these) ----
@@ -502,8 +541,12 @@ Bun.serve({
         { headers: { 'content-type': 'text/html; charset=utf-8' } },
       );
     }
-    // Everything else serves the single-page dashboard.
-    return new Response(dashboardHtml, { headers: { 'content-type': 'text/html; charset=utf-8' } });
+    // Admin dashboard (login + SPA) under /admin.
+    if (url.pathname === '/admin' || url.pathname.startsWith('/admin/')) {
+      return new Response(dashboardHtml, { headers: { 'content-type': 'text/html; charset=utf-8' } });
+    }
+    // Public homepage for everything else (/, etc.).
+    return new Response(homepageHtml, { headers: { 'content-type': 'text/html; charset=utf-8' } });
   },
 });
 

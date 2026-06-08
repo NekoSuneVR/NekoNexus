@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paradise — free UberStrike</title>
+  <meta name="description" content="Paradise — a free, community UberStrike server. Live player counts, server status, and the all-time leaderboard." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { brand: { 400:'#34d399',500:'#10b981',600:'#059669' } } } } };
+  </script>
+  <style>
+    body { background: radial-gradient(1200px 600px at 50% -10%, rgba(16,185,129,.12), transparent 60%), #0a0a0a; }
+    .glass { background: rgba(23,23,23,.7); backdrop-filter: blur(8px); }
+  </style>
+</head>
+<body class="text-neutral-100 min-h-screen">
+  <!-- nav -->
+  <header class="max-w-6xl mx-auto px-5 py-5 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="h-9 w-9 rounded-xl bg-brand-500 grid place-items-center text-neutral-900 font-black">P</div>
+      <span class="font-bold text-lg">Paradise</span>
+    </div>
+    <nav class="flex items-center gap-5 text-sm text-neutral-300">
+      <a href="#leaderboard" class="hover:text-white">Leaderboard</a>
+      <a href="#about" class="hover:text-white">About</a>
+      <a href="#updates" class="hover:text-white">Updates</a>
+      <a href="/admin" class="rounded-lg border border-neutral-700 px-3 py-1.5 hover:border-brand-500 hover:text-white">Admin</a>
+    </nav>
+  </header>
+
+  <!-- hero -->
+  <section class="max-w-6xl mx-auto px-5 pt-10 pb-8 text-center">
+    <div id="statusPill" class="inline-flex items-center gap-2 rounded-full border border-neutral-700 px-3 py-1 text-xs text-neutral-300 mb-6">
+      <span id="statusDot" class="h-2 w-2 rounded-full bg-neutral-500"></span><span id="statusText">Checking server status…</span>
+    </div>
+    <h1 class="text-4xl sm:text-5xl font-black tracking-tight">UberStrike, <span class="text-brand-400">free</span> &amp; community-run</h1>
+    <p class="text-neutral-400 mt-4 max-w-2xl mx-auto">Play the classic shooter on Paradise — no Photon licence, no paywall. Patch your game once and you're in.</p>
+    <div class="mt-7 flex items-center justify-center gap-3">
+      <a href="https://github.com/NekoSuneVR/Paradise/raw/patcher/ParadiseSetup.exe" class="rounded-xl bg-brand-600 hover:bg-brand-500 text-neutral-900 font-semibold px-5 py-3">Get the patcher</a>
+      <a href="https://github.com/NekoSuneVR/Paradise" class="rounded-xl border border-neutral-700 hover:border-neutral-500 px-5 py-3">GitHub</a>
+    </div>
+
+    <!-- live stats -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-12 text-left">
+      <div class="glass rounded-2xl border border-neutral-800 p-5">
+        <div class="text-3xl font-black text-brand-400" id="sActive">—</div><div class="text-xs text-neutral-400 mt-1">Players online</div>
+      </div>
+      <div class="glass rounded-2xl border border-neutral-800 p-5">
+        <div class="text-3xl font-black" id="sServers">—</div><div class="text-xs text-neutral-400 mt-1">Servers online</div>
+      </div>
+      <div class="glass rounded-2xl border border-neutral-800 p-5">
+        <div class="text-3xl font-black" id="sTotal">—</div><div class="text-xs text-neutral-400 mt-1">Registered players</div>
+      </div>
+      <div class="glass rounded-2xl border border-neutral-800 p-5">
+        <div class="text-3xl font-black" id="sRegions">—</div><div class="text-xs text-neutral-400 mt-1">Regions</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- server status -->
+  <section class="max-w-6xl mx-auto px-5 py-6">
+    <h2 class="text-lg font-bold mb-3">Server status</h2>
+    <div id="serverList" class="grid sm:grid-cols-2 gap-3"></div>
+  </section>
+
+  <!-- leaderboard -->
+  <section id="leaderboard" class="max-w-6xl mx-auto px-5 py-10">
+    <h2 class="text-2xl font-bold mb-1">Leaderboard</h2>
+    <p class="text-neutral-400 text-sm mb-5">Top players by XP. Staff are hidden.</p>
+    <div class="glass rounded-2xl border border-neutral-800 overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="text-neutral-400 text-xs uppercase border-b border-neutral-800">
+          <tr><th class="text-left px-5 py-3 w-16">#</th><th class="text-left px-5 py-3">Player</th><th class="text-right px-5 py-3">Level</th><th class="text-right px-5 py-3">XP</th><th class="text-right px-5 py-3">Splats</th></tr>
+        </thead>
+        <tbody id="lbBody"><tr><td colspan="5" class="px-5 py-6 text-neutral-500">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- about -->
+  <section id="about" class="max-w-6xl mx-auto px-5 py-10 grid md:grid-cols-2 gap-8">
+    <div>
+      <h2 class="text-2xl font-bold mb-3">About Paradise</h2>
+      <p class="text-neutral-300 leading-relaxed">Paradise is a free, open-source revival of UberStrike. The proprietary Photon server SDK has been replaced with free transport shims, so anyone can host — no licence, no concurrent-user cap. The whole stack (realtime servers, web services, admin dashboard, store) runs on Docker across Windows, Linux and macOS.</p>
+      <p class="text-neutral-400 leading-relaxed mt-3 text-sm">You keep your XP, level and stats across matches, add friends, join clans, and chat in the lobby. The client auto-updates, so fixes reach you automatically.</p>
+    </div>
+    <div id="updates">
+      <h2 class="text-2xl font-bold mb-3">Latest updates</h2>
+      <ul class="space-y-3 text-sm text-neutral-300">
+        <li class="glass rounded-xl border border-neutral-800 p-4"><b class="text-brand-400">Clans, mail &amp; friends</b> — invites, clan tags in chat, leaving clans, and a fixed mailbox (+ admin system mail).</li>
+        <li class="glass rounded-xl border border-neutral-800 p-4"><b class="text-brand-400">Progression saved</b> — XP, level and stats now persist after every match.</li>
+        <li class="glass rounded-xl border border-neutral-800 p-4"><b class="text-brand-400">Connectivity</b> — realtime now connects reliably (IPv4 transport), and the shop/credits pages no longer freeze.</li>
+        <li class="glass rounded-xl border border-neutral-800 p-4"><b class="text-brand-400">Auto-updates</b> — Stable &amp; Beta channels; your client updates itself on launch.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="max-w-6xl mx-auto px-5 py-10 border-t border-neutral-800 text-sm text-neutral-500 flex items-center justify-between">
+    <span>Paradise — community UberStrike. Not affiliated with Cmune.</span>
+    <a href="/admin" class="hover:text-neutral-300">Admin panel</a>
+  </footer>
+
+  <script>
+    const $ = (s) => document.querySelector(s);
+    const regionName = (r) => ({1:'Europe',2:'North America',3:'South America',4:'Asia',5:'Australia',6:'Comm'}[r] || 'Server');
+    async function load() {
+      try {
+        const s = await (await fetch('/api/public/summary')).json();
+        $('#sActive').textContent = s.activePlayers ?? 0;
+        $('#sServers').textContent = (s.serversOnline ?? 0) + '/' + (s.serversTotal ?? 0);
+        $('#sTotal').textContent = (s.totalPlayers ?? 0).toLocaleString();
+        const regions = new Set((s.servers||[]).map(x => x.Region)); $('#sRegions').textContent = regions.size || 0;
+
+        const anyOnline = (s.serversOnline ?? 0) > 0;
+        $('#statusDot').className = 'h-2 w-2 rounded-full ' + (anyOnline ? 'bg-brand-500' : 'bg-red-500');
+        $('#statusText').textContent = anyOnline ? 'Server online' : 'Server offline';
+
+        const list = $('#serverList');
+        list.innerHTML = (s.servers||[]).map(x =>
+          `<div class="glass rounded-xl border border-neutral-800 px-4 py-3 flex items-center justify-between">
+             <div><div class="font-medium">${(x.Name||'Server')}</div><div class="text-xs text-neutral-400">${regionName(x.Region)}</div></div>
+             <span class="text-xs px-2 py-1 rounded-full ${x.Online?'bg-brand-900/40 text-brand-400':'bg-red-900/30 text-red-400'}">${x.Online?'Online':'Offline'}</span>
+           </div>`).join('') || '<div class="text-neutral-500 text-sm">No servers configured.</div>';
+      } catch (e) { $('#statusText').textContent = 'Status unavailable'; }
+
+      try {
+        const lb = await (await fetch('/api/public/leaderboard')).json();
+        const body = $('#lbBody');
+        body.innerHTML = (lb||[]).length ? lb.map(p =>
+          `<tr class="border-b border-neutral-800/60">
+             <td class="px-5 py-3 text-neutral-500">${p.rank}</td>
+             <td class="px-5 py-3 font-medium">${(p.Name||'').replace(/[<>]/g,'')}</td>
+             <td class="px-5 py-3 text-right">${p.Level ?? 0}</td>
+             <td class="px-5 py-3 text-right">${(p.Xp ?? 0).toLocaleString()}</td>
+             <td class="px-5 py-3 text-right">${(p.Splats ?? 0).toLocaleString()}</td>
+           </tr>`).join('') : '<tr><td colspan="5" class="px-5 py-6 text-neutral-500">No ranked players yet — go play!</td></tr>';
+      } catch (e) {}
+    }
+    load();
+    setInterval(load, 30000);
+  </script>
+</body>
+</html>

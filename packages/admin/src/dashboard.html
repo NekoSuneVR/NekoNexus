@@ -37,7 +37,7 @@
         </div>
         <div id="loginErr" class="text-sm text-red-400 hidden"></div>
         <button class="w-full rounded-lg bg-brand-600 hover:bg-brand-500 text-slate-900 font-semibold py-2 transition">Sign in</button>
-        <p class="text-[11px] text-slate-500 text-center">Default login is <b>admin / admin</b> — change it after signing in.</p>
+        <p class="text-[11px] text-slate-500 text-center">Paradise server administration</p>
       </form>
     </div>
   </div>
@@ -127,6 +127,9 @@
       <section data-view="account" class="hidden max-w-md">
         <h1 class="text-2xl font-bold mb-1">Account</h1>
         <p class="text-slate-400 text-sm mb-6">Change your admin username and password.</p>
+        <div id="credWarn" class="hidden mb-5 rounded-lg border border-red-700 bg-red-900/30 text-red-300 px-4 py-3 text-sm">
+          ⚠ You're still using the default <b>admin / admin</b> login. Set a new <b>username and password</b> below now — anyone can access this panel otherwise.
+        </div>
         <form id="accountForm" class="glass rounded-xl border border-slate-800 p-6 space-y-4">
           <div><label class="text-xs text-slate-400">Username</label><input id="aUser" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 focus:border-brand-500 outline-none" /></div>
           <div><label class="text-xs text-slate-400">Current password</label><input id="aCur" type="password" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 focus:border-brand-500 outline-none" /></div>
@@ -245,8 +248,15 @@
         localStorage.setItem('paradise_admin_token', d.token);
         $('#aUser').value = d.username;
         enter();
+        if (d.mustChangeCredentials) promptChangeCreds();
       } catch (err) { const e2 = $('#loginErr'); e2.textContent = err.message; e2.classList.remove('hidden'); }
     };
+
+    function promptChangeCreds() {
+      nav('account');
+      const w = $('#credWarn'); if (w) w.classList.remove('hidden');
+      setTimeout(() => alert('You are still using the default admin / admin login.\n\nPlease set a new username AND password now on the Account page.'), 100);
+    }
 
     // ---- nav ----
     document.querySelectorAll('.nav').forEach(b => b.addEventListener('click', () => nav(b.dataset.page)));
@@ -448,6 +458,7 @@
         const d = await api('/api/account', { method: 'POST', body: JSON.stringify({ username: $('#aUser').value, currentPassword: $('#aCur').value, newPassword: $('#aNew').value || undefined }) });
         if (d.token) localStorage.setItem('paradise_admin_token', d.token);
         $('#aCur').value = ''; $('#aNew').value = '';
+        $('#credWarn')?.classList.add('hidden');
         msg.textContent = 'Saved.'; msg.className = 'text-sm text-brand-400';
       } catch (err) { msg.textContent = err.message; msg.className = 'text-sm text-red-400'; }
       msg.classList.remove('hidden');
