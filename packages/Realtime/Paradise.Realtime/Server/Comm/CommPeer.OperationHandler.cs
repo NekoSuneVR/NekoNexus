@@ -42,6 +42,15 @@ namespace Paradise.Realtime.Server.Comm {
 
 			public override void OnDisconnect(CommPeer peer, DisconnectReason reasonCode, string reasonDetail) {
 				Log.Debug($"{peer} Disconnected {reasonCode} -> {reasonDetail}");
+
+				// Remove the peer from the lobby on disconnect: tells everyone else they left
+				// (SendPlayerLeft -> their contact entry goes offline) and refreshes the online
+				// roster + the master's ActivePlayer list. Without this, disconnected players
+				// lingered as "online" forever.
+				if (peer.Actor != null && peer.Lobby != null) {
+					LobbyManager.Instance.GlobalLobby.Leave(peer);
+					LobbyManager.Instance.UpdatePlayerList();
+				}
 			}
 
 			#region Implementation of ICommPeerOperationsType
