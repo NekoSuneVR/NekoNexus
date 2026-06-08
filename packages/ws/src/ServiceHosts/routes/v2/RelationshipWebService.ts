@@ -329,6 +329,15 @@ export default class RelationshipWebService extends BaseWebService {
               Status: ContactRequestStatus.Pending,
               SentDate: new Date(),
             });
+          } else if (contactRequest.Status !== ContactRequestStatus.Accepted) {
+            // Re-send: repair an existing non-accepted request (e.g. an old one created before
+            // Status was set, which would otherwise stay NULL and invisible forever).
+            await contactRequest.update({
+              InitiatorName: playerProfile!.Name,
+              InitiatorMessage: message,
+              Status: ContactRequestStatus.Pending,
+              SentDate: new Date(),
+            });
           }
         }
       }
