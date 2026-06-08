@@ -7,13 +7,13 @@
 			"Description": "This is a clan license. You need to own one of these to create a clan.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 500,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 8000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -28,13 +28,13 @@
 			"Description": "Use this item to change your name once. Item is consumed after use.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 500,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 8000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -102,13 +102,13 @@
 			"Description": "This jacket has interwaven kevlar plates to protect you from all sorts of mayhem.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -125,13 +125,13 @@
 			"Description": "Woe unto thee, mortal.\nThe wielder of the BANHAMMER approaches.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -148,13 +148,13 @@
 			"Description": "Agent Xenon's Hazmat Suit (5/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -171,13 +171,13 @@
 			"Description": "Agent Xenon's Hazmat Suit (4/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -194,13 +194,13 @@
 			"Description": "Agent Xenon's Hazmat Suit (3/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -217,13 +217,13 @@
 			"Description": "Agent Xenon's Hazmat Suit (2/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -240,13 +240,13 @@
 			"Description": "Agent Xenon's Hazmat Suit (1/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -263,13 +263,13 @@
 			"Description": "Agent Xenon's Hazmat Suit Limited (5/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -286,13 +286,13 @@
 			"Description": "Agent Xenon's Hazmat Suit Limited (4/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -309,13 +309,13 @@
 			"Description": "Agent Xenon's Hazmat Suit Limited (3/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -332,13 +332,13 @@
 			"Description": "Agent Xenon's Hazmat Suit Limited (2/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -355,13 +355,13 @@
 			"Description": "Agent Xenon's Hazmat Suit Limited (1/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -378,13 +378,13 @@
 			"Description": "ArcticDread Battlegear (5/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -401,13 +401,13 @@
 			"Description": "ArcticDread Battlegear (6/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -424,13 +424,13 @@
 			"Description": "ArcticDread Battlegear (4/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -447,13 +447,13 @@
 			"Description": "ArcticDread Battlegear (3/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -470,13 +470,13 @@
 			"Description": "ArcticDread Battlegear (2/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -493,13 +493,13 @@
 			"Description": "ArcticDread Battlegear (1/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -516,13 +516,13 @@
 			"Description": "Grrrrrrr! These pants just make me angry. That's all you need to know. Mount up!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -539,13 +539,13 @@
 			"Description": "Grrrrrrr! These pants just make me angry. That's all you need to know. Mount up!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -562,13 +562,13 @@
 			"Description": "Doubles as a head cover and a wick for a molotov cocktail. Check yo'self!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -585,13 +585,13 @@
 			"Description": "Doubles as a sling for your pants and a wick for a molotov cocktail. Check yo'self!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -608,13 +608,13 @@
 			"Description": "Cool basketball sneakers.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -631,13 +631,13 @@
 			"Description": "It's a Beard and Mo. What did you expect?",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -654,13 +654,13 @@
 			"Description": "Custom threads for the true Heroes of Paradise.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -677,13 +677,13 @@
 			"Description": "Black Corps Armor (5/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -700,13 +700,13 @@
 			"Description": "Black Corps Armor (6/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -723,13 +723,13 @@
 			"Description": "Black Corps Armor (4/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -746,13 +746,13 @@
 			"Description": "Black Corps Armor (3/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -769,13 +769,13 @@
 			"Description": "Black Corps Armor (2/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -792,13 +792,13 @@
 			"Description": "Black Corps Armor (1/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -815,13 +815,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -838,13 +838,13 @@
 			"Description": "Impress your Francais with this special edition hat for Bastille Day!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -861,13 +861,13 @@
 			"Description": "The open cowl design is useful for grinning at your enemies whilst you pummel them!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -884,13 +884,13 @@
 			"Description": "Ophion's Scout Armor features more armor points.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -907,13 +907,13 @@
 			"Description": "Ophion's Scout Armor features more armor points.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -930,13 +930,13 @@
 			"Description": "A Godlike Crown fit for a King!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -953,13 +953,13 @@
 			"Description": "Gain godlike resistance to attack with the Axis of Ophion!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -976,13 +976,13 @@
 			"Description": "Ultra resistant - the chest armor of Ophion will provide you with godlike protection from damage.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -999,13 +999,13 @@
 			"Description": "Been glassed in the head recently? Use this cap to hide your injuries, nobody will ever know.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1022,13 +1022,13 @@
 			"Description": "Shirt for C4C clan.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1045,13 +1045,13 @@
 			"Description": "Shirt for DED clan.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1068,13 +1068,13 @@
 			"Description": "Shirt for SLD clan.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1091,13 +1091,13 @@
 			"Description": "Shirt for ST6IX clan.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1114,13 +1114,13 @@
 			"Description": "As the name states, this coat is uber classy.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1137,13 +1137,13 @@
 			"Description": "Counter-Terrorist's Tactical Gear (5/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1160,13 +1160,13 @@
 			"Description": "Counter-Terrorist's Tactical Gear (6/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1183,13 +1183,13 @@
 			"Description": "Counter-Terrorist's Tactical Gear (4/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1206,13 +1206,13 @@
 			"Description": "Counter-Terrorist's Tactical Gear (3/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1229,13 +1229,13 @@
 			"Description": "Counter-Terrorist's Tactical Gear (2/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1252,13 +1252,13 @@
 			"Description": "Counter-Terrorist's Tactical Gear (1/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1275,13 +1275,13 @@
 			"Description": "Counter-Terrorist's Tactical Gear (1/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1298,13 +1298,13 @@
 			"Description": "Counter-Terrorist's Tactical Gear (1/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1331,13 +1331,13 @@
 			"Description": "Counter-Terrorist's Tactical Gear (1/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1354,13 +1354,13 @@
 			"Description": "Lutz wants your braaaaaaains, and with this set of upgrades he is sporting, he's going to get them.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1377,13 +1377,13 @@
 			"Description": "This is a green shirt.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1400,13 +1400,13 @@
 			"Description": "A cool shirt without armor points.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1423,13 +1423,13 @@
 			"Description": "Dr Decay's Raiments (5/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1446,13 +1446,13 @@
 			"Description": "Dr Decay's Raiments (4/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1469,13 +1469,13 @@
 			"Description": "Dr Decay's Raiments (3/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1492,13 +1492,13 @@
 			"Description": "Dr Decay's Raiments (2/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1515,13 +1515,13 @@
 			"Description": "Dr Decay's Raiments (1/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1538,13 +1538,13 @@
 			"Description": "Dr Decay's Raiments Limited (5/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1561,13 +1561,13 @@
 			"Description": "Dr Decay's Raiments Limited (4/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1584,13 +1584,13 @@
 			"Description": "Dr Decay's Raiments Limited (3/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1607,13 +1607,13 @@
 			"Description": "Dr Decay's Raiments Limited (2/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1630,13 +1630,13 @@
 			"Description": "Dr Decay's Raiments Limited (1/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1653,13 +1653,13 @@
 			"Description": "Croc Hunter's Outfit (3/4)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1676,13 +1676,13 @@
 			"Description": "Croc Hunter's Outfit (2/4)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1699,13 +1699,13 @@
 			"Description": "Croc Hunter's Outfit (4/4)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1722,13 +1722,13 @@
 			"Description": "Croc Hunter's Outfit (1/4)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1745,13 +1745,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1768,13 +1768,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1791,13 +1791,13 @@
 			"Description": "A mask with the flag of Australia on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1814,13 +1814,13 @@
 			"Description": "A mask with the flag of Brazil on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1837,13 +1837,13 @@
 			"Description": "A mask with the flag of Canada on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1860,13 +1860,13 @@
 			"Description": "A mask with the flag of China on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1883,13 +1883,13 @@
 			"Description": "A mask with the flag of the European Union on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1906,13 +1906,13 @@
 			"Description": "A mask with the flag of France on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1929,13 +1929,13 @@
 			"Description": "A mask with the flag of Germany on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1952,13 +1952,13 @@
 			"Description": "A mask with the flag of the Netherlands on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1975,13 +1975,13 @@
 			"Description": "A mask with the flag of Hong Kong on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -1998,13 +1998,13 @@
 			"Description": "A mask with the flag of India on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2021,13 +2021,13 @@
 			"Description": "A mask with the flag of Italy on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2044,13 +2044,13 @@
 			"Description": "A mask with the flag of Japan on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2067,13 +2067,13 @@
 			"Description": "Limited Edition",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2090,13 +2090,13 @@
 			"Description": "A mask with the flag of Korea on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2113,13 +2113,13 @@
 			"Description": "A mask with the flag of Latvia on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2136,13 +2136,13 @@
 			"Description": "A mask with the flag of Malaysia on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2159,13 +2159,13 @@
 			"Description": "A mask with the flag of Mexico on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2182,13 +2182,13 @@
 			"Description": "A mask with the flag of New Zealand on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2205,13 +2205,13 @@
 			"Description": "A mask with the flag of the Philippines on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2228,13 +2228,13 @@
 			"Description": "A mask with the flag of Poland on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2251,13 +2251,13 @@
 			"Description": "A mask with the flag of Portugal on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2274,13 +2274,13 @@
 			"Description": "A mask with the flag of Romania on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2307,13 +2307,13 @@
 			"Description": "A mask with the flag of Singapore on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2330,13 +2330,13 @@
 			"Description": "A mask with the flag of Spain on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2353,13 +2353,13 @@
 			"Description": "A mask with the flag of Taiwan on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2376,13 +2376,13 @@
 			"Description": "A mask with the flag of Turkiye on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2399,13 +2399,13 @@
 			"Description": "A mask with the Union Jack on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2422,13 +2422,13 @@
 			"Description": "A mask with the Star Spangled Banner on it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2445,13 +2445,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2468,13 +2468,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2491,13 +2491,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2514,13 +2514,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2537,13 +2537,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2560,13 +2560,13 @@
 			"Description": "Available for Halloween!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2583,13 +2583,13 @@
 			"Description": "Available for Halloween!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2614,13 +2614,13 @@
 			"Description": "Available for Halloween!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2637,13 +2637,13 @@
 			"Description": "Available for Halloween!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2660,13 +2660,13 @@
 			"Description": "Available for Halloween!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2683,13 +2683,13 @@
 			"Description": "All tread lightly when the boys and girls in Global Mod Blue show up to the party.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2706,13 +2706,13 @@
 			"Description": "Uber rare. This is only for the Godfather.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2729,13 +2729,13 @@
 			"Description": "Wearing this is the same as carrying a sign that says \"I CAN DESTROY YOU WITH MY THOUSAND YARD STARE\" that people believe.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2752,13 +2752,13 @@
 			"Description": "The superior Eco Shirt is much greener than the Green Shirt and contributes to a clean environment!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2775,13 +2775,13 @@
 			"Description": "The Ghost of the Orient is basically a blood sucking zombie vampire, from China.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2798,13 +2798,13 @@
 			"Description": "A hat straight from Hell's kitchen garden.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2821,13 +2821,13 @@
 			"Description": "...BRAAAAINS ...BRAAAAAA - you get the point.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2844,13 +2844,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2867,13 +2867,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2890,13 +2890,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2913,13 +2913,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2934,13 +2934,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2957,13 +2957,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -2980,13 +2980,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3003,13 +3003,13 @@
 			"Description": "Spread the hilarity to your dead opponents with this oversized grinning skull head!\n",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3026,13 +3026,13 @@
 			"Description": "Are you man enough to ride a broom and wear a purple hat with a glittery ribbon?",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3049,13 +3049,13 @@
 			"Description": "The open cowl design is useful for grinning at your enemies whilst you pummel them!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3072,13 +3072,13 @@
 			"Description": "The gloves of Ophion Heavy will provide you with godlike grip for your guns. To shoot people with.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3095,13 +3095,13 @@
 			"Description": "A Godlike Crown fit for a King!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3118,13 +3118,13 @@
 			"Description": "A Godlike Crown fit for a King!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3141,13 +3141,13 @@
 			"Description": "Gain godlike resistance to attack with the Axis of Ophion!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3164,13 +3164,13 @@
 			"Description": "Gain godlike resistance to attack with the Axis of Ophion!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3187,13 +3187,13 @@
 			"Description": "Ultra resistant - Ophion Heavy gear features the highest protection!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3210,13 +3210,13 @@
 			"Description": "Ultra resistant - Ophion Heavy gear features the highest protection!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3233,13 +3233,13 @@
 			"Description": "Ophion's Scout Armor features more armor points.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3256,13 +3256,13 @@
 			"Description": "Equip Ophion's Spurs to squash your enemies with Godlike power!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3279,13 +3279,13 @@
 			"Description": "The gloves of Ophion will provide you with godlike grip for your guns. To shoot people with.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3302,13 +3302,13 @@
 			"Description": "The open cowl design is useful for grinning at your enemies whilst you pummel them!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3325,13 +3325,13 @@
 			"Description": "Ophion Scout Armor features more armor points.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3348,13 +3348,13 @@
 			"Description": "Ophion's Armor features more armor points.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3371,13 +3371,13 @@
 			"Description": "Ophion's Scout Armor features more armor points.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3394,13 +3394,13 @@
 			"Description": "Win the easy way. This bling has enough reflective power to blind your enemies without having to actually hit them.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3417,13 +3417,13 @@
 			"Description": "Headphones are cool.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3440,13 +3440,13 @@
 			"Description": "Hydra is a female holo making a splash in UberStrike!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3463,13 +3463,13 @@
 			"Description": "Once a rockstar scientist, a tragic lab accident left his body disfigured and mind warped. Now his madness only leaves destruction in its wake.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3486,13 +3486,13 @@
 			"Description": "Rust is here to make sure you are looking cool.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3509,13 +3509,13 @@
 			"Description": "Terra is an elemental holo made of more than sap and dirt!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3532,13 +3532,13 @@
 			"Description": "Sometimes, the shirt makes the man. Nuff said.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3555,13 +3555,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3578,13 +3578,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3601,13 +3601,13 @@
 			"Description": "Lutz is here, and he's after your braaaaaaaaaaaains...",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3624,13 +3624,13 @@
 			"Description": "Juggernaut Power Armor (5/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3647,13 +3647,13 @@
 			"Description": "DRAGON EDITION: One small step for man, one giant stomp for you.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3670,13 +3670,13 @@
 			"Description": "Juggernaut Power Armor (4/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3693,13 +3693,13 @@
 			"Description": "DRAGON EDITION: Each gauntlet is labeled with simple instructions: \"Smash\" and \"Crush\"",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3716,13 +3716,13 @@
 			"Description": "Juggernaut Power Armor (3/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3739,13 +3739,13 @@
 			"Description": "DRAGON EDITION: The updated Juggernaut Visor is now NON-magnetic, after multiple customer complaints!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3762,13 +3762,13 @@
 			"Description": "Juggernaut Power Armor (2/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3785,13 +3785,13 @@
 			"Description": "DRAGON EDITION: These heavy duty pants are both functional and stylish.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3808,13 +3808,13 @@
 			"Description": "Juggernaut Power Armor (1/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3831,13 +3831,13 @@
 			"Description": "DRAGON EDITION: The powered chest armor of the Juggernaut can withstand huge amounts of damage.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3854,13 +3854,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3877,13 +3877,13 @@
 			"Description": "A holographic ninja kit that will make you look like Julia.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3900,13 +3900,13 @@
 			"Description": "Viktor Ironfist's Armor (5/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3923,13 +3923,13 @@
 			"Description": "Sir Magnus' Armor (5/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3946,13 +3946,13 @@
 			"Description": "Viktor Ironfist's Armor (4/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3969,13 +3969,13 @@
 			"Description": "Sir Magnus' Armor (4/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -3992,13 +3992,13 @@
 			"Description": "Viktor Ironfist's Armor (3/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4015,13 +4015,13 @@
 			"Description": "Sir Magnus' Armor (3/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4038,13 +4038,13 @@
 			"Description": "Viktor Ironfist's Armor (3/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4061,13 +4061,13 @@
 			"Description": "Sir Magnus' Armor (3/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4084,13 +4084,13 @@
 			"Description": "Viktor Ironfist's Armor (3/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4107,13 +4107,13 @@
 			"Description": "Sir Magnus' Armor (3/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4130,13 +4130,13 @@
 			"Description": "Viktor Ironfist's Armor (2/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4153,13 +4153,13 @@
 			"Description": "Sir Magnus' Armor (2/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4176,13 +4176,13 @@
 			"Description": "Viktor Ironfist's Armor (1/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4199,13 +4199,13 @@
 			"Description": "Sir Magnus' Armor (1/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4222,13 +4222,13 @@
 			"Description": "A good looking jacket with no armor points.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4245,13 +4245,13 @@
 			"Description": "A super-slick leather jacket.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4268,13 +4268,13 @@
 			"Description": "Shiny leather shoes fit for any occasion.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4291,13 +4291,13 @@
 			"Description": "This lab jacket practically screams 'I'm insane'. If you  run around screaming the same thing, no one will have any doubts!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4314,13 +4314,13 @@
 			"Description": "Mafioso's Attire (2/2)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4337,13 +4337,13 @@
 			"Description": "Mafioso's Attire (1/2)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4360,13 +4360,13 @@
 			"Description": "Sentinel Power Armor (5/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4383,13 +4383,13 @@
 			"Description": "Sentinel Power Armor (4/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4406,13 +4406,13 @@
 			"Description": "Sentinel Power Armor (3/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4429,13 +4429,13 @@
 			"Description": "Sentinel Power Armor (2/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4452,13 +4452,13 @@
 			"Description": "Sentinel Power Armor (1/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4475,13 +4475,13 @@
 			"Description": "Folks will know you mean business when you show up wearing Mod orange.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4498,13 +4498,13 @@
 			"Description": "Dragon Edition ninja gear. Made for long distance flykicking.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4521,13 +4521,13 @@
 			"Description": "Dragon Edition ninja gear. Made for long distance flykicking.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4544,13 +4544,13 @@
 			"Description": "Dragon Edition ninja gear. Because there are actually four ninjas in every game that you DON'T see.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4567,13 +4567,13 @@
 			"Description": "Dragon Edition ninja gear. Because there are actually four ninjas in every game that you DON'T see.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4590,13 +4590,13 @@
 			"Description": "SForce Ninja Shozoku (4/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4613,13 +4613,13 @@
 			"Description": "Dragon Edition ninja gear. Because any problem can be solved with enough ninjas.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4636,13 +4636,13 @@
 			"Description": "Dragon Edition ninja gear. Because any problem can be solved with enough ninjas.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4659,13 +4659,13 @@
 			"Description": "SForce Ninja Shozoku (3/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4682,13 +4682,13 @@
 			"Description": "Dragon Edition ninja gear. Because money can't buy you happiness, but it can buy you assassins.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4705,13 +4705,13 @@
 			"Description": "Dragon Edition ninja gear. Because money can't buy you happiness, but it can buy you assassins.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4728,13 +4728,13 @@
 			"Description": "SForce Ninja Shozoku (2/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4751,13 +4751,13 @@
 			"Description": "Dragon Edition ninja gear is cool; and by cool, I mean totally sweet.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4774,13 +4774,13 @@
 			"Description": "Dragon Edition ninja gear is cool; and by cool, I mean totally sweet.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4797,13 +4797,13 @@
 			"Description": "SForce Ninja Shozoku (6/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4820,13 +4820,13 @@
 			"Description": "SForce Ninja Shozoku (6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4843,13 +4843,13 @@
 			"Description": "SForce Ninja Shozoku (5/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4866,13 +4866,13 @@
 			"Description": "SForce Ninja Shozoku (1/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4889,13 +4889,13 @@
 			"Description": "Dragon Edition ninja gear. For the elite of the elite.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4912,13 +4912,13 @@
 			"Description": "Dragon Edition ninja gear. For the elite of the elite.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4935,13 +4935,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4958,13 +4958,13 @@
 			"Description": "Cap'n Bradford's Finery (6/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -4981,13 +4981,13 @@
 			"Description": "Cap'n Bradford's Finery (4/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5012,13 +5012,13 @@
 			"Description": "Cap'n Bradford's Finery (2/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5035,13 +5035,13 @@
 			"Description": "Cap'n Bradford's Finery (5/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5058,13 +5058,13 @@
 			"Description": "Cap'n Bradford's Finery (1/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5081,13 +5081,13 @@
 			"Description": "These are the most stain resistant pants in the world. They are also made of iron.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5104,13 +5104,13 @@
 			"Description": "On to your head goes the Pumpkin o' Gloom, don this fearsome visage and your foes are all doomed.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5127,13 +5127,13 @@
 			"Description": "You can only wear this shirt if you are UberM*****F*****G awesome! \n\nNOW GO FIND SOME BUGS!!!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5150,13 +5150,13 @@
 			"Description": "The Punk Wear (4/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5173,13 +5173,13 @@
 			"Description": "The Punk Wear (3/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5196,13 +5196,13 @@
 			"Description": "The Punk Wear (2/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5219,13 +5219,13 @@
 			"Description": "The Punk Wear (5/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5242,13 +5242,13 @@
 			"Description": "The Punk Wear (1/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5265,13 +5265,13 @@
 			"Description": "The UberBeard. Because beards are Uber.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5288,13 +5288,13 @@
 			"Description": "UberSantas Boots come with their own central heating unit.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5311,13 +5311,13 @@
 			"Description": "UberSantas Gloves have reinforced palms for slapping unruly reindeer.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5334,13 +5334,13 @@
 			"Description": "UberSantas Hat also functions as as camel deterrent, just in case he is attacked by camels.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5357,13 +5357,13 @@
 			"Description": "UberSantas Pants are specially made for annual long distance overnight delivery runs.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5380,13 +5380,13 @@
 			"Description": "UberSantas Jacket has been upgraded with kevlar plates.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5403,13 +5403,13 @@
 			"Description": "Sometimes, the shirt makes the man. Nuff said.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5426,13 +5426,13 @@
 			"Description": "Sanchez style steel tipped sandals for kicking ass.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5449,13 +5449,13 @@
 			"Description": "The Dancing Skeleton (4/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5472,13 +5472,13 @@
 			"Description": "The Dancing Skeleton (3/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5495,13 +5495,13 @@
 			"Description": "The Dancing Skeleton (5/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5518,13 +5518,13 @@
 			"Description": "The Dancing Skeleton (2/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5541,13 +5541,13 @@
 			"Description": "A scary ceremonial mask useful for injecting terror into your opponents!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5564,13 +5564,13 @@
 			"Description": "Awarded only to players who managed to reach the level 10 and beyond during the the Old Experience Regime.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5587,13 +5587,13 @@
 			"Description": "Awarded only to players who managed to reach the level 30 and beyond during the the Old Experience Regime.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5610,13 +5610,13 @@
 			"Description": "A scary ceremonial mask useful for injecting terror into your opponents!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5633,13 +5633,13 @@
 			"Description": "A scary ceremonial mask useful for injecting terror into your opponents!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5656,13 +5656,13 @@
 			"Description": "A simple gold skull.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5679,13 +5679,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5702,13 +5702,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5725,13 +5725,13 @@
 			"Description": "A scary ceremonial mask useful for injecting terror into your opponents!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5748,13 +5748,13 @@
 			"Description": "A scary ceremonial mask useful for injecting terror into your opponents!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5771,13 +5771,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5794,13 +5794,13 @@
 			"Description": "A simple green skull.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5817,13 +5817,13 @@
 			"Description": "A simple red skull.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5840,13 +5840,13 @@
 			"Description": "Awarded only to players who managed to reach the maximum level during the the Old Experience Regime.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5863,13 +5863,13 @@
 			"Description": "A scary ceremonial mask useful for injecting terror into your opponents!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5886,13 +5886,13 @@
 			"Description": "Awarded only to players who managed to reach the level 20 and beyond during the the Old Experience Regime.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5909,13 +5909,13 @@
 			"Description": "Limited edition",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5932,13 +5932,13 @@
 			"Description": "Stratos Space Suit (5/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5955,13 +5955,13 @@
 			"Description": "Stratos Space Suit (4/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -5978,13 +5978,13 @@
 			"Description": "Stratos Space Suit (3/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6001,13 +6001,13 @@
 			"Description": "Stratos Space Suit (2/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6024,13 +6024,13 @@
 			"Description": "Stratos Space Suit (1/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6047,13 +6047,13 @@
 			"Description": "Sanchez style shades for looking badass.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6070,13 +6070,13 @@
 			"Description": "Only cool people wear sunglasses.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6093,13 +6093,13 @@
 			"Description": "Perfect for squashing your competition like the bugs that they are.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6116,13 +6116,13 @@
 			"Description": "The ultimate balaclava to strike terror in your opponents!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6139,13 +6139,13 @@
 			"Description": "Leave no touch to chance with the Terrorist Gloves. Perfect recoil control come as standard.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6162,13 +6162,13 @@
 			"Description": "These are the most stain resistant pants in the world. They are also made of ice.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6185,13 +6185,13 @@
 			"Description": "These are the most stain resistant pants in the world. They are also made of jungle.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6208,13 +6208,13 @@
 			"Description": "These are the most stain resistant pants in the world. They are also made of Fire.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6231,13 +6231,13 @@
 			"Description": "Pants in Cookie Dough Camouflage to distract your enemies!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6254,13 +6254,13 @@
 			"Description": "Classic streamlined urban camo pants - perfect for striking terror in your opponent!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6277,13 +6277,13 @@
 			"Description": "Strike terror into your opponents with top tier kevlar. Complete with Backpack - remember, the red X marks the spot.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6300,13 +6300,13 @@
 			"Description": "Useful for protecting yourself against bullets and fashion disasters!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6323,13 +6323,13 @@
 			"Description": "Useful for protecting yourself against bullets and fashion disasters!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6346,13 +6346,13 @@
 			"Description": "Useful for protecting yourself against bullet and fashion disasters!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6369,13 +6369,13 @@
 			"Description": "Useful for protecting yourself against bullets and fashion disasters!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6392,13 +6392,13 @@
 			"Description": "Useful for protecting yourself against bullets and fashion disasters!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6415,13 +6415,13 @@
 			"Description": "Useful for protecting yourself against bullets and fashion disasters!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6438,13 +6438,13 @@
 			"Description": "Custom threads made just for UberStrike.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6461,13 +6461,13 @@
 			"Description": "Black Sentai Samurai Armor (5/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6484,13 +6484,13 @@
 			"Description": "Black Sentai Samurai Armor (4/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6507,13 +6507,13 @@
 			"Description": "Black Sentai Samurai Armor (2/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6530,13 +6530,13 @@
 			"Description": "Black Sentai Samurai Armor (1/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6553,13 +6553,13 @@
 			"Description": "White Sentai Samurai Armor (5/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6576,13 +6576,13 @@
 			"Description": "White Sentai Samurai Armor (4/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6599,13 +6599,13 @@
 			"Description": "White Sentai Samurai Armor (2/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6622,13 +6622,13 @@
 			"Description": "White Sentai Samurai Armor (1/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6645,13 +6645,13 @@
 			"Description": "Yellow Sentai Samurai Armor (5/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6668,13 +6668,13 @@
 			"Description": "Yellow Sentai Samurai Armor (4/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6691,13 +6691,13 @@
 			"Description": "Yellow Sentai Samurai Armor (2/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6714,13 +6714,13 @@
 			"Description": "Yellow Sentai Samurai Armor (1/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6737,13 +6737,13 @@
 			"Description": "Black Sentai Samurai Armor (3/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6760,13 +6760,13 @@
 			"Description": "White Sentai Samurai Armor (3/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6783,13 +6783,13 @@
 			"Description": "Yellow Sentai Samurai Armor (3/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6806,13 +6806,13 @@
 			"Description": "Visage of Lucius the Cruel (5/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6829,13 +6829,13 @@
 			"Description": "Visage of Lucius the Cruel (6/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6852,13 +6852,13 @@
 			"Description": "Visage of Lucius the Cruel (4/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6875,13 +6875,13 @@
 			"Description": "Visage of Lucius the Cruel (3/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6898,13 +6898,13 @@
 			"Description": "Visage of Lucius the Cruel (2/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6921,13 +6921,13 @@
 			"Description": "Visage of Lucius the Cruel (1/6)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6944,13 +6944,13 @@
 			"Description": "The Dancing Skeleton (1/5)",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 700,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 10000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6969,13 +6969,13 @@
 			"Description": "A pack of 8 recharging spring grenades.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 250,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 3000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -6999,13 +6999,13 @@
 			"Description": "A pack of 4 recharging spring grenades.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 250,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 3000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7029,13 +7029,13 @@
 			"Description": "A pack of 2 recharging spring grenades.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 250,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 3000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7059,13 +7059,13 @@
 			"Description": "A pack of unlimited recharging spring grenades.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 250,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 3000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7090,13 +7090,13 @@
 			"Description": "Tier 1 Mace",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7136,13 +7136,13 @@
 			"Description": "Tier 1 Machine Gun",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7182,13 +7182,13 @@
 			"Description": "Tier 1 Shotgun",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7228,13 +7228,13 @@
 			"Description": "Tier 1 Sniper Rifle",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7274,13 +7274,13 @@
 			"Description": "Tier 1 Rocket Launcher",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7320,13 +7320,13 @@
 			"Description": "Tier 1 Plasmagun",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7366,13 +7366,13 @@
 			"Description": "Tier 1 Grenade Launcher",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7412,13 +7412,13 @@
 			"Description": "The AK-47 is a worldwide classic - now available in UberStrike!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7458,13 +7458,13 @@
 			"Description": "The AK-47 is a worldwide classic - now available in UberStrike! Black Edition includes extra start ammo.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7504,13 +7504,13 @@
 			"Description": "The AK-47 is a worldwide classic - now available in UberStrike! Camo edition includes max. start ammo!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7550,13 +7550,13 @@
 			"Description": "The AK-47 is a worldwide classic - now available in UberStrike! Tiger edition includes max. start ammo!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7596,13 +7596,13 @@
 			"Description": "The AK-47 is a worldwide classic - now available in UberStrike! Snake Edition includes max. start ammo!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7642,13 +7642,13 @@
 			"Description": "Tier 4 Sniper Rifle",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2800,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 45000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7691,13 +7691,13 @@
 			"Description": "Tier 4 Sniper Rifle [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2800,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 45000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7740,13 +7740,13 @@
 			"Description": "Tier 3 Sniper Rifle [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7789,13 +7789,13 @@
 			"Description": "Tier 3 Plasmagun",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7835,13 +7835,13 @@
 			"Description": "In Stealth Black: Uberstrike's first triple fire Machine Gun. Perfect for tackling snipers! The Black edition benefits from additional start ammo.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7881,13 +7881,13 @@
 			"Description": "Uberstrike's first triple fire Machine Gun. Perfect for tackling snipers!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7927,13 +7927,13 @@
 			"Description": "Uberstrike's first triple fire Machine Gun. Perfect for tackling snipers! The Camo edition benefits from full max & start ammo!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -7973,13 +7973,13 @@
 			"Description": "Uberstrike's first triple fire Machine Gun. Perfect for tackling snipers! The Tiger edition benefits from full max & start ammo!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8019,13 +8019,13 @@
 			"Description": "Using some of the energy of each shot to cycle the action and land a new round. The Black edition benefits from additional start ammo.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8065,13 +8065,13 @@
 			"Description": "Using some of the energy of each shot to cycle the action and land a new round - The SPAS-12 is a force to be reckoned with. In Camo you get full start and max ammo!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8111,13 +8111,13 @@
 			"Description": "Using some of the energy of each shot to cycle the action and land a new round - The SPAS-12 is a force to be reckoned with. In Tiger you get full start and max ammo!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8157,13 +8157,13 @@
 			"Description": "Using some of the energy of each shot to cycle the action and land a new round - The SPAS-12 is a force to be reckoned with.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8203,13 +8203,13 @@
 			"Description": "Using some of the energy of each shot to cycle the action and land a new round - The SPAS-12 is a force to be reckoned with. Get max ammo with Snake Edition!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8249,13 +8249,13 @@
 			"Description": "Tier 4 Sniper Rifle [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2800,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 45000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8295,13 +8295,13 @@
 			"Description": "Tier 4 Sniper Rifle [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2800,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 45000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8341,13 +8341,13 @@
 			"Description": "Tier 4 Sniper Rifle [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2800,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 45000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8387,13 +8387,13 @@
 			"Description": "Tier 4 Sniper Rifle",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2800,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 45000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8433,13 +8433,13 @@
 			"Description": "Tier 4 Sniper Rifle [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2800,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 45000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8479,13 +8479,13 @@
 			"Description": "The Battlesnake is fastest frying weapon around. Shoots fast enough to mow the lawn if you can find enough ammo to run it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8525,13 +8525,13 @@
 			"Description": "DRAGON EDITION: The Battlesnake is fastest frying weapon around. Shoots fast enough to mow the lawn if you can find enough ammo to run it.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8571,13 +8571,13 @@
 			"Description": "The Beretta is a handgun with plenty of flare.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8617,13 +8617,13 @@
 			"Description": "The Beretta is a handgun with plenty of flare. Pimped Edition features max ammo!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8663,13 +8663,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8709,13 +8709,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8755,13 +8755,13 @@
 			"Description": "Tier 3 Sniper Rifle [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8801,13 +8801,13 @@
 			"Description": "This gun is the big brother of the Pain Hammer, and packs a proportionally larger punch with the extra barrel it sports.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8847,13 +8847,13 @@
 			"Description": "Tier 2 Sniper Rifle",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1400,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 22000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8893,13 +8893,13 @@
 			"Description": "Tier 3 Grenade Launcher\n\nLaunches a volley of 3 grenades.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8939,13 +8939,13 @@
 			"Description": "Tier 1 Knife",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -8985,13 +8985,13 @@
 			"Description": "Tier 3 Rocket Launcher",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9031,13 +9031,13 @@
 			"Description": "Tier 3 Rocket Launcher [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9077,13 +9077,13 @@
 			"Description": "Tier 3 Rocket Launcher [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9123,13 +9123,13 @@
 			"Description": "Tier 3 Rocket Launcher",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9169,13 +9169,13 @@
 			"Description": "Tier 3 Rocket Launcher [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9215,13 +9215,13 @@
 			"Description": "Third model of the Lawmaker Handguns. The Executioner is slow to fire but can down an enemy in two shots.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9261,13 +9261,13 @@
 			"Description": "The Persuader is a high calibre shotgun with explosive critical damage. Black edition has more ammo!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9307,13 +9307,13 @@
 			"Description": "The Persuader is a high calibre shotgun with explosive critical damage. Gold edition has more ammo!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9353,13 +9353,13 @@
 			"Description": "The Persuader is a high calibre shotgun with explosive critical damage.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9399,13 +9399,13 @@
 			"Description": "The Persuader is a high calibre shotgun with explosive critical damage. Tiger edition has more ammo!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9445,13 +9445,13 @@
 			"Description": "Tier 3 Stickybomb Launcher\n\nLaunches stickybombs that detonate manually with secondary fire.\n\n",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9494,13 +9494,13 @@
 			"Description": "Tier 3 Stickybomb Launcher [Special]\n\nLaunches stickybombs that detonate manually with secondary fire.\n\n",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9543,13 +9543,13 @@
 			"Description": "The Firewave is a relative of the Thunderbuss that sends shockwaves out when it shoots.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9589,13 +9589,13 @@
 			"Description": "Tier 3 Rocket Launcher",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9635,13 +9635,13 @@
 			"Description": "Tier 4 Rocket Launcher",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2800,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 45000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9681,13 +9681,13 @@
 			"Description": "Tier 3 Sniper Rifle",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9730,13 +9730,13 @@
 			"Description": "Tier 2 Sniper Rifle [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1400,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 22000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9776,13 +9776,13 @@
 			"Description": "Tier 2 Sniper Rifle [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1400,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 22000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9822,13 +9822,13 @@
 			"Description": "Tier 2 Sniper Rifle",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1400,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 22000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9868,13 +9868,13 @@
 			"Description": "Tier 2 Sniper Rifle [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1400,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 22000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9914,13 +9914,13 @@
 			"Description": "The ultra-rare golden hand cannon of the Godfather himself.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -9960,13 +9960,13 @@
 			"Description": "Tier 4 Rocket Launcher",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2800,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 45000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10006,13 +10006,13 @@
 			"Description": "Tier 4 Rocket Launcher [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2800,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 45000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10052,13 +10052,13 @@
 			"Description": "Tier 4 Rocket Launcher [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2800,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 45000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10098,13 +10098,13 @@
 			"Description": "Tier 4 Hammer",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2800,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 45000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10144,13 +10144,13 @@
 			"Description": "Tier 1 Grenade Launcher [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10190,13 +10190,13 @@
 			"Description": "Designed to reign a wall of destruction on your opponents!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10236,13 +10236,13 @@
 			"Description": "Limited Edition: Designed to reign a wall of destruction on your opponents!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10282,13 +10282,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10328,13 +10328,13 @@
 			"Description": "Second model of the Lawmaker Handguns. The Jury has a slower rate of fire than the Judge, but packs a bigger punch with each shot.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10374,13 +10374,13 @@
 			"Description": "Tier 3 Grenade Launcher",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10420,13 +10420,13 @@
 			"Description": "A high rate of fire, high accuracy rifle made for one thing - Pure Destruction. Black edition contains maxed out ammo.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10466,13 +10466,13 @@
 			"Description": "A high rate of fire, high accuracy rifle made for one thing - Pure Destruction. Black edition contains maxed out ammo.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10512,13 +10512,13 @@
 			"Description": "A high rate of fire, high accuracy rifle made for one thing - Pure Destruction. Camo edition contains maxed out ammo.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10558,13 +10558,13 @@
 			"Description": "A high rate of fire, high accuracy rifle made for one thing - Pure Destruction. Camo edition contains maxed out ammo.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10604,13 +10604,13 @@
 			"Description": "A high rate of fire, high accuracy rifle made for one thing - Pure Destruction.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10650,13 +10650,13 @@
 			"Description": "A high rate of fire, high accuracy rifle made for one thing - Pure Destruction.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10696,13 +10696,13 @@
 			"Description": "A high rate of fire, high accuracy rifle made for one thing - Pure Destruction. Tiger edition contains maxed out ammo.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10742,13 +10742,13 @@
 			"Description": "A high rate of fire, high accuracy rifle made for one thing - Pure Destruction. Tiger edition contains maxed out ammo.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10788,13 +10788,13 @@
 			"Description": "Celebrate Independence Day with the JULY4A1!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10834,13 +10834,13 @@
 			"Description": "A special Valentines edition of the M4A1 Silenced. Made just for you, baby! xoxo",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10880,13 +10880,13 @@
 			"Description": "Tier 2 Plasmagun",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1400,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 22000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10926,13 +10926,13 @@
 			"Description": "Tier 2 Plasmagun [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1400,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 22000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -10972,13 +10972,13 @@
 			"Description": "Tier 3 Baguette [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11018,13 +11018,13 @@
 			"Description": "Tier 1 Dagger",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11064,13 +11064,13 @@
 			"Description": "Tier 3 Grenade Launcher [Special]\n\nLaunches a volley of 3 grenades.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11110,13 +11110,13 @@
 			"Description": "Tier 2 Grenade Launcher",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1400,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 22000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11156,13 +11156,13 @@
 			"Description": "Tier 4 Sword",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2800,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 45000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11202,13 +11202,13 @@
 			"Description": "Tier 2 Sniper Rifle",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1400,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 22000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11248,13 +11248,13 @@
 			"Description": "Biggest and chunkiest of the Hammer Solutions shotguns, the Oblivion Hammer is slow to shoot but will blast your enemies out of this world.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11294,13 +11294,13 @@
 			"Description": "Tier 2 Sniper Rifle",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1400,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 22000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11340,13 +11340,13 @@
 			"Description": "The Pain Hammer has a disproportionately strong knockback effect. Use it to blast your foes off ledges!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11386,13 +11386,13 @@
 			"Description": "Tier 2 Rocket Launcher",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1400,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 22000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11432,13 +11432,13 @@
 			"Description": "Tier 3 Sniper Rifle",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11481,13 +11481,13 @@
 			"Description": "Tier 3 Sniper Rifle [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11530,13 +11530,13 @@
 			"Description": "Tier 3 Sniper Rifle [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11579,13 +11579,13 @@
 			"Description": "Tier 2 Sword",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1400,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 22000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11625,13 +11625,13 @@
 			"Description": "Tier 2 Sword",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1400,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 22000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11671,13 +11671,13 @@
 			"Description": "The Sabertooth is an upgraded version of the Battlesnake with greater accuracy at range and a slick camouflage paint job.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11717,13 +11717,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11763,13 +11763,13 @@
 			"Description": "Due to a lower muzzle velocity the sawn off shotgun is extremely effective at shorter range. Pimped edition has more ammo!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11809,13 +11809,13 @@
 			"Description": "Solid and reliable, the Shadow Gun is experimental weaponry that originated in the Underground.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11855,13 +11855,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11901,13 +11901,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11947,13 +11947,13 @@
 			"Description": "Tier 1 Sickle",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -11993,13 +11993,13 @@
 			"Description": "Tier 2 Sniper Rifle",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1400,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 22000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12042,13 +12042,13 @@
 			"Description": "Tier 2 Sniper Rifle",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1400,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 22000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12088,13 +12088,13 @@
 			"Description": "Tier 2 Sniper Rifle [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1400,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 22000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12134,13 +12134,13 @@
 			"Description": "Tier 2 Sniper Rifle [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1400,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 22000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12180,13 +12180,13 @@
 			"Description": "Tier 2 Sniper Rifle [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1400,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 22000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12226,13 +12226,13 @@
 			"Description": "Coat your enemies in snot with this foul, phlegm-flinging device.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12272,13 +12272,13 @@
 			"Description": "SForce presents the Spiteful Stinger, a pistol class crossbow from the Insidious product line. One hit will slow a player by 30% for 3 seconds.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12318,13 +12318,13 @@
 			"Description": "Tier 4 Plasmagun",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2800,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 45000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12364,13 +12364,13 @@
 			"Description": "A blowback-operated semi-automatic gun made for one thing: DESTRUCTION!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12410,13 +12410,13 @@
 			"Description": "A blowback-operated semi-automatic gun made for one thing: DESTRUCTION! Pimped version contains more ammo!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12456,13 +12456,13 @@
 			"Description": "Tier 3 Mace",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12502,13 +12502,13 @@
 			"Description": "DRAGON EDITION: The Firewave is a relative of the Thunderbuss that sends shockwaves out when it shoots.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12548,13 +12548,13 @@
 			"Description": "The thunderous blast that this shotgun issues can be heard miles away. Fear the Thunderbuss.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12594,13 +12594,13 @@
 			"Description": "Tier 2 Rocket Launcher",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1400,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 22000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12640,13 +12640,13 @@
 			"Description": "The Uber Machine Gun. Upgraded version of the classic machine gun with a higher damage output.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12686,13 +12686,13 @@
 			"Description": "DRAGON EDITION: The Uber Machine Gun. Upgraded version of the classic machine gun with a higher damage output.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12732,13 +12732,13 @@
 			"Description": "A new semi-automatic offensive handgun in UberStrike!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12778,13 +12778,13 @@
 			"Description": "A new semi-automatic offensive handgun in UberStrike!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12824,13 +12824,13 @@
 			"Description": "In Stealth Black: A new semi-automatic offensive handgun in UberStrike!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12870,13 +12870,13 @@
 			"Description": "In Stealth Black: A new semi-automatic offensive handgun in UberStrike!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12916,13 +12916,13 @@
 			"Description": "In Camo with full max & start ammo! A new semi-automatic offensive handgun in UberStrike!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -12962,13 +12962,13 @@
 			"Description": "In Camo with full max & start ammo! A new semi-automatic offensive handgun in UberStrike!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -13008,13 +13008,13 @@
 			"Description": "In Tiger with full max & start ammo! A new semi-automatic offensive handgun in UberStrike!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -13054,13 +13054,13 @@
 			"Description": "In Tiger with full max & start ammo! A new semi-automatic offensive handgun in UberStrike!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -13100,13 +13100,13 @@
 			"Description": "The UZI is a submachine gun with a blistering rate of fire and high damage output. Watch out though - it eats more bullets than you've had hot meals.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -13146,13 +13146,13 @@
 			"Description": "The UZI is a submachine gun with a blistering rate of fire and high damage output. Watch out though - it eats more bullets than you've had hot meals. Camo edition includes max start ammo!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -13192,13 +13192,13 @@
 			"Description": "The Golden Gun is a submachine gun with a blistering rate of fire and high damage output. Watch out though - it eats more bullets than you've had hot meals.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -13270,13 +13270,13 @@
 			"Description": "The UZI is a submachine gun with a blistering rate of fire and high damage output. Watch out though - it eats more bullets than you've had hot meals. Tiger edition includes max start ammo!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -13316,13 +13316,13 @@
 			"Description": "Tier 3 Sniper Rifle",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -13362,13 +13362,13 @@
 			"Description": "Tier 3 Sniper Rifle [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -13408,13 +13408,13 @@
 			"Description": "Tier 3 Sniper Rifle [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -13454,13 +13454,13 @@
 			"Description": "A hydbrid shotgun-crossbow that unleashed 3 arrows at a great accuracy! It has an iron sight for better aim and long distance use.",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -13500,13 +13500,13 @@
 			"Description": "Smack the life back into your opponent!",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -13546,13 +13546,13 @@
 			"Description": "Tier 4 Grenade Launcher",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2800,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 45000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -13592,13 +13592,13 @@
 			"Description": "Tier 4 Grenade Launcher [Special]",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2800,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 45000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -13638,13 +13638,13 @@
 			"Description": "Tier 3 Axe",
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 2000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 32000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5
@@ -13684,13 +13684,13 @@
 			"Description": null,
 			"Prices": [
 				{
-					"Price": 0,
+					"Price": 1000,
 					"Currency": 1,
 					"Amount": 1,
 					"Duration": 5
 				},
 				{
-					"Price": 0,
+					"Price": 15000,
 					"Currency": 2,
 					"Amount": 1,
 					"Duration": 5

@@ -127,6 +127,23 @@ export default async function runSeed() {
   );
   await seedIfEmpty(models.ShopItemPrice, priceRows, 'shop prices');
 
+  // Backfill the shop economy onto older databases. Early seeds priced every item at 0 (the whole
+  // shop was free); the seed data now carries real prices. This sets those prices ONLY on rows that
+  // are still 0, so it brings an existing DB up to date without clobbering any prices an admin later
+  // customised (anything already non-zero is left alone). New installs are already priced above.
+  {
+    let backfilled = 0;
+    for (const price of priceRows) {
+      if (!price.Price) continue;
+      const [n] = await models.ShopItemPrice.update(
+        { Price: price.Price },
+        { where: { ID: price.ID, Currency: price.Currency, Duration: price.Duration, Price: 0 } },
+      );
+      backfilled += n;
+    }
+    if (backfilled) Log.info(`Backfilled ${backfilled} shop price(s) onto previously-free rows.`);
+  }
+
   // Maps + map settings.
   await seedIfEmpty(models.Map, maps as Partial<Map>[], 'maps');
   const mapSettings = maps.reduce((acc: any[], cur) => {
