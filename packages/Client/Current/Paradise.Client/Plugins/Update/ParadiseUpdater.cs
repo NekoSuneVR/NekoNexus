@@ -286,13 +286,17 @@ namespace Paradise.Client {
 					}
 				}
 
-				PopupSystem.HideMessage(progressPopup);
-
 				if (FilesToUpdate.Count > 0) {
+					PopupSystem.HideMessage(progressPopup);
 					Log.Info($"Update available: {CachedUpdates.Version} (Build {CachedUpdates.Build}), files to update: {FilesToUpdate.Count}; files to remove: {FilesToRemove.Count}");
 					updateAvailableCallback?.Invoke(CachedUpdates);
 				} else {
-					Log.Info("No update available.");
+					Log.Info("No update available - all files match. Up to date.");
+
+					// All hashes match: briefly show an "up to date" confirmation, then continue.
+					progressPopup.Text = "Paradise is up to date!";
+					Thread.Sleep(900);
+					PopupSystem.HideMessage(progressPopup);
 
 					if (FilesToRemove.Count > 0) {
 						DeleteRemovedFiles();
