@@ -34,6 +34,7 @@ export async function initDatabase(cfg: AdminConfig) {
   }
 
   await ensureDefaultAdmin();
+  await ensureDefaultPackages();
 }
 
 // Create a default admin/admin login on first run. The user is prompted to change it.
@@ -45,4 +46,20 @@ async function ensureDefaultAdmin() {
     // eslint-disable-next-line no-console
     console.log('[admin] Created default admin account -> username: admin  password: admin  (change this!)');
   }
+}
+
+// Seed a few starter credit packages on first run so the in-game web store isn't empty.
+// Edit / add / remove these in the admin dashboard (Store -> Packages). Cheap by design.
+async function ensureDefaultPackages() {
+  const count = await models.CreditPackage.count();
+  if (count > 0) return;
+  const defaults = [
+    { Name: 'Starter Pack', Credits: 1000, PriceCents: 99, Currency: 'USD', Enabled: true },
+    { Name: 'Value Pack', Credits: 5000, PriceCents: 299, Currency: 'USD', Enabled: true },
+    { Name: 'Pro Pack', Credits: 12000, PriceCents: 499, Currency: 'USD', Enabled: true },
+    { Name: 'Elite Pack', Credits: 30000, PriceCents: 999, Currency: 'USD', Enabled: true },
+  ];
+  for (const p of defaults) await models.CreditPackage.create(p as any);
+  // eslint-disable-next-line no-console
+  console.log('[admin] Seeded 4 default credit packages (edit them in Store -> Packages).');
 }

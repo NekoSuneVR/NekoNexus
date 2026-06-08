@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paradise — Get Credits</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-neutral-950 text-neutral-100 min-h-screen">
+  <div class="max-w-3xl mx-auto px-4 py-10">
+    <div class="flex items-center gap-3 mb-2">
+      <div class="h-9 w-9 rounded-lg bg-emerald-500/20 grid place-items-center text-emerald-400 font-bold">P</div>
+      <h1 class="text-2xl font-bold">Paradise — Get Credits</h1>
+    </div>
+    <p id="who" class="text-neutral-400 mb-8 text-sm"></p>
+
+    <div id="status" class="hidden mb-6 rounded-lg border px-4 py-3 text-sm"></div>
+    <div id="packages" class="grid sm:grid-cols-2 gap-4"></div>
+
+    <p class="text-neutral-500 text-xs mt-10">
+      Pay securely via NekoPay. Credits are added to your account automatically once payment completes —
+      they appear in-game after your next login or wallet refresh.
+    </p>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const cmid = params.get('cmid');
+    const elPkgs = document.getElementById('packages');
+    const elWho = document.getElementById('who');
+    const elStatus = document.getElementById('status');
+
+    function showStatus(msg, ok) {
+      elStatus.className = 'mb-6 rounded-lg border px-4 py-3 text-sm ' +
+        (ok ? 'border-emerald-700 bg-emerald-900/30 text-emerald-300'
+            : 'border-red-800 bg-red-900/30 text-red-300');
+      elStatus.textContent = msg;
+      elStatus.classList.remove('hidden');
+    }
+
+    elWho.textContent = cmid ? `Buying for player CMID ${cmid}` : 'No player selected';
+
+    function money(cents, cur) {
+      const sym = cur === 'GBP' ? '£' : cur === 'EUR' ? '€' : '$';
+      return sym + (cents / 100).toFixed(2);
+    }
+
+    async function buy(pkgId, btn) {
+      if (!cmid) { showStatus('Open this page from the in-game "Get Credits" button so we know who to credit.', false); return; }
+      btn.disabled = true; btn.textContent = 'Starting…';
+      try {
+        const res = await fetch('/api/store/buy', {
+          method: 'POST', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ cmid: Number(cmid), packageId: pkgId }),
+        });
+        const data = await res.json();
+        if (data.checkoutUrl) { location.href = data.checkoutUrl; return; }
+        showStatus(data.error || 'Could not start checkout.', false);
+      } catch (e) { showStatus('Network error starting checkout.', false); }
+      btn.disabled = false; btn.textContent = 'Buy';
+    }
+
+    async function load() {
+      try {
+        const pkgs = await (await fetch('/api/store/packages')).json();
+        if (!Array.isArray(pkgs) || pkgs.length === 0) {
+          elPkgs.innerHTML = '<p class="text-neutral-400">No credit packages are available right now.</p>';
+          return;
+        }
+        elPkgs.innerHTML = '';
+        for (const p of pkgs) {
+          const card = document.createElement('div');
+          card.className = 'rounded-xl border border-neutral-800 bg-neutral-900 p-5 flex flex-col gap-2';
+          card.innerHTML =
+            `<div class="text-lg font-semibold">${p.Name ?? 'Credits'}</div>
+             <div class="text-emerald-400 text-2xl font-bold">${(p.Credits ?? 0).toLocaleString()} <span class="text-sm text-neutral-400 font-normal">credits</span></div>
+             <div class="text-neutral-300">${money(p.PriceCents ?? 0, p.Currency ?? 'USD')}</div>
+             <button class="mt-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 px-4 py-2 font-medium">Buy</button>`;
+          card.querySelector('button').addEventListener('click', (e) => buy(p.Id, e.target));
+          elPkgs.appendChild(card);
+        }
+      } catch (e) {
+        showStatus('Could not load packages. Is the store server reachable?', false);
+      }
+    }
+    load();
+  </script>
+</body>
+</html>

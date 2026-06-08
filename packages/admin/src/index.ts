@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { Op } from 'sequelize';
 // Dashboard HTML is embedded at build time so the compiled exe is self-contained.
 import dashboardHtml from './dashboard.html' with { type: 'text' };
+import storeHtml from './store.html' with { type: 'text' };
 import { bearer, signToken, verifyToken } from './auth';
 import { loadConfig } from './config';
 import { initDatabase, sequelize } from './db';
@@ -454,6 +455,24 @@ Bun.serve({
         console.error('[api error]', url.pathname, e?.stack ?? e);
         return json({ error: e?.message ?? 'Server error' }, 500);
       }
+    }
+    // Public web store (opened by the in-game "Get Credits" button).
+    if (url.pathname === '/store') {
+      return new Response(storeHtml, { headers: { 'content-type': 'text/html; charset=utf-8' } });
+    }
+    // NekoPay return pages.
+    if (url.pathname === '/pay/success' || url.pathname === '/pay/cancel') {
+      const ok = url.pathname.endsWith('success');
+      const msg = ok
+        ? 'Payment received! Your credits will appear in-game after your next login or wallet refresh. You can close this tab.'
+        : 'Payment cancelled. You can close this tab and try again from the game.';
+      return new Response(
+        `<!doctype html><meta charset="utf-8"><title>Paradise</title>` +
+        `<body style="background:#0a0a0a;color:#e5e5e5;font-family:system-ui;display:grid;place-items:center;height:100vh;margin:0">` +
+        `<div style="max-width:28rem;text-align:center;padding:1.5rem">` +
+        `<h1 style="color:${ok ? '#34d399' : '#f87171'}">${ok ? 'Thank you!' : 'Cancelled'}</h1><p>${msg}</p></div></body>`,
+        { headers: { 'content-type': 'text/html; charset=utf-8' } },
+      );
     }
     // Everything else serves the single-page dashboard.
     return new Response(dashboardHtml, { headers: { 'content-type': 'text/html; charset=utf-8' } });
