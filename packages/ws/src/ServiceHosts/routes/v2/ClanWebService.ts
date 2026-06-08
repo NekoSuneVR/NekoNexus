@@ -846,11 +846,28 @@ export default class ClanWebService extends BaseWebService {
             } else {
               const clanMember = clan.Members.find((_) => _.Cmid === publicProfile.Cmid);
 
-              if (!clanMember || clanMember.Position !== GroupPosition.Leader) {
+              if (!clanMember) {
+                // Not actually a member of this clan.
                 Int32Proxy.Serialize(outputStream, ClanActionResultCode.Error);
               } else {
+                // The original logic was inverted (only the leader could leave). Anyone can leave:
+                const others = clan.Members.filter((_) => _.Cmid !== publicProfile.Cmid);
+
+                // If the LEADER leaves and others remain, hand leadership to another member
+                // (prefer an existing officer) so the clan isn't left ownerless.
+                if (clanMember.Position === GroupPosition.Leader && others.length > 0) {
+                  const successor = others.find((_) => _.Position === GroupPosition.Officer) ?? others[0];
+                  await successor.update({ Position: GroupPosition.Leader });
+                  await clan.update({ OwnerCmid: successor.Cmid, OwnerName: successor.Name });
+                }
+
                 await clanMember.destroy();
                 await publicProfile.update({ GroupTag: '' });
+
+                // Last member left -> disband the now-empty clan.
+                if (others.length === 0) {
+                  await Clan.destroy({ where: { GroupId: groupId } });
+                }
 
                 Int32Proxy.Serialize(outputStream, ClanActionResultCode.Success);
               }
