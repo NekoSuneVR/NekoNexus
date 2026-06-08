@@ -146,20 +146,26 @@ export default class PrivateMessageWebService extends BaseWebService {
               const otherCmid = message.FromCmid !== steamMember.Cmid ? message.FromCmid : message.ToCmid;
               const otherProfile = await PublicProfile.findOne({ where: { Cmid: otherCmid } });
 
-              if (otherProfile) {
-                threads.push(
-                  new MessageThreadView({
-                    ThreadId: otherCmid,
-                    ThreadName: otherProfile.Name,
-                    MessageCount: filteredMessages.length,
-                    LastMessagePreview: message.ContentText,
-                    LastUpdate: message.DateSent,
-                    HasNewMessages: filteredMessages.some(
-                      (_: PrivateMessage) => _.ToCmid === steamMember.Cmid && !_.IsRead,
-                    ),
-                  }),
-                );
-              }
+              // Always show the thread. System mail (FromCmid 0) has no profile, and some accounts
+              // have an empty name - fall back to a safe name so the client never gets null/empty
+              // (which crashed the mailbox when opening such a thread).
+              const threadName =
+                (otherProfile?.Name && otherProfile.Name.trim()) ||
+                (message.FromName && message.FromName.trim()) ||
+                'System';
+
+              threads.push(
+                new MessageThreadView({
+                  ThreadId: otherCmid,
+                  ThreadName: threadName,
+                  MessageCount: filteredMessages.length,
+                  LastMessagePreview: message.ContentText ?? '',
+                  LastUpdate: message.DateSent,
+                  HasNewMessages: filteredMessages.some(
+                    (_: PrivateMessage) => _.ToCmid === steamMember.Cmid && !_.IsRead,
+                  ),
+                }),
+              );
             }
           }
 

@@ -131,6 +131,34 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
     return json({ username: auth.name });
   }
 
+  // ---- System mail: broadcast a message from "System" to every player's in-game mailbox ----
+  // Players see it from "System" and cannot reply (the web service rejects messages to Cmid 0).
+  if (pathname === '/api/mail/broadcast' && method === 'POST') {
+    const { message } = await req.json().catch(() => ({}));
+    const text = String(message ?? '').trim();
+    if (!text) return json({ error: 'Message is required' }, 400);
+
+    const players = await models.PublicProfile.findAll({
+      where: { Cmid: { [Op.ne]: 0 } },
+      attributes: ['Cmid'],
+      raw: true,
+    });
+    const now = new Date();
+    const rows = (players as any[]).map((p) => ({
+      PrivateMessageId: Math.floor(Math.random() * 2147483647) + 1,
+      FromCmid: 0,
+      FromName: 'System',
+      ToCmid: p.Cmid,
+      DateSent: now,
+      ContentText: text,
+      IsRead: false,
+      IsDeletedBySender: false,
+      IsDeletedByReceiver: false,
+    }));
+    if (rows.length) await models.PrivateMessage.bulkCreate(rows as any[]);
+    return json({ ok: true, sent: rows.length });
+  }
+
   // ---- account (change username / password) ----
   if (pathname === '/api/account' && method === 'POST') {
     const { username, currentPassword, newPassword } = await req.json().catch(() => ({}));
