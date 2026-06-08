@@ -324,6 +324,9 @@ export default class RelationshipWebService extends BaseWebService {
               InitiatorName: playerProfile!.Name,
               InitiatorMessage: message,
               ReceiverCmid: receiverCmid,
+              // MUST set Pending - the column has no DB default, and GetContactRequests filters
+              // on Status=Pending, so an unset (NULL) status hides the request from the receiver.
+              Status: ContactRequestStatus.Pending,
               SentDate: new Date(),
             });
           }

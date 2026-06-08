@@ -72,7 +72,7 @@ export default class PrivateMessageWebService extends BaseWebService {
           });
 
           for (const message of messages) {
-            if (message.FromCmid === steamMember.cmid) {
+            if (message.FromCmid === steamMember.Cmid) {
               await message.update({ IsDeletedBySender: true });
             } else {
               await message.update({ IsDeletedByReceiver: true });
@@ -133,7 +133,8 @@ export default class PrivateMessageWebService extends BaseWebService {
           const threads: MessageThreadView[] = [];
 
           for (const messageGroup of Object.values(messages)) {
-            const filteredMessages = (messageGroup as any).find(
+            // .filter (NOT .find) - we need ALL non-deleted messages in the thread, not just one.
+            const filteredMessages = (messageGroup as any).filter(
               (_: PrivateMessage) =>
                 (_.FromCmid === steamMember.Cmid && !_.IsDeletedBySender) ||
                 (_.ToCmid === steamMember.Cmid && !_.IsDeletedByReceiver),
@@ -358,7 +359,10 @@ export default class PrivateMessageWebService extends BaseWebService {
               IsRead: false,
             });
 
-            PrivateMessageViewProxy.Serialize(outputStream, new PrivateMessageView({ ...privateMessage }));
+            PrivateMessageViewProxy.Serialize(
+              outputStream,
+              new PrivateMessageView({ ...privateMessage.get({ plain: true }) }),
+            );
           }
         }
       }
