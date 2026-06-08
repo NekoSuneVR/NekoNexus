@@ -76,11 +76,13 @@ program
   .command('gen-updates')
   .description('Generates YAML definitions for automatic game updates')
   .option('--fallback', 'Generate fallback definitions for pre-v2 update clients')
+  .option('--dir <path>', 'wwwroot base directory to scan/write (defaults to ./wwwroot)')
   .action((options, command) => {
+    const base = options.dir ? path.resolve(options.dir) : path.join(process.cwd(), 'wwwroot');
     if (!options.fallback) {
-      UpdateGenerator.generate(path.join(process.cwd(), 'wwwroot/updates/v2'));
+      UpdateGenerator.generate(path.join(base, 'updates/v2'));
     } else {
-      FallbackUpdateGenerator.generate(path.join(process.cwd(), 'wwwroot/updates/'));
+      FallbackUpdateGenerator.generate(path.join(base, 'updates/'));
     }
   });
 

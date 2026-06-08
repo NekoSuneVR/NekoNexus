@@ -70,6 +70,9 @@ services:
       - "8082:8082"   # realtime <-> master socket
     volumes:
       - ./docker/config/Paradise.Settings.WebServices.yml:/app/packages/ws/Paradise.Settings.WebServices.yml:ro
+      # Client auto-updates: publish with misc/publish-update.ps1 (writes ./server-data/updates);
+      # the file server serves them at /updates/v2/<channel>/. No image rebuild/restart needed.
+      - ./server-data/updates:/app/packages/ws/wwwroot/updates:ro
 
   realtime-comm:
     image: ghcr.io/nekosunevr/paradise-realtime:latest
