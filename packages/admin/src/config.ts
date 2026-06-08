@@ -18,6 +18,16 @@ export interface AdminConfig {
   // broadcasts) to online players. Inert unless internalApiKey is set (must match the ws side).
   wsInternalUrl: string;
   internalApiKey?: string;
+  // Public base URL of the site (used for Steam OpenID realm/return + absolute links).
+  publicBaseUrl: string;
+  // Event theme for the public site: none | halloween | xmas | pride | easter | auto.
+  // "auto" picks a theme from the current date (off-season = none).
+  siteTheme: string;
+  // Steam Web API key (optional - only needed to resolve Steam display names/avatars).
+  steamApiKey?: string;
+  // Twitch app credentials for the "now streaming" page (optional - page shows a hint if unset).
+  twitchClientId?: string;
+  twitchClientSecret?: string;
 }
 
 // Resolve DB settings from (in order): explicit env vars, an admin.config.yml next to the
@@ -76,5 +86,13 @@ export function loadConfig(): AdminConfig {
     // network. INTERNAL_API_KEY must match the value the web service is started with.
     wsInternalUrl: (process.env.WS_INTERNAL_URL ?? 'http://webservices:8080').replace(/\/$/, ''),
     internalApiKey: process.env.INTERNAL_API_KEY,
+    publicBaseUrl: (process.env.PUBLIC_BASE_URL ?? `http://localhost:${process.env.ADMIN_PORT ?? 8088}`).replace(
+      /\/$/,
+      '',
+    ),
+    siteTheme: (process.env.SITE_THEME ?? 'auto').toLowerCase().trim(),
+    steamApiKey: process.env.STEAM_API_KEY,
+    twitchClientId: process.env.TWITCH_CLIENT_ID,
+    twitchClientSecret: process.env.TWITCH_CLIENT_SECRET,
   };
 }

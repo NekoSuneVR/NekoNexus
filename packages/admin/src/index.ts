@@ -5,10 +5,17 @@ import { Op } from 'sequelize';
 import dashboardHtml from './dashboard.html' with { type: 'text' };
 import storeHtml from './store.html' with { type: 'text' };
 import homepageHtml from './homepage.html' with { type: 'text' };
+import leaderboardHtml from './leaderboard.html' with { type: 'text' };
+import profileHtml from './profile.html' with { type: 'text' };
+import streamsHtml from './streams.html' with { type: 'text' };
+import loginHtml from './login.html' with { type: 'text' };
 import { bearer, signToken, verifyToken } from './auth';
 import { loadConfig } from './config';
 import { initDatabase, sequelize } from './db';
 import { createCheckout, loadNekoPay, parseWebhook } from './nekopay';
+import { applyTheme } from './theme';
+import { beginSteamLogin, verifySteamReturn } from './steam';
+import { getUberStrikeStreams } from './twitch';
 
 const cfg = loadConfig();
 const nekopay = loadNekoPay();
@@ -50,8 +57,18 @@ function json(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json' } });
 }
 
+// Admin tokens carry { sub, name }; user (Steam) tokens carry { kind:'user', cmid, name }. Keep them
+// separate so a player's site session can never be used as an admin credential.
 function requireAuth(req: Request): any | null {
-  return verifyToken(bearer(req), cfg.jwtSecret);
+  const payload = verifyToken(bearer(req), cfg.jwtSecret);
+  if (!payload || payload.kind === 'user') return null;
+  return payload;
+}
+
+function requireUser(req: Request): any | null {
+  const payload = verifyToken(bearer(req), cfg.jwtSecret);
+  if (!payload || payload.kind !== 'user') return null;
+  return payload;
 }
 
 function isOnline(lastResponse: Date | null | undefined): boolean {
@@ -93,12 +110,16 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
   }
 
   if (pathname === '/api/public/leaderboard' && method === 'GET') {
+    const sortField = ({ xp: 'Xp', level: 'Level', splats: 'Splats', points: 'Points' } as Record<string, string>)[
+      url.searchParams.get('sort') ?? 'xp'
+    ] ?? 'Xp';
+    const limit = Math.min(Number(url.searchParams.get('limit') ?? 25) || 25, 100);
     const staff = await models.PublicProfile.findAll({ where: { [Op.or]: [{ AccessLevel: { [Op.gte]: 4 } }, { Cmid: 0 }] }, attributes: ['Cmid'], raw: true });
     const hidden = (staff as any[]).map((s) => s.Cmid);
     const top = await models.PlayerStatistics.findAll({
       where: hidden.length ? { Cmid: { [Op.notIn]: hidden } } : {},
-      order: [['Xp', 'DESC']],
-      limit: 60,
+      order: [[sortField, 'DESC']],
+      limit: limit + 35,
       raw: true,
     });
     const names = await models.PublicProfile.findAll({ where: { Cmid: { [Op.in]: (top as any[]).map((t) => t.Cmid) } }, raw: true });
@@ -106,9 +127,122 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
     return json(
       (top as any[])
         .filter((t) => (nameMap.get(t.Cmid) ?? '') !== '')
-        .slice(0, 25)
-        .map((t, i) => ({ rank: i + 1, Name: nameMap.get(t.Cmid), Level: t.Level, Xp: t.Xp, Splats: t.Splats })),
+        .slice(0, limit)
+        .map((t, i) => ({ rank: i + 1, Cmid: t.Cmid, Name: nameMap.get(t.Cmid), Level: t.Level, Xp: t.Xp, Splats: t.Splats, Points: t.Points })),
     );
+  }
+
+  // Public player profile (name, level, combat stats, clan). Used by the /profile/:cmid page.
+  if (pathname.startsWith('/api/public/profile/') && method === 'GET') {
+    const cmid = Number(pathname.split('/').pop());
+    if (!Number.isFinite(cmid)) return json({ error: 'Bad id' }, 400);
+    const profile = await models.PublicProfile.findByPk(cmid, { raw: true });
+    if (!profile || (profile as any).Cmid === 0) return json({ error: 'Not found' }, 404);
+    const stats: any = (await models.PlayerStatistics.findByPk(cmid, { raw: true })) ?? {};
+    const member: any = await models.ClanMember.findByPk(cmid, { raw: true });
+    let clan: any = null;
+    if (member) {
+      const c: any = await models.Clan.findByPk(member.GroupId, { raw: true });
+      if (c) clan = { Name: c.Name, Tag: c.Tag, GroupId: c.GroupId };
+    }
+    return json({
+      Cmid: (profile as any).Cmid,
+      Name: (profile as any).Name,
+      Level: stats.Level ?? 0,
+      Xp: stats.Xp ?? 0,
+      Points: stats.Points ?? 0,
+      Splats: stats.Splats ?? 0,
+      Splatted: stats.Splatted ?? 0,
+      Headshots: stats.Headshots ?? 0,
+      Nutshots: stats.Nutshots ?? 0,
+      Shots: Number(stats.Shots ?? 0),
+      Hits: Number(stats.Hits ?? 0),
+      TimeSpentInGame: stats.TimeSpentInGame ?? 0,
+      Clan: clan,
+    });
+  }
+
+  // Public clan leaderboard: clans ranked by combined member kills (with member count + tag).
+  if (pathname === '/api/public/clans' && method === 'GET') {
+    const limit = Math.min(Number(url.searchParams.get('limit') ?? 25) || 25, 100);
+    const clans = await models.Clan.findAll({ raw: true });
+    const members = await models.ClanMember.findAll({ attributes: ['Cmid', 'GroupId'], raw: true });
+    const byGroup = new Map<number, number[]>();
+    for (const m of members as any[]) {
+      if (!byGroup.has(m.GroupId)) byGroup.set(m.GroupId, []);
+      byGroup.get(m.GroupId)!.push(m.Cmid);
+    }
+    const allCmids = (members as any[]).map((m) => m.Cmid);
+    const stats = allCmids.length
+      ? await models.PlayerStatistics.findAll({ where: { Cmid: { [Op.in]: allCmids } }, attributes: ['Cmid', 'Splats'], raw: true })
+      : [];
+    const killsByCmid = new Map((stats as any[]).map((s) => [s.Cmid, s.Splats ?? 0]));
+    const ranked = (clans as any[])
+      .map((c) => {
+        const cmids = byGroup.get(c.GroupId) ?? [];
+        const kills = cmids.reduce((sum, id) => sum + (killsByCmid.get(id) ?? 0), 0);
+        return { Name: c.Name, Tag: c.Tag, GroupId: c.GroupId, Members: cmids.length, Kills: kills };
+      })
+      .sort((a, b) => b.Kills - a.Kills || b.Members - a.Members)
+      .slice(0, limit);
+    return json(ranked);
+  }
+
+  // Public Twitch streams playing UberStrike.
+  if (pathname === '/api/public/streams' && method === 'GET') {
+    if (!cfg.twitchClientId || !cfg.twitchClientSecret) return json({ configured: false, streams: [] });
+    const streams = await getUberStrikeStreams(cfg.twitchClientId, cfg.twitchClientSecret);
+    return json({ configured: true, streams });
+  }
+
+  // A signed-in (Steam) user reports another player.
+  if (pathname === '/api/public/report' && method === 'POST') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in with Steam first.' }, 401);
+    const { targetCmid, reason, details } = await req.json().catch(() => ({}));
+    const tCmid = Number(targetCmid);
+    if (!Number.isFinite(tCmid) || tCmid <= 0) return json({ error: 'Invalid target.' }, 400);
+    if (tCmid === user.cmid) return json({ error: "You can't report yourself." }, 400);
+    const target: any = await models.PublicProfile.findByPk(tCmid, { raw: true });
+    if (!target) return json({ error: 'Player not found.' }, 404);
+    // Light rate-limit: cap open reports from one reporter against one target.
+    const existing = await models.PlayerReport.count({ where: { ReporterCmid: user.cmid, TargetCmid: tCmid, Status: 'open' } });
+    if (existing >= 3) return json({ error: 'You already have reports pending for this player.' }, 429);
+    await models.PlayerReport.create({
+      ReporterCmid: user.cmid,
+      ReporterName: user.name ?? String(user.cmid),
+      TargetCmid: tCmid,
+      TargetName: target.Name,
+      Reason: ['cheating', 'abuse', 'name', 'other'].includes(reason) ? reason : 'other',
+      Details: String(details ?? '').slice(0, 1000),
+      Status: 'open',
+    });
+    return json({ ok: true });
+  }
+
+  // ---- Steam OpenID login for normal users (admins keep username/password) ----
+  if (pathname === '/api/auth/steam/login' && method === 'GET') {
+    const realm = cfg.publicBaseUrl;
+    const returnTo = `${cfg.publicBaseUrl}/api/auth/steam/return`;
+    return Response.redirect(beginSteamLogin(realm, returnTo), 302);
+  }
+
+  if (pathname === '/api/auth/steam/return' && method === 'GET') {
+    const steamId = await verifySteamReturn(url.searchParams);
+    if (!steamId) return Response.redirect(`${cfg.publicBaseUrl}/login?error=verification%20failed`, 302);
+    const member: any = await models.SteamMember.findByPk(steamId, { raw: true }).catch(() => null);
+    if (!member) {
+      return Response.redirect(`${cfg.publicBaseUrl}/login?error=No%20Paradise%20account%20for%20this%20Steam%20user%20-%20play%20once%20first`, 302);
+    }
+    const profile: any = await models.PublicProfile.findByPk(member.Cmid, { raw: true }).catch(() => null);
+    const token = signToken({ kind: 'user', cmid: member.Cmid, name: profile?.Name ?? '', steamId }, cfg.jwtSecret);
+    return Response.redirect(`${cfg.publicBaseUrl}/login?token=${encodeURIComponent(token)}`, 302);
+  }
+
+  if (pathname === '/api/auth/me' && method === 'GET') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Not signed in' }, 401);
+    return json({ cmid: user.cmid, name: user.name });
   }
 
   // ---- PUBLIC store endpoints (no admin auth: players + NekoPay call these) ----
@@ -471,6 +605,28 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
     return json(log);
   }
 
+  // ---- player reports (submitted by signed-in users) ----
+  if (pathname === '/api/reports' && method === 'GET') {
+    const status = url.searchParams.get('status');
+    const reports = await models.PlayerReport.findAll({
+      where: status ? { Status: status } : {},
+      limit: 200,
+      order: [['createdAt', 'DESC']],
+      raw: true,
+    });
+    return json(reports);
+  }
+
+  if (pathname.startsWith('/api/reports/') && pathname.endsWith('/status') && method === 'POST') {
+    const id = Number(pathname.split('/')[3]);
+    const { status } = await req.json().catch(() => ({}));
+    if (!['open', 'reviewed', 'resolved', 'dismissed'].includes(status)) return json({ error: 'Bad status' }, 400);
+    const report = await models.PlayerReport.findByPk(id);
+    if (!report) return json({ error: 'Not found' }, 404);
+    await report.update({ Status: status });
+    return json({ ok: true });
+  }
+
   // ---- leaderboard (staff: Moderator+ are hidden) ----
   if (pathname === '/api/leaderboard' && method === 'GET') {
     const sortMap: Record<string, string> = { xp: 'Xp', level: 'Level', points: 'Points', splats: 'Splats' };
@@ -548,10 +704,19 @@ Bun.serve({
         return json({ error: e?.message ?? 'Server error' }, 500);
       }
     }
+    // Serve an HTML page with the active event theme injected (none = unchanged).
+    const page = (body: string) =>
+      new Response(applyTheme(body, cfg.siteTheme), { headers: { 'content-type': 'text/html; charset=utf-8' } });
+
     // Public web store (opened by the in-game "Get Credits" button).
     if (url.pathname === '/store') {
-      return new Response(storeHtml, { headers: { 'content-type': 'text/html; charset=utf-8' } });
+      return page(storeHtml);
     }
+    // Public site pages.
+    if (url.pathname === '/leaderboard') return page(leaderboardHtml);
+    if (url.pathname === '/streams') return page(streamsHtml);
+    if (url.pathname === '/login') return page(loginHtml);
+    if (url.pathname === '/profile' || url.pathname.startsWith('/profile/')) return page(profileHtml);
     // NekoPay return pages.
     if (url.pathname === '/pay/success' || url.pathname === '/pay/cancel') {
       const ok = url.pathname.endsWith('success');
@@ -571,7 +736,7 @@ Bun.serve({
       return new Response(dashboardHtml, { headers: { 'content-type': 'text/html; charset=utf-8' } });
     }
     // Public homepage for everything else (/, etc.).
-    return new Response(homepageHtml, { headers: { 'content-type': 'text/html; charset=utf-8' } });
+    return page(homepageHtml);
   },
 });
 

@@ -27,6 +27,7 @@ export async function initDatabase(cfg: AdminConfig) {
   await models.AdminUser.sync({ alter: true });
   await models.CreditPackage.sync({ alter: true });
   await models.PaymentOrder.sync({ alter: true });
+  await models.PlayerReport.sync({ alter: true }); // player-report inbox (owned by the admin app)
   try {
     await models.PhotonServer.sync({ alter: true });
   } catch {

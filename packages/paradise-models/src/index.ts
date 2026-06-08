@@ -36,6 +36,7 @@ import PhotonServer from './PhotonServer';
 import PlayerInventoryItem from './PlayerInventoryItem';
 import PlayerLoadout from './PlayerLoadout';
 import PlayerMachine from './PlayerMachine';
+import PlayerReport from './PlayerReport';
 import PlayerStatistics from './PlayerStatistics';
 import PointDeposit from './PointDeposit';
 import PaymentOrder from './PaymentOrder';
@@ -72,6 +73,7 @@ export { default as PhotonServer } from './PhotonServer';
 export { default as PlayerInventoryItem } from './PlayerInventoryItem';
 export { default as PlayerLoadout } from './PlayerLoadout';
 export { default as PlayerMachine } from './PlayerMachine';
+export { default as PlayerReport } from './PlayerReport';
 export { default as PlayerStatistics } from './PlayerStatistics';
 export { default as PointDeposit } from './PointDeposit';
 export { default as PaymentOrder } from './PaymentOrder';
@@ -109,6 +111,7 @@ export default {
   PlayerInventoryItem,
   PlayerLoadout,
   PlayerMachine,
+  PlayerReport,
   PlayerStatistics,
   PointDeposit,
   PaymentOrder,

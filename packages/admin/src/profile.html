@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Player Profile — Paradise</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { brand: { 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857' } } } } };
+  </script>
+  <style>
+    body { background: radial-gradient(1200px 600px at 50% -10%, rgba(16, 185, 129, .14), transparent 60%), #0a0a0a; }
+    .glass { background: rgba(23, 23, 23, .7); backdrop-filter: blur(8px); }
+  </style>
+</head>
+<body class="text-neutral-200 min-h-screen">
+  <header class="border-b border-neutral-800">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="/" class="text-xl font-bold text-brand-400">Paradise</a>
+      <nav class="flex gap-5 text-sm text-neutral-400">
+        <a href="/" class="hover:text-brand-400">Home</a>
+        <a href="/leaderboard" class="hover:text-brand-400">Leaderboard</a>
+        <a href="/streams" class="hover:text-brand-400">Streams</a>
+        <a href="/login" class="hover:text-brand-400">Sign in</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-8">
+    <div id="card" class="glass rounded-xl p-6">
+      <p class="text-neutral-500">Loading…</p>
+    </div>
+
+    <section id="reportBox" class="glass rounded-xl p-6 mt-6 hidden">
+      <h2 class="font-semibold mb-3">Report this player</h2>
+      <p id="reportHint" class="text-sm text-neutral-400 mb-3"></p>
+      <div id="reportForm" class="hidden space-y-3">
+        <select id="reason" class="bg-neutral-900 border border-neutral-700 rounded px-3 py-2 text-sm w-full max-w-xs">
+          <option value="cheating">Cheating / hacking</option>
+          <option value="abuse">Harassment / abuse</option>
+          <option value="name">Offensive name</option>
+          <option value="other">Other</option>
+        </select>
+        <textarea id="details" rows="3" maxlength="1000" placeholder="What happened? (optional)"
+          class="bg-neutral-900 border border-neutral-700 rounded px-3 py-2 text-sm w-full"></textarea>
+        <button id="submitReport" class="px-4 py-2 rounded bg-brand-600 hover:bg-brand-500 text-white text-sm">Submit report</button>
+        <span id="reportMsg" class="text-sm ml-2"></span>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const cmid = Number(location.pathname.split('/').filter(Boolean).pop());
+    const fmtTime = (ms) => { const h = Math.floor((ms || 0) / 3600000); return h >= 1 ? h + ' h' : Math.floor((ms || 0) / 60000) + ' min'; };
+
+    async function load() {
+      const p = await fetch('/api/public/profile/' + cmid).then((r) => r.ok ? r.json() : null).catch(() => null);
+      const card = document.getElementById('card');
+      if (!p) { card.innerHTML = '<p class="text-neutral-400">Player not found.</p>'; return; }
+      const acc = p.Shots > 0 ? ((p.Hits / p.Shots) * 100).toFixed(1) + '%' : '—';
+      const kd = p.Splatted > 0 ? (p.Splats / p.Splatted).toFixed(2) : (p.Splats || 0).toFixed(2);
+      card.innerHTML = `
+        <div class="flex items-center gap-4 mb-5">
+          <div class="w-16 h-16 rounded-full bg-brand-600/20 border border-brand-600 grid place-items-center text-2xl font-bold text-brand-400">${esc((p.Name || '?')[0])}</div>
+          <div>
+            <h1 class="text-2xl font-bold">${p.Clan?.Tag ? `<span class="text-brand-400">[${esc(p.Clan.Tag)}]</span> ` : ''}${esc(p.Name)}</h1>
+            <p class="text-neutral-400 text-sm">Level ${p.Level ?? 0} · ${(p.Xp ?? 0).toLocaleString()} XP${p.Clan ? ' · ' + esc(p.Clan.Name) : ''}</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+          ${[['Kills', (p.Splats ?? 0).toLocaleString()], ['Deaths', (p.Splatted ?? 0).toLocaleString()], ['K/D', kd], ['Accuracy', acc],
+             ['Headshots', (p.Headshots ?? 0).toLocaleString()], ['Nutshots', (p.Nutshots ?? 0).toLocaleString()], ['Time played', fmtTime(p.TimeSpentInGame)], ['Points', (p.Points ?? 0).toLocaleString()]]
+            .map(([k, v]) => `<div class="bg-neutral-900/60 rounded-lg p-3"><div class="text-xl font-bold text-brand-400">${v}</div><div class="text-xs text-neutral-500 mt-1">${k}</div></div>`).join('')}
+        </div>`;
+
+      // Report box: requires a signed-in (Steam) user.
+      const box = document.getElementById('reportBox');
+      box.classList.remove('hidden');
+      const token = localStorage.getItem('paradise_user_token');
+      const me = token ? JSON.parse(atob(token.split('.')[0].replace(/-/g, '+').replace(/_/g, '/'))) : null;
+      if (!token) {
+        document.getElementById('reportHint').innerHTML = 'Please <a class="text-brand-400" href="/login">sign in with Steam</a> to report a player.';
+      } else if (me && me.cmid === cmid) {
+        document.getElementById('reportHint').textContent = "You can't report yourself.";
+      } else {
+        document.getElementById('reportHint').textContent = 'Signed in' + (me?.name ? ' as ' + me.name : '') + '. Misuse may result in action against your account.';
+        document.getElementById('reportForm').classList.remove('hidden');
+      }
+    }
+
+    document.getElementById('submitReport').addEventListener('click', async () => {
+      const msg = document.getElementById('reportMsg');
+      const token = localStorage.getItem('paradise_user_token');
+      msg.textContent = 'Sending…'; msg.className = 'text-sm ml-2 text-neutral-400';
+      const r = await fetch('/api/public/report', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', authorization: 'Bearer ' + token },
+        body: JSON.stringify({ targetCmid: cmid, reason: document.getElementById('reason').value, details: document.getElementById('details').value }),
+      }).then((x) => x.json()).catch(() => ({ error: 'Network error' }));
+      if (r.ok) { msg.textContent = 'Report submitted. Thank you.'; msg.className = 'text-sm ml-2 text-brand-400'; document.getElementById('reportForm').classList.add('hidden'); }
+      else { msg.textContent = r.error || 'Failed.'; msg.className = 'text-sm ml-2 text-red-400'; }
+    });
+
+    load();
+  </script>
+</body>
+</html>

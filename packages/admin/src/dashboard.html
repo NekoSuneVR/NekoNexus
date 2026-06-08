@@ -116,7 +116,13 @@
 
       <!-- REPORTS / MODERATION LOG -->
       <section data-view="reports" class="hidden">
-        <h1 class="text-2xl font-bold mb-1">Reports &amp; moderation log</h1>
+        <h1 class="text-2xl font-bold mb-1">Player reports</h1>
+        <p class="text-slate-400 text-sm mb-4">Reports submitted by signed-in players. Mark them as you review.</p>
+        <div class="glass rounded-xl border border-slate-800 overflow-hidden mb-8">
+          <table class="w-full text-sm"><thead class="text-slate-400 text-left border-b border-slate-800"><tr><th class="p-3">When</th><th class="p-3">Reported</th><th class="p-3">By</th><th class="p-3">Reason</th><th class="p-3">Details</th><th class="p-3">Status</th><th class="p-3"></th></tr></thead><tbody id="reportRows"></tbody></table>
+        </div>
+
+        <h2 class="text-xl font-bold mb-1">Moderation log</h2>
         <p class="text-slate-400 text-sm mb-4">Recent moderation actions.</p>
         <div class="glass rounded-xl border border-slate-800 overflow-hidden">
           <table class="w-full text-sm"><thead class="text-slate-400 text-left border-b border-slate-800"><tr><th class="p-3">When</th><th class="p-3">Action</th><th class="p-3">Target</th><th class="p-3">By</th><th class="p-3">Reason</th><th class="p-3">Expires</th></tr></thead><tbody id="modRows"></tbody></table>
@@ -412,9 +418,31 @@
 
     // ---- reports / moderation ----
     async function loadReports() {
+      const fmt = (d) => d ? new Date(d).toLocaleString() : '—';
+
+      // Player-submitted reports
+      const reports = await api('/api/reports');
+      const sb = (s) => ({open:'bg-amber-500/20 text-amber-300',reviewed:'bg-sky-500/20 text-sky-300',resolved:'bg-emerald-500/20 text-emerald-300',dismissed:'bg-slate-600/30 text-slate-400'}[s]||'bg-slate-700');
+      $('#reportRows').innerHTML = reports.map(r => `<tr class="border-b border-slate-800/60">
+        <td class="p-3 text-slate-400">${fmt(r.createdAt)}</td>
+        <td class="p-3">${(r.TargetName||'')} <a class="text-slate-500 hover:text-brand-400" href="/profile/${r.TargetCmid}" target="_blank">(${r.TargetCmid})</a></td>
+        <td class="p-3 text-slate-400">${(r.ReporterName||'')} <span class="text-slate-600">(${r.ReporterCmid})</span></td>
+        <td class="p-3">${r.Reason||''}</td>
+        <td class="p-3 text-slate-300 max-w-xs truncate" title="${(r.Details||'').replace(/"/g,'&quot;')}">${r.Details||''}</td>
+        <td class="p-3"><span class="px-2 py-0.5 rounded text-xs ${sb(r.Status)}">${r.Status}</span></td>
+        <td class="p-3 whitespace-nowrap">
+          <button data-rev="${r.Id}" class="text-sky-400 hover:underline mr-2">Reviewed</button>
+          <button data-res="${r.Id}" class="text-emerald-400 hover:underline mr-2">Resolve</button>
+          <button data-dis="${r.Id}" class="text-slate-400 hover:underline">Dismiss</button>
+        </td></tr>`).join('') || `<tr><td colspan="7" class="p-6 text-center text-slate-500">No player reports.</td></tr>`;
+      const setStatus = async (id, status) => { await api('/api/reports/'+id+'/status', { method:'POST', body: JSON.stringify({ status }) }); loadReports(); };
+      $('#reportRows').querySelectorAll('[data-rev]').forEach(b => b.onclick = () => setStatus(b.dataset.rev, 'reviewed'));
+      $('#reportRows').querySelectorAll('[data-res]').forEach(b => b.onclick = () => setStatus(b.dataset.res, 'resolved'));
+      $('#reportRows').querySelectorAll('[data-dis]').forEach(b => b.onclick = () => setStatus(b.dataset.dis, 'dismissed'));
+
+      // Moderation log
       const log = await api('/api/moderation');
       const flag = (f) => ({1:'Muted',2:'Ghosted',4:'Banned',8:'Speed',16:'Spamming',32:'Crude'}[f] || ('Flag '+f));
-      const fmt = (d) => d ? new Date(d).toLocaleString() : '—';
       $('#modRows').innerHTML = log.map(m => `<tr class="border-b border-slate-800/60"><td class="p-3 text-slate-400">${fmt(m.ActionDate)}</td><td class="p-3">${flag(m.ModerationFlag)}</td><td class="p-3">${m.TargetName||''} <span class="text-slate-500">(${m.TargetCmid})</span></td><td class="p-3">${m.SourceName||'—'}</td><td class="p-3 text-slate-300">${m.Reason||''}</td><td class="p-3 text-slate-400">${m.ExpireTime?fmt(m.ExpireTime):'permanent'}</td></tr>`).join('') || `<tr><td colspan="6" class="p-6 text-center text-slate-500">No moderation actions yet.</td></tr>`;
     }
 

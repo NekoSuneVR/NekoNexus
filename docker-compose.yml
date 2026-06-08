@@ -132,6 +132,15 @@ services:
       # The web service is reached on the shared docker network as http://webservices:8080.
       INTERNAL_API_KEY: "change-me-paradise-internal"
       WS_INTERNAL_URL: "http://webservices:8080"
+      # Public site URL (used for Steam sign-in return + absolute links). Set to your real domain.
+      PUBLIC_BASE_URL: "${PARADISE_SITE_URL:-http://localhost:8088}"
+      # Event theme for the public site: none | halloween | xmas | pride | easter | auto.
+      SITE_THEME: "${SITE_THEME:-auto}"
+      # Optional: Steam Web API key (only to resolve Steam display names; sign-in works without it).
+      STEAM_API_KEY: "${STEAM_API_KEY:-}"
+      # Optional: Twitch app credentials to power the /streams "now streaming UberStrike" page.
+      TWITCH_CLIENT_ID: "${TWITCH_CLIENT_ID:-}"
+      TWITCH_CLIENT_SECRET: "${TWITCH_CLIENT_SECRET:-}"
       # For NekoPay webhooks, set your public URL here (or in docker/.nekopay.env):
       # PUBLIC_BASE_URL: https://admin.yourdomain.com
     # NekoPay secret (optional). Create docker/.nekopay.env from docker/.nekopay.env.example.

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Live Streams — Paradise</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { brand: { 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857' } } } } };
+  </script>
+  <style>
+    body { background: radial-gradient(1200px 600px at 50% -10%, rgba(16, 185, 129, .14), transparent 60%), #0a0a0a; }
+    .glass { background: rgba(23, 23, 23, .7); backdrop-filter: blur(8px); }
+  </style>
+</head>
+<body class="text-neutral-200 min-h-screen">
+  <header class="border-b border-neutral-800">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="/" class="text-xl font-bold text-brand-400">Paradise</a>
+      <nav class="flex gap-5 text-sm text-neutral-400">
+        <a href="/" class="hover:text-brand-400">Home</a>
+        <a href="/leaderboard" class="hover:text-brand-400">Leaderboard</a>
+        <a href="/streams" class="text-brand-400">Streams</a>
+        <a href="/login" class="hover:text-brand-400">Sign in</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-1">Live now</h1>
+    <p class="text-neutral-400 mb-6">People streaming UberStrike on Twitch right now.</p>
+    <div id="grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <p class="text-neutral-500">Loading…</p>
+    </div>
+  </main>
+
+  <script>
+    const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    async function load() {
+      const data = await fetch('/api/public/streams').then((r) => r.json()).catch(() => ({ streams: [] }));
+      const grid = document.getElementById('grid');
+      if (data.configured === false) {
+        grid.innerHTML = '<p class="text-neutral-500 col-span-full">Stream discovery isn\'t configured yet. (Set TWITCH_CLIENT_ID / TWITCH_CLIENT_SECRET on the server.)</p>';
+        return;
+      }
+      const s = data.streams || [];
+      grid.innerHTML = s.length
+        ? s.map((x) => `<a href="${esc(x.url)}" target="_blank" rel="noopener" class="glass rounded-xl overflow-hidden hover:ring-1 hover:ring-brand-500 transition block">
+            <div class="relative"><img src="${esc(x.thumbnailUrl)}" class="w-full aspect-video object-cover" alt="">
+            <span class="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-0.5 rounded font-semibold">LIVE</span>
+            <span class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-0.5 rounded">${(x.viewerCount ?? 0).toLocaleString()} viewers</span></div>
+            <div class="p-3"><div class="font-semibold text-brand-400">${esc(x.userName)}</div>
+            <div class="text-sm text-neutral-400 line-clamp-2">${esc(x.title)}</div></div></a>`).join('')
+        : '<p class="text-neutral-500 col-span-full">Nobody is streaming UberStrike right now. Go be the first! 🎥</p>';
+    }
+    load();
+    setInterval(load, 60000);
+  </script>
+</body>
+</html>
