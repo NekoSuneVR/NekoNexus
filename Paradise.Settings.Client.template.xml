@@ -19,7 +19,10 @@
   <!-- File server (images/assets). Port 8081 by default. -->
   <ImagePath>http://SERVER_HOST:8081/images/</ImagePath>
 
-  <AutoUpdates>false</AutoUpdates>
+  <!-- Auto-updates ON so players receive your pushed fixes on launch. UpdateChannel can be
+       Stable or Beta (players can switch in-game: Paradise Settings -> Updates). Publish updates
+       with misc/publish-update.ps1 -Channel stable|beta. -->
+  <AutoUpdates>true</AutoUpdates>
   <UpdateChannel>Stable</UpdateChannel>
   <UpdateUrl>http://SERVER_HOST:8081/updates/</UpdateUrl>
 </ParadiseClientSettings>
