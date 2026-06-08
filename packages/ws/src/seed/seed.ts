@@ -144,6 +144,26 @@ export default async function runSeed() {
     if (backfilled) Log.info(`Backfilled ${backfilled} shop price(s) onto previously-free rows.`);
   }
 
+  // Insert shop items present in the seed catalogue but MISSING from an existing DB. seedIfEmpty
+  // above only fills entirely-empty tables, so new catalogue additions (e.g. the Nyan Cat Cannon)
+  // would otherwise never reach a live server. This is additive only - it never modifies items the
+  // DB already has, just adds the new ones and their prices.
+  async function seedNewItems(model: any, items: any[], label: string): Promise<void> {
+    if (!items?.length) return;
+    const existing = await model.findAll({ attributes: ['ID'], raw: true });
+    const have = new Set((existing as any[]).map((r) => r.ID));
+    const missing = items.filter((it) => !have.has(it.ID));
+    if (!missing.length) return;
+    await model.bulkCreate(missing as any[]);
+    const newPrices = missing.flatMap((it: any) => (it.Prices ?? []).map((p: any) => ({ ...p, ID: it.ID })));
+    if (newPrices.length) await models.ShopItemPrice.bulkCreate(newPrices);
+    Log.info(`Added ${missing.length} new ${label} (+${newPrices.length} price rows).`);
+  }
+  await seedNewItems(models.ShopFunctionalItem, shop.FunctionalItems as any[], 'functional items');
+  await seedNewItems(models.ShopGearItem, shop.GearItems as any[], 'gear items');
+  await seedNewItems(models.ShopQuickItem, shop.QuickItems as any[], 'quick items');
+  await seedNewItems(models.ShopWeaponItem, shop.WeaponItems as any[], 'weapon items');
+
   // Maps + map settings.
   await seedIfEmpty(models.Map, maps as Partial<Map>[], 'maps');
   const mapSettings = maps.reduce((acc: any[], cur) => {
