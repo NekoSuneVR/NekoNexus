@@ -71,6 +71,8 @@ namespace Paradise.Realtime.Server.Comm {
 					Channel = ChannelType.Steam,
 					Cmid = member.CmuneMemberView.PublicProfile.Cmid,
 					PlayerName = member.CmuneMemberView.PublicProfile.Name,
+					// Carry the clan tag so the lobby/chat shows [TAG] Name.
+					ClanTag = member.CmuneMemberView.PublicProfile.GroupTag,
 				});
 
 				peer.Actor = actor;

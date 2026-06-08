@@ -111,11 +111,18 @@ export default class ClanWebService extends BaseWebService {
 
               if (clan) {
                 await ClanMember.create({
+                  // GroupId was missing -> the new member had no clan link, so accepting an
+                  // invite did nothing usable (no membership, no tag). Link it to the clan.
+                  GroupId: clan.GroupId,
                   Cmid: publicProfile.Cmid,
                   Name: publicProfile.Name,
                   Position: GroupPosition.Member,
+                  JoiningDate: new Date(),
                   Lastlogin: publicProfile.LastLoginDate,
                 });
+
+                // Stamp the clan tag on the profile so [TAG] shows in chat (applied next login).
+                await publicProfile.update({ GroupTag: clan.Tag });
 
                 groupInvitation.destroy();
 
@@ -367,6 +374,9 @@ export default class ClanWebService extends BaseWebService {
                 JoiningDate: new Date(),
                 Lastlogin: publicProfile.LastLoginDate,
               });
+
+              // Stamp the clan tag on the owner's profile so [TAG] shows in chat (next login).
+              await publicProfile.update({ GroupTag: clan.Tag });
 
               ClanCreationReturnViewProxy.Serialize(
                 outputStream,
@@ -770,6 +780,7 @@ export default class ClanWebService extends BaseWebService {
                 Int32Proxy.Serialize(outputStream, ClanActionResultCode.Error);
               } else {
                 await memberToKick.destroy();
+                await toKickProfile.update({ GroupTag: '' });
 
                 Int32Proxy.Serialize(outputStream, ClanActionResultCode.Success);
               }
@@ -834,6 +845,7 @@ export default class ClanWebService extends BaseWebService {
                 Int32Proxy.Serialize(outputStream, ClanActionResultCode.Error);
               } else {
                 await clanMember.destroy();
+                await publicProfile.update({ GroupTag: '' });
 
                 Int32Proxy.Serialize(outputStream, ClanActionResultCode.Success);
               }
