@@ -34,6 +34,20 @@ That script:
 Because `./server-data/updates` is volume-mounted into the web service, the new files are live
 immediately. Players on that channel get them on their next launch.
 
+### Pushing to a remote server (one command)
+If your server is a separate box (e.g. your VPS), use the SSH helper to build, upload, and reload
+in one go (Windows OpenSSH; uses your SSH key):
+
+```powershell
+.\misc\sync-updates.ps1 -SshHost paradisetest.nekosunevr.co.uk -RemoteDir /opt/paradise -Publish beta
+# promote later:
+.\misc\sync-updates.ps1 -SshHost paradisetest.nekosunevr.co.uk -RemoteDir /opt/paradise -Publish stable
+```
+
+`-RemoteDir` is the folder on the server that holds `docker-compose.yml`. It uploads
+`server-data/updates` there and runs `docker compose up -d webservices`. Omit `-Publish` to just
+re-upload the current payload; add `-NoRestart` to skip the reload.
+
 > Tip: `server-data/` is git-ignored (it's generated binary payload). If your build host and your
 > server are different machines, copy `server-data/updates` to the server (or point the volume at
 > wherever you sync it).
