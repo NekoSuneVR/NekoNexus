@@ -31,6 +31,26 @@ a NekoPay-powered in-game store, and a safer (non-destructive) database seed.
   response serialization, and a `cmid` casing typo.
 - Disconnect now reliably leaves the lobby (handled in `LobbyRoom`), keeping presence accurate.
 
+### Clans
+- **Clan invites work**: `AcceptClanInvitation` created the member row **without `GroupId`** (no
+  real membership) — fixed. The clan **`[TAG]`** now shows next to names in chat: the tag is written
+  to the profile on create/join (cleared on leave/kick/disband) and carried on the comm actor.
+
+### Gameplay / realtime stability
+- In-match ops that **threw** (and aborted the op): **quick-item activation** and **hit-feedback**
+  knockback are now implemented (broadcast to peers); ready-up, in-match gear/health/damage,
+  game-info, inspect-room, report-player and backend-refresh are safe no-ops instead of exceptions.
+- **Moderator ban/kick** of an *offline* player no longer NullReferences; **unban** is implemented.
+- **Match progression is saved again**: points + XP/stats persistence (`DepositPoints` /
+  `UpdatePlayerStatistics`) was commented out during the port — re-enabled, so players keep XP,
+  level and stats after matches.
+
+### Shop / economy
+- **Get Credits & the shop's Credits tab no longer freeze the game** — both open the web store.
+- **BuyItem**: the item was granted **even when payment failed** (and Points purchases deducted
+  Points but wrote to Credits) — now items are only granted on a successful purchase.
+- **VerifyAuthToken** returned wallet data as player stats — fixed.
+
 ### In-game store + payments
 - Admin serves a public **`/store`** page (opened by Get Credits): lists credit packages, **Buy**
   creates a **NekoPay** checkout, webhook grants credits. `/pay/success|cancel` return pages.
