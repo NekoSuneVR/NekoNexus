@@ -34,15 +34,22 @@ namespace Paradise.Realtime.Server.Game {
 				Room.StatisticsManager.CalculateXp(playerMatchData);
 				Room.StatisticsManager.CalculatePoints(playerMatchData);
 
-				//UserWebServiceClient.Instance.DepositPoints(new PointDepositView {
-				//	Cmid = player.Actor.Cmid,
-				//	DepositDate = DateTime.UtcNow,
-				//	DepositType = PointsDepositType.Game,
-				//	PointDepositId = r.Next(1, int.MaxValue),
-				//	Points = playerMatchData.PlayerStatsTotal.Points,
-				//}, player.AuthToken);
+				// Persist progression: deposit the match Points and save the accumulated stats /
+				// XP / level to the web service. Wrapped per-player so one failure (network,
+				// serialization) can't abort match-end for the rest of the room.
+				try {
+					UserWebServiceClient.Instance.DepositPoints(new PointDepositView {
+						Cmid = player.Actor.Cmid,
+						DepositDate = DateTime.UtcNow,
+						DepositType = PointsDepositType.Game,
+						PointDepositId = r.Next(1, int.MaxValue),
+						Points = playerMatchData.PlayerStatsTotal.Points,
+					}, player.AuthToken);
 
-				//Room.StatisticsManager.SaveStatistics(player, playerMatchData);
+					Room.StatisticsManager.SaveStatistics(player, playerMatchData);
+				} catch (Exception ex) {
+					Log.Error($"Failed to persist match results for cmid {player.Actor.Cmid}", ex);
+				}
 
 				player.GameEventSender.SendMatchEnd(playerMatchData);
 				player.State.SetState(PlayerStateId.Overview);
