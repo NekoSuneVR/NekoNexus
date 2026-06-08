@@ -96,11 +96,10 @@ namespace Paradise.Client {
 					traverse.Instance.StartCoroutine(Start());
 				}
 			}, (error) => {
-				//Log.Error(error);
-				Debug.LogError(error);
-				ParadiseUpdater.HandleUpdateError(error, () => {
-					Application.Quit();
-				});
+				// A failed/unreachable update check must NOT lock players out (it used to quit the
+				// game). Log it and continue into the menu - they just didn't update this launch.
+				Debug.LogError("Update check failed, continuing anyway: " + error);
+				traverse.Instance.StartCoroutine(Start());
 			}));
 
 			yield break;

@@ -141,6 +141,11 @@ namespace Paradise.Client {
 			UnityRuntime.StartRoutine(DownloadUpdateCatalog(updateUri, delegate (UpdateCatalog updateCatalog) {
 				UnityRuntime.StartRoutine(OnUpdateCatalogDownloadComplete(updateCatalog, catalogDownloadedCallback, errorCallback));
 			}, delegate (HttpResponse responseHeader) {
+				// Tear down the "Checking for updates..." progress popup so it doesn't stay frozen
+				// on screen when we continue into the menu after a failed check.
+				if (progressPopup != null) {
+					PopupSystem.HideMessage(progressPopup);
+				}
 				errorCallback?.Invoke($"Failed to download update catalog.\n{responseHeader.StatusText}");
 			}));
 
@@ -211,8 +216,26 @@ namespace Paradise.Client {
 			Log.Info($"Attempting to download update catalog from {updateUri}");
 
 			using (WWW loader = new WWW(updateUri)) {
+				// Hard timeout: a hung request (TLS stall on old Mono, unreachable host) must never
+				// lock the game on "Checking for updates" forever.
+				float elapsed = 0f;
 				while (!loader.isDone) {
+					elapsed += Time.deltaTime;
+					if (elapsed > 20f) {
+						Log.Error("Update catalog download timed out.");
+						errorCallback?.Invoke(new HttpResponse { StatusCode = HttpStatusCode.RequestTimeout, StatusText = "Update check timed out" });
+						yield break;
+					}
 					yield return null;
+				}
+
+				// A transport-level failure (TLS validation, DNS, refused connection) leaves no
+				// response headers - bail cleanly instead of NRE-ing on responseHeaders["STATUS"]
+				// (an uncaught throw here would silently kill the coroutine and hang the game).
+				if (!string.IsNullOrEmpty(loader.error) || loader.responseHeaders == null || !loader.responseHeaders.ContainsKey("STATUS")) {
+					Log.Error($"Update catalog download failed: {loader.error}");
+					errorCallback?.Invoke(new HttpResponse { StatusCode = HttpStatusCode.ServiceUnavailable, StatusText = string.IsNullOrEmpty(loader.error) ? "Update download failed" : loader.error });
+					yield break;
 				}
 
 				var responseHeader = HTTPStatusParser.ParseHeader(loader.responseHeaders["STATUS"]);
@@ -227,22 +250,30 @@ namespace Paradise.Client {
 
 				yield return new WaitForSeconds(0.5f);
 
+				UpdateCatalog updateCatalog = null;
 				try {
 					var deserializer = new DeserializerBuilder()
 						.WithNamingConvention(CamelCaseNamingConvention.Instance)
 						.Build();
 
-					var updateCatalog = deserializer.Deserialize<UpdateCatalog>(loader.text);
+					updateCatalog = deserializer.Deserialize<UpdateCatalog>(loader.text);
 
 					Log.Info("Successfully parsed update catalog");
 					progressPopup.Progress = 0.6f;
-
-					successCallback?.Invoke(updateCatalog);
 				} catch (Exception e) {
 					Log.Error($"An error occured while checking for updates:\n{e.Message}");
 					Log.Debug(e);
 
+					// Never silently yield break here - that is what hung the game on
+					// "Checking for updates". Notify the caller so it continues into the menu.
+					errorCallback?.Invoke(new HttpResponse { StatusCode = HttpStatusCode.UnsupportedMediaType, StatusText = "Update manifest could not be parsed" });
 					yield break;
+				}
+
+				// Invoke the success path OUTSIDE the try so an exception thrown by downstream
+				// update handling can't be swallowed into the parse-error branch above.
+				if (updateCatalog != null) {
+					successCallback?.Invoke(updateCatalog);
 				}
 			}
 
