@@ -14,6 +14,10 @@ export interface AdminConfig {
   port: number;
   jwtSecret: string;
   db: DbConfig;
+  // Web service internal endpoint, used to push realtime inbox refreshes (e.g. System mail
+  // broadcasts) to online players. Inert unless internalApiKey is set (must match the ws side).
+  wsInternalUrl: string;
+  internalApiKey?: string;
 }
 
 // Resolve DB settings from (in order): explicit env vars, an admin.config.yml next to the
@@ -68,5 +72,9 @@ export function loadConfig(): AdminConfig {
     // Set ADMIN_JWT_SECRET in production so tokens survive restarts and can't be guessed.
     jwtSecret: process.env.ADMIN_JWT_SECRET ?? 'paradise-admin-change-me',
     db: loadDbConfig(),
+    // In the docker stack the web service is reachable as http://webservices:8080 on the shared
+    // network. INTERNAL_API_KEY must match the value the web service is started with.
+    wsInternalUrl: (process.env.WS_INTERNAL_URL ?? 'http://webservices:8080').replace(/\/$/, ''),
+    internalApiKey: process.env.INTERNAL_API_KEY,
   };
 }

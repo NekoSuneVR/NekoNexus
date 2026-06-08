@@ -195,6 +195,31 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
       IsDeletedByReceiver: false,
     }));
     if (rows.length) await models.PrivateMessage.bulkCreate(rows as any[]);
+
+    // Realtime: nudge currently-online recipients so the announcement lands in their mailbox
+    // instantly instead of on the next manual refresh. Best-effort; the mail is already saved.
+    if (cfg.internalApiKey && rows.length) {
+      try {
+        const online = new Set(
+          (
+            (await models.ActivePlayer.findAll({ attributes: ['Cmid'], raw: true }).catch(() => [])) as any[]
+          ).map((p) => p.Cmid),
+        );
+        const entries = rows
+          .filter((r) => online.has(r.ToCmid))
+          .map((r) => ({ cmid: r.ToCmid, messageId: r.PrivateMessageId }));
+        if (entries.length) {
+          await fetch(`${cfg.wsInternalUrl}/internal/notify-inbox`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Internal-Key': cfg.internalApiKey },
+            body: JSON.stringify({ entries }),
+          }).catch(() => {});
+        }
+      } catch {
+        /* realtime is best-effort */
+      }
+    }
+
     return json({ ok: true, sent: rows.length });
   }
 

@@ -17,6 +17,7 @@
 
 import ParadiseService from '@/ParadiseService';
 import { Log } from '@/utils';
+import { RealtimeNotify } from '@/utils/RealtimeNotify';
 import bodyParser from 'body-parser';
 import bodyParserXml from 'body-parser-xml';
 import express, { type Express } from 'express';
@@ -54,6 +55,32 @@ export default class WebServiceHost {
       res.set('Server', 'Microsoft-HTTPAPI/2.0');
 
       return next();
+    });
+
+    // Internal realtime-notify endpoint (admin service -> ws). The admin writes mail / System
+    // announcements straight to the DB but has no Comm-server bridge, so it calls this to make
+    // online players' inboxes refresh in realtime. Gated by a shared secret (INTERNAL_API_KEY) so
+    // it's inert unless configured and safe even if the port is exposed.
+    this.expressApp.post('/internal/notify-inbox', express.json(), (req, res): void => {
+      const key = process.env.INTERNAL_API_KEY;
+      if (!key || req.get('X-Internal-Key') !== key) {
+        res.status(403).json({ error: 'forbidden' });
+        return;
+      }
+
+      const entries = Array.isArray(req.body?.entries) ? req.body.entries : [];
+      // Fire-and-forget: realtime delivery must never block (or fail) the admin's response.
+      void (async () => {
+        for (const entry of entries) {
+          const cmid = Number(entry?.cmid);
+          const messageId = Number(entry?.messageId);
+          if (Number.isFinite(cmid) && Number.isFinite(messageId)) {
+            await RealtimeNotify.inboxMessage(cmid, messageId);
+          }
+        }
+      })().catch(() => {});
+
+      res.json({ ok: true, count: entries.length });
     });
 
     this.expressApp.use(Routes);

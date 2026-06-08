@@ -43,6 +43,12 @@ enum WebSocketPacketType {
   OpenRoom = (1 << 10) + 11,
   CloseRoom = (1 << 10) + 12,
   BanPlayer = (1 << 10) + 13,
+
+  // Web service -> Comm server realtime notifications (must match WebSocket.PacketType.cs).
+  NotifyInboxMessage = (1 << 10) + 14,
+  NotifyInboxRequests = (1 << 10) + 15,
+  NotifyClanMembers = (1 << 10) + 16,
+  NotifyClanChat = (1 << 10) + 17,
 }
 
 export default WebSocketPacketType;

@@ -99,6 +99,54 @@ namespace Paradise.Realtime.Server.Comm {
 
 						break;
 					}
+					case PacketType.NotifyInboxMessage: {
+						// New mail (or a System announcement) arrived for this player - tell their
+						// client to pull it in immediately instead of waiting for a manual refresh.
+						try {
+							var data = (Dictionary<string, object>)e.Data;
+							var targetCmid = Convert.ToInt64(data["TargetCmid"]);
+							var messageId = Convert.ToInt32(data["MessageId"]);
+							LobbyManager.Instance.Peers.FirstOrDefault(_ => _.Actor.Cmid == targetCmid)
+								?.LobbyEventSender.SendUpdateInboxMessages(messageId);
+						} catch (Exception ex) { Log.Error("NotifyInboxMessage failed", ex); }
+						break;
+					}
+					case PacketType.NotifyInboxRequests: {
+						// A clan/contact invitation was created for this player - refresh their
+						// requests list in realtime (the same way friend requests already work).
+						try {
+							var data = (Dictionary<string, object>)e.Data;
+							var targetCmid = Convert.ToInt64(data["TargetCmid"]);
+							LobbyManager.Instance.Peers.FirstOrDefault(_ => _.Actor.Cmid == targetCmid)
+								?.LobbyEventSender.SendUpdateInboxRequests();
+						} catch (Exception ex) { Log.Error("NotifyInboxRequests failed", ex); }
+						break;
+					}
+					case PacketType.NotifyClanMembers: {
+						// The clan roster changed (member joined/left/accepted) - refresh this
+						// member's clan view in realtime.
+						try {
+							var data = (Dictionary<string, object>)e.Data;
+							var targetCmid = Convert.ToInt64(data["TargetCmid"]);
+							LobbyManager.Instance.Peers.FirstOrDefault(_ => _.Actor.Cmid == targetCmid)
+								?.LobbyEventSender.SendUpdateClanMembers();
+						} catch (Exception ex) { Log.Error("NotifyClanMembers failed", ex); }
+						break;
+					}
+					case PacketType.NotifyClanChat: {
+						// Push a clan chat line (e.g. a "X joined the clan" system message) to an
+						// online clan member.
+						try {
+							var data = (Dictionary<string, object>)e.Data;
+							var targetCmid = Convert.ToInt64(data["TargetCmid"]);
+							var fromCmid = Convert.ToInt32(data["Cmid"]);
+							var name = Convert.ToString(data["Name"]);
+							var msg = Convert.ToString(data["Message"]);
+							LobbyManager.Instance.Peers.FirstOrDefault(_ => _.Actor.Cmid == targetCmid)
+								?.LobbyEventSender.SendClanChatMessage(fromCmid, name, msg);
+						} catch (Exception ex) { Log.Error("NotifyClanChat failed", ex); }
+						break;
+					}
 				}
 			};
 

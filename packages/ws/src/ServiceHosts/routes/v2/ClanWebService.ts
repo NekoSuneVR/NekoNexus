@@ -16,6 +16,7 @@
  */
 
 import ParadiseService from '@/ParadiseService';
+import { RealtimeNotify } from '@/utils/RealtimeNotify';
 import { ProfanityFilter } from '@/ProfanityFilter';
 import { XpPointsUtil } from '@/utils';
 import { ApiVersion, UberstrikeInventoryItem } from '@/utils/enums';
@@ -125,6 +126,25 @@ export default class ClanWebService extends BaseWebService {
                 await publicProfile.update({ GroupTag: clan.Tag });
 
                 groupInvitation.destroy();
+
+                // Realtime: refresh every online clan member's roster and drop a "joined" line into
+                // clan chat - no manual refresh needed (this is what made clan chat feel dead when a
+                // member joined). The new member is included so their own clan view populates too.
+                try {
+                  const members = await ClanMember.findAll({
+                    where: { GroupId: clan.GroupId },
+                    attributes: ['Cmid'],
+                    raw: true,
+                  });
+                  for (const m of members as any[]) {
+                    await RealtimeNotify.clanMembers(m.Cmid);
+                    if (m.Cmid !== publicProfile.Cmid) {
+                      await RealtimeNotify.clanChat(m.Cmid, 0, 'System', `${publicProfile.Name} joined the clan.`);
+                    }
+                  }
+                } catch {
+                  /* realtime is best-effort */
+                }
 
                 ClanRequestAcceptViewProxy.Serialize(
                   outputStream,
@@ -715,6 +735,10 @@ export default class ClanWebService extends BaseWebService {
               });
 
               Int32Proxy.Serialize(outputStream, ClanActionResultCode.Success);
+
+              // Realtime: the invited player's client refreshes its invitations instantly (like a
+              // friend request) instead of needing a manual refresh.
+              await RealtimeNotify.inboxRequests(inviteeCmid);
             }
           }
         }
@@ -788,6 +812,17 @@ export default class ClanWebService extends BaseWebService {
                 await toKickProfile.update({ GroupTag: '' });
 
                 Int32Proxy.Serialize(outputStream, ClanActionResultCode.Success);
+
+                // Realtime: refresh remaining members' rosters, and clear the kicked player's view.
+                try {
+                  for (const m of clan.Members) {
+                    if (m.Cmid === cmidToKick) continue;
+                    await RealtimeNotify.clanMembers(m.Cmid);
+                  }
+                  await RealtimeNotify.clanMembers(cmidToKick);
+                } catch {
+                  /* realtime is best-effort */
+                }
               }
             }
           }
@@ -870,6 +905,18 @@ export default class ClanWebService extends BaseWebService {
                 }
 
                 Int32Proxy.Serialize(outputStream, ClanActionResultCode.Success);
+
+                // Realtime: refresh remaining members' rosters + a "left" line in clan chat, and
+                // clear the leaver's own clan view.
+                try {
+                  for (const m of others) {
+                    await RealtimeNotify.clanMembers(m.Cmid);
+                    await RealtimeNotify.clanChat(m.Cmid, 0, 'System', `${publicProfile.Name} left the clan.`);
+                  }
+                  await RealtimeNotify.clanMembers(publicProfile.Cmid);
+                } catch {
+                  /* realtime is best-effort */
+                }
               }
             }
           }

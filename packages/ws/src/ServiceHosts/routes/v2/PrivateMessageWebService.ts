@@ -16,6 +16,7 @@
  */
 
 import ParadiseService from '@/ParadiseService';
+import { RealtimeNotify } from '@/utils/RealtimeNotify';
 import { ApiVersion } from '@/utils/enums';
 import { PrivateMessage, PublicProfile } from '@festivaldev/paradise-models';
 import { MessageThreadView, PrivateMessageView } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
@@ -367,6 +368,10 @@ export default class PrivateMessageWebService extends BaseWebService {
               outputStream,
               new PrivateMessageView({ ...privateMessage.get({ plain: true }) }),
             );
+
+            // Realtime: nudge the recipient's client to pull in the new message instantly (like
+            // friend requests) instead of waiting for the inbox poll.
+            await RealtimeNotify.inboxMessage(receiver.Cmid, privateMessage.PrivateMessageId);
           }
         }
       }

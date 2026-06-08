@@ -68,6 +68,10 @@ services:
       - "8080:8080"   # SOAP web service
       - "8081:8081"   # file server
       - "8082:8082"   # realtime <-> master socket
+    environment:
+      # Shared secret for the admin -> ws internal realtime-notify endpoint (System-mail
+      # broadcasts refresh online inboxes instantly). MUST match the admin service's value below.
+      INTERNAL_API_KEY: "change-me-paradise-internal"
     volumes:
       - ./docker/config/Paradise.Settings.WebServices.yml:/app/packages/ws/Paradise.Settings.WebServices.yml:ro
       # Client auto-updates: publish with misc/publish-update.ps1 (writes ./server-data/updates);
@@ -124,6 +128,10 @@ services:
       DB_NAME: paradise
       # CHANGE THIS — keeps admin login tokens valid across restarts and unguessable.
       ADMIN_JWT_SECRET: "change-me-paradise-admin"
+      # Realtime System-mail broadcasts: must match webservices' INTERNAL_API_KEY above.
+      # The web service is reached on the shared docker network as http://webservices:8080.
+      INTERNAL_API_KEY: "change-me-paradise-internal"
+      WS_INTERNAL_URL: "http://webservices:8080"
       # For NekoPay webhooks, set your public URL here (or in docker/.nekopay.env):
       # PUBLIC_BASE_URL: https://admin.yourdomain.com
     # NekoPay secret (optional). Create docker/.nekopay.env from docker/.nekopay.env.example.
