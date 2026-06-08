@@ -485,7 +485,12 @@ export default class ClanWebService extends BaseWebService {
           });
 
           if (clan && clan.Members.find((_) => _.Cmid === steamMember.Cmid && _.Position === GroupPosition.Leader)) {
-            Clan.destroy({ where: { GroupId: groupId } });
+            // Clear the clan tag from every member's profile before disbanding.
+            const memberCmids = clan.Members.map((_) => _.Cmid);
+            if (memberCmids.length) {
+              await PublicProfile.update({ GroupTag: '' }, { where: { Cmid: memberCmids } });
+            }
+            await Clan.destroy({ where: { GroupId: groupId } });
             Int32Proxy.Serialize(outputStream, 0);
           }
         }

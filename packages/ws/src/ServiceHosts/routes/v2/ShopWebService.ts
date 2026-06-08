@@ -345,6 +345,10 @@ export default class ShopWebService extends BaseWebService {
                   } else if (XpPointsUtil.GetLevelForXp(playerStatistics!.Xp) < item.LevelLock) {
                     Int32Proxy.Serialize(outputStream, BuyItemResult.InvalidLevel);
                   } else {
+                    // Track whether payment actually succeeded - the item must NOT be granted
+                    // (and OK must NOT be returned) on a failed/insufficient purchase.
+                    let purchased = false;
+
                     if (currencyType === UberStrikeCurrencyType.Credits) {
                       const price = item.Prices.find(
                         (_: ShopItemPrice) => _.Currency === UberStrikeCurrencyType.Credits,
@@ -367,6 +371,7 @@ export default class ShopWebService extends BaseWebService {
                           WithdrawalDate: new Date(),
                           WithdrawalId: Math.randomInt(),
                         });
+                        purchased = true;
                       }
                     } else if (currencyType === UberStrikeCurrencyType.Points) {
                       const price = item.Prices.find(
@@ -378,8 +383,9 @@ export default class ShopWebService extends BaseWebService {
                       } else if (memberWallet.Points! < price.Price) {
                         Int32Proxy.Serialize(outputStream, BuyItemResult.NotEnoughCurrency);
                       } else {
+                        // Deduct POINTS (was wrongly writing to Credits).
                         await memberWallet.update({
-                          Credits: memberWallet.Points! - price.Price,
+                          Points: memberWallet.Points! - price.Price,
                         });
 
                         await ItemTransaction.create({
@@ -390,41 +396,42 @@ export default class ShopWebService extends BaseWebService {
                           WithdrawalDate: new Date(),
                           WithdrawalId: Math.randomInt(),
                         });
+                        purchased = true;
                       }
-                    } else if (
-                      currencyType === UberStrikeCurrencyType.None ||
-                      UberStrikeCurrencyType[currencyType] === undefined
-                    ) {
+                    } else {
                       Int32Proxy.Serialize(outputStream, BuyItemResult.InvalidData);
                     }
 
-                    let expirationDate;
+                    // Only grant the item + return OK when payment actually succeeded.
+                    if (purchased) {
+                      let expirationDate;
 
-                    switch (durationType) {
-                      case BuyingDurationType.OneDay:
-                        expirationDate = moment(new Date()).add(1, 'day').toDate();
-                        break;
-                      case BuyingDurationType.SevenDays:
-                        expirationDate = moment(new Date()).add(7, 'days').toDate();
-                        break;
-                      case BuyingDurationType.ThirtyDays:
-                        expirationDate = moment(new Date()).add(30, 'days').toDate();
-                        break;
-                      case BuyingDurationType.NinetyDays:
-                        expirationDate = moment(new Date()).add(90, 'days').toDate();
-                        break;
-                      default:
-                        break;
+                      switch (durationType) {
+                        case BuyingDurationType.OneDay:
+                          expirationDate = moment(new Date()).add(1, 'day').toDate();
+                          break;
+                        case BuyingDurationType.SevenDays:
+                          expirationDate = moment(new Date()).add(7, 'days').toDate();
+                          break;
+                        case BuyingDurationType.ThirtyDays:
+                          expirationDate = moment(new Date()).add(30, 'days').toDate();
+                          break;
+                        case BuyingDurationType.NinetyDays:
+                          expirationDate = moment(new Date()).add(90, 'days').toDate();
+                          break;
+                        default:
+                          break;
+                      }
+
+                      await PlayerInventoryItem.create({
+                        Cmid: publicProfile.Cmid,
+                        ItemId: itemId,
+                        AmountRemaining: -1,
+                        ExpirationDate: expirationDate,
+                      });
+
+                      Int32Proxy.Serialize(outputStream, BuyItemResult.OK);
                     }
-
-                    await PlayerInventoryItem.create({
-                      Cmid: publicProfile.Cmid,
-                      ItemId: itemId,
-                      AmountRemaining: -1,
-                      ExpirationDate: expirationDate,
-                    });
-
-                    Int32Proxy.Serialize(outputStream, BuyItemResult.OK);
                   }
                 }
               }

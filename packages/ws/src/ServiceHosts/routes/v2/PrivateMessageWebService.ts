@@ -308,9 +308,7 @@ export default class PrivateMessageWebService extends BaseWebService {
           });
 
           for (const message of messages) {
-            message.update({
-              IsRead: true,
-            });
+            await message.update({ IsRead: true });
           }
 
           BooleanProxy.Serialize(outputStream, true);
