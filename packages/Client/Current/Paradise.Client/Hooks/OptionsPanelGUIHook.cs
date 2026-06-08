@@ -351,6 +351,17 @@ namespace Paradise.Client {
 					GUILayout.Label($"{value * 100:F0} %", BlueStonez.label_interparkbold_11pt_left, GUILayout.Width(ParadiseGUITools.SLIDER_VALUE_WIDTH), GUILayout.Height(22f));
 				});
 
+				// The sliders above only wrote the stored values; without re-applying them to the
+				// SfxManager (like the Mute toggle does) the change had no audible effect until the
+				// next scene load - which is why the volume controls felt broken. Apply live.
+				if (GUI.changed) {
+					GUI.changed = false;
+					var sfx = AutoMonoBehaviour<SfxManager>.Instance;
+					sfx.UpdateMasterVolume();
+					sfx.UpdateMusicVolume();
+					sfx.UpdateEffectsVolume();
+				}
+
 				GUI.enabled = true;
 				GUITools.PopGUIState();
 			});

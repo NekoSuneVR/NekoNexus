@@ -285,7 +285,15 @@ export default class ApplicationWebService extends BaseWebService {
 
       if (ApplicationWebService.supportedClientVersions.includes(appVersion)) {
         const maps = await Map.findAll().then((mapList) =>
-          mapList.filter((map) => map.FileName?.['4.3.10'] !== undefined),
+          mapList.filter(
+            (map) =>
+              map.FileName?.['4.3.10'] !== undefined &&
+              // Only advertise maps whose scene ships with the standard client. The "extra" maps
+              // (Space City / Spaceport Alpha / UberZone) carry a real 4.7.1 filename rather than
+              // an empty one; their .unity3d isn't in the build, so loading them throws
+              // "Couldn't open file ...". Matches the v2 GetMaps exclusion.
+              !map.FileName?.['4.7.1']?.length,
+          ),
         );
 
         const mapSettings = await MapSettings.findAll({
