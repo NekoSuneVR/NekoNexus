@@ -65,107 +65,81 @@ export default async function runSeed() {
     model.associate?.(models);
   }
 
-  // Seeding (re)creates the schema and inserts rows across tables with cross-referencing
-  // foreign keys (e.g. shop item prices reference several item tables). Disable FK checks,
-  // drop + recreate all tables cleanly (force), seed, then re-enable integrity checks.
+  // Ensure the schema WITHOUT dropping data: `alter` adds/updates columns in place, so existing
+  // players, wallets, stats, friends and any admin customizations are preserved across re-runs.
+  // FK checks are toggled around the alter because some column changes touch referenced keys.
   await sequelize.query('SET FOREIGN_KEY_CHECKS = 0');
   try {
-    await sequelize.sync({ force: true });
-    Log.info('Database schema created.');
+    await sequelize.sync({ alter: true });
+    Log.info('Database schema ensured (alter - no data dropped).');
   } catch (e) {
-    Log.error('Failed to create database schema (check the DB user has CREATE/DROP rights).');
+    Log.error('Failed to ensure database schema (check the DB user has ALTER rights).');
     Log.error(String(e));
     process.exit(1);
   }
 
-  // #region Application Configuration
-  await models.ApplicationConfiguration.destroy({ where: {} });
-  await models.ApplicationConfiguration.bulkCreate(applicationConfiguration as Partial<ApplicationConfiguration>[]);
-  // #endregion
+  // Seed default/reference data ONLY into tables that are currently empty, so re-running the
+  // seed on a live server never wipes anything. To re-seed a specific table, empty it first.
+  async function seedIfEmpty<T>(model: any, rows: T[], label: string): Promise<void> {
+    const existing = await model.count();
+    if (existing > 0) {
+      Log.info(`Skipping ${label}: ${existing} row(s) already present.`);
+      return;
+    }
+    if (!rows.length) return;
+    await model.bulkCreate(rows as any[]);
+    Log.info(`Seeded ${rows.length} ${label}.`);
+  }
 
-  // #region Users
-  await models.PublicProfile.destroy({ where: {} });
-  await models.PublicProfile.bulkCreate(users as Partial<PublicProfile>[]);
-  // #endregion
+  await seedIfEmpty(
+    models.ApplicationConfiguration,
+    applicationConfiguration as Partial<ApplicationConfiguration>[],
+    'application configuration',
+  );
+  await seedIfEmpty(models.PublicProfile, users as Partial<PublicProfile>[], 'default users');
 
-  // #region Photon Servers
-  // The IP stored here is what the GAME CLIENT connects to, so it must be reachable from
-  // the player's machine — NOT 127.0.0.1 unless the client runs on this same host. Override
-  // the seeded IP with PARADISE_PUBLIC_HOST (your LAN/public IP or domain) for real/Docker
-  // deployments. You can also change it later in the admin dashboard (Servers page).
+  // Photon servers: the IP is what the GAME CLIENT connects to, so it must be reachable from the
+  // player's machine - override with PARADISE_PUBLIC_HOST (your public IP/domain). Only seeded
+  // when empty; change/add servers later in the admin dashboard (Servers page).
   const publicHost = process.env.PARADISE_PUBLIC_HOST?.trim();
   const photonRows = (photonServers as Partial<PhotonServer>[]).map((s) =>
     publicHost ? { ...s, IP: publicHost } : s,
   );
-  if (publicHost) Log.info(`Seeding realtime server list with public host: ${publicHost}`);
-  await models.PhotonServer.destroy({ where: {} });
-  await models.PhotonServer.bulkCreate(photonRows);
-  // #endregion
+  if (publicHost) Log.info(`Realtime server list will use public host: ${publicHost}`);
+  await seedIfEmpty(models.PhotonServer, photonRows, 'realtime servers');
 
-  // #region Shop
-  await models.ShopFunctionalItem.destroy({ where: {} });
-  await models.ShopGearItem.destroy({ where: {} });
-  await models.ShopQuickItem.destroy({ where: {} });
-  await models.ShopWeaponItem.destroy({ where: {} });
+  // Shop items + prices.
+  await seedIfEmpty(models.ShopFunctionalItem, shop.FunctionalItems as Partial<ShopFunctionalItem>[], 'functional items');
+  await seedIfEmpty(models.ShopGearItem, shop.GearItems as Partial<ShopGearItem>[], 'gear items');
+  await seedIfEmpty(models.ShopQuickItem, shop.QuickItems as any[] as Partial<ShopQuickItem>[], 'quick items');
+  await seedIfEmpty(models.ShopWeaponItem, shop.WeaponItems as Partial<ShopWeaponItem>[], 'weapon items');
 
-  await models.ShopFunctionalItem.bulkCreate(shop.FunctionalItems as Partial<ShopFunctionalItem>[]);
-  await models.ShopGearItem.bulkCreate(shop.GearItems as Partial<ShopGearItem>[]);
-  await models.ShopQuickItem.bulkCreate(shop.QuickItems as any[] as Partial<ShopQuickItem>[]);
-  await models.ShopWeaponItem.bulkCreate(shop.WeaponItems as Partial<ShopWeaponItem>[]);
-
-  await models.ShopItemPrice.destroy({ where: {} });
-  await models.ShopItemPrice.bulkCreate(
-    shop.FunctionalItems.reduce((acc: any[], item) => {
-      if (!item.Prices || !item.Prices.length) return acc;
-      acc.push(...item.Prices.map((price) => ({ ...price, ID: item.ID })));
+  const priceRows = [shop.FunctionalItems, shop.GearItems, shop.QuickItems, shop.WeaponItems].reduce(
+    (acc: any[], group: any[]) => {
+      for (const item of group) {
+        if (item.Prices && item.Prices.length) {
+          acc.push(...item.Prices.map((price: any) => ({ ...price, ID: item.ID })));
+        }
+      }
       return acc;
-    }, []),
+    },
+    [],
   );
-  await models.ShopItemPrice.bulkCreate(
-    shop.GearItems.reduce((acc: any[], item) => {
-      if (!item.Prices || !item.Prices.length) return acc;
-      acc.push(...item.Prices.map((price) => ({ ...price, ID: item.ID })));
-      return acc;
-    }, []),
-  );
-  await models.ShopItemPrice.bulkCreate(
-    shop.QuickItems.reduce((acc: any[], item) => {
-      if (!item.Prices || !item.Prices.length) return acc;
-      acc.push(...item.Prices.map((price) => ({ ...price, ID: item.ID })));
-      return acc;
-    }, []),
-  );
-  await models.ShopItemPrice.bulkCreate(
-    shop.WeaponItems.reduce((acc: any[], item) => {
-      if (!item.Prices || !item.Prices.length) return acc;
-      acc.push(...item.Prices.map((price) => ({ ...price, ID: item.ID })));
-      return acc;
-    }, []),
-  );
-  // #endregion
+  await seedIfEmpty(models.ShopItemPrice, priceRows, 'shop prices');
 
-  // #region Maps
-  await models.Map.destroy({ where: {} });
-
-  await models.Map.bulkCreate(maps as Partial<Map>[]);
-  await models.MapSettings.bulkCreate(
-    maps.reduce((acc: any[], cur) => {
-      Object.entries(cur.Settings).forEach(([key, value]) => {
-        acc.push({
-          ...(value as object),
-          MapId: cur.MapId,
-          GameModeType: key,
-        });
-      });
-
-      return acc;
-    }, []),
-  );
-  // #endregion
+  // Maps + map settings.
+  await seedIfEmpty(models.Map, maps as Partial<Map>[], 'maps');
+  const mapSettings = maps.reduce((acc: any[], cur) => {
+    Object.entries(cur.Settings).forEach(([key, value]) => {
+      acc.push({ ...(value as object), MapId: cur.MapId, GameModeType: key });
+    });
+    return acc;
+  }, []);
+  await seedIfEmpty(models.MapSettings, mapSettings, 'map settings');
 
   await sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
 
-  Log.info('Database seeded successfully.');
+  Log.info('Database seed complete (existing data preserved).');
   process.exit(0);
 }
 
