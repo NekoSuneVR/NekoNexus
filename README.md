@@ -7,6 +7,8 @@ No game files are included or redistributed; the patch runs against *your* insta
 ## Requirements
 - A Steam copy of **UberStrike** installed.
 - **Windows** with PowerShell (built in).
+- **.NET Framework 4.7.2+** (the patcher needs it). Windows 10/11 already include 4.8 — only
+  older/stripped Windows may need it: https://dotnet.microsoft.com/download/dotnet-framework
 
 ## Install (easy — double-click)
 

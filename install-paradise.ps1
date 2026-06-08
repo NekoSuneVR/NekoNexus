@@ -107,7 +107,21 @@ Need $PatchXml   "Paradise.Patch.xml"
 Need $ShimDll    "Photon3Unity3D.dll (free transport shim)"
 Need $ModDir     "mod\ folder (prebuilt Paradise DLLs)"
 
-# 1) Patch Assembly-CSharp to load the Paradise bootstrap. Restore a clean copy from the
+# 1) Install the prebuilt Paradise runtime + our free transport FIRST. The patch injects a Call
+#    into Paradise.Client.Bootstrap, so that DLL MUST already be in Managed for the patcher to
+#    resolve it - otherwise the patch fails (exit 1, stops at "patch method Awake").
+Step "Installing Paradise runtime + free transport into the game"
+Get-ChildItem $ModDir -File | ForEach-Object {
+  Copy-Item $_.FullName $Managed -Force
+  Write-Host "    + $($_.Name)"
+}
+# Our free Photon3Unity3D.dll REPLACES the game's Photon transport (back the original up once).
+$gamePhoton = Join-Path $Managed "Photon3Unity3D.dll"
+if ((Test-Path $gamePhoton) -and -not (Test-Path "$gamePhoton.orig")) { Copy-Item $gamePhoton "$gamePhoton.orig" -Force }
+Copy-Item $ShimDll $gamePhoton -Force
+Write-Host "    + Photon3Unity3D.dll (free LiteNetLib transport)"
+
+# 2) Patch Assembly-CSharp to load the bootstrap (now resolvable). Restore a clean copy from the
 #    backup first so re-running is safe (re-patching an already-patched DLL crashes).
 if (-not $NoPatch) {
   $backupDll = Join-Path $Managed "backup\Assembly-CSharp.dll"
@@ -120,18 +134,6 @@ if (-not $NoPatch) {
   $p = Start-Process -FilePath $PatcherExe -ArgumentList $pargs -NoNewWindow -Wait -PassThru
   if ($p.ExitCode -ne 0) { throw "UniversalUnityPatcher failed (exit $($p.ExitCode)). Is this an unmodified, supported UberStrike build?" }
 }
-
-# 2) Install the prebuilt Paradise runtime + our free transport.
-Step "Installing Paradise runtime + free transport into the game"
-Get-ChildItem $ModDir -File | ForEach-Object {
-  Copy-Item $_.FullName $Managed -Force
-  Write-Host "    + $($_.Name)"
-}
-# Our free Photon3Unity3D.dll REPLACES the game's Photon transport (back the original up once).
-$gamePhoton = Join-Path $Managed "Photon3Unity3D.dll"
-if ((Test-Path $gamePhoton) -and -not (Test-Path "$gamePhoton.orig")) { Copy-Item $gamePhoton "$gamePhoton.orig" -Force }
-Copy-Item $ShimDll $gamePhoton -Force
-Write-Host "    + Photon3Unity3D.dll (free LiteNetLib transport)"
 
 # 3) Write the settings file pointing at the server.
 if ($Https) { $webBase = "https://$ServerHost"; $fileBase = "https://$ServerHost" }
