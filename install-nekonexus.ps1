@@ -1,28 +1,28 @@
 <#
 .SYNOPSIS
-  Installs the Paradise free-server patch into an UberStrike install.
+  Installs the NekoNexus free-server patch into an UberStrike install.
   SELF-CONTAINED: uses the prebuilt mod DLLs + transport shim shipped in this zip.
   No repo, no .NET SDK, no building required.
 
-  ZERO-TYPING MODE: if you (the server owner) set your domain in paradise-target.json,
+  ZERO-TYPING MODE: if you (the server owner) set your domain in nekonexus-target.json,
   end users can just double-click Install.cmd — the game is auto-found from Steam and the
   server is read from the config. No arguments needed.
 
 .EXAMPLE
-  # End user, zero-typing: just double-click Install.cmd (uses paradise-target.json + Steam auto-detect)
+  # End user, zero-typing: just double-click Install.cmd (uses nekonexus-target.json + Steam auto-detect)
 
 .EXAMPLE
   # Explicit:
-  .\install-paradise.ps1 -ServerHost play.example.com -Https
+  .\install-nekonexus.ps1 -ServerHost play.example.com -Https
 
 .EXAMPLE
   # Game not in a standard Steam library? point at it:
-  .\install-paradise.ps1 -UberStrikePath "D:\Games\UberStrike" -ServerHost play.example.com -Https
+  .\install-nekonexus.ps1 -UberStrikePath "D:\Games\UberStrike" -ServerHost play.example.com -Https
 #>
 [CmdletBinding()]
 param(
   [string]$UberStrikePath,   # optional — auto-detected from Steam if omitted
-  [string]$ServerHost,       # optional — read from paradise-target.json if omitted
+  [string]$ServerHost,       # optional — read from nekonexus-target.json if omitted
   [int]$WebPort  = 8080,
   [int]$FilePort = 8081,
   [switch]$Https,
@@ -62,8 +62,8 @@ function Find-UberStrike {
   return $null
 }
 
-# --- Resolve target: command-line args win, else paradise-target.json -----------------------
-$cfgFile = Join-Path $Here "paradise-target.json"
+# --- Resolve target: command-line args win, else nekonexus-target.json -----------------------
+$cfgFile = Join-Path $Here "nekonexus-target.json"
 $cfg = $null
 if (Test-Path $cfgFile) { try { $cfg = Get-Content $cfgFile -Raw | ConvertFrom-Json } catch { } }
 function CfgHas($name) { return $cfg -and ($cfg.PSObject.Properties.Name -contains $name) }
@@ -74,7 +74,7 @@ if (-not $PSBoundParameters.ContainsKey('WebPort') -and (CfgHas 'WebPort'))   { 
 if (-not $PSBoundParameters.ContainsKey('FilePort') -and (CfgHas 'FilePort')) { $FilePort = [int]$cfg.FilePort }
 
 if (-not $ServerHost -or $ServerHost -eq 'play.yourdomain.com') {
-  throw "No server configured. Set ServerHost in paradise-target.json (or pass -ServerHost <host>)."
+  throw "No server configured. Set ServerHost in nekonexus-target.json (or pass -ServerHost <host>)."
 }
 
 if (-not $UberStrikePath) {
@@ -99,18 +99,18 @@ if (Get-Process UberStrike -ErrorAction SilentlyContinue) {
 
 # Bundled payload that ships in this zip.
 $PatcherExe = Join-Path $Here "patcher\UniversalUnityPatcher.exe"
-$PatchXml   = Join-Path $Here "Paradise.Patch.xml"
+$PatchXml   = Join-Path $Here "NekoNexus.Patch.xml"
 $ShimDll    = Join-Path $Here "Photon3Unity3D.dll"
 $ModDir     = Join-Path $Here "mod"
 Need $PatcherExe "patcher (UniversalUnityPatcher.exe)"
-Need $PatchXml   "Paradise.Patch.xml"
+Need $PatchXml   "NekoNexus.Patch.xml"
 Need $ShimDll    "Photon3Unity3D.dll (free transport shim)"
-Need $ModDir     "mod\ folder (prebuilt Paradise DLLs)"
+Need $ModDir     "mod\ folder (prebuilt NekoNexus DLLs)"
 
-# 1) Install the prebuilt Paradise runtime + our free transport FIRST. The patch injects a Call
-#    into Paradise.Client.Bootstrap, so that DLL MUST already be in Managed for the patcher to
+# 1) Install the prebuilt NekoNexus runtime + our free transport FIRST. The patch injects a Call
+#    into NekoNexus.Client.Bootstrap, so that DLL MUST already be in Managed for the patcher to
 #    resolve it - otherwise the patch fails (exit 1, stops at "patch method Awake").
-Step "Installing Paradise runtime + free transport into the game"
+Step "Installing NekoNexus runtime + free transport into the game"
 Get-ChildItem $ModDir -File | ForEach-Object {
   Copy-Item $_.FullName $Managed -Force
   Write-Host "    + $($_.Name)"
@@ -150,17 +150,17 @@ if (-not $NoPatch) {
 # 3) Write the settings file pointing at the server.
 if ($Https) { $webBase = "https://$ServerHost"; $fileBase = "https://$ServerHost" }
 else        { $webBase = "http://${ServerHost}:${WebPort}"; $fileBase = "http://${ServerHost}:${FilePort}" }
-Step "Writing Paradise.Settings.Client.xml -> $webBase"
-$tpl = Get-Content (Join-Path $Here "Paradise.Settings.Client.template.xml") -Raw
+Step "Writing NekoNexus.Settings.Client.xml -> $webBase"
+$tpl = Get-Content (Join-Path $Here "NekoNexus.Settings.Client.template.xml") -Raw
 $tpl = $tpl -replace 'http://SERVER_HOST:8080/2\.0/', "$webBase/2.0/" `
             -replace 'http://SERVER_HOST:8081/images/', "$fileBase/images/" `
             -replace 'http://SERVER_HOST:8081/updates/', "$fileBase/updates/"
-Set-Content -Path (Join-Path $DataDir "Paradise.Settings.Client.xml") -Value $tpl -Encoding UTF8
+Set-Content -Path (Join-Path $DataDir "NekoNexus.Settings.Client.xml") -Value $tpl -Encoding UTF8
 
 Write-Host ""
-Write-Host "Done! UberStrike is patched for the Paradise server at $webBase." -ForegroundColor Green
-Write-Host "Launch the game. You can add/switch servers in-game via Paradise Settings -> Web Service URLs."
+Write-Host "Done! UberStrike is patched for the NekoNexus server at $webBase." -ForegroundColor Green
+Write-Host "Launch the game. You can add/switch servers in-game via NekoNexus Settings -> Web Service URLs."
 Write-Host ""
 Write-Host "NOTE: if this game was patched before against a DIFFERENT server, the client keeps the old" -ForegroundColor Yellow
-Write-Host "URL in saved settings. Change it in-game (Paradise Settings -> Web Service URLs), or clear it" -ForegroundColor Yellow
+Write-Host "URL in saved settings. Change it in-game (NekoNexus Settings -> Web Service URLs), or clear it" -ForegroundColor Yellow
 Write-Host "once:  Remove-Item 'HKCU:\Software\Cmune\UberStrike' -Recurse   (resets game prefs)." -ForegroundColor Yellow

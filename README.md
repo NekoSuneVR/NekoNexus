@@ -1,7 +1,7 @@
-# Paradise client patch — connect UberStrike to the FREE server
+# NekoNexus client patch — connect UberStrike to the FREE server
 
-This patches your UberStrike client to run Paradise on the **free LiteNetLib server**
-(no Photon SDK), and points it at **your** server. The in-game *Paradise Settings → Web
+This patches your UberStrike client to run NekoNexus on the **free LiteNetLib server**
+(no Photon SDK), and points it at **your** server. The in-game *NekoNexus Settings → Web
 Service URLs* list is your **server browser** — add as many servers as you like and switch
 between them.
 
@@ -11,8 +11,8 @@ between them.
 ## What makes the connection work
 
 1. **Free transport** — our `Photon3Unity3D.dll` shim replaces the game's Photon client, so
-   the game speaks LiteNetLib to the free Paradise server (`shims/Photon3Unity3D.Shim`).
-2. **Server address** — `Paradise.Settings.Client.xml` (or the in-game URL list) points the
+   the game speaks LiteNetLib to the free NekoNexus server (`shims/Photon3Unity3D.Shim`).
+2. **Server address** — `NekoNexus.Settings.Client.xml` (or the in-game URL list) points the
    client at your web service, which hands back the realtime server list.
 
 ## One-command patch (from a repo checkout)
@@ -27,7 +27,7 @@ packages\Client\make-client-patch.ps1 `
   -ServerHost 127.0.0.1
 ```
 
-This builds the Paradise client mod against your game, injects the bootstrap, installs our
+This builds the NekoNexus client mod against your game, injects the bootstrap, installs our
 free transport, and writes a settings file. Re-run after `git pull` to update.
 
 ## From the packaged release (`.release/client/_pak/free-server/`)
@@ -36,11 +36,11 @@ The release bundle contains the prebuilt patcher, our free `Photon3Unity3D.dll`,
 definition, a settings template, and `make-client-patch.ps1`. Unzip it next to a repo
 checkout (it reuses the build) and run the command above.
 
-## Already running official Paradise?
+## Already running official NekoNexus?
 
 You only need to (a) drop our `Photon3Unity3D.dll` into `UberStrike_Data\Managed\`
 (back up the original first) and (b) add your server's web-service URL in
-*Paradise Settings → Web Service URLs*. No re-patch required.
+*NekoNexus Settings → Web Service URLs*. No re-patch required.
 
 ## Notes / caveats
 

@@ -1,6 +1,6 @@
-# Paradise — UberStrike free-server client patch
+# NekoNexus — UberStrike free-server client patch
 
-This patches your own copy of **UberStrike** to play on a Paradise free server (no Photon
+This patches your own copy of **UberStrike** to play on a NekoNexus free server (no Photon
 SDK). It is **self-contained** — you only need this folder, Windows PowerShell, and your game.
 No game files are included or redistributed; the patch runs against *your* install.
 
@@ -17,22 +17,22 @@ No game files are included or redistributed; the patch runs against *your* insta
 3. Double-click **`Install.cmd`**.
 
 That's it. The game is found automatically from Steam, and the server is read from
-`paradise-target.json` (already set to the right server). Then launch UberStrike.
+`nekonexus-target.json` (already set to the right server). Then launch UberStrike.
 
 ## Install (manual / non-standard setup)
 
 If your game isn't in a normal Steam library, open **PowerShell** in this folder and point at it:
 ```powershell
-.\install-paradise.ps1 -UberStrikePath "D:\Games\UberStrike"
+.\install-nekonexus.ps1 -UberStrikePath "D:\Games\UberStrike"
 ```
 You can also override the server: `-ServerHost play.example.com -Https` (or `-ServerHost 203.0.113.10` for plain IP + ports).
 
 If PowerShell blocks the script, prefix it with `powershell -ExecutionPolicy Bypass -File `.
 
-After patching, launch UberStrike — you can add/switch servers anytime in **Paradise Settings → Web Service URLs**.
+After patching, launch UberStrike — you can add/switch servers anytime in **NekoNexus Settings → Web Service URLs**.
 
 ## For server owners — make this YOUR installer
-Edit **`paradise-target.json`** before sharing the zip:
+Edit **`nekonexus-target.json`** before sharing the zip:
 ```json
 { "ServerHost": "play.yourdomain.com", "Https": true, "WebPort": 8080, "FilePort": 8081 }
 ```
@@ -44,13 +44,13 @@ The patch keeps backups:
 - `UberStrike_Data\Managed\backup\Assembly-CSharp.dll` — the original game code.
 - `UberStrike_Data\Managed\Photon3Unity3D.dll.orig` — the original Photon transport.
 
-To revert, copy each backup back over its file (and delete `Paradise.Settings.Client.xml`),
+To revert, copy each backup back over its file (and delete `NekoNexus.Settings.Client.xml`),
 or use Steam → UberStrike → Properties → Installed Files → **Verify integrity**.
 
 ## Troubleshooting
 - **"UberStrike is running"** — close the game (and quit Steam's copy), then re-run.
 - **Still connecting to an old/local server** — you patched before against another address; the
-  client caches the URL. Change it in-game (Paradise Settings → Web Service URLs), or reset once:
+  client caches the URL. Change it in-game (NekoNexus Settings → Web Service URLs), or reset once:
   ```powershell
   Remove-Item 'HKCU:\Software\Cmune\UberStrike' -Recurse
   ```
@@ -59,9 +59,9 @@ or use Steam → UberStrike → Properties → Installed Files → **Verify inte
 
 ## What's in this zip
 - `Install.cmd` — double-click installer (calls the script below).
-- `install-paradise.ps1` — the installer (Steam auto-detect + config).
-- `paradise-target.json` — the server this installer points at (owners edit this).
-- `patcher\` — UniversalUnityPatcher (injects the Paradise bootstrap).
-- `mod\` — prebuilt Paradise client DLLs.
+- `install-nekonexus.ps1` — the installer (Steam auto-detect + config).
+- `nekonexus-target.json` — the server this installer points at (owners edit this).
+- `patcher\` — UniversalUnityPatcher (injects the NekoNexus bootstrap).
+- `mod\` — prebuilt NekoNexus client DLLs.
 - `Photon3Unity3D.dll` — the free LiteNetLib transport (replaces Photon).
-- `Paradise.Patch.xml`, `Paradise.Settings.Client.template.xml` — patch definition + settings template.
+- `NekoNexus.Patch.xml`, `NekoNexus.Settings.Client.template.xml` — patch definition + settings template.
