@@ -37,6 +37,11 @@ $Base   = Join-Path $Repo 'server-data'
 $Dest   = Join-Path $Base "updates\v2\$Channel\universal\UberStrike_Data\Managed"
 Step "Staging update files -> $Channel"
 New-Item -ItemType Directory -Force -Path $Dest | Out-Null
+# Remove stale artifacts from a previous Paradise build so the regenerated manifest is
+# NekoNexus-only (the renamed assemblies do not overwrite the old Paradise.* filenames).
+Get-ChildItem -Path $Dest -Filter 'Paradise.*' -File -ErrorAction SilentlyContinue | ForEach-Object {
+  Write-Host "    - $($_.Name) (old Paradise)"; Remove-Item $_.FullName -Force
+}
 foreach ($f in 'NekoNexus.Client.Bootstrap.dll', 'NekoNexus.Client.dll', '0Harmony.dll', 'log4net.dll', 'YamlDotNet.dll') {
   Copy-Item (Join-Path $ModSrc $f) $Dest -Force
   Write-Host "    + $f"
@@ -51,6 +56,9 @@ $RpcExe  = Join-Path $Repo '.release\client\_pak\UberStrike_Data\Plugins\NekoNex
 if (Test-Path $RpcExe) {
   $RpcDest = Join-Path $Base "updates\v2\$Channel\win\UberStrike_Data\Plugins"
   New-Item -ItemType Directory -Force -Path $RpcDest | Out-Null
+  Get-ChildItem -Path $RpcDest -Filter 'Paradise.*' -File -ErrorAction SilentlyContinue | ForEach-Object {
+    Write-Host "    - $($_.Name) (old Paradise)"; Remove-Item $_.FullName -Force
+  }
   Copy-Item $RpcExe $RpcDest -Force
   Write-Host '    + NekoNexus.Client.DiscordRPC.exe (win)'
 }
