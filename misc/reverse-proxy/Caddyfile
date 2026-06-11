@@ -1,14 +1,14 @@
-# One-domain reverse proxy for Paradise (automatic HTTPS via Caddy).
+# One-domain reverse proxy for NekoNexus (automatic HTTPS via Caddy).
 # Put your real domain below and run:  caddy run --config ./Caddyfile
 #
 # This fronts the three internal web ports behind ONE domain so the client only needs a
 # single URL. The realtime<->master WebSocket (8082) stays internal and is NOT exposed.
 #
-# After this is up, point the client (Paradise Settings -> Web Service URLs) at:
-#     https://paradise.example.com
+# After this is up, point the client (NekoNexus Settings -> Web Service URLs) at:
+#     https://nekonexus.example.com
 # (web service endpoint /2.0 and file paths /images, /updates resolve under it).
 
-paradise.example.com {
+nekonexus.example.com {
 	encode gzip
 
 	# SOAP web service (UberStrike.DataCenter.WebService.CWS...Contract.svc) lives under /2.0

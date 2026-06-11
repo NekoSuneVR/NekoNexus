@@ -27,7 +27,7 @@ import {
   PointDeposit,
   PublicProfile,
   UserAccount,
-} from '@festivaldev/paradise-models';
+} from '@festivaldev/nekonexus-models';
 import {
   ItemInventoryView,
   MemberOperationResult,

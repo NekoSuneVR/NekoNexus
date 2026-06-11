@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import ParadiseServiceSettings from '@/ParadiseServiceSettings';
+import NekoNexusServiceSettings from '@/NekoNexusServiceSettings';
 import { Log } from '@/utils';
 import RijndaelCryptographyPolicy from '@/utils/RijndaelCryptographyPolicy';
 
@@ -33,11 +33,11 @@ export default abstract class BaseWebService {
   static readonly CryptoPolicy = new RijndaelCryptographyPolicy();
 
   static get EncryptionPassPhrase(): string {
-    return ParadiseServiceSettings.EncryptionPassPhrase as string;
+    return NekoNexusServiceSettings.EncryptionPassPhrase as string;
   }
 
   static get EncryptionInitVector(): string {
-    return ParadiseServiceSettings.EncryptionInitVector as string;
+    return NekoNexusServiceSettings.EncryptionInitVector as string;
   }
 
   static debugEndpoint(serviceMethod: String, ...args: any): void {

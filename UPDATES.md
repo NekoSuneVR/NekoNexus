@@ -3,10 +3,10 @@
 Patched clients check your server for updated mod files on launch and apply them automatically —
 so when you fix something, players get it without re-running the installer. There are two
 channels: **Stable** (everyone) and **Beta** (testers). Players choose theirs in-game under
-**Paradise Settings → Updates**; new installs default to **Stable** with auto-updates **on**.
+**NekoNexus Settings → Updates**; new installs default to **Stable** with auto-updates **on**.
 
 ## How it works
-- The in-game updater (`ParadiseUpdater`) fetches
+- The in-game updater (`NekoNexusUpdater`) fetches
   `https://<your-domain>/updates/v2/<channel>/updates.yml`, compares each file's hash to what's
   installed, downloads any that changed, and applies them (then asks the player to restart).
 - The manifest + files are served by the **web service file server** (port 8081, `/updates/`).
@@ -39,9 +39,9 @@ If your server is a separate box (e.g. your VPS), use the SSH helper to build, u
 in one go (Windows OpenSSH; uses your SSH key):
 
 ```powershell
-.\misc\sync-updates.ps1 -SshHost paradise.nekosunevr.co.uk -RemoteDir /opt/paradise -Publish beta
+.\misc\sync-updates.ps1 -SshHost nekonexus.nekosunevr.co.uk -RemoteDir /opt/nekonexus -Publish beta
 # promote later:
-.\misc\sync-updates.ps1 -SshHost paradise.nekosunevr.co.uk -RemoteDir /opt/paradise -Publish stable
+.\misc\sync-updates.ps1 -SshHost nekonexus.nekosunevr.co.uk -RemoteDir /opt/nekonexus -Publish stable
 ```
 
 `-RemoteDir` is the folder on the server that holds `docker-compose.yml`. It uploads
@@ -58,9 +58,9 @@ re-upload the current payload; add `-NoRestart` to skip the reload.
 3. Happy? `publish-update.ps1 -Channel stable` → everyone gets it next launch.
 
 ## Notes
-- Updates only carry the **Paradise mod DLLs + transport shim** — never game files.
+- Updates only carry the **NekoNexus mod DLLs + transport shim** — never game files.
 - If a player has auto-updates off, they can still update manually from
-  **Paradise Settings → Updates**, or just re-run the installer.
+  **NekoNexus Settings → Updates**, or just re-run the installer.
 - HTTPS: the updater uses whatever the client's File Server URL is, so behind your domain it's
   `https://<domain>/updates/...` (make sure your reverse proxy already serves `/updates/`, which it
   does alongside `/images/`).

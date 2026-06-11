@@ -12,15 +12,15 @@ EASIEST WAY (GUI, no command line)
 
 WHAT'S IN HERE
   Start-Server-Manager.bat                 <- GUI: configure + run (recommended)
-  ParadiseServerManager.ps1                <- (the GUI itself)
+  NekoNexusServerManager.ps1                <- (the GUI itself)
   start-server.bat                         <- no-GUI: just launch everything
-  Paradise.WebServices\
-     Paradise.WebServices_x64.exe          <- web service (standalone, no install)
-     Paradise.Settings.WebServices.yml     <- EDIT: db, server names, server list
+  NekoNexus.WebServices\
+     NekoNexus.WebServices_x64.exe          <- web service (standalone, no install)
+     NekoNexus.Settings.WebServices.yml     <- EDIT: db, server names, server list
      wwwroot\                              <- game assets / images / updates
-  Paradise.Realtime\
-     bin\Paradise.Realtime.Host.exe        <- realtime game server (Comm + Game)
-     bin\Paradise.Realtime.yml             <- EDIT: player slots, server identity
+  NekoNexus.Realtime\
+     bin\NekoNexus.Realtime.Host.exe        <- realtime game server (Comm + Game)
+     bin\NekoNexus.Realtime.yml             <- EDIT: player slots, server identity
 
 --------------------------------------------------------------------------------
  STEP 1 — MySQL / MariaDB
@@ -28,49 +28,49 @@ WHAT'S IN HERE
 You need a MySQL or MariaDB database. Two easy options:
 
   A) Docker (one line):
-       docker run -d --name paradise-db -p 3306:3306 ^
-         -e MARIADB_DATABASE=paradise -e MARIADB_USER=paradise ^
-         -e MARIADB_PASSWORD=paradise -e MARIADB_ROOT_PASSWORD=paradise-root ^
+       docker run -d --name nekonexus-db -p 3306:3306 ^
+         -e MARIADB_DATABASE=nekonexus -e MARIADB_USER=nekonexus ^
+         -e MARIADB_PASSWORD=nekonexus -e MARIADB_ROOT_PASSWORD=nekonexus-root ^
          mariadb:11
 
-  B) Install MariaDB for Windows, create a database named "paradise".
+  B) Install MariaDB for Windows, create a database named "nekonexus".
 
 Then point the web service at it in:
-  Paradise.WebServices\Paradise.Settings.WebServices.yml  ->  DatabaseSettings:
+  NekoNexus.WebServices\NekoNexus.Settings.WebServices.yml  ->  DatabaseSettings:
        Server:   127.0.0.1      (or your DB host)
        Port:     3306
-       Username: paradise
-       Password: paradise
-       DatabaseName: paradise
+       Username: nekonexus
+       Password: nekonexus
+       DatabaseName: nekonexus
 
 --------------------------------------------------------------------------------
  STEP 2 — Name your server(s) / the server list
 --------------------------------------------------------------------------------
 The in-game server list comes from "ServerCredentials" in
-Paradise.Settings.WebServices.yml. Each pair (Comm = Type 2, Game = Type 3) is one
+NekoNexus.Settings.WebServices.yml. Each pair (Comm = Type 2, Game = Type 3) is one
 server. Change "Name" to whatever you want players to see:
 
   ServerCredentials:
     - Name: 'My Cool Server'        # <- shown to players
       Type: 2                       # 2 = Comm (lobby/chat)
       Id: '11111111-1111-1111-1111-111111111111'
-      Passphrase: 'paradise-comm-secret'
+      Passphrase: 'nekonexus-comm-secret'
     - Name: 'My Cool Server'
       Type: 3                       # 3 = Game (gameplay)
       Id: '22222222-2222-2222-2222-222222222222'
-      Passphrase: 'paradise-game-secret'
+      Passphrase: 'nekonexus-game-secret'
 
-The Id + Passphrase MUST match Paradise.Realtime\bin\Paradise.Realtime.yml
+The Id + Passphrase MUST match NekoNexus.Realtime\bin\NekoNexus.Realtime.yml
 (CommApplicationSettings / GameApplicationSettings). To run MORE servers, add more
 pairs here with fresh Ids + matching realtime instances.
 
 --------------------------------------------------------------------------------
  STEP 3 — Player slots (max players)
 --------------------------------------------------------------------------------
-Edit Paradise.Realtime\bin\Paradise.Realtime.yml:
+Edit NekoNexus.Realtime\bin\NekoNexus.Realtime.yml:
      GameApplicationSettings:
         MaxPlayerCount: 100     # <- change this
-You can also override per launch:  Paradise.Realtime.Host.exe Game --max-peers 64
+You can also override per launch:  NekoNexus.Realtime.Host.exe Game --max-peers 64
 There is NO licence / CCU cap — set whatever you want.
 
 --------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ There is NO licence / CCU cap — set whatever you want.
 The database starts empty and must be seeded once, or the web service will crash
 with "null is not an object". Do ONE of:
    * GUI: click "Initialize Database" in the Server Manager, or
-   * CLI: cd Paradise.WebServices  &&  Paradise.WebServices_x64.exe seed
+   * CLI: cd NekoNexus.WebServices  &&  NekoNexus.WebServices_x64.exe seed
 This creates the tables + default shop/maps/config. Run it again only if you want
 to reset to defaults (it wipes existing data).
 
@@ -90,14 +90,14 @@ Double-click start-server.bat (or "Start Server" in the GUI). Three windows open
 (Web Services, Comm, Game).
 
 If players connect from other PCs, set MasterHostname to your machine's LAN/public
-IP in Paradise.Realtime.yml, or launch with:
-     Paradise.Realtime.Host.exe Game --master-host YOUR.IP.ADDRESS
+IP in NekoNexus.Realtime.yml, or launch with:
+     NekoNexus.Realtime.Host.exe Game --master-host YOUR.IP.ADDRESS
 and make sure UDP 5055 + 5155 and TCP 8080/8081/8082 are open in your firewall.
 
 --------------------------------------------------------------------------------
  CLIENT
 --------------------------------------------------------------------------------
-Patch UberStrike with the client toolkit (Paradise-free-server-client.zip), then in
-the game open Paradise Settings -> Web Service URLs and point it at your server's
+Patch UberStrike with the client toolkit (NekoNexus-free-server-client.zip), then in
+the game open NekoNexus Settings -> Web Service URLs and point it at your server's
 http://YOUR.IP:8080  (that URL list is the server browser).
 ================================================================================

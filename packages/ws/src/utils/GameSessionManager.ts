@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { GameSession, type SteamMember, type UserAccount } from '@festivaldev/paradise-models';
+import { GameSession, type SteamMember, type UserAccount } from '@festivaldev/nekonexus-models';
 import type { PublicProfileView } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { Op } from 'sequelize';
 

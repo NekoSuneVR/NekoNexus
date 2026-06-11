@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Net;
 using LiteNetLib;
-using Paradise.Transport;
+using NekoNexus.Transport;
 using PhotonHostRuntimeInterfaces;
 // Disambiguate from LiteNetLib.DisconnectReason: in this namespace, "DisconnectReason"
-// always means Photon's (the one Paradise.Realtime overrides against).
+// always means Photon's (the one NekoNexus.Realtime overrides against).
 using DisconnectReason = PhotonHostRuntimeInterfaces.DisconnectReason;
 
 namespace Photon.SocketServer {
@@ -20,7 +20,7 @@ namespace Photon.SocketServer {
 		InvalidChannel = 6,
 	}
 
-	// Photon's SendParameters is a struct with several flags; Paradise only sets Unreliable
+	// Photon's SendParameters is a struct with several flags; NekoNexus only sets Unreliable
 	// (and occasionally ChannelId). The rest are accepted and ignored.
 	public struct SendParameters {
 		public bool Unreliable;
@@ -93,7 +93,7 @@ namespace Photon.SocketServer {
 		public int RoundTripTime => Transport != null ? Transport.Ping * 2 : 0;
 		public int RoundTripTimeVariance => 0;
 
-		// Photon's PeerBase is IDisposable; Paradise disposes peers to drop the connection.
+		// Photon's PeerBase is IDisposable; NekoNexus disposes peers to drop the connection.
 		public virtual void Dispose() {
 			DisconnectRequested = true;
 			Host?.Disconnect(this);
@@ -114,7 +114,7 @@ namespace Photon.SocketServer {
 			}
 		}
 
-		// Overridden by Paradise's BasePeer.
+		// Overridden by NekoNexus's BasePeer.
 		protected virtual void OnOperationRequest(OperationRequest operationRequest, SendParameters sendParameters) { }
 		protected virtual void OnDisconnect(DisconnectReason reasonCode, string reasonDetail) { }
 
@@ -143,7 +143,7 @@ namespace Photon.SocketServer {
 
 	// Replaces Photon's ApplicationBase. The host process calls RunHost() to bind the
 	// UDP listener and pump the LiteNetLib event loop; Setup()/CreatePeer()/TearDown()
-	// keep the exact protected-override shape Paradise's BaseRealtimeApplication expects.
+	// keep the exact protected-override shape NekoNexus's BaseRealtimeApplication expects.
 	public abstract class ApplicationBase {
 		public static ApplicationBase Instance { get; private set; }
 
@@ -156,7 +156,7 @@ namespace Photon.SocketServer {
 		protected internal abstract void TearDown();
 		protected internal abstract PeerBase CreatePeer(InitRequest initRequest);
 
-		// Entry point used by the launcher (Paradise.Realtime.Host).
+		// Entry point used by the launcher (NekoNexus.Realtime.Host).
 		public void RunHost(RealtimeHostOptions options) {
 			Instance = this;
 			BinaryPath = string.IsNullOrEmpty(options.BinaryPath) ? System.AppContext.BaseDirectory : options.BinaryPath;

@@ -1,4 +1,4 @@
-# Full Paradise stack: MySQL + Bun web services + free LiteNetLib realtime (Comm + Game).
+# Full NekoNexus stack: MySQL + Bun web services + free LiteNetLib realtime (Comm + Game).
 # No Photon SDK, no licence, no CCU cap. Multi-arch (amd64 + arm64) — see docker/README.md.
 #
 # Quick start (uses the prebuilt images published to GHCR — no source/build needed):
@@ -18,17 +18,17 @@
 #   8080 TCP (web), 8081 TCP (files), 5055 UDP (Comm), 5155 UDP (Game).
 #   8082 is realtime<->master only — internal to the compose network, NOT needed by clients.
 
-name: paradise
+name: nekonexus
 
 services:
   db:
     image: mariadb:11
     restart: unless-stopped
     environment:
-      MARIADB_DATABASE: paradise
-      MARIADB_USER: paradise
-      MARIADB_PASSWORD: paradise
-      MARIADB_ROOT_PASSWORD: paradise-root
+      MARIADB_DATABASE: nekonexus
+      MARIADB_USER: nekonexus
+      MARIADB_PASSWORD: nekonexus
+      MARIADB_ROOT_PASSWORD: nekonexus-root
     volumes:
       - db-data:/var/lib/mysql
     healthcheck:
@@ -42,7 +42,7 @@ services:
   #   PARADISE_PUBLIC_HOST=192.168.1.50 docker compose run --rm seed
   # It does NOT start with `docker compose up` (it's behind the "tools" profile).
   seed:
-    image: ghcr.io/nekosunevr/paradise-webservices:latest
+    image: ghcr.io/nekosunevr/nekonexus-webservices:latest
     profiles: ["tools"]
     depends_on:
       db:
@@ -51,11 +51,11 @@ services:
       # The address PLAYERS use to reach the realtime servers (goes into the server list).
       PARADISE_PUBLIC_HOST: ${PARADISE_PUBLIC_HOST:-127.0.0.1}
     volumes:
-      - ./docker/config/Paradise.Settings.WebServices.yml:/app/packages/ws/Paradise.Settings.WebServices.yml:ro
+      - ./docker/config/NekoNexus.Settings.WebServices.yml:/app/packages/ws/NekoNexus.Settings.WebServices.yml:ro
     command: ["bun", "src/index.ts", "seed"]
 
   webservices:
-    image: ghcr.io/nekosunevr/paradise-webservices:latest
+    image: ghcr.io/nekosunevr/nekonexus-webservices:latest
     pull_policy: always
     # build:
     #   context: .
@@ -71,15 +71,15 @@ services:
     environment:
       # Shared secret for the admin -> ws internal realtime-notify endpoint (System-mail
       # broadcasts refresh online inboxes instantly). MUST match the admin service's value below.
-      INTERNAL_API_KEY: "change-me-paradise-internal"
+      INTERNAL_API_KEY: "change-me-nekonexus-internal"
     volumes:
-      - ./docker/config/Paradise.Settings.WebServices.yml:/app/packages/ws/Paradise.Settings.WebServices.yml:ro
+      - ./docker/config/NekoNexus.Settings.WebServices.yml:/app/packages/ws/NekoNexus.Settings.WebServices.yml:ro
       # Client auto-updates: publish with misc/publish-update.ps1 (writes ./server-data/updates);
       # the file server serves them at /updates/v2/<channel>/. No image rebuild/restart needed.
       - ./server-data/updates:/app/packages/ws/wwwroot/updates:ro
 
   realtime-comm:
-    image: ghcr.io/nekosunevr/paradise-realtime:latest
+    image: ghcr.io/nekosunevr/nekonexus-realtime:latest
     pull_policy: always
     # build:
     #   context: .
@@ -94,7 +94,7 @@ services:
       - "5055:5055/udp"
 
   realtime-game:
-    image: ghcr.io/nekosunevr/paradise-realtime:latest
+    image: ghcr.io/nekosunevr/nekonexus-realtime:latest
     pull_policy: always
     # build:
     #   context: .
@@ -109,7 +109,7 @@ services:
   # Admin dashboard (server/player/store management). Open http://<host>:8088 — default
   # login admin/admin; change it on the Account page on first run.
   admin:
-    image: ghcr.io/nekosunevr/paradise-admin:latest
+    image: ghcr.io/nekosunevr/nekonexus-admin:latest
     pull_policy: always
     # build:
     #   context: .
@@ -123,14 +123,14 @@ services:
       # Share the stack's DB (same creds as the db service above).
       DB_HOST: db
       DB_PORT: "3306"
-      DB_USER: paradise
-      DB_PASS: paradise
-      DB_NAME: paradise
+      DB_USER: nekonexus
+      DB_PASS: nekonexus
+      DB_NAME: nekonexus
       # CHANGE THIS — keeps admin login tokens valid across restarts and unguessable.
-      ADMIN_JWT_SECRET: "change-me-paradise-admin"
+      ADMIN_JWT_SECRET: "change-me-nekonexus-admin"
       # Realtime System-mail broadcasts: must match webservices' INTERNAL_API_KEY above.
       # The web service is reached on the shared docker network as http://webservices:8080.
-      INTERNAL_API_KEY: "change-me-paradise-internal"
+      INTERNAL_API_KEY: "change-me-nekonexus-internal"
       WS_INTERNAL_URL: "http://webservices:8080"
       # Public site URL (used for Steam sign-in return + absolute links). Set to your real domain.
       PUBLIC_BASE_URL: "${PARADISE_SITE_URL:-http://localhost:8088}"

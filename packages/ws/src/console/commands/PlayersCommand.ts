@@ -16,12 +16,12 @@
  */
 
 import { getDividerText } from '@/utils';
-import { ActivePlayer, Clan, ClanMember, PublicProfile, SteamMember } from '@festivaldev/paradise-models';
+import { ActivePlayer, Clan, ClanMember, PublicProfile, SteamMember } from '@festivaldev/nekonexus-models';
 import { GroupPosition, MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { Op } from 'sequelize';
-import ParadiseCommand from '../ParadiseCommand';
+import NekoNexusCommand from '../NekoNexusCommand';
 
-export default class PlayersCommand extends ParadiseCommand {
+export default class PlayersCommand extends NekoNexusCommand {
   static override Command: string = 'players';
   static override Aliases: string[] = ['player', 'p'];
 

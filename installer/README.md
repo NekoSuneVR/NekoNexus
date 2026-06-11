@@ -1,7 +1,7 @@
-# ParadiseSetup.exe — one-click UberStrike patch installer
+# NekoNexusSetup.exe — one-click UberStrike patch installer
 
 A single native installer (Inno Setup) that auto-detects UberStrike from Steam and patches it
-to play on the Paradise free server (`paradise.nekosunevr.co.uk`). No `.cmd`, no PowerShell,
+to play on the NekoNexus free server (`nekonexus.nekosunevr.co.uk`). No `.cmd`, no PowerShell,
 no typing — the user just runs the EXE, clicks Next, done.
 
 If the machine is missing **.NET Framework 4.7.2+** (the patcher's dependency — Windows 10/11
@@ -14,12 +14,12 @@ step (with a progress bar), then continues. Only users who lack .NET pay that on
 winget install --id JRSoftware.InnoSetup -e
 # build (bundles the toolkit, then compiles)
 .\misc\build-installer.ps1
-# output: .release\installer\ParadiseSetup.exe
+# output: .release\installer\NekoNexusSetup.exe
 ```
 The prebuilt mod DLLs must exist first — run `packages\Client\make-client-patch.ps1` once against a
 real UberStrike install (it builds them), or build on the `patcher` branch which ships them.
 
-To re-target a different server, change `#define ServerHost` at the top of `paradise-setup.iss`.
+To re-target a different server, change `#define ServerHost` at the top of `nekonexus-setup.iss`.
 
 ## About antivirus / "virus safe"
 **The honest picture:** any tool that modifies another program's files (game patching) can trip
@@ -36,9 +36,9 @@ we deliberately avoid them).
 2. **Paid** — an OV/EV cert from Sectigo / DigiCert / SSL.com (~$100–400/yr). An **EV** cert gives
    instant SmartScreen reputation.
 
-Once you have a cert, uncomment `SignTool=signtool` in `paradise-setup.iss` and register the tool:
+Once you have a cert, uncomment `SignTool=signtool` in `nekonexus-setup.iss` and register the tool:
 ```
-"C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /Ssigntool="signtool.exe sign /f mycert.pfx /p PWD /tr http://timestamp.digicert.com /td sha256 /fd sha256 $f" installer\paradise-setup.iss
+"C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /Ssigntool="signtool.exe sign /f mycert.pfx /p PWD /tr http://timestamp.digicert.com /td sha256 /fd sha256 $f" installer\nekonexus-setup.iss
 ```
 
 **Until signed:** users click *More info → Run anyway* on the SmartScreen prompt. If a specific AV

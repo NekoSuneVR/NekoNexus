@@ -32,7 +32,7 @@ import {
   ShopQuickItem,
   ShopWeaponItem,
   UserAccount,
-} from '@festivaldev/paradise-models';
+} from '@festivaldev/nekonexus-models';
 import {
   BundleCategoryType,
   BundleView,

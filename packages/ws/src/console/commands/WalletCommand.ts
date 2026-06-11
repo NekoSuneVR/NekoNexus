@@ -16,11 +16,11 @@
  */
 
 import { getDividerText } from '@/utils';
-import { MemberWallet, PublicProfile } from '@festivaldev/paradise-models';
+import { MemberWallet, PublicProfile } from '@festivaldev/nekonexus-models';
 import { MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
-import ParadiseCommand from '../ParadiseCommand';
+import NekoNexusCommand from '../NekoNexusCommand';
 
-export default class WalletCommand extends ParadiseCommand {
+export default class WalletCommand extends NekoNexusCommand {
   static override Command: string = 'wallet';
   static override Aliases: string[] = [];
 

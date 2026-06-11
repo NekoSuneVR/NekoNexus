@@ -50,13 +50,13 @@ const logger = winston.createLogger({
       ),
     }),
     new DailyRotateFile({
-      filename: 'Paradise.WebServices-%DATE%.log',
+      filename: 'NekoNexus.WebServices-%DATE%.log',
       datePattern: 'YYYY-MM-DD',
       maxSize: '512k',
       maxFiles: '10d',
       dirname: 'logs',
       createSymlink: true,
-      symlinkName: 'Paradise.WebServices.log',
+      symlinkName: 'NekoNexus.WebServices.log',
       options: {
         flags: 'w',
       },

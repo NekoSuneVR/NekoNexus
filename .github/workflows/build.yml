@@ -1,4 +1,4 @@
-name: Build Paradise (server exes, client patch, docker images)
+name: Build NekoNexus (server exes, client patch, docker images)
 
 on:
   workflow_dispatch:
@@ -38,7 +38,7 @@ jobs:
 
       - name: Prepare release output dirs
         shell: pwsh
-        run: New-Item -ItemType Directory -Force -Path ".release/server/_pak/Paradise.WebServices", ".release/server/_pak/Paradise.Admin", ".release/server/_pak/Paradise.Realtime/bin" | Out-Null
+        run: New-Item -ItemType Directory -Force -Path ".release/server/_pak/NekoNexus.WebServices", ".release/server/_pak/NekoNexus.Admin", ".release/server/_pak/NekoNexus.Realtime/bin" | Out-Null
 
       # Separate steps so a failure points at the exact build that broke.
       - name: Build free shims
@@ -61,8 +61,8 @@ jobs:
         shell: pwsh
         run: |
           $req = @(
-            ".release/server/_pak/Paradise.WebServices/Paradise.WebServices_x64.exe",
-            ".release/server/_pak/Paradise.Realtime/bin/Paradise.Realtime.Host.exe",
+            ".release/server/_pak/NekoNexus.WebServices/NekoNexus.WebServices_x64.exe",
+            ".release/server/_pak/NekoNexus.Realtime/bin/NekoNexus.Realtime.Host.exe",
             "packages/Patcher/bin/Release/UniversalUnityPatcher.exe"
           )
           $missing = $req | Where-Object { -not (Test-Path $_) }
@@ -77,12 +77,12 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: paradise-server-win-x64
-          path: .release/server/Paradise-server-win-x64.zip
+          name: nekonexus-server-win-x64
+          path: .release/server/NekoNexus-server-win-x64.zip
       - uses: actions/upload-artifact@v4
         with:
-          name: paradise-client-patch
-          path: .release/client/Paradise-free-server-client.zip
+          name: nekonexus-client-patch
+          path: .release/client/NekoNexus-free-server-client.zip
 
   # ----------------------------------------------------------- Cross-platform WS
   # Standalone Web Services + Admin exes for Linux + macOS (amd64/arm64) via Bun.
@@ -95,7 +95,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install
       - name: Prepare release output dirs
-        run: mkdir -p .release/server/_pak/Paradise.WebServices .release/server/_pak/Paradise.Admin
+        run: mkdir -p .release/server/_pak/NekoNexus.WebServices .release/server/_pak/NekoNexus.Admin
       - name: Build Web Services (linux + darwin, amd64 + arm64)
         working-directory: packages/ws
         run: |
@@ -110,10 +110,10 @@ jobs:
           bun run build:linux-arm64
       - uses: actions/upload-artifact@v4
         with:
-          name: paradise-webservices-unix
+          name: nekonexus-webservices-unix
           path: |
-            .release/server/_pak/Paradise.WebServices/paradise-*
-            .release/server/_pak/Paradise.Admin/paradise-*
+            .release/server/_pak/NekoNexus.WebServices/nekonexus-*
+            .release/server/_pak/NekoNexus.Admin/nekonexus-*
 
   # ----------------------------------------------------------------- Docker
   # Multi-arch (amd64 + arm64) images pushed to GHCR. GHCR requires lowercase names.

@@ -48,7 +48,7 @@
 	},
 	{
 		"DisplayName": "Aqualab Research Hub",
-		"Description": "A small research lab located under the waters of Lost Paradise. Conveniently shaped like a square, players just need to make a detour to reach the enemies' base, so don't let the game result in a deadly ring-round-the-rosie face-off.",
+		"Description": "A small research lab located under the waters of Lost NekoNexus. Conveniently shaped like a square, players just need to make a detour to reach the enemies' base, so don't let the game result in a deadly ring-round-the-rosie face-off.",
 		"SceneName": {
 			"default": "AqualabResearchHub"
 		},
@@ -417,8 +417,8 @@
 		}
 	},
 	{
-		"DisplayName": "Lost Paradise 2",
-		"Description": "A group of islands just off the coast of Costa Rica, the Paradise Islands are a great hunting ground for privateers with a keen eye for sniping. Two towering volcanic pillars provide the perfect lookout for those able to make it there in one piece.",
+		"DisplayName": "Lost NekoNexus 2",
+		"Description": "A group of islands just off the coast of Costa Rica, the NekoNexus Islands are a great hunting ground for privateers with a keen eye for sniping. Two towering volcanic pillars provide the perfect lookout for those able to make it there in one piece.",
 		"SceneName": {
 			"default": "LostParadise2"
 		},

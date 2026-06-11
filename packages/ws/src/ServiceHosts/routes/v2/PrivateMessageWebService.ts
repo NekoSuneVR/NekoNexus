@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import ParadiseService from '@/ParadiseService';
+import NekoNexusService from '@/NekoNexusService';
 import { RealtimeNotify } from '@/utils/RealtimeNotify';
 import { ApiVersion } from '@/utils/enums';
-import { PrivateMessage, PublicProfile } from '@festivaldev/paradise-models';
+import { PrivateMessage, PublicProfile } from '@festivaldev/nekonexus-models';
 import { MessageThreadView, PrivateMessageView } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
   BooleanProxy,
@@ -52,7 +52,7 @@ export default class PrivateMessageWebService extends BaseWebService {
 
       this.debugEndpoint('DeleteThread', authToken, otherCmid);
 
-      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
+      const session = await NekoNexusService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -106,7 +106,7 @@ export default class PrivateMessageWebService extends BaseWebService {
 
       this.debugEndpoint('GetAllMessageThreadsForUser', authToken, pageNumber);
 
-      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
+      const session = await NekoNexusService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -196,7 +196,7 @@ export default class PrivateMessageWebService extends BaseWebService {
 
       this.debugEndpoint('GetMessageWithIdForCmid', authToken, messageId);
 
-      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
+      const session = await NekoNexusService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -249,7 +249,7 @@ export default class PrivateMessageWebService extends BaseWebService {
 
       this.debugEndpoint('GetThreadMessages', authToken, otherCmid, pageNumber);
 
-      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
+      const session = await NekoNexusService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -301,7 +301,7 @@ export default class PrivateMessageWebService extends BaseWebService {
 
       this.debugEndpoint('MarkThreadAsRead', authToken, otherCmid);
 
-      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
+      const session = await NekoNexusService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -345,7 +345,7 @@ export default class PrivateMessageWebService extends BaseWebService {
 
       this.debugEndpoint('SendMessage', authToken, receiverCmid, content);
 
-      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
+      const session = await NekoNexusService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 

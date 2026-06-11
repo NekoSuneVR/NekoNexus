@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import ParadiseService from '@/ParadiseService';
+import NekoNexusService from '@/NekoNexusService';
 import { XpPointsUtil } from '@/utils';
 import { ApiVersion } from '@/utils/enums';
 import {
@@ -32,7 +32,7 @@ import {
   ShopItemPrice,
   ShopQuickItem,
   ShopWeaponItem,
-} from '@festivaldev/paradise-models';
+} from '@festivaldev/nekonexus-models';
 import {
   BundleCategoryType,
   BundleView,
@@ -114,7 +114,7 @@ export default class ShopWebService extends BaseWebService {
 
       this.debugEndpoint('BuyBundleSteam', bundleId, steamId, authToken);
 
-      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
+      const session = await NekoNexusService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -243,7 +243,7 @@ export default class ShopWebService extends BaseWebService {
         recommendationType,
       );
 
-      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
+      const session = await NekoNexusService.Instance.SessionManager.findSessionForSteamUser(authToken);
 
       if (session) {
         const steamMember = await session.SteamMember;

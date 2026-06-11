@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Paradise Admin</title>
+  <title>NekoNexus Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -24,7 +24,7 @@
     <div class="glass w-full max-w-sm rounded-2xl border border-slate-800 p-8 shadow-2xl">
       <div class="flex items-center gap-3 mb-6">
         <div class="h-10 w-10 rounded-xl bg-brand-500 grid place-items-center text-slate-900 font-black">P</div>
-        <div><div class="text-lg font-bold">Paradise Admin</div><div class="text-xs text-slate-400">Server control panel</div></div>
+        <div><div class="text-lg font-bold">NekoNexus Admin</div><div class="text-xs text-slate-400">Server control panel</div></div>
       </div>
       <form id="loginForm" class="space-y-4">
         <div>
@@ -37,7 +37,7 @@
         </div>
         <div id="loginErr" class="text-sm text-red-400 hidden"></div>
         <button class="w-full rounded-lg bg-brand-600 hover:bg-brand-500 text-slate-900 font-semibold py-2 transition">Sign in</button>
-        <p class="text-[11px] text-slate-500 text-center">Paradise server administration</p>
+        <p class="text-[11px] text-slate-500 text-center">NekoNexus server administration</p>
       </form>
     </div>
   </div>
@@ -47,7 +47,7 @@
     <aside class="glass border-r border-slate-800 p-4 md:min-h-screen">
       <div class="flex items-center gap-3 mb-8 px-2">
         <div class="h-9 w-9 rounded-xl bg-brand-500 grid place-items-center text-slate-900 font-black">P</div>
-        <div class="font-bold">Paradise</div>
+        <div class="font-bold">NekoNexus</div>
       </div>
       <nav class="space-y-1">
         <button data-page="dashboard" class="nav w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800/70 flex items-center gap-2">▦ Dashboard</button>
@@ -68,7 +68,7 @@
       <!-- DASHBOARD -->
       <section data-view="dashboard">
         <h1 class="text-2xl font-bold mb-1">Dashboard</h1>
-        <p class="text-slate-400 text-sm mb-6">Overview of your Paradise server.</p>
+        <p class="text-slate-400 text-sm mb-6">Overview of your NekoNexus server.</p>
         <div id="stats" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
       </section>
 
@@ -152,7 +152,7 @@
         <form id="mailForm" class="glass rounded-xl border border-slate-800 p-6 space-y-4">
           <div>
             <label class="text-xs text-slate-400">Message</label>
-            <textarea id="mailBody" rows="5" maxlength="500" placeholder="e.g. Welcome to Paradise! Maintenance tonight at 9pm UTC." class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 focus:border-brand-500 outline-none"></textarea>
+            <textarea id="mailBody" rows="5" maxlength="500" placeholder="e.g. Welcome to NekoNexus! Maintenance tonight at 9pm UTC." class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 focus:border-brand-500 outline-none"></textarea>
           </div>
           <div id="mailMsg" class="text-sm hidden"></div>
           <button class="rounded-lg bg-brand-600 hover:bg-brand-500 text-slate-900 font-semibold px-4 py-2 transition">Send to all players</button>
@@ -233,7 +233,7 @@
 
   <script>
     const api = async (path, opts = {}) => {
-      const token = localStorage.getItem('paradise_admin_token');
+      const token = localStorage.getItem('nekonexus_admin_token');
       const res = await fetch(path, { ...opts, headers: { 'content-type': 'application/json', ...(token ? { authorization: 'Bearer ' + token } : {}), ...(opts.headers||{}) } });
       if (res.status === 401 && !path.endsWith('/login')) { logout(); throw new Error('Session expired'); }
       const data = await res.json().catch(() => ({}));
@@ -243,7 +243,7 @@
     const $ = (s) => document.querySelector(s);
     const show = (id) => { $('#login').classList.toggle('hidden', id !== 'login'); $('#app').classList.toggle('hidden', id === 'login'); };
 
-    function logout() { localStorage.removeItem('paradise_admin_token'); show('login'); }
+    function logout() { localStorage.removeItem('nekonexus_admin_token'); show('login'); }
     $('#logout').onclick = logout;
 
     // ---- login ----
@@ -251,7 +251,7 @@
       e.preventDefault();
       try {
         const d = await api('/api/login', { method: 'POST', body: JSON.stringify({ username: $('#lUser').value, password: $('#lPass').value }) });
-        localStorage.setItem('paradise_admin_token', d.token);
+        localStorage.setItem('nekonexus_admin_token', d.token);
         $('#aUser').value = d.username;
         enter();
         if (d.mustChangeCredentials) promptChangeCreds();
@@ -484,7 +484,7 @@
       const msg = $('#accMsg');
       try {
         const d = await api('/api/account', { method: 'POST', body: JSON.stringify({ username: $('#aUser').value, currentPassword: $('#aCur').value, newPassword: $('#aNew').value || undefined }) });
-        if (d.token) localStorage.setItem('paradise_admin_token', d.token);
+        if (d.token) localStorage.setItem('nekonexus_admin_token', d.token);
         $('#aCur').value = ''; $('#aNew').value = '';
         $('#credWarn')?.classList.add('hidden');
         msg.textContent = 'Saved.'; msg.className = 'text-sm text-brand-400';
@@ -507,7 +507,7 @@
     };
 
     // boot
-    if (localStorage.getItem('paradise_admin_token')) {
+    if (localStorage.getItem('nekonexus_admin_token')) {
       api('/api/me').then(d => { $('#aUser').value = d.username; enter(); }).catch(logout);
     } else show('login');
   </script>

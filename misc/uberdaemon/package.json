@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "build:win-x86": "GOOS=windows GOARCH=386 go build -o ../../.release/client/_pak/uberdaemon_paradise.exe src/uberdaemon.go",
-    "build:darwin-x86": "GOOS=darwin GOARCH=386 go build -o ../../.release/client/_pak/uberdaemon_paradise src/uberdaemon.go && cp ./uberdaemon_paradise.sh ../../.release/client/_pak/"
+    "build:win-x86": "GOOS=windows GOARCH=386 go build -o ../../.release/client/_pak/uberdaemon_nekonexus.exe src/uberdaemon.go",
+    "build:darwin-x86": "GOOS=darwin GOARCH=386 go build -o ../../.release/client/_pak/uberdaemon_nekonexus src/uberdaemon.go && cp ./uberdaemon_nekonexus.sh ../../.release/client/_pak/"
   }
 }

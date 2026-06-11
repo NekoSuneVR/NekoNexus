@@ -16,9 +16,9 @@
  */
 
 import { MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
-import ParadiseCommand from '../ParadiseCommand';
+import NekoNexusCommand from '../NekoNexusCommand';
 
-export default class RoomsCommand extends ParadiseCommand {
+export default class RoomsCommand extends NekoNexusCommand {
   static override Command: string = 'rooms';
   static override Aliases: string[] = ['room'];
 

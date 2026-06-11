@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import ParadiseService from '@/ParadiseService';
+import NekoNexusService from '@/NekoNexusService';
 import { Log } from '@/utils';
 import { ArrayProxy, ByteProxy, EnumProxy, Int32Proxy } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import type { Server } from 'bun';
@@ -55,7 +55,7 @@ export default class WebSocketHost extends EventEmitter {
     this.port = port;
 
     this.socket = Bun.serve<{ socketId: string }>({
-      hostname: ParadiseService.Instance.ServiceSettings.Hostname ?? '0.0.0.0',
+      hostname: NekoNexusService.Instance.ServiceSettings.Hostname ?? '0.0.0.0',
       port: this.port,
       fetch: (req, server) =>
         server.upgrade(req, {
@@ -133,7 +133,7 @@ export default class WebSocketHost extends EventEmitter {
                   socketClient.Info = clientInfo;
                   socketClient.Info.IsClient = true;
 
-                  const passphrase = ParadiseService.Instance.ServiceSettings.ServerCredentials.find(
+                  const passphrase = NekoNexusService.Instance.ServiceSettings.ServerCredentials.find(
                     (_) => _.Id.toLowerCase() === socketClient.Identifier.toLowerCase(),
                   )?.Passphrase.trim();
 

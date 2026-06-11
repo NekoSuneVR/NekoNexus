@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { PublicProfile } from '@festivaldev/paradise-models';
+import { PublicProfile } from '@festivaldev/nekonexus-models';
 import { MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
-import ParadiseCommand from '../ParadiseCommand';
+import NekoNexusCommand from '../NekoNexusCommand';
 
-export class DeopCommand extends ParadiseCommand {
+export class DeopCommand extends NekoNexusCommand {
   static override Command: string = 'deop';
   static override Aliases: string[] = [];
 
@@ -64,7 +64,7 @@ export class DeopCommand extends ParadiseCommand {
   }
 }
 
-export class OpCommand extends ParadiseCommand {
+export class OpCommand extends NekoNexusCommand {
   static override Command: string = 'op';
   static override Aliases: string[] = [];
 

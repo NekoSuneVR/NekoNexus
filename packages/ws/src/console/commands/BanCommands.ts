@@ -15,15 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import ParadiseService from '@/ParadiseService';
+import NekoNexusService from '@/NekoNexusService';
 import { WebSocketPacketType } from '@/ServiceHosts/WebSocket';
-import { ModerationAction, PublicProfile } from '@festivaldev/paradise-models';
+import { ModerationAction, PublicProfile } from '@festivaldev/nekonexus-models';
 import { MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import moment from 'moment';
 import { Op } from 'sequelize';
-import ParadiseCommand from '../ParadiseCommand';
+import NekoNexusCommand from '../NekoNexusCommand';
 
-export class BanCommand extends ParadiseCommand {
+export class BanCommand extends NekoNexusCommand {
   static override Command: string = 'ban';
   static override Aliases: string[] = [];
 
@@ -90,7 +90,7 @@ export class BanCommand extends ParadiseCommand {
       Reason: reason,
     });
 
-    await ParadiseService.Instance.SocketHost.SendToCommServer(WebSocketPacketType.BanPlayer, {
+    await NekoNexusService.Instance.SocketHost.SendToCommServer(WebSocketPacketType.BanPlayer, {
       TargetCmid: publicProfile.Cmid,
       Duration: duration,
       ExpireTime: duration > 0 ? moment(new Date()).add(duration, 'minutes') : undefined,
@@ -105,7 +105,7 @@ export class BanCommand extends ParadiseCommand {
   }
 }
 
-export class UnbanCommand extends ParadiseCommand {
+export class UnbanCommand extends NekoNexusCommand {
   static override Command: string = 'unban';
   static override Aliases: string[] = [];
 

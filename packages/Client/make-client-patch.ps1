@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
-  Patches an UberStrike install to run Paradise on the FREE LiteNetLib server
-  (no Photon SDK). Builds the Paradise client mod against YOUR copy of UberStrike,
+  Patches an UberStrike install to run NekoNexus on the FREE LiteNetLib server
+  (no Photon SDK). Builds the NekoNexus client mod against YOUR copy of UberStrike,
   injects the bootstrap with UniversalUnityPatcher, installs our free Photon3Unity3D
   transport shim, and writes a settings file pointing at your server.
 
@@ -31,13 +31,13 @@ $ErrorActionPreference = "Stop"
 function Step($m) { Write-Host "==> $m" -ForegroundColor Cyan }
 function Need($p, $what) { if (-not (Test-Path $p)) { throw "$what not found: $p" } }
 
-# Find the repo (the folder containing Paradise.sln) by walking up from the script and the
+# Find the repo (the folder containing NekoNexus.sln) by walking up from the script and the
 # current directory. Works whether the script is run from packages/Client OR the packaged
 # .release/client/... copy. Override with -RepoRoot if needed.
 function Find-RepoRoot([string]$start) {
   $dir = $start
   while ($dir) {
-    if (Test-Path (Join-Path $dir "Paradise.sln")) { return $dir }
+    if (Test-Path (Join-Path $dir "NekoNexus.sln")) { return $dir }
     $parent = Split-Path $dir -Parent
     if (-not $parent -or $parent -eq $dir) { return $null }
     $dir = $parent
@@ -47,7 +47,7 @@ function Find-RepoRoot([string]$start) {
 if (-not $RepoRoot) { $RepoRoot = Find-RepoRoot $PSScriptRoot }
 if (-not $RepoRoot) { $RepoRoot = Find-RepoRoot (Get-Location).Path }
 if (-not $RepoRoot) {
-  throw "Could not find the Paradise repo (Paradise.sln). Building the client mod needs a repo checkout. Pass -RepoRoot <path-to-Paradise>."
+  throw "Could not find the NekoNexus repo (NekoNexus.sln). Building the client mod needs a repo checkout. Pass -RepoRoot <path-to-NekoNexus>."
 }
 $RepoRoot = (Resolve-Path $RepoRoot).Path
 Write-Host "    repo: $RepoRoot"
@@ -59,7 +59,7 @@ $RefDir  = Join-Path $RepoRoot "packages\AssemblyReferences\4.7.1"
 # Prefer repo-built tools; fall back to copies sitting next to this script (the bundle).
 function Pick($a, $b) { if (Test-Path $a) { return $a } else { return $b } }
 $PatcherExe = Pick (Join-Path $RepoRoot "packages\Patcher\bin\Release\UniversalUnityPatcher.exe") (Join-Path $PSScriptRoot "patcher\UniversalUnityPatcher.exe")
-$PatchXml   = Pick (Join-Path $RepoRoot "packages\Client\Paradise.Patch.xml") (Join-Path $PSScriptRoot "Paradise.Patch.xml")
+$PatchXml   = Pick (Join-Path $RepoRoot "packages\Client\NekoNexus.Patch.xml") (Join-Path $PSScriptRoot "NekoNexus.Patch.xml")
 
 Need $Managed "UberStrike Managed folder"
 Need (Join-Path $Managed "Assembly-CSharp.dll") "Assembly-CSharp.dll (is this an UberStrike install?)"
@@ -87,24 +87,24 @@ $ShimDll = Pick (Join-Path $RepoRoot "packages\Core\AssemblyReferences\Photon3Un
 Need $ShimDll "Photon3Unity3D shim (build shims/Photon3Unity3D.Shim, or use the bundled copy)"
 Copy-Item $ShimDll (Join-Path $RefDir "Photon3Unity3D.dll") -Force
 
-# 3) Build the Paradise client mod (against your game assemblies + our shim).
+# 3) Build the NekoNexus client mod (against your game assemblies + our shim).
 if (-not $SkipBuild) {
-  Step "Building Paradise client mod"
-  dotnet build (Join-Path $RepoRoot "packages\Client\Current\Paradise.Client.Bootstrap\Paradise.Client.Bootstrap.csproj") -c Release | Out-Null
+  Step "Building NekoNexus client mod"
+  dotnet build (Join-Path $RepoRoot "packages\Client\Current\NekoNexus.Client.Bootstrap\NekoNexus.Client.Bootstrap.csproj") -c Release | Out-Null
 }
 # The mod projects emit straight into the client payload folder (custom OutputPath).
 $BootstrapBin = Join-Path $RepoRoot ".release\client\_pak\UberStrike_Data\Managed"
-if (-not (Test-Path (Join-Path $BootstrapBin "Paradise.Client.Bootstrap.dll"))) {
+if (-not (Test-Path (Join-Path $BootstrapBin "NekoNexus.Client.Bootstrap.dll"))) {
   throw "Built mod DLLs not found in $BootstrapBin. Build may have failed; re-run without -SkipBuild."
 }
 
-# 4) Install the Paradise runtime + our free transport into the game FIRST. The patch injects a
-#    Call into Paradise.Client.Bootstrap, so that DLL must already be in Managed for the patcher
+# 4) Install the NekoNexus runtime + our free transport into the game FIRST. The patch injects a
+#    Call into NekoNexus.Client.Bootstrap, so that DLL must already be in Managed for the patcher
 #    to resolve it - otherwise the patch fails (exit 1, stops at "patch method Awake").
-Step "Installing Paradise runtime + free transport into the game"
+Step "Installing NekoNexus runtime + free transport into the game"
 $installs = @(
-  (Join-Path $BootstrapBin "Paradise.Client.Bootstrap.dll"),
-  (Join-Path $BootstrapBin "Paradise.Client.dll"),
+  (Join-Path $BootstrapBin "NekoNexus.Client.Bootstrap.dll"),
+  (Join-Path $BootstrapBin "NekoNexus.Client.dll"),
   (Join-Path $BootstrapBin "0Harmony.dll"),
   (Join-Path $BootstrapBin "log4net.dll"),
   (Join-Path $BootstrapBin "YamlDotNet.dll")
@@ -141,13 +141,13 @@ if (-not $NoPatch) {
 #    -Https: one HTTPS domain (no ports). Otherwise http://host:port.
 if ($Https) { $webBase = "https://$ServerHost"; $fileBase = "https://$ServerHost" }
 else        { $webBase = "http://${ServerHost}:${WebPort}"; $fileBase = "http://${ServerHost}:${FilePort}" }
-Step "Writing Paradise.Settings.Client.xml -> $webBase"
-$tpl = Get-Content (Join-Path $PSScriptRoot "Paradise.Settings.Client.template.xml") -Raw
+Step "Writing NekoNexus.Settings.Client.xml -> $webBase"
+$tpl = Get-Content (Join-Path $PSScriptRoot "NekoNexus.Settings.Client.template.xml") -Raw
 $tpl = $tpl -replace 'http://SERVER_HOST:8080/2\.0/', "$webBase/2.0/" `
             -replace 'http://SERVER_HOST:8081/images/', "$fileBase/images/" `
             -replace 'http://SERVER_HOST:8081/updates/', "$fileBase/updates/"
-Set-Content -Path (Join-Path $DataDir "Paradise.Settings.Client.xml") -Value $tpl -Encoding UTF8
+Set-Content -Path (Join-Path $DataDir "NekoNexus.Settings.Client.xml") -Value $tpl -Encoding UTF8
 
 Write-Host ""
-Write-Host "Done. UberStrike is patched for the free Paradise server at $webBase." -ForegroundColor Green
-Write-Host "Launch the game; add or switch servers anytime in Paradise Settings -> Web Service URLs."
+Write-Host "Done. UberStrike is patched for the free NekoNexus server at $webBase." -ForegroundColor Green
+Write-Host "Launch the game; add or switch servers anytime in NekoNexus Settings -> Web Service URLs."

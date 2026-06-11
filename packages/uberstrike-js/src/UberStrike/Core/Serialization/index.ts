@@ -83,7 +83,7 @@ export { default as MessageThreadViewProxy } from './MessageThreadViewProxy';
 export { default as MysteryBoxUnityViewProxy } from './MysteryBoxUnityViewProxy';
 export { default as MysteryBoxWonItemViewProxy } from './MysteryBoxWonItemViewProxy';
 export { default as PackageViewProxy } from './PackageViewProxy';
-export { default as ParadiseMapViewProxy } from './ParadiseMapViewProxy';
+export { default as NekoNexusMapViewProxy } from './NekoNexusMapViewProxy';
 export { default as PhotonServerLoadProxy } from './PhotonServerLoadProxy';
 export { default as PhotonViewProxy } from './PhotonViewProxy';
 export { default as PlayerCardViewProxy } from './PlayerCardViewProxy';

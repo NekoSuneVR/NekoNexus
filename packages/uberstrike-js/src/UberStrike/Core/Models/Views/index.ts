@@ -5,7 +5,7 @@ export { default as ItemPrice } from './ItemPrice';
 export { default as MapSettings } from './MapSettings';
 export { default as MapView } from './MapView';
 export { default as MatchPointsView } from './MatchPointsView';
-export { default as ParadiseMapView } from './ParadiseMapView';
+export { default as NekoNexusMapView } from './NekoNexusMapView';
 export { default as UberStrikeItemFunctionalView } from './UberStrikeItemFunctionalView';
 export { default as UberStrikeItemGearView } from './UberStrikeItemGearView';
 export { default as UberStrikeItemQuickView } from './UberStrikeItemQuickView';

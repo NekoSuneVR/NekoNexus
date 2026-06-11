@@ -1,4 +1,4 @@
-import ParadiseService from '@/ParadiseService';
+import NekoNexusService from '@/NekoNexusService';
 import { ProfanityFilter } from '@/ProfanityFilter';
 import { Log } from '@/utils';
 import { ApiVersion, ModerationFlag, UberstrikeInventoryItem } from '@/utils/enums';
@@ -14,7 +14,7 @@ import {
   PlayerStatistics,
   PublicProfile,
   SteamMember,
-} from '@festivaldev/paradise-models';
+} from '@festivaldev/nekonexus-models';
 import {
   AccountCompletionResult,
   BuyingDurationType,
@@ -376,7 +376,7 @@ export default class AuthenticationWebService extends BaseWebService {
           WeaponStatistics: new PlayerWeaponStatisticsView(),
         });
 
-        const session = await ParadiseService.Instance.SessionManager.findOrCreateSessionForSteamUser(
+        const session = await NekoNexusService.Instance.SessionManager.findOrCreateSessionForSteamUser(
           publicProfile as PublicProfileView,
           machineId,
           steamMember,
@@ -428,7 +428,7 @@ export default class AuthenticationWebService extends BaseWebService {
             const memberWallet = await MemberWallet.findOne({ where: { Cmid: steamMember.Cmid } });
             const playerStatistics = await PlayerStatistics.findOne({ where: { Cmid: steamMember.Cmid } });
 
-            const session = await ParadiseService.Instance.SessionManager.findOrCreateSessionForSteamUser(
+            const session = await NekoNexusService.Instance.SessionManager.findOrCreateSessionForSteamUser(
               publicProfile as PublicProfileView,
               machineId,
               steamMember,
@@ -510,7 +510,7 @@ export default class AuthenticationWebService extends BaseWebService {
 
       this.debugEndpoint('VerifyAuthToken', authToken);
 
-      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
+      const session = await NekoNexusService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (!session) {
         MemberAuthenticationResultViewProxy.Serialize(
           outputStream,

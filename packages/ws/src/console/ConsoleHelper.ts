@@ -19,7 +19,7 @@ import packageJson from '../../package.json';
 
 export default class ConsoleHelper {
   static PrintConsoleHeader(): void {
-    console.log(`Paradise Web Services [Version ${packageJson.version}]`);
+    console.log(`NekoNexus Web Services [Version ${packageJson.version}]`);
     console.log(`(c) 2017, 2022-${new Date().getFullYear()} Team FESTIVAL. All rights reserved.`);
     console.log(`Made with \u2665 using Bun ${Bun.version}.\n`);
   }

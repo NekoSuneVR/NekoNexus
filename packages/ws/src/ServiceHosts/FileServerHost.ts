@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import ParadiseService from '@/ParadiseService';
+import NekoNexusService from '@/NekoNexusService';
 import { Log } from '@/utils';
 import express, { type Express } from 'express';
 import * as http from 'http';
@@ -63,7 +63,7 @@ export default class FileServerHost {
     return new Promise((resolve, reject) => {
       this.listener = this.expressApp.listen(
         this.port,
-        ParadiseService.Instance.ServiceSettings.Hostname ?? '0.0.0.0',
+        NekoNexusService.Instance.ServiceSettings.Hostname ?? '0.0.0.0',
         () => {
           const address: AddressInfo = this.listener?.address() as AddressInfo;
           Log.info(`HTTP server listening on ${address.address}:${address.port}.`);

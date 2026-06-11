@@ -1,13 +1,13 @@
-# Launches the free Paradise realtime server on Windows: one process for Comm, one for Game.
+# Launches the free NekoNexus realtime server on Windows: one process for Comm, one for Game.
 # Usage: .\run-server.ps1 [-BinDir <dir>] [-MaxPeers <N>]
 param(
     [string]$BinDir = $PSScriptRoot,
     [int]$MaxPeers = 0
 )
 
-$host_exe = Join-Path $BinDir "Paradise.Realtime.Host.exe"
+$host_exe = Join-Path $BinDir "NekoNexus.Realtime.Host.exe"
 if (-not (Test-Path $host_exe)) {
-    Write-Error "Paradise.Realtime.Host.exe not found in $BinDir. Build it first or pass -BinDir."
+    Write-Error "NekoNexus.Realtime.Host.exe not found in $BinDir. Build it first or pass -BinDir."
     exit 1
 }
 

@@ -16,7 +16,7 @@ RUN dotnet build shims/UnityEngine.Shim/UnityEngine.Shim.csproj -c Release \
  && dotnet build shims/PhotonHostRuntimeInterfaces.Shim/PhotonHostRuntimeInterfaces.Shim.csproj -c Release \
  && dotnet build shims/Photon.SocketServer.Shim/Photon.SocketServer.Shim.csproj -c Release \
  && dotnet build shims/Photon3Unity3D.Shim/Photon3Unity3D.Shim.csproj -c Release \
- && dotnet build packages/Realtime/Paradise.Realtime.Host/Paradise.Realtime.Host.csproj -c Release
+ && dotnet build packages/Realtime/NekoNexus.Realtime.Host/NekoNexus.Realtime.Host.csproj -c Release
 
 # ---- runtime stage ------------------------------------------------------------
 # debian:12-slim + mono-complete is multi-arch (amd64 + arm64) and runs the net481
@@ -27,11 +27,11 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY --from=build /src/.release/server/_pak/Paradise.Realtime/bin/   ./bin/
-COPY --from=build /src/.release/server/_pak/Paradise.Realtime/photon/ ./photon/
+COPY --from=build /src/.release/server/_pak/NekoNexus.Realtime/bin/   ./bin/
+COPY --from=build /src/.release/server/_pak/NekoNexus.Realtime/photon/ ./photon/
 
 WORKDIR /app/bin
 # UDP: Comm 5055, Game 5155 (the compose file maps the right one per service).
 # The app to run (Comm/Game) plus any flags (e.g. --max-peers 200) come from CMD.
-ENTRYPOINT ["mono", "Paradise.Realtime.Host.exe"]
+ENTRYPOINT ["mono", "NekoNexus.Realtime.Host.exe"]
 CMD ["Game"]

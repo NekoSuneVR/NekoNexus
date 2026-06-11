@@ -2,12 +2,12 @@
 
   <!--
     Free, managed drop-in replacement for Photon.SocketServer.dll.
-    Provides the small Photon.SocketServer API surface that Paradise.Realtime uses,
+    Provides the small Photon.SocketServer API surface that NekoNexus.Realtime uses,
     backed by a LiteNetLib (vendored, MIT) reliable-UDP transport instead of the
     proprietary, Windows-only, slot-capped Photon Server SDK.
 
     Output copied to packages/AssemblyReferences/Photon.SocketServer.dll so the
-    existing <HintPath> in Paradise.Realtime.csproj resolves with no edits.
+    existing <HintPath> in NekoNexus.Realtime.csproj resolves with no edits.
   -->
 
   <PropertyGroup>
@@ -28,7 +28,7 @@
 
   <!-- Shared wire codec (identical bytes on client + server). -->
   <ItemGroup>
-    <Compile Include="..\_shared\ParadiseWire.cs" Link="Shared\ParadiseWire.cs" />
+    <Compile Include="..\_shared\NekoNexusWire.cs" Link="Shared\NekoNexusWire.cs" />
   </ItemGroup>
 
   <!-- Vendored LiteNetLib 0.9.5.2 source, compiled directly into this assembly. -->

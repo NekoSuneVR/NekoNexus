@@ -10,18 +10,18 @@ a NekoPay-powered in-game store, and a safer (non-destructive) database seed.
   Fixes `SocketException: An address incompatible with the requested protocol was used` on PCs
   with IPv6 disabled, which broke the server browser / lobby with "Couldn't connect to server".
 - **"Get Credits" no longer freezes the game.** Hooked `ApplicationDataManager.OpenBuyCredits` to
-  open the Paradise **web store** in the browser instead of the native credit-bundle page (which
+  open the NekoNexus **web store** in the browser instead of the native credit-bundle page (which
   has no bundles here and threw every frame, locking the UI).
 
 ### One-click installer + patcher
-- **`ParadiseSetup.exe`** (Inno Setup) — single native installer: auto-detects UberStrike from
+- **`NekoNexusSetup.exe`** (Inno Setup) — single native installer: auto-detects UberStrike from
   Steam (registry + `libraryfolders.vdf`), patches, and **auto-downloads/installs .NET 4.8** if
   missing. No `.cmd`, no PowerShell. Built via `misc/build-installer.ps1`.
 - **Self-contained patch zip** with a double-click `Install.cmd`, Steam auto-detect, and a baked
-  `paradise-target.json` (server owners set their domain once). Ships prebuilt mod DLLs — no repo
+  `nekonexus-target.json` (server owners set their domain once). Ships prebuilt mod DLLs — no repo
   or .NET SDK needed by players.
 - **Patch-order fix**: install the mod DLLs **before** patching — the patch injects a call into
-  `Paradise.Client.Bootstrap`, which must be resolvable, or the patcher failed (exit 1).
+  `NekoNexus.Client.Bootstrap`, which must be resolvable, or the patcher failed (exit 1).
 - Dedicated **`patcher` branch** holds the ready-to-download toolkit.
 
 ### Friends, mail, presence (server-side)
@@ -74,7 +74,7 @@ cross-platform, and adds an admin dashboard, store, and payments.
 - Replaced `Photon.SocketServer.dll`, `PhotonHostRuntimeInterfaces.dll`, `Photon3Unity3D.dll`
   and `UnityEngine.dll` (server-side) with free managed shims over **LiteNetLib** (`shims/`).
   No Photon licence, no CCU/slot cap — set your own `MaxPlayerCount`/`--max-peers`.
-- Self-host launcher `Paradise.Realtime.Host` replaces `PhotonSocketServer.exe`
+- Self-host launcher `NekoNexus.Realtime.Host` replaces `PhotonSocketServer.exe`
   (reads `PhotonServer.config`, one app per process, `--master-host` override).
 - Client `Photon3Unity3D` shim matched to the original DLL's exact signatures + enum values
   (verified with Mono.Cecil). Fixed: NAT-punch module crash on Unity Mono, `CallInBackground`

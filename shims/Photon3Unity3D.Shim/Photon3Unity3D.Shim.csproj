@@ -3,7 +3,7 @@
   <!--
     Free, managed drop-in replacement for Photon3Unity3D.dll (the ExitGames.Client.Photon
     Unity client library). Same LiteNetLib transport + wire codec as the server shim, so a
-    repatched UberStrike client talks to the free Paradise server with no Photon SDK at all.
+    repatched UberStrike client talks to the free NekoNexus server with no Photon SDK at all.
 
     net35 to match the Unity (Mono 2.0/3.5) client runtime. Output copied to
     packages/Core/AssemblyReferences/Photon3Unity3D.dll so existing <HintPath>s resolve.
@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\_shared\ParadiseWire.cs" Link="Shared\ParadiseWire.cs" />
+    <Compile Include="..\_shared\NekoNexusWire.cs" Link="Shared\NekoNexusWire.cs" />
     <Compile Include="..\_vendor\LiteNetLib\LiteNetLib\**\*.cs" Link="LiteNetLib\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 

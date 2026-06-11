@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using LiteNetLib;
 using LiteNetLib.Utils;
-using Paradise.Transport;
+using NekoNexus.Transport;
 
 namespace ExitGames.Client.Photon {
 	public enum ConnectionProtocol : byte { Udp = 0, Tcp = 1 }
@@ -24,7 +24,7 @@ namespace ExitGames.Client.Photon {
 	public enum DebugLevel { OFF = 0, ERROR = 1, WARNING = 2, INFO = 3, ALL = 5 }
 
 	// Exact values from the original Photon3Unity3D.dll (verified via Mono.Cecil). OK is a
-	// Paradise-mod-only extension (0 is unused by Photon), the rest must match the originals.
+	// NekoNexus-mod-only extension (0 is unused by Photon), the rest must match the originals.
 	public enum StatusCode {
 		OK = 0,
 		SecurityExceptionOnConnect = 1022,

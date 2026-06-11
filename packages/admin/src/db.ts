@@ -1,4 +1,4 @@
-import models from '@festivaldev/paradise-models';
+import models from '@festivaldev/nekonexus-models';
 import bcrypt from 'bcryptjs';
 import mysql from 'mysql2';
 import { Sequelize } from 'sequelize';

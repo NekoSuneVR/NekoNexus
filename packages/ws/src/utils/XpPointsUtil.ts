@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ApplicationConfiguration } from '@festivaldev/paradise-models';
+import { ApplicationConfiguration } from '@festivaldev/nekonexus-models';
 import { ApplicationConfigurationView } from '@festivaldev/uberstrike-js/UberStrike/Core/Models/Views';
 
 export default class XpPointsUtil {

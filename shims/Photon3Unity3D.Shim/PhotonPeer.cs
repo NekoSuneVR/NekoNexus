@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using LiteNetLib;
 using LiteNetLib.Utils;
-using Paradise.Transport;
+using NekoNexus.Transport;
 
 namespace ExitGames.Client.Photon {
 	// Drop-in for ExitGames.Client.Photon.PhotonPeer, backed by LiteNetLib. Implements
@@ -21,7 +21,7 @@ namespace ExitGames.Client.Photon {
 		public string ServerAddress { get; private set; }
 
 		// Same connection key the server's RealtimeHost expects to gate connections.
-		public static string ConnectionKey = "Paradise";
+		public static string ConnectionKey = "NekoNexus";
 
 		public PhotonPeer(IPhotonPeerListener listener, ConnectionProtocol protocolType) {
 			_listener = listener ?? throw new ArgumentNullException(nameof(listener));

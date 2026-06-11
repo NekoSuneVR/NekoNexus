@@ -16,7 +16,7 @@
  */
 
 import { ApiVersion } from '@/utils/enums';
-import { ContactRequest, PublicProfile, UserAccount } from '@festivaldev/paradise-models';
+import { ContactRequest, PublicProfile, UserAccount } from '@festivaldev/nekonexus-models';
 import {
   ContactGroupView,
   ContactRequestStatus,

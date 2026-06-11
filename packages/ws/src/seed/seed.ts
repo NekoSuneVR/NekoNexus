@@ -16,7 +16,7 @@
  */
 
 // eslint-disable-next-line import/no-named-default
-import { default as ServiceSettings } from '@/ParadiseServiceSettings';
+import { default as ServiceSettings } from '@/NekoNexusServiceSettings';
 import { Log } from '@/utils';
 import models, {
   type ApplicationConfiguration,
@@ -27,7 +27,7 @@ import models, {
   type ShopGearItem,
   type ShopQuickItem,
   type ShopWeaponItem,
-} from '@festivaldev/paradise-models';
+} from '@festivaldev/nekonexus-models';
 import mysql from 'mysql2';
 import { type Dialect, Sequelize } from 'sequelize';
 

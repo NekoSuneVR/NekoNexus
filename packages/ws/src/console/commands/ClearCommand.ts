@@ -16,9 +16,9 @@
  */
 
 import ConsoleHelper from '../ConsoleHelper';
-import ParadiseCommand from '../ParadiseCommand';
+import NekoNexusCommand from '../NekoNexusCommand';
 
-export default class ClearCommand extends ParadiseCommand {
+export default class ClearCommand extends NekoNexusCommand {
   static override Command: string = 'clear';
   static override Aliases: string[] = [];
 

@@ -31,25 +31,25 @@ export interface AdminConfig {
 }
 
 // Resolve DB settings from (in order): explicit env vars, an admin.config.yml next to the
-// binary, or a Paradise web-service settings yml (so the admin shares the existing DB config).
+// binary, or a NekoNexus web-service settings yml (so the admin shares the existing DB config).
 function loadDbConfig(): DbConfig {
   // 1) Environment overrides
   if (process.env.DB_HOST) {
     return {
       host: process.env.DB_HOST,
       port: Number(process.env.DB_PORT ?? 3306),
-      user: process.env.DB_USER ?? 'paradise',
+      user: process.env.DB_USER ?? 'nekonexus',
       password: process.env.DB_PASS ?? '',
-      database: process.env.DB_NAME ?? 'paradise',
+      database: process.env.DB_NAME ?? 'nekonexus',
     };
   }
 
   // 2) A web-service settings yml (DatabaseSettings)
   const candidates = [
     process.env.PARADISE_WS_SETTINGS,
-    path.join(process.cwd(), 'Paradise.Settings.WebServices.yml'),
-    path.join(process.cwd(), '..', 'Paradise.WebServices', 'Paradise.Settings.WebServices.yml'),
-    path.join(process.cwd(), '..', '..', 'packages', 'ws', 'Paradise.Settings.WebServices.yml'),
+    path.join(process.cwd(), 'NekoNexus.Settings.WebServices.yml'),
+    path.join(process.cwd(), '..', 'NekoNexus.WebServices', 'NekoNexus.Settings.WebServices.yml'),
+    path.join(process.cwd(), '..', '..', 'packages', 'ws', 'NekoNexus.Settings.WebServices.yml'),
   ].filter(Boolean) as string[];
 
   for (const file of candidates) {
@@ -61,9 +61,9 @@ function loadDbConfig(): DbConfig {
           return {
             host: String(d.Server ?? '127.0.0.1'),
             port: Number(d.Port ?? 3306),
-            user: String(d.Username ?? 'paradise'),
+            user: String(d.Username ?? 'nekonexus'),
             password: String(d.Password ?? ''),
-            database: String(d.DatabaseName ?? 'paradise'),
+            database: String(d.DatabaseName ?? 'nekonexus'),
           };
         }
       }
@@ -73,14 +73,14 @@ function loadDbConfig(): DbConfig {
   }
 
   // 3) Fallback defaults
-  return { host: '127.0.0.1', port: 3306, user: 'paradise', password: 'paradise', database: 'paradise' };
+  return { host: '127.0.0.1', port: 3306, user: 'nekonexus', password: 'nekonexus', database: 'nekonexus' };
 }
 
 export function loadConfig(): AdminConfig {
   return {
     port: Number(process.env.ADMIN_PORT ?? 8088),
     // Set ADMIN_JWT_SECRET in production so tokens survive restarts and can't be guessed.
-    jwtSecret: process.env.ADMIN_JWT_SECRET ?? 'paradise-admin-change-me',
+    jwtSecret: process.env.ADMIN_JWT_SECRET ?? 'nekonexus-admin-change-me',
     db: loadDbConfig(),
     // In the docker stack the web service is reachable as http://webservices:8080 on the shared
     // network. INTERNAL_API_KEY must match the value the web service is started with.

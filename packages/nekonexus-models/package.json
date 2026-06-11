@@ -1,0 +1,26 @@
+{
+  "name": "@festivaldev/nekonexus-models",
+  "module": "src/index.ts",
+  "type": "module",
+  "exports": {
+    "default": "./src/index.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@types/bun": "latest",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^8.0.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "^3.0.0",
+    "sequelize": "^6.0.0",
+    "typescript": "~5.5.0",
+    "typescript-eslint": "^8.0.0"
+  },
+  "dependencies": {
+    "@festivaldev/uberstrike-js": "workspace:*",
+    "moment": "^2.0.0"
+  }
+}

@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-# Launches the free Paradise realtime server: one process for Comm, one for Game.
-# Comm and Game MUST be separate processes (Paradise uses a per-application singleton).
+# Launches the free NekoNexus realtime server: one process for Comm, one for Game.
+# Comm and Game MUST be separate processes (NekoNexus uses a per-application singleton).
 #
 # Usage: ./run-server.sh [bin-dir] [--max-peers N]
-#   bin-dir defaults to the folder containing Paradise.Realtime.Host(.exe).
+#   bin-dir defaults to the folder containing NekoNexus.Realtime.Host(.exe).
 #
 # On Linux/macOS this runs the host via the dotnet/mono runtime if needed; on a
-# self-contained build just run the native Paradise.Realtime.Host binary directly.
+# self-contained build just run the native NekoNexus.Realtime.Host binary directly.
 set -euo pipefail
 
 BIN_DIR="${1:-$(cd "$(dirname "$0")" && pwd)}"
 shift || true
 EXTRA_ARGS=("$@")
 
-HOST="$BIN_DIR/Paradise.Realtime.Host"
+HOST="$BIN_DIR/NekoNexus.Realtime.Host"
 [ -f "$HOST.exe" ] && HOST="$HOST.exe"
 
 run() {

@@ -1,6 +1,6 @@
-# Hosting Paradise on a domain (HTTPS) + game servers
+# Hosting NekoNexus on a domain (HTTPS) + game servers
 
-The most important thing to understand: **Paradise has two kinds of traffic, and they're
+The most important thing to understand: **NekoNexus has two kinds of traffic, and they're
 exposed differently.**
 
 | Traffic | Ports | Protocol | How to expose |
@@ -18,28 +18,28 @@ exposed differently.**
 Pick whichever is easier for you:
 
 ### Option A — Cloudflare Tunnel (easiest, no port-forwarding, free HTTPS) ✅ recommended
-1. `cloudflared tunnel login`, then `cloudflared tunnel create paradise`.
+1. `cloudflared tunnel login`, then `cloudflared tunnel create nekonexus`.
 2. Route your hostname to the local web ports. Example `config.yml`:
    ```yaml
    tunnel: <tunnel-id>
    ingress:
-     - hostname: paradise.yourdomain.com
+     - hostname: nekonexus.yourdomain.com
        path: /2.0/*
        service: http://localhost:8080
-     - hostname: paradise.yourdomain.com
+     - hostname: nekonexus.yourdomain.com
        path: /images/*
        service: http://localhost:8081
-     - hostname: paradise.yourdomain.com
+     - hostname: nekonexus.yourdomain.com
        path: /updates/*
        service: http://localhost:8081
-     - hostname: paradise.yourdomain.com
+     - hostname: nekonexus.yourdomain.com
        service: http://localhost:8081
    ```
-3. `cloudflared tunnel run paradise`. You now have `https://paradise.yourdomain.com`.
+3. `cloudflared tunnel run nekonexus`. You now have `https://nekonexus.yourdomain.com`.
 
 ### Option B — Nginx Proxy Manager (self-hosted, GUI)
 - Forward router ports 80/443 → the NPM host.
-- Add a Proxy Host for `paradise.yourdomain.com` with custom locations:
+- Add a Proxy Host for `nekonexus.yourdomain.com` with custom locations:
   `/2.0` → `http://<server>:8080`, `/images` + `/updates` → `http://<server>:8081`.
 - Or just use `misc/reverse-proxy/nginx.conf` / `Caddyfile` directly.
 
@@ -60,15 +60,15 @@ game servers, give each its own UDP port + a row in the dashboard.
 ## Step 3 — Point the client at the domain
 
 Patch the client at your domain (HTTPS), or set it in-game under
-**Paradise Settings → Web Service URLs**:
+**NekoNexus Settings → Web Service URLs**:
 ```
-https://paradise.yourdomain.com
+https://nekonexus.yourdomain.com
 ```
 For a fresh patch:
 ```powershell
-packages\Client\make-client-patch.ps1 -UberStrikePath "C:\…\UberStrike" -ServerHost paradise.yourdomain.com
+packages\Client\make-client-patch.ps1 -UberStrikePath "C:\…\UberStrike" -ServerHost nekonexus.yourdomain.com
 ```
-(then edit the generated `Paradise.Settings.Client.xml` to use `https://` if you're on TLS).
+(then edit the generated `NekoNexus.Settings.Client.xml` to use `https://` if you're on TLS).
 
 ## Recap
 - **Web** → Cloudflare Tunnel (or NPM/nginx) → `https://your-domain` (ports 8080/8081 behind it).

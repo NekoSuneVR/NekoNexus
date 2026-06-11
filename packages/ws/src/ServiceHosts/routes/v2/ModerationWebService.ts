@@ -15,9 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import ParadiseService from '@/ParadiseService';
+import NekoNexusService from '@/NekoNexusService';
 import { ApiVersion, type ModerationFlag } from '@/utils/enums';
-import { Clan, ClanMember, ModerationAction, PublicProfile } from '@festivaldev/paradise-models';
+import { Clan, ClanMember, ModerationAction, PublicProfile } from '@festivaldev/nekonexus-models';
 import {
   ChannelType,
   MemberAccessLevel,
@@ -84,7 +84,7 @@ export default class ModerationWebService extends BaseWebService {
 
       this.debugEndpoint('SetModerationFlag', authToken, targetCmid, moderationFlag, expireTime, reason);
 
-      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
+      const session = await NekoNexusService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -155,7 +155,7 @@ export default class ModerationWebService extends BaseWebService {
 
       this.debugEndpoint('UnsetModerationFlag', authToken, targetCmid, moderationFlag);
 
-      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
+      const session = await NekoNexusService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -212,7 +212,7 @@ export default class ModerationWebService extends BaseWebService {
 
       this.debugEndpoint('ClearModerationFlags', authToken, targetCmid);
 
-      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
+      const session = await NekoNexusService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 
@@ -268,7 +268,7 @@ export default class ModerationWebService extends BaseWebService {
 
       this.debugEndpoint('GetNaughtyList', authToken);
 
-      const session = await ParadiseService.Instance.SessionManager.findSessionForSteamUser(authToken);
+      const session = await NekoNexusService.Instance.SessionManager.findSessionForSteamUser(authToken);
       if (session) {
         const steamMember = await session.SteamMember;
 

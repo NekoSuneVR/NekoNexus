@@ -16,7 +16,7 @@
  */
 
 import { ApiVersion } from '@/utils/enums';
-import { Map, MapSettings, PhotonServer, UserAccount } from '@festivaldev/paradise-models';
+import { Map, MapSettings, PhotonServer, UserAccount } from '@festivaldev/nekonexus-models';
 import { BuildType, ChannelType, PhotonUsageType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
   EnumProxy,

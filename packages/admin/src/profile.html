@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Player Profile — Paradise</title>
+  <title>Player Profile — NekoNexus</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = { theme: { extend: { colors: { brand: { 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857' } } } } };
@@ -16,7 +16,7 @@
 <body class="text-neutral-200 min-h-screen">
   <header class="border-b border-neutral-800">
     <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-      <a href="/" class="text-xl font-bold text-brand-400">Paradise</a>
+      <a href="/" class="text-xl font-bold text-brand-400">NekoNexus</a>
       <nav class="flex gap-5 text-sm text-neutral-400">
         <a href="/" class="hover:text-brand-400">Home</a>
         <a href="/leaderboard" class="hover:text-brand-400">Leaderboard</a>
@@ -77,7 +77,7 @@
       // Report box: requires a signed-in (Steam) user.
       const box = document.getElementById('reportBox');
       box.classList.remove('hidden');
-      const token = localStorage.getItem('paradise_user_token');
+      const token = localStorage.getItem('nekonexus_user_token');
       const me = token ? JSON.parse(atob(token.split('.')[0].replace(/-/g, '+').replace(/_/g, '/'))) : null;
       if (!token) {
         document.getElementById('reportHint').innerHTML = 'Please <a class="text-brand-400" href="/login">sign in with Steam</a> to report a player.';
@@ -91,7 +91,7 @@
 
     document.getElementById('submitReport').addEventListener('click', async () => {
       const msg = document.getElementById('reportMsg');
-      const token = localStorage.getItem('paradise_user_token');
+      const token = localStorage.getItem('nekonexus_user_token');
       msg.textContent = 'Sending…'; msg.className = 'text-sm ml-2 text-neutral-400';
       const r = await fetch('/api/public/report', {
         method: 'POST',

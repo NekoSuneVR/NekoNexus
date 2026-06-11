@@ -15,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import ParadiseService from '@/ParadiseService';
+import NekoNexusService from '@/NekoNexusService';
 import { RealtimeError, WebSocketChatMessage } from '@/ServiceHosts/WebSocket';
 import PacketType from '@/ServiceHosts/WebSocket/PacketType';
 import { CommandHandler } from '@/console';
 import { Log } from '@/utils';
-import * as models from '@festivaldev/paradise-models';
-import { DiscordUser } from '@festivaldev/paradise-models';
+import * as models from '@festivaldev/nekonexus-models';
+import { DiscordUser } from '@festivaldev/nekonexus-models';
 import { MemberAccessLevel, PhotonUsageType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
   CommActorInfo,
@@ -75,7 +75,7 @@ export default class DiscordClient {
     if (this.discordClient) return;
     Log.info('Connecting to Discord...');
 
-    this.discordSettings = ParadiseService.Instance.ServiceSettings.DiscordSettings;
+    this.discordSettings = NekoNexusService.Instance.ServiceSettings.DiscordSettings;
 
     this.discordClient = new Client({
       intents: [
@@ -389,7 +389,7 @@ export default class DiscordClient {
       title: 'Game Room created',
       color: Colors.Default,
       image: {
-        url: `https://static.paradise.festival.tf/images/maps/${this.GetImageNameForMapID(metadata.MapID)}.jpg`,
+        url: `https://static.nekonexus.festival.tf/images/maps/${this.GetImageNameForMapID(metadata.MapID)}.jpg`,
       },
       footer: {
         text: `Room ID: ${metadata.Number}`,
@@ -562,7 +562,7 @@ export default class DiscordClient {
     await readyClient.user!.setPresence({
       activities: [
         {
-          name: 'Paradise Web Services TEST',
+          name: 'NekoNexus Web Services TEST',
           type: ActivityType.Playing,
         },
       ],
@@ -667,7 +667,7 @@ export default class DiscordClient {
 
         const publicProfile = await PublicProfile.findOne({ where: { Cmid: discordUser.Cmid } });
 
-        await ParadiseService.Instance.SocketHost.SendToCommServer(
+        await NekoNexusService.Instance.SocketHost.SendToCommServer(
           PacketType.ChatMessage,
           new WebSocketChatMessage({
             Cmid: discordUser.Cmid,
@@ -700,7 +700,7 @@ export default class DiscordClient {
         });
         if (!server) return;
 
-        await ParadiseService.Instance.SocketHost.SendToGameServer(
+        await NekoNexusService.Instance.SocketHost.SendToGameServer(
           server.Guid,
           PacketType.ChatMessage,
           new WebSocketChatMessage({
@@ -756,7 +756,7 @@ export default class DiscordClient {
       case 11:
         return 'Monkey Island 2';
       case 12:
-        return 'Lost Paradise 2';
+        return 'Lost NekoNexus 2';
       case 13:
         return 'Sky Garden';
       case 14:

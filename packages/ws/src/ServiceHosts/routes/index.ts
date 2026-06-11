@@ -16,7 +16,7 @@
  */
 
 /* eslint-disable camelcase */
-import ParadiseServiceSettings from '@/ParadiseServiceSettings';
+import NekoNexusServiceSettings from '@/NekoNexusServiceSettings';
 import { SOAPResponse } from '@/utils';
 import { Router } from 'express';
 import httpStatus from 'http-status';
@@ -31,7 +31,7 @@ export const ServiceVersions: { [key: string]: any } = {
 const router = Router();
 
 router.use(
-  new RegExp(`^/(.+)/${ParadiseServiceSettings.WebServicePrefix}(.+)${ParadiseServiceSettings.WebServiceSuffix}$`),
+  new RegExp(`^/(.+)/${NekoNexusServiceSettings.WebServicePrefix}(.+)${NekoNexusServiceSettings.WebServiceSuffix}$`),
   async (req, res, next): Promise<any> => {
     const serviceVersion = ServiceVersions[req.params[0]];
     if (!serviceVersion) return res.status(httpStatus.BAD_REQUEST).send('');
@@ -80,7 +80,7 @@ router.use(
 );
 
 // router.use(
-//   new RegExp(`^/(.+)/${ParadiseServiceSettings.WebServicePrefix}(.+)${ParadiseServiceSettings.WebServiceSuffix}$`),
+//   new RegExp(`^/(.+)/${NekoNexusServiceSettings.WebServicePrefix}(.+)${NekoNexusServiceSettings.WebServiceSuffix}$`),
 //   async (req, res, next) => {
 //     const serviceVersion = ServiceVersions[req.params[0]];
 //     if (!serviceVersion) return res.status(httpStatus.BAD_REQUEST).send('');

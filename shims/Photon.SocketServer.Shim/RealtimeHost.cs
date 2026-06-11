@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using LiteNetLib;
-using Paradise.Transport;
+using NekoNexus.Transport;
 using PhotonReason = PhotonHostRuntimeInterfaces.DisconnectReason;
 
 namespace Photon.SocketServer {
@@ -13,7 +13,7 @@ namespace Photon.SocketServer {
 		// User-defined concurrent-player cap. No license, no CCU paywall: set what you want.
 		public int MaxPeers = 1000;
 		// Optional connection gate; client must present the same key. Empty = accept any.
-		public string ConnectionKey = "Paradise";
+		public string ConnectionKey = "NekoNexus";
 		public string BinaryPath;
 		public string ApplicationPath;
 		public int PollIntervalMs = 10;
@@ -22,7 +22,7 @@ namespace Photon.SocketServer {
 
 	// Replaces PhotonSocketServer.exe for a single application instance: binds one UDP
 	// listener and pumps the LiteNetLib event loop, translating transport events into the
-	// Photon.SocketServer peer callbacks Paradise.Realtime already implements.
+	// Photon.SocketServer peer callbacks NekoNexus.Realtime already implements.
 	public sealed class RealtimeHost : INetEventListener {
 		private readonly ApplicationBase _app;
 		private readonly RealtimeHostOptions _opts;

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <!-- Free drop-in replacement for PhotonHostRuntimeInterfaces.dll. Only the
-       DisconnectReason enum is actually referenced by Paradise.Realtime. -->
+       DisconnectReason enum is actually referenced by NekoNexus.Realtime. -->
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>

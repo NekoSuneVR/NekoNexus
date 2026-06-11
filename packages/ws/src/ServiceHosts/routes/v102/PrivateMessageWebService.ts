@@ -16,7 +16,7 @@
  */
 
 import { ApiVersion } from '@/utils/enums';
-import { PrivateMessage, PublicProfile, UserAccount } from '@festivaldev/paradise-models';
+import { PrivateMessage, PublicProfile, UserAccount } from '@festivaldev/nekonexus-models';
 import { MessageThreadView } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { Int32Proxy, ListProxy, StringProxy } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization';
 import { MessageThreadViewProxy } from '@festivaldev/uberstrike-js/UberStrike/Core/Serialization/Legacy';

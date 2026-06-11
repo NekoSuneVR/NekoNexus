@@ -1,11 +1,17 @@
-# Paradise — free, cross-platform UberStrike server
+# NekoNexus — community game servers for UberStrike
 
-A fork of [Paradise](https://github.com/festivaldev/Paradise) that runs the **UberStrike**
-game server **without the proprietary Photon Server SDK** — no licence, no CCU/slot cap, and
-it runs on **Windows, Linux (x64 + ARM64), and Docker**. It also adds a modern **admin
-dashboard** (server management, players, leaderboard, store + payments).
+**A NekoSune Community project.** NekoNexus runs the **UberStrike** game server **without the
+proprietary Photon Server SDK** — no licence, no CCU/slot cap — on **Windows, Linux (x64 +
+ARM64), and Docker**. It also adds a modern **admin dashboard** (server management, players,
+leaderboard, store + payments).
 
 > You set your own player slots. The whole server stack is free software.
+
+NekoNexus is an independent, community-run continuation that began as a fork of the
+GPL-licensed [Paradise](https://github.com/festivaldev/Paradise) server, then rebuilt the
+transport (de-Photon shims), web services, admin dashboard, and many gameplay features from
+the ground up. It is **not** affiliated with or endorsed by Cmune/UberStrike or the Paradise
+project — "UberStrike" is referenced only to describe compatibility.
 
 ---
 
@@ -22,8 +28,8 @@ untouched:
 | `UnityEngine.dll` (math types used by shared code) | managed `UnityEngine` shim |
 
 Both client and server talk the **same message envelope over LiteNetLib** (a shared wire
-codec), so neither the game logic nor `Paradise.Realtime` had to change — they just compile
-against the shims. A self-hosting launcher (`Paradise.Realtime.Host`) replaces
+codec), so neither the game logic nor `NekoNexus.Realtime` had to change — they just compile
+against the shims. A self-hosting launcher (`NekoNexus.Realtime.Host`) replaces
 `PhotonSocketServer.exe`. Full detail in [`shims/README.md`](shims/README.md).
 
 ## Repository layout
@@ -32,11 +38,11 @@ against the shims. A self-hosting launcher (`Paradise.Realtime.Host`) replaces
 packages/
   ws/                    Web services (Bun/TypeScript) — SOAP API, file server, master socket
   admin/                 Admin dashboard (Bun) — auth, servers, players, leaderboard, store
-  paradise-models/       Sequelize models (shared)
+  nekonexus-models/       Sequelize models (shared)
   Realtime/
-    Paradise.Realtime/       realtime game server (C#, now Photon-free)
-    Paradise.Realtime.Host/  self-host launcher (replaces PhotonSocketServer.exe)
-  Client/                Paradise client mod (patches UberStrike)
+    NekoNexus.Realtime/       realtime game server (C#, now Photon-free)
+    NekoNexus.Realtime.Host/  self-host launcher (replaces PhotonSocketServer.exe)
+  Client/                NekoNexus client mod (patches UberStrike)
   Core/                  submodule: reverse-engineered UberStrike SDK
   Patcher/               submodule: UniversalUnityPatcher
 shims/                   free managed replacements for the proprietary DLLs (+ vendored LiteNetLib)
@@ -66,12 +72,12 @@ all nodes. See [`misc/SERVER-SETUP.txt`](misc/SERVER-SETUP.txt).
 
 ```bash
 # 1. database (once)
-Paradise.WebServices_x64.exe seed
+NekoNexus.WebServices_x64.exe seed
 # 2. run
-Paradise.WebServices_x64.exe                       # web services :8080/:8081/:8082
-Paradise.Realtime.Host.exe Comm --master-host 127.0.0.1   # lobby  :5055/udp
-Paradise.Realtime.Host.exe Game --master-host 127.0.0.1   # game   :5155/udp
-Paradise.Admin_x64.exe                             # admin dashboard :8088
+NekoNexus.WebServices_x64.exe                       # web services :8080/:8081/:8082
+NekoNexus.Realtime.Host.exe Comm --master-host 127.0.0.1   # lobby  :5055/udp
+NekoNexus.Realtime.Host.exe Game --master-host 127.0.0.1   # game   :5155/udp
+NekoNexus.Admin_x64.exe                             # admin dashboard :8088
 ```
 
 ---
@@ -98,8 +104,8 @@ bun --cwd packages/admin run build:win-x64
 bun run build:patcher
 
 # Package it all up
-powershell -File misc/bundle-server.ps1     # -> .release/server/Paradise-server-win-x64.zip
-powershell -File misc/bundle-client.ps1     # -> .release/client/Paradise-free-server-client.zip
+powershell -File misc/bundle-server.ps1     # -> .release/server/NekoNexus-server-win-x64.zip
+powershell -File misc/bundle-client.ps1     # -> .release/client/NekoNexus-free-server-client.zip
 ```
 
 CI: [`.github/workflows/build.yml`](.github/workflows/build.yml) builds the server exes, the
@@ -110,21 +116,21 @@ release.
 
 ## Patching the game client
 
-The client toolkit (`.release/client/Paradise-free-server-client.zip`) patches **your own**
+The client toolkit (`.release/client/NekoNexus-free-server-client.zip`) patches **your own**
 UberStrike install to use the free server (game files are never redistributed):
 
 ```powershell
 packages\Client\make-client-patch.ps1 -UberStrikePath "C:\…\Steam\steamapps\common\UberStrike" -ServerHost 127.0.0.1
 ```
-It builds the Paradise mod against your game, injects the bootstrap, installs the free
-transport, and writes the settings. In-game, switch/add servers under **Paradise Settings →
+It builds the NekoNexus mod against your game, injects the bootstrap, installs the free
+transport, and writes the settings. In-game, switch/add servers under **NekoNexus Settings →
 Web Service URLs** (that list is your server browser). Details: [`packages/Client/README.md`](packages/Client/README.md).
 
 ---
 
 ## Admin dashboard
 
-`Paradise.Admin_x64.exe` → **http://localhost:8088** (default login **admin / admin** — change
+`NekoNexus.Admin_x64.exe` → **http://localhost:8088** (default login **admin / admin** — change
 it immediately). Dark/green Tailwind UI:
 
 - **Servers** — add servers (IP, port, name, region with IP auto-detect), enable/disable,
@@ -163,8 +169,18 @@ master socket (8082) stays internal. Then point the client at `https://your-doma
 - `.gitignore` excludes build output (`.release/`, `bin/`, `obj/`), generated shim DLLs, and
   secrets (`.env`, `.nekopay.env`).
 
-## Credits
+## Credits & licence
 
-Built on [festivaldev/Paradise](https://github.com/festivaldev/Paradise) and the
-reverse-engineered UberStrike SDK. Transport by [LiteNetLib](https://github.com/RevenantX/LiteNetLib) (MIT).
-UberStrike is © its respective owners; this project ships no game assets.
+NekoNexus is maintained by the **NekoSune Community** and is free software under the
+**GNU GPL v3** (see [`LICENSE`](LICENSE)). New work in this repository — the de-Photon
+transport shims, web services, admin dashboard, and the added/restored gameplay features —
+is © the NekoSune Community.
+
+This project began as a fork of [festivaldev/Paradise](https://github.com/festivaldev/Paradise)
+(GPL v3); portions of the original Paradise code remain © their respective authors and are
+retained under the same licence. It builds on the reverse-engineered UberStrike SDK; transport
+by [LiteNetLib](https://github.com/RevenantX/LiteNetLib) (MIT).
+
+**UberStrike** and all related game content are © Cmune / their respective owners. NekoNexus is
+an unofficial, community-run server and is not affiliated with or endorsed by them. It ships
+**no game assets** — you patch your own UberStrike install.

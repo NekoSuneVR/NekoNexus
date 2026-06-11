@@ -1,7 +1,7 @@
 {
   "private": true,
   "workspaces": [
-    "./packages/paradise-models",
+    "./packages/nekonexus-models",
     "./packages/uberstrike-js",
     "./packages/ws",
     "./packages/admin"
@@ -9,15 +9,15 @@
   "scripts": {
     "start:ws": "bun --cwd=./packages/ws start",
     "build": "bun run build:client:all && bun run build:uberdaemon:all && bun run build:realtime && bun run build:ws",
-    "build:client:bootstrap": "bun --cwd=./packages/Client/Current/Paradise.Client.Bootstrap run build",
-    "build:client:rpc": "bun --cwd=./packages/Client/Current/Paradise.Client.DiscordRPC run build",
+    "build:client:bootstrap": "bun --cwd=./packages/Client/Current/NekoNexus.Client.Bootstrap run build",
+    "build:client:rpc": "bun --cwd=./packages/Client/Current/NekoNexus.Client.DiscordRPC run build",
     "build:client:all": "bun run build:client:bootstrap && bun run build:client:rpc",
     "build:uberdaemon:win-x86": "bun --cwd=./misc/uberdaemon run build:win-x86",
     "build:uberdaemon:darwin-x86": "bun --cwd=./misc/uberdaemon run build:darwin-x86",
     "build:uberdaemon:all": "bun run build:uberdaemon:win-x86 && bun run build:uberdaemon:darwin-x86",
-    "build:realtime": "bun --cwd=./packages/Realtime/Paradise.Realtime run build",
+    "build:realtime": "bun --cwd=./packages/Realtime/NekoNexus.Realtime run build",
     "build:shims": "dotnet build shims/UnityEngine.Shim/UnityEngine.Shim.csproj -c Release && dotnet build shims/PhotonHostRuntimeInterfaces.Shim/PhotonHostRuntimeInterfaces.Shim.csproj -c Release && dotnet build shims/Photon.SocketServer.Shim/Photon.SocketServer.Shim.csproj -c Release && dotnet build shims/Photon3Unity3D.Shim/Photon3Unity3D.Shim.csproj -c Release",
-    "build:host": "dotnet build packages/Realtime/Paradise.Realtime.Host/Paradise.Realtime.Host.csproj -c Release",
+    "build:host": "dotnet build packages/Realtime/NekoNexus.Realtime.Host/NekoNexus.Realtime.Host.csproj -c Release",
     "build:patcher": "nuget restore packages/Patcher/UniversalUnityPatcher.sln && msbuild packages/Patcher/UniversalUnityPatcher.sln /p:Configuration=Release",
     "bundle:client:free-server": "powershell -ExecutionPolicy Bypass -File misc/bundle-client.ps1",
     "build:ws": "bun --cwd=./packages/ws run build-all",

@@ -1,6 +1,6 @@
 /*
  * Steam OpenID 2.0 login for normal site users. Players already have a SteamMember row (SteamId ->
- * Cmid), so after Steam verifies the user we map the Steam64 id back to their Paradise account and
+ * Cmid), so after Steam verifies the user we map the Steam64 id back to their NekoNexus account and
  * issue a USER session token (separate from the admin username/password token).
  *
  * OpenID 2.0 needs no API key for the auth itself; the optional Steam Web API key is only used to

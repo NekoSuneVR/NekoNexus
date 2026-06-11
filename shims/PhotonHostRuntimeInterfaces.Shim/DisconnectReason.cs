@@ -1,5 +1,5 @@
 namespace PhotonHostRuntimeInterfaces {
-	// Mirrors Photon's PhotonHostRuntimeInterfaces.DisconnectReason. Paradise.Realtime
+	// Mirrors Photon's PhotonHostRuntimeInterfaces.DisconnectReason. NekoNexus.Realtime
 	// only forwards these values into its own OnDisconnect handlers, so the exact numeric
 	// values are not protocol-critical; we keep Photon's well-known ones for familiarity.
 	public enum DisconnectReason {

@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import models from '@festivaldev/paradise-models';
+import models from '@festivaldev/nekonexus-models';
 import mysql from 'mysql2';
 import { type Dialect, type QueryOptions, type QueryOptionsWithType, QueryTypes, Sequelize } from 'sequelize';
-import { type DatabaseSettings } from './ParadiseServiceSettings';
+import { type DatabaseSettings } from './NekoNexusServiceSettings';
 import { Log } from './utils';
 
 const Database = {

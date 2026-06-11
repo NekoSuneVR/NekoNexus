@@ -15,12 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import ParadiseService from '@/ParadiseService';
+import NekoNexusService from '@/NekoNexusService';
 import { ServerType } from '@/ServiceHosts/WebSocket';
 import crypto from 'crypto';
-import ParadiseCommand from '../ParadiseCommand';
+import NekoNexusCommand from '../NekoNexusCommand';
 
-export default class ServerCommand extends ParadiseCommand {
+export default class ServerCommand extends NekoNexusCommand {
   static override Command: string = 'server';
   static override Aliases: string[] = [];
 
@@ -41,7 +41,7 @@ export default class ServerCommand extends ParadiseCommand {
 
     switch (args[0].toLocaleLowerCase()) {
       case 'list':
-        for (const serverCredential of ParadiseService.Instance.ServiceSettings.ServerCredentials) {
+        for (const serverCredential of NekoNexusService.Instance.ServiceSettings.ServerCredentials) {
           this.WriteLine(`Name: ${serverCredential.Name}`);
           this.WriteLine(`Type: ${serverCredential.Type} (${ServerType[serverCredential.Type]})`);
           this.WriteLine(`Server ID: ${serverCredential.Id}`);

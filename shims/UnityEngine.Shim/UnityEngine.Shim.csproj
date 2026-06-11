@@ -2,7 +2,7 @@
 
   <!--
     Free, managed drop-in replacement for the subset of UnityEngine.dll that the
-    Paradise / UberStrike *server-side* and shared Core assemblies actually use
+    NekoNexus / UberStrike *server-side* and shared Core assemblies actually use
     (math types + a few stubs). This removes the need for the proprietary
     UnityEngine.dll drop-in. See shims/README.md.
 
@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <!-- The solution references UnityEngine.dll from two different folders:
-       - packages/AssemblyReferences/4.7.1/  (Paradise.Realtime)
+       - packages/AssemblyReferences/4.7.1/  (NekoNexus.Realtime)
        - packages/Core/AssemblyReferences/   (all UberStrike.* Core submodule projects) -->
   <ItemGroup>
     <ShimTargetDir Include="$(MSBuildThisFileDirectory)..\..\packages\AssemblyReferences\4.7.1\" />

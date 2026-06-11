@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import ParadiseService from '@/ParadiseService';
+import NekoNexusService from '@/NekoNexusService';
 import { MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
-import ParadiseCommand from '../ParadiseCommand';
+import NekoNexusCommand from '../NekoNexusCommand';
 
-export default class QuitCommand extends ParadiseCommand {
+export default class QuitCommand extends NekoNexusCommand {
   static override Command: string = 'quit';
   static override Aliases: string[] = ['q'];
 
@@ -31,6 +31,6 @@ export default class QuitCommand extends ParadiseCommand {
   override MinimumAccessLevel: MemberAccessLevel = MemberAccessLevel.Admin;
 
   override async Run(args: string[]): Promise<any> {
-    ParadiseService.Instance.Teardown();
+    NekoNexusService.Instance.Teardown();
   }
 }

@@ -1,4 +1,4 @@
-import models from '@festivaldev/paradise-models';
+import models from '@festivaldev/nekonexus-models';
 import bcrypt from 'bcryptjs';
 import { Op } from 'sequelize';
 // Dashboard HTML is embedded at build time so the compiled exe is self-contained.
@@ -232,7 +232,7 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
     if (!steamId) return Response.redirect(`${cfg.publicBaseUrl}/login?error=verification%20failed`, 302);
     const member: any = await models.SteamMember.findByPk(steamId, { raw: true }).catch(() => null);
     if (!member) {
-      return Response.redirect(`${cfg.publicBaseUrl}/login?error=No%20Paradise%20account%20for%20this%20Steam%20user%20-%20play%20once%20first`, 302);
+      return Response.redirect(`${cfg.publicBaseUrl}/login?error=No%20NekoNexus%20account%20for%20this%20Steam%20user%20-%20play%20once%20first`, 302);
     }
     const profile: any = await models.PublicProfile.findByPk(member.Cmid, { raw: true }).catch(() => null);
     const token = signToken({ kind: 'user', cmid: member.Cmid, name: profile?.Name ?? '', steamId }, cfg.jwtSecret);
@@ -724,7 +724,7 @@ Bun.serve({
         ? 'Payment received! Your credits will appear in-game after your next login or wallet refresh. You can close this tab.'
         : 'Payment cancelled. You can close this tab and try again from the game.';
       return new Response(
-        `<!doctype html><meta charset="utf-8"><title>Paradise</title>` +
+        `<!doctype html><meta charset="utf-8"><title>NekoNexus</title>` +
         `<body style="background:#0a0a0a;color:#e5e5e5;font-family:system-ui;display:grid;place-items:center;height:100vh;margin:0">` +
         `<div style="max-width:28rem;text-align:center;padding:1.5rem">` +
         `<h1 style="color:${ok ? '#34d399' : '#f87171'}">${ok ? 'Thank you!' : 'Cancelled'}</h1><p>${msg}</p></div></body>`,
@@ -741,4 +741,4 @@ Bun.serve({
 });
 
 // eslint-disable-next-line no-console
-console.log(`[admin] Paradise Admin dashboard on http://localhost:${cfg.port}  (db ${cfg.db.host}:${cfg.db.port}/${cfg.db.database})`);
+console.log(`[admin] NekoNexus Admin dashboard on http://localhost:${cfg.port}  (db ${cfg.db.host}:${cfg.db.port}/${cfg.db.database})`);

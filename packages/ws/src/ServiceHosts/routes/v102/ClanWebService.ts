@@ -16,7 +16,7 @@
  */
 
 import { ApiVersion } from '@/utils/enums';
-import { Clan, ClanMember, GroupInvitation, UserAccount } from '@festivaldev/paradise-models';
+import { Clan, ClanMember, GroupInvitation, UserAccount } from '@festivaldev/nekonexus-models';
 import { GroupInvitationView } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import {
   BooleanProxy,

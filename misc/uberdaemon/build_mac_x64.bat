@@ -5,6 +5,6 @@ set GOARCH=amd64
 
 echo Building uberdaemon for %GOOS%-%GOARCH%...
 
-go build -o build\uberdaemon_paradise_x64 src\uberdaemon.go
+go build -o build\uberdaemon_nekonexus_x64 src\uberdaemon.go
 
 pause

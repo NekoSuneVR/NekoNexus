@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import ParadiseService from '@/ParadiseService';
+import NekoNexusService from '@/NekoNexusService';
 import { ProfanityFilter } from '@/ProfanityFilter';
 import { Log } from '@/utils';
 import { ApiVersion, ModerationFlag, UberstrikeInventoryItem } from '@/utils/enums';
@@ -31,7 +31,7 @@ import {
   PlayerStatistics,
   PublicProfile,
   UserAccount,
-} from '@festivaldev/paradise-models';
+} from '@festivaldev/nekonexus-models';
 import {
   AccountCompletionResult,
   BuyingDurationType,
@@ -381,7 +381,7 @@ export default class AuthenticationWebService extends BaseWebService {
                 WeaponStatistics: new PlayerWeaponStatisticsView(),
               });
 
-              const session = await ParadiseService.Instance.SessionManager.findOrCreateSession(
+              const session = await NekoNexusService.Instance.SessionManager.findOrCreateSession(
                 publicProfile as PublicProfileView,
                 machineId,
                 userAccount,
@@ -410,7 +410,7 @@ export default class AuthenticationWebService extends BaseWebService {
               const memberWallet = await MemberWallet.findOne({ where: { Cmid: userAccount.Cmid } });
               const playerStatistics = await PlayerStatistics.findOne({ where: { Cmid: userAccount.Cmid } });
 
-              const session = await ParadiseService.Instance.SessionManager.findOrCreateSession(
+              const session = await NekoNexusService.Instance.SessionManager.findOrCreateSession(
                 publicProfile as PublicProfileView,
                 machineId,
                 userAccount,

@@ -16,11 +16,11 @@
  */
 
 import { XpPointsUtil } from '@/utils';
-import { PlayerStatistics, PublicProfile } from '@festivaldev/paradise-models';
+import { PlayerStatistics, PublicProfile } from '@festivaldev/nekonexus-models';
 import { MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
-import ParadiseCommand from '../ParadiseCommand';
+import NekoNexusCommand from '../NekoNexusCommand';
 
-export default class XpCommand extends ParadiseCommand {
+export default class XpCommand extends NekoNexusCommand {
   static override Command: string = 'xp';
   static override Aliases: string[] = [];
 

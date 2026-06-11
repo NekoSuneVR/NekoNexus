@@ -5,6 +5,6 @@ set GOARCH=386
 
 echo Building uberdaemon for %GOOS%-%GOARCH%...
 
-go build -o build\uberdaemon_paradise src\uberdaemon.go
+go build -o build\uberdaemon_nekonexus src\uberdaemon.go
 
 pause

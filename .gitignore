@@ -174,7 +174,7 @@ dist
 # Finder (MacOS) folder config
 .DS_Store
 
-# Paradise
+# NekoNexus
 .vscode/
 .old/
 build/
@@ -193,7 +193,7 @@ packages/Realtime/photon/*
 .vs
 
 # ---------------------------------------------------------------------------
-# Paradise — .NET, build output, secrets (added for the free-server build)
+# NekoNexus — .NET, build output, secrets (added for the free-server build)
 # ---------------------------------------------------------------------------
 
 # .NET build intermediates / output

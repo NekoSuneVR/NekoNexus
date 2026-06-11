@@ -17,10 +17,10 @@ interface ThemeDef {
 }
 
 const THEMES: Record<Exclude<ThemeName, 'none'>, ThemeDef> = {
-  halloween: { accent: '#f97316', accent2: '#a855f7', glow: 'rgba(249,115,22,.14)', banner: '🎃 Happy Halloween from Paradise!' },
-  xmas: { accent: '#ef4444', accent2: '#22c55e', glow: 'rgba(34,197,94,.14)', banner: '🎄 Season&#39;s greetings from Paradise!' },
-  pride: { accent: '#ec4899', accent2: '#8b5cf6', glow: 'rgba(236,72,153,.14)', banner: '🏳️‍🌈 Paradise celebrates Pride — everyone&#39;s welcome!' },
-  easter: { accent: '#f472b6', accent2: '#34d399', glow: 'rgba(244,114,182,.14)', banner: '🐰 Happy Easter from Paradise!' },
+  halloween: { accent: '#f97316', accent2: '#a855f7', glow: 'rgba(249,115,22,.14)', banner: '🎃 Happy Halloween from NekoNexus!' },
+  xmas: { accent: '#ef4444', accent2: '#22c55e', glow: 'rgba(34,197,94,.14)', banner: '🎄 Season&#39;s greetings from NekoNexus!' },
+  pride: { accent: '#ec4899', accent2: '#8b5cf6', glow: 'rgba(236,72,153,.14)', banner: '🏳️‍🌈 NekoNexus celebrates Pride — everyone&#39;s welcome!' },
+  easter: { accent: '#f472b6', accent2: '#34d399', glow: 'rgba(244,114,182,.14)', banner: '🐰 Happy Easter from NekoNexus!' },
 };
 
 /** Resolve 'auto' (and validate explicit values) to a concrete theme. */
@@ -47,7 +47,7 @@ export function themeHead(theme: ThemeName): string {
   if (theme === 'none') return '';
   const t = THEMES[theme];
   // Override the emerald brand utility classes the pages use, the body glow, and links.
-  return `<style data-paradise-theme="${theme}">
+  return `<style data-nekonexus-theme="${theme}">
 :root{--accent:${t.accent};--accent2:${t.accent2};}
 body{background:radial-gradient(1200px 600px at 50% -10%, ${t.glow}, transparent 60%), #0a0a0a !important;}
 .text-brand-400,.text-brand-500,.text-brand-600{color:var(--accent)!important;}
@@ -57,7 +57,7 @@ body{background:radial-gradient(1200px 600px at 50% -10%, ${t.glow}, transparent
 .from-brand-400,.from-brand-500{--tw-gradient-from:var(--accent)!important;}
 .to-brand-500,.to-brand-600{--tw-gradient-to:var(--accent2)!important;}
 a:hover{color:var(--accent);}
-#paradise-event-banner{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#0a0a0a;
+#nekonexus-event-banner{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#0a0a0a;
  font-weight:700;text-align:center;padding:.4rem 1rem;font-size:.85rem;letter-spacing:.02em;}
 </style>`;
 }
@@ -66,7 +66,7 @@ a:hover{color:var(--accent);}
 export function themeBanner(theme: ThemeName): string {
   if (theme === 'none') return '';
   const t = THEMES[theme];
-  return t.banner ? `<div id="paradise-event-banner">${t.banner}</div>` : '';
+  return t.banner ? `<div id="nekonexus-event-banner">${t.banner}</div>` : '';
 }
 
 /**

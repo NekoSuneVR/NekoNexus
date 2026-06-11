@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sign in — Paradise</title>
+  <title>Sign in — NekoNexus</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = { theme: { extend: { colors: { brand: { 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857' } } } } };
@@ -16,7 +16,7 @@
 <body class="text-neutral-200 min-h-screen">
   <header class="border-b border-neutral-800">
     <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-      <a href="/" class="text-xl font-bold text-brand-400">Paradise</a>
+      <a href="/" class="text-xl font-bold text-brand-400">NekoNexus</a>
       <nav class="flex gap-5 text-sm text-neutral-400">
         <a href="/" class="hover:text-brand-400">Home</a>
         <a href="/leaderboard" class="hover:text-brand-400">Leaderboard</a>
@@ -28,7 +28,7 @@
 
   <main class="max-w-md mx-auto px-4 py-16">
     <div class="glass rounded-xl p-8 text-center">
-      <h1 class="text-2xl font-bold mb-2">Sign in to Paradise</h1>
+      <h1 class="text-2xl font-bold mb-2">Sign in to NekoNexus</h1>
       <div id="content"><p class="text-neutral-500">…</p></div>
     </div>
     <p class="text-center text-neutral-600 text-xs mt-4">Admins: use the <a href="/admin" class="text-brand-400">admin dashboard</a> (username &amp; password).</p>
@@ -40,7 +40,7 @@
 
     // Capture the token handed back after a successful Steam return, then clean the URL.
     if (params.get('token')) {
-      localStorage.setItem('paradise_user_token', params.get('token'));
+      localStorage.setItem('nekonexus_user_token', params.get('token'));
       history.replaceState({}, '', '/login');
     }
     if (params.get('error')) {
@@ -48,7 +48,7 @@
         `<p class="text-red-400 mb-4">Sign-in failed: ${esc(params.get('error'))}</p>
          <a href="/api/auth/steam/login" class="inline-block px-5 py-2 rounded bg-brand-600 hover:bg-brand-500 text-white">Try again with Steam</a>`;
     } else {
-      const token = localStorage.getItem('paradise_user_token');
+      const token = localStorage.getItem('nekonexus_user_token');
       let me = null;
       try { me = token ? JSON.parse(atob(token.split('.')[0].replace(/-/g, '+').replace(/_/g, '/'))) : null; } catch {}
       if (me && (!me.exp || me.exp > Date.now() / 1000)) {
@@ -59,7 +59,7 @@
              <a href="/leaderboard" class="px-4 py-2 rounded bg-brand-600 hover:bg-brand-500 text-white text-sm">Browse players</a>
              <button id="logout" class="px-4 py-2 rounded bg-neutral-800 text-sm">Sign out</button>
            </div>`;
-        document.getElementById('logout').addEventListener('click', () => { localStorage.removeItem('paradise_user_token'); location.reload(); });
+        document.getElementById('logout').addEventListener('click', () => { localStorage.removeItem('nekonexus_user_token'); location.reload(); });
       } else {
         document.getElementById('content').innerHTML =
           `<p class="text-neutral-400 text-sm mb-5">Sign in with the Steam account you play UberStrike on. We only use this to verify it's you (for reporting players and your profile).</p>

@@ -16,7 +16,7 @@
  */
 
 import { ApiVersion } from '@/utils/enums';
-import { ApplicationConfiguration, Map, MapSettings, PhotonServer } from '@festivaldev/paradise-models';
+import { ApplicationConfiguration, Map, MapSettings, PhotonServer } from '@festivaldev/nekonexus-models';
 import { ChannelType, PhotonUsageType } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { Op } from 'sequelize';
 import { ApplicationConfigurationView } from '@festivaldev/uberstrike-js/UberStrike/Core/Models/Views';

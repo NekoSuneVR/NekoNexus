@@ -1,4 +1,4 @@
-import ParadiseService from '@/ParadiseService';
+import NekoNexusService from '@/NekoNexusService';
 import { WebSocketPacketType } from '@/ServiceHosts/WebSocket';
 
 /**
@@ -14,7 +14,7 @@ export const RealtimeNotify = {
   /** New mail (or a System announcement) arrived for TargetCmid -> client pulls in that message. */
   async inboxMessage(targetCmid: number, messageId: number): Promise<void> {
     try {
-      await ParadiseService.Instance.SocketHost.SendToCommServer(WebSocketPacketType.NotifyInboxMessage, {
+      await NekoNexusService.Instance.SocketHost.SendToCommServer(WebSocketPacketType.NotifyInboxMessage, {
         TargetCmid: targetCmid,
         MessageId: messageId,
       });
@@ -26,7 +26,7 @@ export const RealtimeNotify = {
   /** A clan/contact invitation was created for TargetCmid -> client refreshes its requests list. */
   async inboxRequests(targetCmid: number): Promise<void> {
     try {
-      await ParadiseService.Instance.SocketHost.SendToCommServer(WebSocketPacketType.NotifyInboxRequests, {
+      await NekoNexusService.Instance.SocketHost.SendToCommServer(WebSocketPacketType.NotifyInboxRequests, {
         TargetCmid: targetCmid,
       });
     } catch {
@@ -37,7 +37,7 @@ export const RealtimeNotify = {
   /** The clan roster changed -> TargetCmid's client refreshes its clan view. */
   async clanMembers(targetCmid: number): Promise<void> {
     try {
-      await ParadiseService.Instance.SocketHost.SendToCommServer(WebSocketPacketType.NotifyClanMembers, {
+      await NekoNexusService.Instance.SocketHost.SendToCommServer(WebSocketPacketType.NotifyClanMembers, {
         TargetCmid: targetCmid,
       });
     } catch {
@@ -48,7 +48,7 @@ export const RealtimeNotify = {
   /** Push a clan chat line (e.g. a "X joined the clan" system message) to online member TargetCmid. */
   async clanChat(targetCmid: number, fromCmid: number, name: string, message: string): Promise<void> {
     try {
-      await ParadiseService.Instance.SocketHost.SendToCommServer(WebSocketPacketType.NotifyClanChat, {
+      await NekoNexusService.Instance.SocketHost.SendToCommServer(WebSocketPacketType.NotifyClanChat, {
         TargetCmid: targetCmid,
         Cmid: fromCmid,
         Name: name,

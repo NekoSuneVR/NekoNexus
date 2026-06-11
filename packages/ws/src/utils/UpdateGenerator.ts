@@ -30,7 +30,7 @@ const PLATFORMS: string[] = ['win', 'darwin', 'universal'];
 const OPTIONAL_FILES: { [key: string]: any[] } = {
   win: [
     {
-      filename: 'Paradise.Client.DiscordRPC.exe',
+      filename: 'NekoNexus.Client.DiscordRPC.exe',
       localPath: 'UberStrike_Data/Plugins',
     },
   ],

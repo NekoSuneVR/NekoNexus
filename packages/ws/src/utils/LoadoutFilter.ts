@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { PlayerInventoryItem, PlayerLoadout } from '@festivaldev/paradise-models';
+import type { PlayerInventoryItem, PlayerLoadout } from '@festivaldev/nekonexus-models';
 import type { LoadoutView } from '@festivaldev/uberstrike-js/UberStrike/DataCenter/Common/Entities';
 
 export default class LoadoutFilter {

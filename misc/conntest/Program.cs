@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using ExitGames.Client.Photon;
 
-// Connects to a Paradise realtime server using the SAME PhotonPeer shim the game uses,
+// Connects to a NekoNexus realtime server using the SAME PhotonPeer shim the game uses,
 // to prove the LiteNetLib transport accepts connections. Usage: conntest <ip:port> [appId]
 class Listener : IPhotonPeerListener {
     public void OnEvent(EventData e) => Console.WriteLine($"  <- event {e.Code}");

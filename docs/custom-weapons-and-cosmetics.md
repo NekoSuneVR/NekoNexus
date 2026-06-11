@@ -16,11 +16,11 @@ Making the gun actually fire flying Nyan Cats (rainbow trail, pop-tart cat sprit
 new **Unity assets** that are *not* in the stock client:
 1. A weapon prefab + a projectile prefab (mesh/sprite + particle/trail + audio).
 2. Building those into an **AssetBundle** the client can load by name.
-3. Loading that bundle in the Paradise client mod and registering the new `PrefabName`, then
+3. Loading that bundle in the NekoNexus client mod and registering the new `PrefabName`, then
    pointing the shop item at it.
 
 Steps 1-2 are art/Unity-editor tasks (can't be done from server code). Once the bundle exists, wiring
-it into `packages/Client/Current/Paradise.Client` (load bundle on startup, map `PrefabName ->` the
+it into `packages/Client/Current/NekoNexus.Client` (load bundle on startup, map `PrefabName ->` the
 bundled prefab) and setting the shop item's `PrefabName` to it is straightforward code.
 
 **Recommendation:** ship the data-only Nyan Cat Cannon now (done), and treat the real Nyan visuals as

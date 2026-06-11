@@ -15,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { PlayerInventoryItem, PlayerLoadout, PublicProfile } from '@festivaldev/paradise-models';
+import { PlayerInventoryItem, PlayerLoadout, PublicProfile } from '@festivaldev/nekonexus-models';
 import { MemberAccessLevel } from '@festivaldev/uberstrike-js/Cmune/DataCenter/Common/Entities';
 import { LoadoutSlotType } from '@festivaldev/uberstrike-js/UberStrike/Core/Types';
 import { Op } from 'sequelize';
-import ParadiseCommand from '../ParadiseCommand';
+import NekoNexusCommand from '../NekoNexusCommand';
 
-export default class InventoryCommand extends ParadiseCommand {
+export default class InventoryCommand extends NekoNexusCommand {
   static override Command: string = 'inventory';
   static override Aliases: string[] = ['inv'];
 

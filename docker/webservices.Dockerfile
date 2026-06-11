@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-# Paradise Web Services (Bun/TypeScript). oven/bun is multi-arch (amd64 + arm64).
+# NekoNexus Web Services (Bun/TypeScript). oven/bun is multi-arch (amd64 + arm64).
 FROM oven/bun:1 AS base
 WORKDIR /app
 
@@ -8,18 +8,18 @@ WORKDIR /app
 # bun resolves all members declared in the root package.json "workspaces", so a missing
 # manifest (e.g. packages/admin) makes `bun install` fail even though we don't run it here.
 COPY package.json bun.lockb ./
-COPY packages/paradise-models/package.json packages/paradise-models/
+COPY packages/nekonexus-models/package.json packages/nekonexus-models/
 COPY packages/uberstrike-js/package.json   packages/uberstrike-js/
 COPY packages/ws/package.json              packages/ws/
 COPY packages/admin/package.json           packages/admin/
 RUN bun install --frozen-lockfile || bun install
 
 # Copy the workspace sources.
-COPY packages/paradise-models packages/paradise-models
+COPY packages/nekonexus-models packages/nekonexus-models
 COPY packages/uberstrike-js   packages/uberstrike-js
 COPY packages/ws              packages/ws
 
-# The service reads Paradise.Settings.WebServices.yml and wwwroot/ from its cwd.
+# The service reads NekoNexus.Settings.WebServices.yml and wwwroot/ from its cwd.
 WORKDIR /app/packages/ws
 
 EXPOSE 8080 8081 8082

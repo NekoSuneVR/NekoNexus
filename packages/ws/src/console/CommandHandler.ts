@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { CommandOutputArgs } from './ParadiseCommand';
+import { CommandOutputArgs } from './NekoNexusCommand';
 
 export default class CommandHandler {
   static Commands: any[] = [];

@@ -16,9 +16,9 @@
  */
 
 import CommandHandler from '../CommandHandler';
-import ParadiseCommand from '../ParadiseCommand';
+import NekoNexusCommand from '../NekoNexusCommand';
 
-export default class HelpCommand extends ParadiseCommand {
+export default class HelpCommand extends NekoNexusCommand {
   static override Command: string = 'help';
   static override Aliases: string[] = ['h'];
 

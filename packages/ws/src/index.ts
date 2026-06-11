@@ -19,7 +19,7 @@ import packageJson from '@/../package.json';
 import { program } from 'commander';
 import path from 'path';
 import seedrandom from 'seedrandom';
-import ParadiseService from './ParadiseService';
+import NekoNexusService from './NekoNexusService';
 import { FallbackUpdateGenerator, Log, LogLevel, UpdateGenerator } from './utils';
 
 const r = seedrandom(String(new Date().getTime()));
@@ -42,7 +42,7 @@ Math.randomInt = function (min = 1, max = 2147483647) {
 // #endregion
 
 program
-  .name('paradise')
+  .name('nekonexus')
   .description(packageJson.description)
   .version(packageJson.version)
   .helpOption('--help', 'Displays this help text')
@@ -58,7 +58,7 @@ program
     if (options.logLevel >= 0) Log.MaxLogLevel = options.logLevel;
 
     process.stdout.write('\x1bc');
-    ParadiseService.Instance.Run({
+    NekoNexusService.Instance.Run({
       serviceHost: options.service,
       prompt: options.prompt,
     });
