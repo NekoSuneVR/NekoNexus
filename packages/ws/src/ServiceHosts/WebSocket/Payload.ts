@@ -219,7 +219,20 @@ export default class WebSocketPayload {
 
     let data = Buffer.from(payloadObj.Data, 'base64');
     if (crypto != null && payloadObj.IsEncrypted) {
-      data = crypto.decrypt(data);
+      try {
+        data = crypto.decrypt(data);
+      } catch (e: any) {
+        // A failed decrypt almost always means the connecting server's passphrase
+        // doesn't match this server's ServerCredentials entry for its GUID. Drop the
+        // packet instead of letting the exception crash the whole web services process.
+        Log.error(
+          `Failed to decrypt ${WebSocketPacketType[payloadObj.Type]}(${payloadObj.Type}) payload. ` +
+            `This usually indicates a server passphrase mismatch.`,
+        );
+        Log.error(e);
+
+        return [null, null];
+      }
     }
 
     const bytes = [...data];

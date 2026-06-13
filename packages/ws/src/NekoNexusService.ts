@@ -108,8 +108,21 @@ export default class NekoNexusService {
       await this.fileServer.start();
 
       if (this.ServiceSettings.DiscordSettings.Enabled) {
-        this.discordClient = new DiscordClient();
-        await this.discordClient.Connect();
+        try {
+          this.discordClient = new DiscordClient();
+          await this.discordClient.Connect();
+
+          // If the connection didn't actually establish (missing/invalid token, etc.),
+          // drop the client so the socket handlers skip Discord entirely instead of
+          // invoking methods on a dead client.
+          if (!this.discordClient.IsConnected) {
+            this.discordClient = undefined as any;
+          }
+        } catch (error) {
+          Log.error('Discord integration failed to initialize. Continuing without it.');
+          Log.error(error);
+          this.discordClient = undefined as any;
+        }
       }
 
       this.SocketHost = new WebSocketHost(+this.ServiceSettings.SocketPort!);

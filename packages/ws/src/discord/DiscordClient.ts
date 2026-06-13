@@ -73,9 +73,16 @@ export default class DiscordClient {
 
   async Connect(): Promise<void> {
     if (this.discordClient) return;
-    Log.info('Connecting to Discord...');
 
     this.discordSettings = NekoNexusService.Instance.ServiceSettings.DiscordSettings;
+
+    const botToken = this.discordSettings.BotToken?.trim();
+    if (!botToken) {
+      Log.warn('Discord integration is enabled but no bot token is configured. Skipping Discord integration.');
+      return;
+    }
+
+    Log.info('Connecting to Discord...');
 
     this.discordClient = new Client({
       intents: [
@@ -108,12 +115,26 @@ export default class DiscordClient {
         this.OnReady(e);
         resolve();
       });
+      this.discordClient.once(Events.Error, reject);
     });
 
     this.discordClient.on(Events.MessageCreate, this.OnMessageCreate.bind(this));
 
-    this.discordClient.login(this.discordSettings.BotToken);
-    await loginPromise;
+    try {
+      await this.discordClient.login(botToken);
+      await loginPromise;
+    } catch (error) {
+      Log.error('Failed to connect to Discord. Disabling Discord integration for this session.');
+      Log.error(error);
+
+      try {
+        await this.discordClient.destroy();
+      } catch {
+        // ignore teardown errors
+      }
+      this.discordClient = undefined as any;
+      return;
+    }
 
     if (this.discordSettings.Integrations.LobbyChat && this.discordSettings.WebHooks.LobbyChat?.trim().length) {
       this.lobbyChatClient = new WebhookClient({ url: this.discordSettings.WebHooks.LobbyChat });
@@ -148,8 +169,12 @@ export default class DiscordClient {
     }
   }
 
+  get IsConnected(): boolean {
+    return !!this.discordClient?.isReady();
+  }
+
   async Disconnect(): Promise<void> {
-    await this.discordClient.user?.setStatus('invisible');
+    await this.discordClient?.user?.setStatus('invisible');
   }
 
   async SendLobbyChatMessage(message: WebSocketChatMessage): Promise<void> {
