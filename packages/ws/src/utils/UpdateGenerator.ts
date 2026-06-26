@@ -92,6 +92,28 @@ export class UpdateGenerator {
     return path.normalize(pth).split(path.sep).join('/');
   }
 
+  // Bump the last segment of the previously-published version so EVERY regenerate is a new version
+  // (not just when the main DLLs change). The in-game auto-updater shows this, so players see a
+  // genuinely new version number for each update - maps, assets, anything. Falls back to the base
+  // VERSION when there is no prior manifest to read.
+  static nextVersion(existingManifestPath: string): string {
+    try {
+      if (fs.existsSync(existingManifestPath)) {
+        const prev: any = YAML.parse(fs.readFileSync(existingManifestPath, 'utf8'));
+        const cur = String(prev?.version ?? '').trim();
+        const parts = cur.split('.');
+        if (parts.length >= 2 && parts.every((p) => /^\d+$/.test(p))) {
+          const nums = parts.map(Number);
+          nums[nums.length - 1] += 1;
+          return nums.join('.');
+        }
+      }
+    } catch {
+      /* fall through to the base VERSION */
+    }
+    return VERSION;
+  }
+
   static async generate(outputDir: string): Promise<void> {
     console.log('Generating V2 updates...');
 
@@ -106,8 +128,11 @@ export class UpdateGenerator {
 
     for (const channel of CHANNELS) {
       if (fs.existsSync(channel)) {
+        // Bump from the last-published manifest so each regenerate is a new version (always).
+        const version = this.nextVersion(path.join(outputDir, channel, `${FILE_NAME}.${FILE_SUFFIX}`));
+
         const updates: { [key: string]: any } = {
-          version: VERSION,
+          version,
           build,
           channel,
           platforms: {},
