@@ -73,7 +73,26 @@
           ${[['Kills', (p.Splats ?? 0).toLocaleString()], ['Deaths', (p.Splatted ?? 0).toLocaleString()], ['K/D', kd], ['Accuracy', acc],
              ['Headshots', (p.Headshots ?? 0).toLocaleString()], ['Nutshots', (p.Nutshots ?? 0).toLocaleString()], ['Time played', fmtTime(p.TimeSpentInGame)], ['Points', (p.Points ?? 0).toLocaleString()]]
             .map(([k, v]) => `<div class="bg-neutral-900/60 rounded-lg p-3"><div class="text-xl font-bold text-brand-400">${v}</div><div class="text-xs text-neutral-500 mt-1">${k}</div></div>`).join('')}
-        </div>`;
+        </div>
+        ${(() => {
+          const used = (p.WeaponStats || []).filter((w) => w.ShotsFired > 0 || w.Splats > 0 || w.DamageDone > 0);
+          if (!used.length) return '';
+          return `
+          <h2 class="text-lg font-bold mt-6 mb-2">Weapon breakdown</h2>
+          <div class="overflow-x-auto bg-neutral-900/40 rounded-lg">
+            <table class="w-full text-sm">
+              <thead class="text-neutral-400 text-left"><tr>
+                <th class="p-2">Weapon</th><th class="p-2 text-right">Kills</th><th class="p-2 text-right">Damage</th><th class="p-2 text-right">Shots (hit/fired)</th><th class="p-2 text-right">Accuracy</th>
+              </tr></thead>
+              <tbody>${used.map((w) => `<tr class="border-t border-neutral-800">
+                <td class="p-2">${esc(w.Weapon)}</td>
+                <td class="p-2 text-right font-medium text-brand-400">${(w.Splats||0).toLocaleString()}</td>
+                <td class="p-2 text-right">${(w.DamageDone||0).toLocaleString()}</td>
+                <td class="p-2 text-right text-neutral-400">${w.ShotsHit}/${w.ShotsFired}</td>
+                <td class="p-2 text-right">${w.Accuracy}%</td></tr>`).join('')}</tbody>
+            </table>
+          </div>`;
+        })()}`;
 
       // Report box: requires a signed-in (Steam) user.
       const box = document.getElementById('reportBox');

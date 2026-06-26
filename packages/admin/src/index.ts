@@ -135,6 +135,50 @@ function json(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json' } });
 }
 
+// Open API responses: same as json() but CORS-enabled so third-party sites/tools can read them.
+const CORS_HEADERS = {
+  'content-type': 'application/json',
+  'access-control-allow-origin': '*',
+  'access-control-allow-methods': 'GET, OPTIONS',
+  'access-control-allow-headers': 'Content-Type',
+  'cache-control': 'public, max-age=15',
+};
+function apiJson(data: unknown, status = 200): Response {
+  return new Response(JSON.stringify(data), { status, headers: CORS_HEADERS });
+}
+
+// The game stores PlayerStatistics.WeaponStatistics / PersonalRecord as DOUBLE-encoded JSON
+// (a JSON string of a JSON string). Parse defensively up to a couple of times until it's an object.
+function parseStatJson(val: any): Record<string, any> {
+  let v = val;
+  for (let i = 0; i < 3 && typeof v === 'string'; i++) {
+    try {
+      v = JSON.parse(v);
+    } catch {
+      return {};
+    }
+  }
+  return v && typeof v === 'object' ? v : {};
+}
+
+// Turn the flat WeaponStatistics blob into a tidy per-weapon array with accuracy.
+const WEAPON_KEYS = ['Handgun', 'MachineGun', 'Shotgun', 'Splattergun', 'Sniper', 'Melee', 'Cannon', 'Launcher'];
+function weaponStatsFrom(raw: any): any[] {
+  const w = parseStatJson(raw);
+  return WEAPON_KEYS.map((name) => {
+    const fired = Number(w[`${name}TotalShotsFired`] ?? 0);
+    const hit = Number(w[`${name}TotalShotsHit`] ?? 0);
+    return {
+      Weapon: name,
+      Splats: Number(w[`${name}TotalSplats`] ?? 0),
+      DamageDone: Number(w[`${name}TotalDamageDone`] ?? 0),
+      ShotsFired: fired,
+      ShotsHit: hit,
+      Accuracy: fired > 0 ? Math.round((hit / fired) * 1000) / 10 : 0, // % to 1dp
+    };
+  });
+}
+
 // Admin tokens carry { sub, name }; user (Steam) tokens carry { kind:'user', cmid, name }. Keep them
 // separate so a player's site session can never be used as an admin credential.
 function requireAuth(req: Request): any | null {
@@ -151,6 +195,123 @@ function requireUser(req: Request): any | null {
 
 function isOnline(lastResponse: Date | null | undefined): boolean {
   return !!lastResponse && Date.now() - new Date(lastResponse).getTime() < ONLINE_WINDOW_MS;
+}
+
+// Full public player profile (used by /api/public/profile and the Open API). Returns null for
+// unknown players or the Cmid 0 system account.
+async function buildPlayerProfile(cmid: number): Promise<any | null> {
+  if (!Number.isFinite(cmid)) return null;
+  const profile: any = await models.PublicProfile.findByPk(cmid, { raw: true });
+  if (!profile || profile.Cmid === 0) return null;
+  const stats: any = (await models.PlayerStatistics.findByPk(cmid, { raw: true })) ?? {};
+  const member: any = await models.ClanMember.findByPk(cmid, { raw: true }).catch(() => null);
+  let clan: any = null;
+  if (member) {
+    const c: any = await models.Clan.findByPk(member.GroupId, { raw: true }).catch(() => null);
+    if (c) clan = { GroupId: c.GroupId, Name: c.Name, Tag: c.Tag };
+  }
+  const shots = Number(stats.Shots ?? 0);
+  const hits = Number(stats.Hits ?? 0);
+  const splats = Number(stats.Splats ?? 0);
+  const splatted = Number(stats.Splatted ?? 0);
+  return {
+    Cmid: profile.Cmid,
+    Name: profile.Name,
+    AccessLevel: profile.AccessLevel ?? 0,
+    Level: stats.Level ?? 0,
+    Xp: stats.Xp ?? 0,
+    Points: stats.Points ?? 0,
+    Splats: splats,
+    Splatted: splatted,
+    KDR: splatted > 0 ? Math.round((splats / splatted) * 100) / 100 : splats,
+    Headshots: stats.Headshots ?? 0,
+    Nutshots: stats.Nutshots ?? 0,
+    Shots: shots,
+    Hits: hits,
+    Accuracy: shots > 0 ? Math.round((hits / shots) * 1000) / 10 : 0,
+    TimeSpentInGame: stats.TimeSpentInGame ?? 0, // seconds
+    WeaponStats: weaponStatsFrom(stats.WeaponStatistics),
+    PersonalRecord: parseStatJson(stats.PersonalRecord),
+    Clan: clan,
+  };
+}
+
+// Clans ranked by combined member kills (+ member count + tag).
+async function buildClanList(limit: number): Promise<any[]> {
+  const clans = (await models.Clan.findAll({ raw: true })) as any[];
+  const members = (await models.ClanMember.findAll({ attributes: ['Cmid', 'GroupId'], raw: true })) as any[];
+  const byGroup = new Map<number, number[]>();
+  for (const m of members) {
+    if (!byGroup.has(m.GroupId)) byGroup.set(m.GroupId, []);
+    byGroup.get(m.GroupId)!.push(m.Cmid);
+  }
+  const allCmids = members.map((m) => m.Cmid);
+  const stats = allCmids.length
+    ? ((await models.PlayerStatistics.findAll({ where: { Cmid: { [Op.in]: allCmids } }, attributes: ['Cmid', 'Splats'], raw: true })) as any[])
+    : [];
+  const killsByCmid = new Map(stats.map((s) => [s.Cmid, s.Splats ?? 0]));
+  return clans
+    .map((c) => {
+      const cmids = byGroup.get(c.GroupId) ?? [];
+      return {
+        GroupId: c.GroupId,
+        Name: c.Name,
+        Tag: c.Tag,
+        Members: cmids.length,
+        Kills: cmids.reduce((sum, id) => sum + (killsByCmid.get(id) ?? 0), 0),
+      };
+    })
+    .sort((a, b) => b.Kills - a.Kills || b.Members - a.Members)
+    .slice(0, limit);
+}
+
+// One clan with its member roster (name, level, kills).
+async function buildClanDetail(groupId: number): Promise<any | null> {
+  const clan: any = await models.Clan.findByPk(groupId, { raw: true });
+  if (!clan) return null;
+  const members = (await models.ClanMember.findAll({ where: { GroupId: groupId }, raw: true })) as any[];
+  const cmids = members.map((m) => m.Cmid);
+  const profiles = cmids.length
+    ? ((await models.PublicProfile.findAll({ where: { Cmid: { [Op.in]: cmids } }, attributes: ['Cmid', 'Name'], raw: true })) as any[])
+    : [];
+  const stats = cmids.length
+    ? ((await models.PlayerStatistics.findAll({ where: { Cmid: { [Op.in]: cmids } }, attributes: ['Cmid', 'Splats', 'Level', 'Xp'], raw: true })) as any[])
+    : [];
+  const nameBy = new Map(profiles.map((p) => [p.Cmid, p.Name]));
+  const statBy = new Map(stats.map((s) => [s.Cmid, s]));
+  const memberList = members
+    .map((m) => {
+      const s: any = statBy.get(m.Cmid) ?? {};
+      return { Cmid: m.Cmid, Name: nameBy.get(m.Cmid) ?? '', Splats: s.Splats ?? 0, Level: s.Level ?? 0, Xp: s.Xp ?? 0 };
+    })
+    .sort((a, b) => b.Splats - a.Splats);
+  return {
+    GroupId: clan.GroupId,
+    Name: clan.Name,
+    Tag: clan.Tag,
+    Members: memberList.length,
+    TotalKills: memberList.reduce((sum, m) => sum + m.Splats, 0),
+    MemberList: memberList,
+  };
+}
+
+// Top players, excluding staff (AccessLevel >= 4), the system account and unnamed rows.
+async function buildLeaderboard(sort: string, limit: number): Promise<any[]> {
+  const sortCol = sort === 'level' ? 'Level' : sort === 'points' ? 'Points' : sort === 'splats' ? 'Splats' : 'Xp';
+  const stats = (await models.PlayerStatistics.findAll({ order: [[sortCol, 'DESC']], limit: limit * 3, raw: true })) as any[];
+  const cmids = stats.map((s) => s.Cmid);
+  const profiles = cmids.length
+    ? ((await models.PublicProfile.findAll({ where: { Cmid: { [Op.in]: cmids } }, attributes: ['Cmid', 'Name', 'AccessLevel'], raw: true })) as any[])
+    : [];
+  const profBy = new Map(profiles.map((p) => [p.Cmid, p]));
+  const rows: any[] = [];
+  for (const s of stats) {
+    const p: any = profBy.get(s.Cmid);
+    if (!p || p.Cmid === 0 || !p.Name || (p.AccessLevel ?? 0) >= 4) continue;
+    rows.push({ Rank: rows.length + 1, Cmid: s.Cmid, Name: p.Name, Level: s.Level ?? 0, Xp: s.Xp ?? 0, Points: s.Points ?? 0, Splats: s.Splats ?? 0 });
+    if (rows.length >= limit) break;
+  }
+  return rows;
 }
 
 async function handleApi(req: Request, url: URL): Promise<Response> {
@@ -212,32 +373,93 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
 
   // Public player profile (name, level, combat stats, clan). Used by the /profile/:cmid page.
   if (pathname.startsWith('/api/public/profile/') && method === 'GET') {
-    const cmid = Number(pathname.split('/').pop());
-    if (!Number.isFinite(cmid)) return json({ error: 'Bad id' }, 400);
-    const profile = await models.PublicProfile.findByPk(cmid, { raw: true });
-    if (!profile || (profile as any).Cmid === 0) return json({ error: 'Not found' }, 404);
-    const stats: any = (await models.PlayerStatistics.findByPk(cmid, { raw: true })) ?? {};
-    const member: any = await models.ClanMember.findByPk(cmid, { raw: true });
-    let clan: any = null;
-    if (member) {
-      const c: any = await models.Clan.findByPk(member.GroupId, { raw: true });
-      if (c) clan = { Name: c.Name, Tag: c.Tag, GroupId: c.GroupId };
+    const p = await buildPlayerProfile(Number(pathname.split('/').pop()));
+    if (!p) return json({ error: 'Not found' }, 404);
+    return json(p);
+  }
+
+  // ===================== Open API (v1) — public, read-only, CORS =====================
+  if (pathname.startsWith('/api/v1')) {
+    if (method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS_HEADERS });
+
+    if (pathname === '/api/v1' || pathname === '/api/v1/') {
+      return apiJson({
+        name: 'NekoNexus Open API',
+        version: 1,
+        endpoints: [
+          'GET /api/v1/players?q=<name|cmid>&limit=<1-100>',
+          'GET /api/v1/players/:cmid',
+          'GET /api/v1/clans?limit=<1-100>',
+          'GET /api/v1/clans/:groupId',
+          'GET /api/v1/leaderboard?sort=xp|level|points|splats&limit=<1-100>',
+        ],
+      });
     }
-    return json({
-      Cmid: (profile as any).Cmid,
-      Name: (profile as any).Name,
-      Level: stats.Level ?? 0,
-      Xp: stats.Xp ?? 0,
-      Points: stats.Points ?? 0,
-      Splats: stats.Splats ?? 0,
-      Splatted: stats.Splatted ?? 0,
-      Headshots: stats.Headshots ?? 0,
-      Nutshots: stats.Nutshots ?? 0,
-      Shots: Number(stats.Shots ?? 0),
-      Hits: Number(stats.Hits ?? 0),
-      TimeSpentInGame: stats.TimeSpentInGame ?? 0,
-      Clan: clan,
-    });
+
+    if (pathname === '/api/v1/players' && method === 'GET') {
+      const q = (url.searchParams.get('q') ?? '').trim();
+      const limit = Math.min(Math.max(Number(url.searchParams.get('limit')) || 25, 1), 100);
+      const where: any = { Cmid: { [Op.ne]: 0 }, Name: { [Op.ne]: '' } };
+      if (q) {
+        where[Op.or] = [{ Name: { [Op.like]: `%${q}%` } }, ...(/^\d+$/.test(q) ? [{ Cmid: Number(q) }] : [])];
+      }
+      const players = await models.PublicProfile.findAll({
+        where,
+        limit,
+        order: [['LastLoginDate', 'DESC']],
+        attributes: ['Cmid', 'Name', 'AccessLevel', 'LastLoginDate'],
+        raw: true,
+      });
+      return apiJson(players);
+    }
+
+    const v1Player = pathname.match(/^\/api\/v1\/players\/(\d+)$/);
+    if (v1Player && method === 'GET') {
+      const p = await buildPlayerProfile(Number(v1Player[1]));
+      return p ? apiJson(p) : apiJson({ error: 'Not found' }, 404);
+    }
+
+    if (pathname === '/api/v1/clans' && method === 'GET') {
+      return apiJson(await buildClanList(Math.min(Math.max(Number(url.searchParams.get('limit')) || 50, 1), 100)));
+    }
+
+    const v1Clan = pathname.match(/^\/api\/v1\/clans\/(\d+)$/);
+    if (v1Clan && method === 'GET') {
+      const c = await buildClanDetail(Number(v1Clan[1]));
+      return c ? apiJson(c) : apiJson({ error: 'Not found' }, 404);
+    }
+
+    if (pathname === '/api/v1/leaderboard' && method === 'GET') {
+      const sort = (url.searchParams.get('sort') ?? 'xp').toLowerCase();
+      const limit = Math.min(Math.max(Number(url.searchParams.get('limit')) || 50, 1), 100);
+      return apiJson(await buildLeaderboard(sort, limit));
+    }
+
+    return apiJson({ error: 'Unknown endpoint. See GET /api/v1' }, 404);
+  }
+
+  // ---- a signed-in user's own payment / transaction history ----
+  if (pathname === '/api/me/payments' && method === 'GET') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in first.' }, 401);
+    const orders = (await models.PaymentOrder.findAll({
+      where: { Cmid: user.cmid },
+      order: [['createdAt', 'DESC']],
+      limit: 50,
+      raw: true,
+    }).catch(() => [])) as any[];
+    return json(
+      orders.map((o) => ({
+        Date: o.createdAt,
+        Credits: o.Credits,
+        Amount: (Number(o.PriceCents) || 0) / 100,
+        Currency: o.Currency,
+        Status: o.Status,
+        Fulfilled: !!o.Fulfilled,
+        TxId: o.SessionId || o.ExternalId,
+        ExternalId: o.ExternalId,
+      })),
+    );
   }
 
   // Public clan leaderboard: clans ranked by combined member kills (with member count + tag).
