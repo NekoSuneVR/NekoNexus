@@ -25,11 +25,21 @@
       <a href="#download" class="hover:text-white">Download</a>
       <a href="/leaderboard" class="hover:text-white">Leaderboard</a>
       <a href="/streams" class="hover:text-white">Streams</a>
+      <a href="/api/docs" class="hover:text-white">API</a>
       <a href="#about" class="hover:text-white">About</a>
       <span id="authnav"><a href="/login" class="hover:text-white">Sign in</a></span>
       <a href="/admin" class="rounded-lg border border-neutral-700 px-3 py-1.5 hover:border-brand-500 hover:text-white">Admin</a>
     </nav>
   </header>
+
+  <!-- boost event banner (shown only while a coin boost is running) -->
+  <div id="boostBanner" class="hidden max-w-6xl mx-auto px-5">
+    <div class="rounded-xl border border-yellow-500/40 bg-gradient-to-r from-yellow-500/15 to-brand-500/10 px-4 py-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm">
+      <span class="text-xl leading-none">🔥</span>
+      <span id="boostText" class="font-semibold text-yellow-300"></span>
+      <span id="boostTime" class="text-neutral-300"></span>
+    </div>
+  </div>
 
   <!-- hero -->
   <section class="max-w-6xl mx-auto px-5 pt-10 pb-8 text-center">
@@ -148,6 +158,35 @@
     }
     load();
     setInterval(load, 30000);
+
+    // ---- live boost-event banner ----
+    let boost = null;
+    function fmtRemaining(ms) {
+      if (ms <= 0) return '';
+      const s = Math.floor(ms / 1000);
+      const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+      if (d > 0) return `${d}d ${h}h ${m}m`;
+      if (h > 0) return `${h}h ${m}m ${sec}s`;
+      if (m > 0) return `${m}m ${sec}s`;
+      return `${sec}s`;
+    }
+    function renderBoost() {
+      const banner = $('#boostBanner');
+      if (!boost || !boost.active) { banner.classList.add('hidden'); return; }
+      // Expired since last fetch?
+      if (boost.endsAt && Date.now() >= boost.endsAt) { boost.active = false; banner.classList.add('hidden'); return; }
+      const xpNote = boost.xpMultiplier > 1 && boost.xpMultiplier !== boost.pointsMultiplier ? ` + ${boost.xpMultiplier}x XP` : '';
+      $('#boostText').textContent = `${boost.pointsMultiplier}x Coins${xpNote} boost is LIVE!`;
+      $('#boostTime').textContent = boost.endsAt ? `Ends in ${fmtRemaining(boost.endsAt - Date.now())}` : 'On now — limited time!';
+      banner.classList.remove('hidden');
+    }
+    async function loadBoost() {
+      try { boost = await (await fetch('/api/public/boost')).json(); } catch (e) { boost = null; }
+      renderBoost();
+    }
+    loadBoost();
+    setInterval(loadBoost, 30000); // refresh state
+    setInterval(renderBoost, 1000); // tick the countdown
   </script>
   <script src="/assets/nav.js"></script>
 </body>

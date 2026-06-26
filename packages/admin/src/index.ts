@@ -10,6 +10,7 @@ import profileHtml from './profile.html' with { type: 'text' };
 import streamsHtml from './streams.html' with { type: 'text' };
 import socialHtml from './social.html' with { type: 'text' };
 import shopHtml from './shop.html' with { type: 'text' };
+import apiDocsHtml from './apidocs.html' with { type: 'text' };
 import loginHtml from './login.html' with { type: 'text' };
 import { bearer, signToken, verifyToken } from './auth';
 import { loadConfig } from './config';
@@ -600,6 +601,19 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
     );
   }
 
+  // Public boost state — drives the homepage "boost running" banner. Returns active=false when no
+  // boost is live (or it has expired). No auth: it's just the public event status.
+  if (pathname === '/api/public/boost' && method === 'GET') {
+    await ensureBoostTable();
+    const [rows]: any = await sequelize.query('SELECT PointsMultiplier, XpMultiplier, EndsAt FROM GlobalBoost WHERE Id = 1').catch(() => [[]]);
+    const r = rows?.[0] ?? {};
+    const points = Number(r.PointsMultiplier) || 1;
+    const xp = Number(r.XpMultiplier) || 1;
+    const endsAt = Number(r.EndsAt) || 0;
+    const active = (points > 1 || xp > 1) && (endsAt === 0 || Date.now() < endsAt);
+    return json({ active, pointsMultiplier: points, xpMultiplier: xp, endsAt });
+  }
+
   // Public player profile (name, level, combat stats, clan). Used by the /profile/:cmid page.
   if (pathname.startsWith('/api/public/profile/') && method === 'GET') {
     const p = await buildPlayerProfile(Number(pathname.split('/').pop()));
@@ -615,6 +629,7 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
       return apiJson({
         name: 'NekoNexus Open API',
         version: 1,
+        docs: '/api/docs',
         endpoints: [
           'GET /api/v1/players?q=<name|cmid>&limit=<1-100>',
           'GET /api/v1/players/:cmid',
@@ -1817,6 +1832,7 @@ Bun.serve({
     if (url.pathname === '/leaderboard') return page(leaderboardHtml);
     if (url.pathname === '/social') return page(socialHtml);
     if (url.pathname === '/shop') return page(shopHtml);
+    if (url.pathname === '/api/docs' || url.pathname === '/docs') return page(apiDocsHtml);
     if (url.pathname === '/streams') return page(streamsHtml);
     if (url.pathname === '/login') return page(loginHtml);
     if (url.pathname === '/profile' || url.pathname.startsWith('/profile/')) return page(profileHtml);

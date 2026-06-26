@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Open API — NekoNexus</title>
+  <meta name="description" content="NekoNexus Open API — public, read-only JSON endpoints for players, clans, matches and the leaderboard." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { brand: { 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857' } } } } };
+  </script>
+  <style>
+    body { background: radial-gradient(1200px 600px at 50% -10%, rgba(16, 185, 129, .12), transparent 60%), #0a0a0a; }
+    .glass { background: rgba(23, 23, 23, .7); backdrop-filter: blur(8px); }
+    pre { white-space: pre-wrap; word-break: break-word; }
+    .meth { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  </style>
+</head>
+<body class="text-neutral-200 min-h-screen">
+  <header class="border-b border-neutral-800">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="/" class="text-xl font-bold text-brand-400">NekoNexus</a>
+      <nav class="flex gap-5 text-sm text-neutral-400 items-center">
+        <a href="/" class="hover:text-brand-400">Home</a>
+        <a href="/leaderboard" class="hover:text-brand-400">Leaderboard</a>
+        <a href="/api/docs" class="text-brand-400">API</a>
+        <span id="authnav"><a href="/login" class="hover:text-brand-400">Sign in</a></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-8 grid lg:grid-cols-[14rem_1fr] gap-8">
+    <!-- sidebar -->
+    <aside class="hidden lg:block">
+      <div class="sticky top-6 text-sm space-y-1">
+        <div class="text-neutral-500 uppercase text-xs font-semibold mb-2">Open API v1</div>
+        <a href="#intro" class="block px-2 py-1 rounded hover:bg-neutral-800">Introduction</a>
+        <a href="#players" class="block px-2 py-1 rounded hover:bg-neutral-800">Players</a>
+        <a href="#matches" class="block px-2 py-1 rounded hover:bg-neutral-800">Match history</a>
+        <a href="#clans" class="block px-2 py-1 rounded hover:bg-neutral-800">Clans</a>
+        <a href="#leaderboard" class="block px-2 py-1 rounded hover:bg-neutral-800">Leaderboard</a>
+        <div class="text-neutral-500 uppercase text-xs font-semibold mb-2 mt-4">Public</div>
+        <a href="#public" class="block px-2 py-1 rounded hover:bg-neutral-800">Status &amp; boost</a>
+      </div>
+    </aside>
+
+    <div class="min-w-0">
+      <section id="intro" class="mb-10">
+        <h1 class="text-3xl font-bold mb-2">NekoNexus Open API</h1>
+        <p class="text-neutral-400 max-w-2xl">A public, read-only JSON API for player profiles, clans, match history and the
+          leaderboard. No API key, no auth, CORS-enabled — call it straight from the browser or any HTTP client.</p>
+        <div class="glass rounded-xl p-4 mt-5 text-sm">
+          <div class="text-neutral-500 mb-1">Base URL</div>
+          <code id="baseUrl" class="text-brand-400">…</code>
+          <div class="text-neutral-500 mt-3 mb-1">Notes</div>
+          <ul class="list-disc list-inside text-neutral-400 space-y-1">
+            <li>All responses are JSON. Errors return <code>{ "error": "…" }</code> with a 4xx status.</li>
+            <li>Rate-limit friendly: cache where you can. The System Staff account (Cmid 0) is never returned.</li>
+            <li>The machine-readable index lives at <a id="idxLink" class="text-brand-400 underline" href="/api/v1">GET /api/v1</a>.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="players" class="mb-10 space-y-6"></section>
+      <section id="matches" class="mb-10 space-y-6"></section>
+      <section id="clans" class="mb-10 space-y-6"></section>
+      <section id="leaderboard" class="mb-10 space-y-6"></section>
+      <section id="public" class="mb-10 space-y-6"></section>
+    </div>
+  </main>
+
+  <footer class="max-w-6xl mx-auto px-4 py-8 border-t border-neutral-800 text-sm text-neutral-500">
+    NekoNexus — community UberStrike. The Open API is provided as-is; endpoints may evolve under <code>/api/v2</code> later.
+  </footer>
+
+  <script>
+    const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const ORIGIN = location.origin;
+    document.getElementById('baseUrl').textContent = ORIGIN;
+
+    // Each endpoint: method, path, summary, params[], a sample request path, and an example response.
+    const SECTIONS = {
+      players: [
+        {
+          method: 'GET', path: '/api/v1/players', sample: '/api/v1/players?q=neko&limit=10',
+          summary: 'Search players by name or CMID. Omit q to list the most recently seen players.',
+          params: [
+            ['q', 'string', 'Name fragment, or an exact CMID. Optional.'],
+            ['limit', 'int 1–100', 'Max results (default 25).'],
+          ],
+          example: [{ Cmid: 12345, Name: 'NekoSuneVR', AccessLevel: 8, LastLoginDate: '2026-06-26T12:00:00.000Z' }],
+        },
+        {
+          method: 'GET', path: '/api/v1/players/:cmid', sample: '/api/v1/players/12345',
+          summary: 'Full public profile: name, level/XP/points, combat stats, per-weapon stats and clan.',
+          params: [['cmid', 'int (path)', "The player's CMID."]],
+          example: {
+            Cmid: 12345, Name: 'NekoSuneVR', AccessLevel: 8, Level: 42, Xp: 1234567, Points: 98000,
+            Kills: 5400, Deaths: 3200, TimePlayed: 184000, Clan: { GroupId: 7, Name: 'Neko', Tag: 'NEKO' },
+            Weapons: [{ Name: 'Machinegun', Kills: 2100, ShotsFired: 84000 }],
+          },
+        },
+      ],
+      matches: [
+        {
+          method: 'GET', path: '/api/v1/players/:cmid/matches', sample: '/api/v1/players/12345/matches?limit=10',
+          summary: "A player's recent finished matches (most recent first).",
+          params: [
+            ['cmid', 'int (path)', "The player's CMID."],
+            ['limit', 'int 1–50', 'Max matches (default 20).'],
+          ],
+          example: [{ MapId: 12, Mode: 'Team Death Match', Kills: 24, Deaths: 11, Won: true, Xp: 1800, Points: 950, Date: '2026-06-26T11:40:00.000Z' }],
+        },
+      ],
+      clans: [
+        {
+          method: 'GET', path: '/api/v1/clans', sample: '/api/v1/clans?limit=25',
+          summary: 'Top clans by total member XP, with tag and member count.',
+          params: [['limit', 'int 1–100', 'Max clans (default 50).']],
+          example: [{ GroupId: 7, Name: 'Neko', Tag: 'NEKO', Members: 18, Xp: 9876543, Kills: 42000 }],
+        },
+        {
+          method: 'GET', path: '/api/v1/clans/:groupId', sample: '/api/v1/clans/7',
+          summary: 'Clan detail: tag, description and the full member roster.',
+          params: [['groupId', 'int (path)', 'The clan id.']],
+          example: { GroupId: 7, Name: 'Neko', Tag: 'NEKO', Members: [{ Cmid: 12345, Name: 'NekoSuneVR', Splats: 5400, Level: 42, Xp: 1234567 }] },
+        },
+      ],
+      leaderboard: [
+        {
+          method: 'GET', path: '/api/v1/leaderboard', sample: '/api/v1/leaderboard?sort=xp&limit=25',
+          summary: 'Top players (everyone, staff included; only System Staff is excluded).',
+          params: [
+            ['sort', 'xp | level | points | splats', 'Ranking metric (default xp).'],
+            ['limit', 'int 1–100', 'How many ranks (default 50).'],
+          ],
+          example: [{ Rank: 1, Cmid: 12345, Name: 'NekoSuneVR', Level: 42, Xp: 1234567, Points: 98000, Splats: 5400 }],
+        },
+      ],
+      public: [
+        {
+          method: 'GET', path: '/api/public/summary', sample: '/api/public/summary',
+          summary: 'Live server status: players online, servers up, total registered players, server list.',
+          params: [],
+          example: { activePlayers: 12, serversOnline: 2, serversTotal: 3, totalPlayers: 4821, servers: [{ Name: 'EU1', Region: 1, Online: true }] },
+        },
+        {
+          method: 'GET', path: '/api/public/leaderboard', sample: '/api/public/leaderboard?sort=xp&limit=25',
+          summary: 'The same leaderboard the website shows (alias of the v1 leaderboard shape).',
+          params: [['sort', 'xp | level | points | splats', 'default xp'], ['limit', 'int 1–100', 'default 25']],
+          example: [{ rank: 1, Cmid: 12345, Name: 'NekoSuneVR', Level: 42, Xp: 1234567, Splats: 5400, Points: 98000 }],
+        },
+        {
+          method: 'GET', path: '/api/public/profile/:cmid', sample: '/api/public/profile/12345',
+          summary: 'Public profile (same payload as /api/v1/players/:cmid).',
+          params: [['cmid', 'int (path)', "The player's CMID."]],
+          example: { Cmid: 12345, Name: 'NekoSuneVR', Level: 42, Xp: 1234567 },
+        },
+        {
+          method: 'GET', path: '/api/public/boost', sample: '/api/public/boost',
+          summary: 'Current global coin/XP boost event status (drives the homepage banner).',
+          params: [],
+          example: { active: true, pointsMultiplier: 2, xpMultiplier: 2, endsAt: 1782000000000 },
+        },
+      ],
+    };
+
+    const HEADINGS = { players: 'Players', matches: 'Match history', clans: 'Clans', leaderboard: 'Leaderboard', public: 'Public status & boost' };
+
+    function card(ep) {
+      const params = ep.params.length
+        ? `<table class="w-full text-sm mt-3"><thead><tr class="text-neutral-500 text-left"><th class="pb-1 pr-4 font-medium">Param</th><th class="pb-1 pr-4 font-medium">Type</th><th class="pb-1 font-medium">Description</th></tr></thead><tbody>${ep.params.map((p) => `<tr class="border-t border-neutral-800"><td class="py-1 pr-4 text-brand-400 meth">${esc(p[0])}</td><td class="py-1 pr-4 text-neutral-400">${esc(p[1])}</td><td class="py-1 text-neutral-300">${esc(p[2])}</td></tr>`).join('')}</tbody></table>`
+        : '<p class="text-neutral-600 text-sm mt-2">No parameters.</p>';
+      return `<div class="glass rounded-xl border border-neutral-800 p-5">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="meth text-xs font-bold px-2 py-0.5 rounded bg-brand-700/40 text-brand-300">${ep.method}</span>
+          <code class="meth text-sm text-neutral-100">${esc(ep.path)}</code>
+        </div>
+        <p class="text-neutral-400 text-sm mt-2">${esc(ep.summary)}</p>
+        ${params}
+        <div class="mt-4 flex items-center justify-between">
+          <div class="text-xs text-neutral-500">Try it</div>
+          <a href="${esc(ep.sample)}" target="_blank" class="text-xs text-brand-400 underline meth break-all">${esc(ORIGIN + ep.sample)}</a>
+        </div>
+        <div class="text-xs text-neutral-500 mt-3 mb-1">Example response</div>
+        <pre class="text-xs bg-neutral-900/70 rounded-lg p-3 border border-neutral-800 text-neutral-300">${esc(JSON.stringify(ep.example, null, 2))}</pre>
+      </div>`;
+    }
+
+    for (const [id, eps] of Object.entries(SECTIONS)) {
+      const sec = document.getElementById(id);
+      sec.innerHTML = `<h2 class="text-2xl font-bold">${HEADINGS[id]}</h2>` + eps.map(card).join('');
+    }
+  </script>
+  <script src="/assets/nav.js"></script>
+</body>
+</html>

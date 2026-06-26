@@ -1,5 +1,42 @@
 # Changelog
 
+## 4.7.5 — Web social & shop, multi-channel chat, updater fix, Open API docs
+
+### Website
+- **Friends & mail on the web** (`/social`): list / add / accept / remove friends and read / send /
+  delete mail, backed by the same `ContactRequests` / `PrivateMessages` tables the game uses, so
+  everything stays in sync. Web actions nudge the player's in-game lists in realtime.
+- **Web chat with three channels**, each synced with the game:
+  - **Global** — shares one stream with the in-game global lobby (web posts broadcast into the
+    lobby; in-game lobby chat shows on the web).
+  - **Clan** — mirrors in-game clan chat both ways (the Comm server now forwards each in-game clan
+    line to the web service; web posts broadcast to the clan's online members).
+  - **Friend DMs** — a persistent 1-on-1 thread (new `DirectMessage` table), limited to accepted
+    friends, that is also delivered to the friend as an in-game private/whisper message when online.
+  - Web chat is **gated**: you must have logged into UberStrike at least once and finished creating
+    your account (a named profile) — otherwise it tells you to play once first.
+- **Web shop** (`/shop`): browse the real item catalogue (weapons / gear / quick / functional) with
+  prices, level locks and icons; **buy** with Credits or Points (mirrors the in-game purchase — same
+  ownership / for-sale / level / balance checks, same inventory + transaction tables, live wallet
+  refresh); **equip / unequip** items into your loadout. Item icons served at `/images/items/<id>.png`
+  with a placeholder fallback (drop real icons in per the README).
+- **Leaderboard now ranks everyone, staff included** — only the System Staff account (Cmid 0) and
+  unnamed rows are excluded (public, Open-API and admin boards alike).
+- **Boost-event banner on the homepage**: when a coin/XP boost is running it shows a live banner with
+  the multiplier and a countdown to the end. New public `GET /api/public/boost`.
+
+### Open API
+- **Browsable API docs** at `/api/docs` (and `/docs`): every public read-only endpoint (players,
+  match history, clans, leaderboard, status, boost) with parameters, a "try it" link and an example
+  response. `GET /api/v1` now points at the docs.
+
+### Client
+- **Launch update check fixed.** Update detection and its popups were running on a background thread;
+  Unity calls fail silently off the main thread on Mono, so the "Update available" prompt never
+  showed and the game went straight into the menu. The check now runs on the main thread, so the
+  download-progress popup and the "please restart" prompt appear as intended when a new version is
+  published.
+
 ## 4.7.4 — Multi-node servers, realtime-notify fix, crash hardening
 
 ### Servers / multi-node
