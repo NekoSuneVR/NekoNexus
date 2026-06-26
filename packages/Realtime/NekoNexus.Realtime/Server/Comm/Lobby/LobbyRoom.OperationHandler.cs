@@ -340,6 +340,14 @@ namespace NekoNexus.Realtime.Server.Comm {
 				foreach (var cmid in clanMembers) {
 					FindPeerWithCmid(cmid)?.LobbyEventSender.SendClanChatMessage(peer.Actor.Cmid, peer.Actor.Name, trimmed);
 				}
+
+				// Mirror this clan chat line to the web service so the website's clan channel reflects
+				// in-game clan chat (the ws looks the sender's clan up by Cmid and buffers it there).
+				CommServerApplication.Instance.SocketClient?.SendSync(PacketType.ClanChatMessage, new Dictionary<string, object> {
+					{ "Cmid", peer.Actor.Cmid },
+					{ "Name", peer.Actor.Name },
+					{ "Message", trimmed },
+				}, serverType: ServerType.Comm);
 			}
 
 			private void ModerationMutePlayer(CommPeer peer, MemoryStream bytes) {

@@ -205,6 +205,65 @@ export default class WebServiceHost {
       res.json({ ok: true, lastId: ChatBuffer.lastId });
     });
 
+    // Internal CLAN-chat bridge (admin <-> ws). GET returns the clan's buffered chat (in-game clan
+    // chat the Comm forwards + web posts); POST buffers a web clan message and broadcasts it to the
+    // clan's online members in-game. Same shared-secret gate.
+    this.expressApp.get('/internal/clan-chat', (req, res): void => {
+      const key = process.env.INTERNAL_API_KEY;
+      if (!key || req.get('X-Internal-Key') !== key) {
+        res.status(403).json({ error: 'forbidden' });
+        return;
+      }
+      const groupId = Number(req.query?.groupId) || 0;
+      const since = Number(req.query?.since) || 0;
+      res.json({ ok: true, lastId: ChatBuffer.clanLastId(groupId), messages: ChatBuffer.recentClan(groupId, since) });
+    });
+
+    this.expressApp.post('/internal/clan-chat', express.json(), (req, res): void => {
+      const key = process.env.INTERNAL_API_KEY;
+      if (!key || req.get('X-Internal-Key') !== key) {
+        res.status(403).json({ error: 'forbidden' });
+        return;
+      }
+      const groupId = Number(req.body?.groupId) || 0;
+      const cmid = Number(req.body?.cmid);
+      const name = String(req.body?.name ?? '').trim();
+      const text = String(req.body?.text ?? '').trim().slice(0, 200);
+      const members: number[] = Array.isArray(req.body?.members) ? req.body.members.map((m: any) => Number(m)).filter(Boolean) : [];
+      if (!(groupId > 0) || !Number.isFinite(cmid) || !name || !text) {
+        res.status(400).json({ error: 'invalid message' });
+        return;
+      }
+      ChatBuffer.pushClan(groupId, cmid, name, text);
+      // Broadcast to each clan member's online lobby client (best-effort).
+      void (async () => {
+        for (const target of members) {
+          if (target !== cmid) await RealtimeNotify.clanChat(target, cmid, name, text);
+        }
+      })().catch(() => {});
+      res.json({ ok: true, lastId: ChatBuffer.clanLastId(groupId) });
+    });
+
+    // Internal private-chat push (admin -> ws). Deliver a website friend DM to the target as an
+    // in-game whisper if they're online. The DM is stored in the DB by the admin; this is the nudge.
+    this.expressApp.post('/internal/private-chat', express.json(), (req, res): void => {
+      const key = process.env.INTERNAL_API_KEY;
+      if (!key || req.get('X-Internal-Key') !== key) {
+        res.status(403).json({ error: 'forbidden' });
+        return;
+      }
+      const target = Number(req.body?.targetCmid);
+      const cmid = Number(req.body?.cmid);
+      const name = String(req.body?.name ?? '').trim();
+      const text = String(req.body?.text ?? '').trim().slice(0, 200);
+      if (!Number.isFinite(target) || !Number.isFinite(cmid) || !name || !text) {
+        res.status(400).json({ error: 'invalid message' });
+        return;
+      }
+      void RealtimeNotify.privateChat(target, cmid, name, text).catch(() => {});
+      res.json({ ok: true });
+    });
+
     this.expressApp.use(Routes);
 
     this.expressApp.use((req, res, next) => {

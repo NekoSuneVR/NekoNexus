@@ -286,6 +286,21 @@ export default class NekoNexusService {
               /* non-fatal */
             }
             break;
+          case WebSocketPacketType.ClanChatMessage:
+            // In-game clan chat: look the sender's clan up by Cmid and buffer it under that GroupId
+            // so the website's clan channel mirrors in-game clan chat.
+            try {
+              const fromCmid = Number(e.Data?.Cmid) || 0;
+              const member: any = fromCmid
+                ? await models.ClanMember.findByPk(fromCmid, { raw: true }).catch(() => null)
+                : null;
+              if (member?.GroupId) {
+                ChatBuffer.pushClan(Number(member.GroupId), fromCmid, e.Data?.Name, e.Data?.Message);
+              }
+            } catch {
+              /* non-fatal */
+            }
+            break;
           case WebSocketPacketType.RoomChatMessage: {
             const [message, roomInfo] = e.Data;
 

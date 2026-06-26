@@ -78,19 +78,43 @@
 
       <!-- CHAT -->
       <section data-view="chat" class="hidden">
-        <div class="glass rounded-xl p-5">
+        <div id="chatGate" class="hidden glass rounded-xl p-6 text-center mb-4 text-sm text-neutral-400"></div>
+        <div id="chanBar" class="flex gap-2 mb-3 text-sm">
+          <button data-chan="global" class="chanbtn px-3 py-1.5 rounded bg-brand-600 text-white">Global</button>
+          <button data-chan="clan" class="chanbtn px-3 py-1.5 rounded bg-neutral-800">Clan</button>
+          <button data-chan="dm" class="chanbtn px-3 py-1.5 rounded bg-neutral-800">Friends DM</button>
+        </div>
+
+        <!-- global + clan share this room view -->
+        <div id="chanRoom" class="glass rounded-xl p-5">
           <div class="flex items-center justify-between mb-3">
-            <h2 class="font-semibold">Global lobby chat</h2>
-            <span id="chatStatus" class="text-xs text-neutral-500">This is the same chat as the in-game lobby.</span>
+            <h2 id="chanTitle" class="font-semibold">Global lobby chat</h2>
+            <span id="chatStatus" class="text-xs text-neutral-500">Same chat as the in-game lobby.</span>
           </div>
           <div id="chatLog" class="h-80 overflow-y-auto space-y-1 text-sm bg-neutral-900/60 rounded-lg p-3 border border-neutral-800">
             <p class="text-neutral-600">Loading chat…</p>
           </div>
           <form id="chatForm" class="flex gap-2 mt-3">
-            <input id="chatInput" type="text" maxlength="200" autocomplete="off" placeholder="Message the lobby…" class="flex-1 px-3 py-2 rounded bg-neutral-900 border border-neutral-700 outline-none focus:border-brand-500 text-sm" />
+            <input id="chatInput" type="text" maxlength="200" autocomplete="off" placeholder="Message…" class="flex-1 px-3 py-2 rounded bg-neutral-900 border border-neutral-700 outline-none focus:border-brand-500 text-sm" />
             <button id="chatSend" type="submit" class="px-4 py-2 rounded bg-brand-600 hover:bg-brand-500 text-white text-sm disabled:opacity-40">Send</button>
           </form>
           <p id="chatErr" class="text-xs text-red-400 mt-1 h-4"></p>
+        </div>
+
+        <!-- friend DMs -->
+        <div id="chanDm" class="hidden grid md:grid-cols-3 gap-4">
+          <div class="glass rounded-xl p-4 md:col-span-1">
+            <h2 class="font-semibold mb-2">Conversations</h2>
+            <div id="dmThreads" class="space-y-1 text-sm"></div>
+          </div>
+          <div class="glass rounded-xl p-4 md:col-span-2">
+            <h2 id="dmWith" class="font-semibold mb-2 text-neutral-400">Select a friend to chat</h2>
+            <div id="dmLog" class="h-72 overflow-y-auto space-y-1 text-sm bg-neutral-900/60 rounded-lg p-3 border border-neutral-800 mb-3"></div>
+            <form id="dmForm" class="flex gap-2 hidden">
+              <input id="dmInput" type="text" maxlength="200" autocomplete="off" placeholder="Message your friend…" class="flex-1 px-3 py-2 rounded bg-neutral-900 border border-neutral-700 outline-none focus:border-brand-500 text-sm" />
+              <button type="submit" class="px-4 py-2 rounded bg-brand-600 hover:bg-brand-500 text-white text-sm">Send</button>
+            </form>
+          </div>
         </div>
       </section>
     </div>
@@ -139,7 +163,7 @@
       document.getElementById('friendList').innerHTML = d.friends.length ? d.friends.map((f) => `
         <div class="flex items-center justify-between border-b border-neutral-800 pb-2">
           <a href="/profile/${f.Cmid}" class="hover:text-brand-400">${f.Online ? '<span class="inline-block w-2 h-2 rounded-full bg-brand-500 mr-1"></span>' : '<span class="inline-block w-2 h-2 rounded-full bg-neutral-600 mr-1"></span>'}${esc(f.Name)}</a>
-          <span class="space-x-2"><button data-mailto="${f.Cmid}" data-name="${esc(f.Name)}" class="text-brand-400 text-xs">Message</button><button data-unfriend="${f.Cmid}" class="text-red-400 text-xs">Remove</button></span>
+          <span class="space-x-2"><button data-dmto="${f.Cmid}" data-name="${esc(f.Name)}" class="text-brand-400 text-xs">Chat</button><button data-mailto="${f.Cmid}" data-name="${esc(f.Name)}" class="text-neutral-400 text-xs">Mail</button><button data-unfriend="${f.Cmid}" class="text-red-400 text-xs">Remove</button></span>
         </div>`).join('') : '<p class="text-neutral-500">No friends yet — add some!</p>';
       document.getElementById('incoming').innerHTML = d.incoming.length ? d.incoming.map((r) => `
         <div class="flex items-center justify-between">
@@ -148,6 +172,7 @@
         </div>`).join('') : '<p class="text-neutral-500">No pending requests.</p>';
       document.getElementById('friendList').querySelectorAll('[data-unfriend]').forEach((b) => b.onclick = async () => { await api('/api/me/friends/remove', { method: 'POST', body: JSON.stringify({ cmid: +b.dataset.unfriend }) }).catch(() => {}); loadFriends(); });
       document.getElementById('friendList').querySelectorAll('[data-mailto]').forEach((b) => b.onclick = () => { document.querySelector('[data-tab="mail"]').click(); pickRecipient({ Cmid: +b.dataset.mailto, Name: b.dataset.name }); });
+      document.getElementById('friendList').querySelectorAll('[data-dmto]').forEach((b) => b.onclick = () => { document.querySelector('[data-tab="chat"]').click(); switchChannel('dm'); openDm(+b.dataset.dmto, b.dataset.name); });
       document.getElementById('incoming').querySelectorAll('[data-accept]').forEach((b) => b.onclick = async () => { await api('/api/me/friends/accept', { method: 'POST', body: JSON.stringify({ requestId: +b.dataset.accept }) }).catch(() => {}); loadFriends(); });
       document.getElementById('incoming').querySelectorAll('[data-decline]').forEach((b) => b.onclick = async () => { await api('/api/me/friends/decline', { method: 'POST', body: JSON.stringify({ requestId: +b.dataset.decline }) }).catch(() => {}); loadFriends(); });
     }
@@ -197,14 +222,17 @@
       } catch (e) { msg.className = 'text-sm text-red-400 ml-2'; msg.textContent = e.message; }
     }
 
-    // ---- chat (shared with the in-game lobby) ----
+    // ---- chat: Global / Clan (in-game lobby+clan) and friend DMs ----
+    let chatChannel = 'global';
     let chatLastId = 0;
-    const chatSeen = [];
+    let chatSeen = [];
+    let chatGated = false;
+
     function renderChat(msgs) {
       const log = document.getElementById('chatLog');
       if (!chatSeen.length && !msgs.length) { log.innerHTML = '<p class="text-neutral-600">No messages yet — say hi!</p>'; return; }
       const atBottom = log.scrollHeight - log.scrollTop - log.clientHeight < 40;
-      if (!log.querySelector('.chatline')) log.innerHTML = ''; // clear the "Loading…"/"No messages" placeholder
+      if (!log.querySelector('.chatline')) log.innerHTML = '';
       for (const m of msgs) {
         chatSeen.push(m);
         const mine = me && m.cmid === me.cmid;
@@ -217,16 +245,45 @@
       while (chatSeen.length > 120 && log.firstChild) { chatSeen.shift(); log.removeChild(log.firstChild); }
       if (atBottom) log.scrollTop = log.scrollHeight;
     }
+    function showGate(msg) {
+      chatGated = true;
+      const g = document.getElementById('chatGate');
+      g.textContent = msg; g.classList.remove('hidden');
+      document.getElementById('chanBar').classList.add('hidden');
+      document.getElementById('chanRoom').classList.add('hidden');
+      document.getElementById('chanDm').classList.add('hidden');
+    }
     async function pollChat() {
+      if (chatGated || chatChannel === 'dm') return;
       try {
-        const d = await api('/api/me/chat?since=' + chatLastId);
-        if (Array.isArray(d.messages) && d.messages.length) { renderChat(d.messages); }
-        else if (chatLastId === 0 && !chatSeen.length) { renderChat([]); }
+        const d = await api('/api/me/chat?channel=' + chatChannel + '&since=' + chatLastId);
+        if (d.noClan) { document.getElementById('chatLog').innerHTML = '<p class="text-neutral-500">You\'re not in a clan. Join one in-game to use clan chat.</p>'; document.getElementById('chatStatus').textContent = ''; return; }
+        if (Array.isArray(d.messages) && d.messages.length) renderChat(d.messages);
+        else if (chatLastId === 0 && !chatSeen.length) renderChat([]);
         if (typeof d.lastId === 'number' && d.lastId >= chatLastId) chatLastId = d.lastId;
-        document.getElementById('chatStatus').textContent = d.disabled || d.offline ? 'Chat bridge offline — messages may be delayed.' : 'Same chat as the in-game lobby.';
-      } catch (e) { /* keep trying */ }
+        const offline = d.disabled || d.offline;
+        document.getElementById('chatStatus').textContent = offline ? 'Chat bridge offline — messages may be delayed.'
+          : (chatChannel === 'clan' ? 'Same chat as your in-game clan chat.' + (d.clan ? ' (' + d.clan + ')' : '') : 'Same chat as the in-game lobby.');
+      } catch (e) {
+        if (/UberStrike/i.test(e.message)) showGate(e.message);
+      }
+    }
+    function switchChannel(chan) {
+      chatChannel = chan;
+      document.querySelectorAll('.chanbtn').forEach((x) => x.className = 'chanbtn px-3 py-1.5 rounded bg-neutral-800');
+      document.querySelector(`.chanbtn[data-chan="${chan}"]`).className = 'chanbtn px-3 py-1.5 rounded bg-brand-600 text-white';
+      const isDm = chan === 'dm';
+      document.getElementById('chanRoom').classList.toggle('hidden', isDm);
+      document.getElementById('chanDm').classList.toggle('hidden', !isDm);
+      if (isDm) { loadDmThreads(); return; }
+      chatLastId = 0; chatSeen = [];
+      document.getElementById('chatLog').innerHTML = '<p class="text-neutral-600">Loading chat…</p>';
+      document.getElementById('chanTitle').textContent = chan === 'clan' ? 'Clan chat' : 'Global lobby chat';
+      document.getElementById('chatInput').placeholder = chan === 'clan' ? 'Message your clan…' : 'Message the lobby…';
+      pollChat();
     }
     function initChat() {
+      document.querySelectorAll('.chanbtn').forEach((b) => b.addEventListener('click', () => switchChannel(b.dataset.chan)));
       const form = document.getElementById('chatForm');
       const input = document.getElementById('chatInput');
       const err = document.getElementById('chatErr');
@@ -236,12 +293,57 @@
         if (!text) return;
         input.value = ''; err.textContent = '';
         document.getElementById('chatSend').disabled = true;
-        try { await api('/api/me/chat', { method: 'POST', body: JSON.stringify({ text }) }); await pollChat(); }
+        try { await api('/api/me/chat', { method: 'POST', body: JSON.stringify({ channel: chatChannel, text }) }); await pollChat(); }
         catch (ex) { err.textContent = ex.message; input.value = text; }
         finally { document.getElementById('chatSend').disabled = false; input.focus(); }
       });
+      document.getElementById('dmForm').addEventListener('submit', sendDm);
       pollChat();
       setInterval(pollChat, 3000);
+    }
+
+    // ---- friend DMs ----
+    let dmWith = null, dmWithName = '';
+    async function loadDmThreads() {
+      const el = document.getElementById('dmThreads');
+      const threads = await api('/api/me/dm/threads').catch((e) => { if (/UberStrike/i.test(e.message)) showGate(e.message); return []; });
+      el.innerHTML = threads.length ? threads.map((t) => `
+        <button data-dm="${t.cmid}" data-name="${esc(t.name)}" class="w-full text-left px-2 py-1.5 rounded hover:bg-neutral-800 flex justify-between items-center">
+          <span>${t.unread ? '<span class="inline-block w-2 h-2 rounded-full bg-brand-500 mr-1"></span>' : ''}${esc(t.name)}</span>
+          <span class="text-neutral-600 text-xs truncate max-w-[8rem]">${esc(t.last || '')}</span>
+        </button>`).join('') : '<p class="text-neutral-500 text-xs">No conversations yet. Open a friend\'s profile or use the Friends tab to start one.</p>';
+      el.querySelectorAll('[data-dm]').forEach((b) => b.onclick = () => openDm(+b.dataset.dm, b.dataset.name));
+    }
+    let dmTimer = null;
+    async function openDm(cmid, name) {
+      dmWith = cmid; dmWithName = name;
+      document.getElementById('dmWith').textContent = 'Chat with ' + name;
+      document.getElementById('dmWith').className = 'font-semibold mb-2';
+      document.getElementById('dmForm').classList.remove('hidden');
+      await pollDm();
+      if (dmTimer) clearInterval(dmTimer);
+      dmTimer = setInterval(() => { if (chatChannel === 'dm' && dmWith) pollDm(); }, 3500);
+    }
+    async function pollDm() {
+      if (!dmWith) return;
+      const msgs = await api('/api/me/dm?with=' + dmWith).catch(() => null);
+      if (!msgs) return;
+      const log = document.getElementById('dmLog');
+      const atBottom = log.scrollHeight - log.scrollTop - log.clientHeight < 40;
+      log.innerHTML = msgs.length ? msgs.map((m) => {
+        const time = new Date(m.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return `<div><span class="text-neutral-600 text-xs mr-1">${time}</span><span class="${m.mine ? 'text-brand-400' : 'text-neutral-300'} font-medium">${esc(m.mine ? 'You' : m.name)}</span><span class="text-neutral-500">:</span> <span class="text-neutral-300">${esc(m.text)}</span></div>`;
+      }).join('') : '<p class="text-neutral-600">No messages yet — say hi!</p>';
+      if (atBottom) log.scrollTop = log.scrollHeight;
+    }
+    async function sendDm(e) {
+      e.preventDefault();
+      const input = document.getElementById('dmInput');
+      const text = input.value.trim();
+      if (!text || !dmWith) return;
+      input.value = '';
+      try { await api('/api/me/dm/send', { method: 'POST', body: JSON.stringify({ toCmid: dmWith, text }) }); await pollDm(); loadDmThreads(); }
+      catch (ex) { alert(ex.message); input.value = text; }
     }
 
     // ---- shared player search ----

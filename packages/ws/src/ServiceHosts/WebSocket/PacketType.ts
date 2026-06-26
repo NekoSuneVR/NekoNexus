@@ -58,6 +58,12 @@ enum WebSocketPacketType {
   MatchResult = (1 << 10) + 20,
   // Web service -> Comm server: a player's stats changed -> push new xp/points to their lobby client.
   NotifyStats = (1 << 10) + 21,
+  // Comm server -> web service: an in-game CLAN chat line, forwarded so the website's clan channel
+  // mirrors in-game clan chat. { Cmid, Name, Message }.
+  ClanChatMessage = (1 << 10) + 22,
+  // Web service -> Comm server: deliver a website friend DM as an in-game private (whisper) chat
+  // message to the online target. { TargetCmid, Cmid, Name, Message }.
+  NotifyPrivateChat = (1 << 10) + 23,
 }
 
 export default WebSocketPacketType;

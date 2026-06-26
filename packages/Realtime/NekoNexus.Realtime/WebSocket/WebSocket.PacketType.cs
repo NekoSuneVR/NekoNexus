@@ -54,7 +54,15 @@
 
 			// Web service -> Comm server: a player's stats changed (admin edit) -> push new xp/points
 			// to the online lobby peer so level/xp/points update live. { TargetCmid, Xp, Points }.
-			NotifyStats
+			NotifyStats,
+
+			// Comm server -> web service: an in-game CLAN chat line, forwarded so the website's clan
+			// channel mirrors in-game clan chat. { Cmid, Name, Message }.
+			ClanChatMessage,
+
+			// Web service -> Comm server: deliver a website friend DM as an in-game private (whisper)
+			// chat message to the online target. { TargetCmid, Cmid, Name, Message } -> SendPrivateChatMessage.
+			NotifyPrivateChat
 		}
 	}
 }

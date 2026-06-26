@@ -174,6 +174,20 @@ namespace NekoNexus.Realtime.Server.Comm {
 						} catch (Exception ex) { Log.Error("NotifyClanChat failed", ex); }
 						break;
 					}
+					case PacketType.NotifyPrivateChat: {
+						// Deliver a website friend DM to the target as an in-game private (whisper) chat
+						// message, if they're online. Offline = harmless no-op (the DM is stored on the web).
+						try {
+							var data = (Dictionary<string, object>)e.Data;
+							var targetCmid = Convert.ToInt64(data["TargetCmid"]);
+							var fromCmid = Convert.ToInt32(data["Cmid"]);
+							var name = Convert.ToString(data["Name"]);
+							var msg = Convert.ToString(data["Message"]);
+							LobbyManager.Instance.Peers.FirstOrDefault(_ => _.Actor.Cmid == targetCmid)
+								?.LobbyEventSender.SendPrivateChatMessage(fromCmid, name, msg);
+						} catch (Exception ex) { Log.Error("NotifyPrivateChat failed", ex); }
+						break;
+					}
 				}
 			};
 

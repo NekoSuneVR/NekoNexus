@@ -25,6 +25,7 @@ import CreditPackage from './CreditPackage';
 import CurrencyDeposit from './CurrencyDeposit';
 import DiscordUser from './DiscordUser';
 import GameRoom from './GameRoom';
+import DirectMessage from './DirectMessage';
 import GameSession from './GameSession';
 import GroupInvitation from './GroupInvitation';
 import ItemTransaction from './ItemTransaction';
@@ -68,6 +69,7 @@ export { default as GroupInvitation } from './GroupInvitation';
 export { default as ItemTransaction } from './ItemTransaction';
 export { default as Map } from './Map';
 export { default as MapSettings } from './MapSettings';
+export { default as DirectMessage } from './DirectMessage';
 export { default as MatchRecord } from './MatchRecord';
 export { default as MemberWallet } from './MemberWallet';
 export { default as ModerationAction } from './ModerationAction';
@@ -101,6 +103,7 @@ export default {
   CreditPackage,
   CurrencyDeposit,
   DiscordUser,
+  DirectMessage,
   GameRoom,
   GameSession,
   GroupInvitation,

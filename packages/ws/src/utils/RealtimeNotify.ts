@@ -93,6 +93,23 @@ export const RealtimeNotify = {
     }
   },
 
+  /**
+   * A website friend DM -> deliver it to the target as an in-game private (whisper) chat message if
+   * they're online. The DM itself is stored in the DB by the admin service; this is the live nudge.
+   */
+  async privateChat(targetCmid: number, fromCmid: number, name: string, message: string): Promise<void> {
+    try {
+      await NekoNexusService.Instance.SocketHost.SendToCommServer(WebSocketPacketType.NotifyPrivateChat, {
+        TargetCmid: targetCmid,
+        Cmid: fromCmid,
+        Name: name,
+        Message: message,
+      });
+    } catch {
+      /* realtime is best-effort */
+    }
+  },
+
   /** TargetCmid's stats changed (admin edit) -> push new xp/points so level/xp/points update live. */
   async stats(targetCmid: number, xp: number, points: number): Promise<void> {
     try {

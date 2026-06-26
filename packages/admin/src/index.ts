@@ -370,6 +370,26 @@ function requireUser(req: Request): any | null {
   return payload;
 }
 
+// Web chat is only for players who have logged into the GAME at least once and finished creating
+// their account (a PublicProfile with a non-empty Name). Steam web login already requires an
+// existing in-game SteamMember, but an account can exist with a blank name (created, never named) -
+// those still can't chat. Returns the in-game name to use, or null if they haven't played yet.
+async function chatIdentity(cmid: number): Promise<string | null> {
+  const profile: any = await models.PublicProfile.findByPk(cmid, { raw: true }).catch(() => null);
+  if (!profile || profile.Cmid === 0) return null;
+  const name = String(profile.Name ?? '').trim();
+  return name ? name : null;
+}
+
+// The clan (GroupId + tag/name + member CMIDs) a player belongs to, or null if they're not in one.
+async function playerClan(cmid: number): Promise<{ groupId: number; name: string; members: number[] } | null> {
+  const member: any = await models.ClanMember.findByPk(cmid, { raw: true }).catch(() => null);
+  if (!member?.GroupId) return null;
+  const clan: any = await models.Clan.findByPk(member.GroupId, { raw: true }).catch(() => null);
+  const roster: any[] = await models.ClanMember.findAll({ where: { GroupId: member.GroupId }, attributes: ['Cmid'], raw: true }).catch(() => []);
+  return { groupId: Number(member.GroupId), name: clan?.Name ?? clan?.Tag ?? 'Clan', members: roster.map((r) => Number(r.Cmid)).filter(Boolean) };
+}
+
 function isOnline(lastResponse: Date | null | undefined): boolean {
   return !!lastResponse && Date.now() - new Date(lastResponse).getTime() < ONLINE_WINDOW_MS;
 }
@@ -798,18 +818,35 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
     return json({ ok: true });
   }
 
-  // ============================ Web social: chat (shared with in-game lobby) ============================
-  // The website and the in-game global lobby share one chat stream. Reads/posts proxy to the ws,
-  // which buffers in-game chat and broadcasts web posts into the lobby. Inert if the bridge is off.
+  // ============================ Web social: chat (synced with in-game) ============================
+  // Three channels share their streams with the game: `global` (the in-game global lobby), `clan`
+  // (the player's in-game clan chat), and friend DMs (a persistent thread that's also delivered to
+  // the friend as an in-game whisper). Web chat is gated: you must have logged into UberStrike at
+  // least once and finished creating your account (a named PublicProfile).
   if (pathname === '/api/me/chat' && method === 'GET') {
     const user = requireUser(req);
     if (!user) return json({ error: 'Please sign in first.' }, 401);
+    const name = await chatIdentity(user.cmid);
+    if (!name) return json({ error: 'Log into UberStrike at least once before using web chat.', needsGame: true }, 403);
+    const channel = (url.searchParams.get('channel') ?? 'global').toLowerCase();
     const since = Number(url.searchParams.get('since')) || 0;
     if (!cfg.internalApiKey) return json({ ok: true, lastId: since, messages: [], disabled: true });
+
+    if (channel === 'clan') {
+      const clan = await playerClan(user.cmid);
+      if (!clan) return json({ ok: true, lastId: 0, messages: [], noClan: true });
+      try {
+        const r = await fetch(`${cfg.wsInternalUrl}/internal/clan-chat?groupId=${clan.groupId}&since=${since}`, {
+          headers: { 'X-Internal-Key': cfg.internalApiKey },
+        });
+        return json({ ...(await r.json().catch(() => ({ ok: true, lastId: since, messages: [] }))), clan: clan.name });
+      } catch {
+        return json({ ok: true, lastId: since, messages: [], offline: true, clan: clan.name });
+      }
+    }
+    // global
     try {
-      const r = await fetch(`${cfg.wsInternalUrl}/internal/chat?since=${since}`, {
-        headers: { 'X-Internal-Key': cfg.internalApiKey },
-      });
+      const r = await fetch(`${cfg.wsInternalUrl}/internal/chat?since=${since}`, { headers: { 'X-Internal-Key': cfg.internalApiKey } });
       return json(await r.json().catch(() => ({ ok: true, lastId: since, messages: [] })));
     } catch {
       return json({ ok: true, lastId: since, messages: [], offline: true });
@@ -819,20 +856,108 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
   if (pathname === '/api/me/chat' && method === 'POST') {
     const user = requireUser(req);
     if (!user) return json({ error: 'Please sign in first.' }, 401);
+    const name = await chatIdentity(user.cmid);
+    if (!name) return json({ error: 'Log into UberStrike at least once before using web chat.', needsGame: true }, 403);
     if (!cfg.internalApiKey) return json({ error: 'Chat is currently unavailable.' }, 503);
     const b = await req.json().catch(() => ({}));
+    const channel = String(b.channel ?? 'global').toLowerCase();
     const text = String(b.text ?? '').trim().slice(0, 200);
     if (!text) return json({ error: 'Message is required' }, 400);
+
+    if (channel === 'clan') {
+      const clan = await playerClan(user.cmid);
+      if (!clan) return json({ error: "You're not in a clan." }, 400);
+      try {
+        const r = await fetch(`${cfg.wsInternalUrl}/internal/clan-chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Internal-Key': cfg.internalApiKey },
+          body: JSON.stringify({ groupId: clan.groupId, cmid: user.cmid, name, text, members: clan.members }),
+        });
+        return json(await r.json().catch(() => ({ ok: true })));
+      } catch {
+        return json({ error: 'Chat is offline.' }, 502);
+      }
+    }
+    // global
     try {
       const r = await fetch(`${cfg.wsInternalUrl}/internal/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Internal-Key': cfg.internalApiKey },
-        body: JSON.stringify({ cmid: user.cmid, name: user.name ?? `Player ${user.cmid}`, text }),
+        body: JSON.stringify({ cmid: user.cmid, name, text }),
       });
       return json(await r.json().catch(() => ({ ok: true })));
     } catch {
       return json({ error: 'Chat is offline.' }, 502);
     }
+  }
+
+  // ---- friend DMs (persistent 1-on-1 thread, also pushed to the in-game whisper channel) ----
+  // List conversations: each friend + the last message + unread count.
+  if (pathname === '/api/me/dm/threads' && method === 'GET') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in first.' }, 401);
+    if (!(await chatIdentity(user.cmid))) return json({ error: 'Log into UberStrike first.', needsGame: true }, 403);
+    const msgs: any[] = await models.DirectMessage.findAll({
+      where: { [Op.or]: [{ FromCmid: user.cmid }, { ToCmid: user.cmid }] },
+      order: [['Id', 'DESC']],
+      limit: 500,
+      raw: true,
+    }).catch(() => []);
+    const threads = new Map<number, any>();
+    for (const m of msgs) {
+      const other = m.FromCmid === user.cmid ? m.ToCmid : m.FromCmid;
+      if (!threads.has(other)) threads.set(other, { cmid: other, last: m.Text, date: m.DateSent, unread: 0 });
+      if (m.ToCmid === user.cmid && !m.IsRead) threads.get(other).unread += 1;
+    }
+    const ids = [...threads.keys()];
+    const profiles: any[] = ids.length ? await models.PublicProfile.findAll({ where: { Cmid: { [Op.in]: ids } }, attributes: ['Cmid', 'Name'], raw: true }) : [];
+    const nameBy = new Map(profiles.map((p) => [p.Cmid, p.Name]));
+    return json([...threads.values()].map((t) => ({ ...t, name: nameBy.get(t.cmid) ?? `Player ${t.cmid}` })));
+  }
+
+  // A 1-on-1 thread with ?with=cmid (marks the other side's messages read).
+  if (pathname === '/api/me/dm' && method === 'GET') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in first.' }, 401);
+    if (!(await chatIdentity(user.cmid))) return json({ error: 'Log into UberStrike first.', needsGame: true }, 403);
+    const other = Number(url.searchParams.get('with'));
+    if (!Number.isInteger(other)) return json({ error: 'Invalid conversation' }, 400);
+    const msgs: any[] = await models.DirectMessage.findAll({
+      where: { [Op.or]: [{ FromCmid: user.cmid, ToCmid: other }, { FromCmid: other, ToCmid: user.cmid }] },
+      order: [['Id', 'ASC']],
+      limit: 200,
+      raw: true,
+    }).catch(() => []);
+    await models.DirectMessage.update({ IsRead: true } as any, { where: { FromCmid: other, ToCmid: user.cmid, IsRead: false } }).catch(() => {});
+    return json(msgs.map((m) => ({ id: m.Id, fromCmid: m.FromCmid, name: m.FromName, text: m.Text, date: m.DateSent, mine: m.FromCmid === user.cmid })));
+  }
+
+  // Send a DM to a friend.
+  if (pathname === '/api/me/dm/send' && method === 'POST') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in first.' }, 401);
+    const name = await chatIdentity(user.cmid);
+    if (!name) return json({ error: 'Log into UberStrike first.', needsGame: true }, 403);
+    const b = await req.json().catch(() => ({}));
+    const to = Number(b.toCmid);
+    const text = String(b.text ?? '').trim().slice(0, 200);
+    if (!Number.isInteger(to) || to <= 0 || to === user.cmid) return json({ error: 'Invalid recipient' }, 400);
+    if (!text) return json({ error: 'Message is required' }, 400);
+    // Must be friends (an accepted contact request either way).
+    const friends = await models.ContactRequest.findOne({
+      where: { Status: 1, [Op.or]: [{ InitiatorCmid: user.cmid, ReceiverCmid: to }, { InitiatorCmid: to, ReceiverCmid: user.cmid }] },
+    }).catch(() => null);
+    if (!friends) return json({ error: 'You can only DM your friends.' }, 403);
+    await models.DirectMessage.create({ FromCmid: user.cmid, FromName: name, ToCmid: to, Text: text, DateSent: new Date(), IsRead: false } as any);
+    // Deliver as an in-game whisper if they're online (best-effort).
+    if (cfg.internalApiKey) {
+      void fetch(`${cfg.wsInternalUrl}/internal/private-chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Internal-Key': cfg.internalApiKey },
+        body: JSON.stringify({ targetCmid: to, cmid: user.cmid, name, text }),
+      }).catch(() => {});
+    }
+    return json({ ok: true });
   }
 
   // ============================ Web shop: browse / buy / equip ============================
