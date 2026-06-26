@@ -166,64 +166,70 @@ export default class WebSocketHost extends EventEmitter {
                   switch (clientInfo.Type) {
                     case ServerType.Comm:
                       if (this.CommServer) {
-                        socketClient.DisconnectReason = 'Cannot register more than one Comm Server';
+                        if (this.CommServer.Identifier === socketClient.Identifier) {
+                          // Same Comm server reconnecting (e.g. after a restart/blip) - the old TCP
+                          // session may not have been detected as dead yet. Evict the stale one and
+                          // accept the live connection instead of rejecting the reconnect.
+                          Log.warn(`[Socket] CommServer(${socketClient.Identifier}) reconnecting; dropping stale session.`);
+                          const stale = this.CommServer;
+                          this.CommServer = undefined;
+                          try {
+                            stale.Socket.close();
+                          } catch {
+                            /* already gone */
+                          }
+                        } else {
+                          socketClient.DisconnectReason = 'Cannot register more than one Comm Server';
 
-                        this.emit(
-                          'ConnectionRejected',
-                          new WebSocketConnectionRejectedEventArgs({
-                            Info: clientInfo,
-                            Socket: socketClient,
-                            Reason: socketClient.DisconnectReason,
-                          }),
-                        );
+                          this.emit(
+                            'ConnectionRejected',
+                            new WebSocketConnectionRejectedEventArgs({
+                              Info: clientInfo,
+                              Socket: socketClient,
+                              Reason: socketClient.DisconnectReason,
+                            }),
+                          );
 
-                        await socketClient.Send(
-                          PacketType.ConnectionStatus,
-                          new WebSocketConnectionStatus({
-                            Connected: false,
-                            Rejected: true,
-                            DisconnectReason: socketClient.DisconnectReason,
-                          }),
-                          true,
-                          payloadObj.ConversationId,
-                        );
+                          await socketClient.Send(
+                            PacketType.ConnectionStatus,
+                            new WebSocketConnectionStatus({
+                              Connected: false,
+                              Rejected: true,
+                              DisconnectReason: socketClient.DisconnectReason,
+                            }),
+                            true,
+                            payloadObj.ConversationId,
+                          );
 
-                        return;
+                          return;
+                        }
                       }
 
                       this.CommServer = socketClient;
 
                       break;
-                    case ServerType.Game:
-                      if (this.GameServers.find((_) => _.Identifier === socketClient.Identifier)) {
-                        socketClient.DisconnectReason = 'Duplicate server identifier';
-
-                        this.emit(
-                          'ConnectionRejected',
-                          new WebSocketConnectionRejectedEventArgs({
-                            Info: clientInfo,
-                            Socket: socketClient,
-                            Reason: socketClient.DisconnectReason,
-                          }),
-                        );
-
-                        await socketClient.Send(
-                          PacketType.ConnectionStatus,
-                          new WebSocketConnectionStatus({
-                            Connected: false,
-                            Rejected: true,
-                            DisconnectReason: socketClient.DisconnectReason,
-                          }),
-                          true,
-                          payloadObj.ConversationId,
-                        );
-
-                        return;
+                    case ServerType.Game: {
+                      // A Game server with this identifier already registered is almost always a STALE
+                      // session from a restart/blip whose close hasn't been detected yet (the ping
+                      // timeout takes ~13s). Evict it and accept the reconnecting server instead of
+                      // rejecting it as a "duplicate" - otherwise the restarted server is locked out
+                      // until the old one times out. (Two genuinely-different game servers must use
+                      // DIFFERENT identifiers, so this only ever evicts the SAME identity.)
+                      const stale = this.GameServers.find((_) => _.Identifier === socketClient.Identifier);
+                      if (stale) {
+                        Log.warn(`[Socket] GameServer(${socketClient.Identifier}) reconnecting; dropping stale session.`);
+                        this.GameServers = this.GameServers.filter((_) => _ !== stale);
+                        try {
+                          stale.Socket.close();
+                        } catch {
+                          /* already gone */
+                        }
                       }
 
                       this.GameServers.push(socketClient);
 
                       break;
+                    }
                     default:
                       socketClient.DisconnectReason = 'Invalid server type';
 
