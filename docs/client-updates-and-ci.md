@@ -26,41 +26,43 @@ dependency and keep building on GitHub-hosted runners.
 ## The pipeline
 
 ```
-self-hosted runner (your UberStrike PC)                    GitHub-hosted runners
-─────────────────────────────────────                     ─────────────────────
-publish-client.yml                                         build.yml (docker job)
-  └─ misc/publish-update.ps1 -Channel all -RefreshInstaller -Push
-       ├─ build shim + mod + bootstrap + RPC               builds & pushes GHCR images:
-       ├─ stage DLLs -> server-data/updates/v2/{beta,stable}/…   ghcr.io/<repo>-realtime
-       ├─ gen-updates  (regenerate manifests w/ hashes)          ghcr.io/<repo>-webservices
-       ├─ refresh NekoNexusSetup.exe (installer w/ same DLLs)    ghcr.io/<repo>-admin
-       └─ publish-update-branch.ps1  → force-push to `updates` branch
-                                          │
-                                          ▼
-                              GitHub Pages serves the `updates` branch:
-                              https://<user>.github.io/<repo>/v2/<channel>/updates.yml
-                              https://<user>.github.io/<repo>/NekoNexusSetup.exe
+GitHub-hosted runners (windows-latest)
+──────────────────────────────────────
+publish-client.yml (channel)         release-installer.yml (on v* tag)     build.yml (docker)
+  ├─ fetch game refs (GAME_REFS_URL)   ├─ fetch game refs (GAME_REFS_URL)    builds & pushes GHCR:
+  ├─ build shim + mod                  ├─ build patcher + mod + installer      ghcr.io/<repo>-realtime
+  ├─ stage both channels + manifests   ├─ stage channels + NekoNexusSetup.exe  ghcr.io/<repo>-webservices
+  └─ push to `updates` branch          ├─ push to `updates` branch             ghcr.io/<repo>-admin
+                │                       └─ upload installer+zip to the Release
+                ▼
+   GitHub Pages serves the `updates` branch:
+   https://<user>.github.io/<repo>/v2/<channel>/updates.yml
 ```
 
-The in-game updater points at the Pages host, so updates are **global** with no private file server.
-(You can still also serve them from your own domain — see "Hosting options".)
+Everything runs on GitHub's cloud runners — no self-hosted runner needed. The in-game updater points
+at the Pages host, so updates are **global** with no private file server. (You can still also serve
+them from your own domain — see "Hosting options".)
 
 ## One-time setup
 
-1. **Self-hosted runner** (on your UberStrike PC): repo *Settings → Actions → Runners → New
-   self-hosted runner* (Windows; keep the default `self-hosted`, `windows` labels). Install on that
-   machine: .NET SDK, Bun, git, Inno Setup 6 (`winget install JRSoftware.InnoSetup`).
-2. **Point the runner at your game DLLs**: set a machine/user env var `UBERSTRIKE_MANAGED` to your
-   `…\UberStrike\UberStrike_Data\Managed` folder. The workflow copies the reference assemblies from
-   there each run (they never enter the repo).
-3. **GitHub Pages**: repo *Settings → Pages → Deploy from a branch → `updates` / root*.
+1. **`GAME_REFS_URL` secret** — the mod only compiles against the real UberStrike game DLLs
+   (`Assembly-CSharp.dll`, `Assembly-CSharp-firstpass.dll`, `Photon3Unity3D.dll`, `UnityEngine.dll`).
+   They're proprietary and can't live in the repo, so the cloud jobs **download** them at build time:
+   - Zip those four DLLs (from your `UberStrike_Data\Managed`) and host the zip behind an unguessable
+     URL (your own server, a private release asset, etc.).
+   - Repo *Settings → Secrets and variables → Actions → New repository secret*: name `GAME_REFS_URL`,
+     value = that direct-download URL.
+2. **GitHub Pages**: repo *Settings → Pages → Deploy from a branch → `updates` / root*.
 
 ## Publishing an update
 
-- **Automatic**: push client/shim changes to `dev` → `publish-client.yml` runs on your self-hosted
-  runner and publishes both channels.
-- **Manual**: Actions tab → *Publish client update* → choose `beta`, `stable`, or `all`.
-- **Locally** (no CI): `./misc/publish-update.ps1 -Channel all -RefreshInstaller -Push`.
+- **Automatic**: push client/shim changes to `dev` → `publish-client.yml` builds + publishes both
+  channels on a cloud runner.
+- **Manual**: Actions tab → *Publish client update (cloud)* → choose `beta`, `stable`, or `all`.
+- **Installer on a release**: push a `vX.Y.Z` tag (or run *Release installer (cloud, on tag)* with a
+  tag) → builds `NekoNexusSetup.exe` and attaches it to that tag's Release.
+- **Locally** (no CI): `./misc/publish-update.ps1 -Channel all -RefreshInstaller -Push` (needs the
+  game refs under `packages/AssemblyReferences/4.7.1/`).
 
 `beta` is for testers; promote by publishing `stable` (or `all`). Players with Auto-Updates on get
 the new files on next launch and are prompted to restart.

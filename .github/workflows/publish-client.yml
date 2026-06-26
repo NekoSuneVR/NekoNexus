@@ -1,26 +1,19 @@
-name: Publish client update (self-hosted)
+name: Publish client update (cloud)
 
-# Builds the NekoNexus client mod and publishes the in-game auto-update channel + the one-click
-# installer to the `updates` branch (served globally by GitHub Pages).
+# Builds the NekoNexus client mod and publishes the in-game auto-update channel to the `updates`
+# branch (served by GitHub Pages). Runs on GitHub-hosted runners.
 #
-# WHY SELF-HOSTED: the mod only compiles against the real UberStrike game assemblies
-# (Assembly-CSharp.dll etc.), which are proprietary and must NOT live in the repo or on
-# GitHub-hosted runners. So this job runs on a self-hosted runner on a machine that has UberStrike
-# installed. The server-side images (realtime/ws/admin) keep building on GitHub-hosted runners in
-# build.yml - they don't need the game refs.
+# THE ONE SECRET YOU MUST SET: the mod only compiles against the real UberStrike game assemblies
+# (Assembly-CSharp.dll etc.), which are proprietary and must NOT live in the repo. Instead, host a
+# zip of them somewhere private and put its direct-download URL in the repo secret GAME_REFS_URL:
+#   Settings -> Secrets and variables -> Actions -> New repository secret
+#     Name:  GAME_REFS_URL
+#     Value: https://<your-private-host>/uberstrike-refs.zip
+#   The zip must contain (from your UberStrike_Data\Managed):
+#     Assembly-CSharp.dll, Assembly-CSharp-firstpass.dll, Photon3Unity3D.dll, UnityEngine.dll
+#   (Put it behind an unguessable URL / token on your own server, a private release asset, etc.)
 #
-# ONE-TIME RUNNER SETUP (on your UberStrike PC):
-#   1. Repo Settings -> Actions -> Runners -> New self-hosted runner (Windows). Give it the labels
-#      `self-hosted` and `windows` (default) - this workflow targets those.
-#   2. Install on the runner (once): .NET SDK, Bun, git, and Inno Setup 6
-#      (winget install JRSoftware.InnoSetup).
-#   3. Point the runner at your game DLLs: set an environment variable UBERSTRIKE_MANAGED to your
-#      `...\UberStrike\UberStrike_Data\Managed` folder (in the runner's .env or machine env). This
-#      job copies the needed reference assemblies from there each run.
-#   4. Repo Settings -> Pages -> Source: Deploy from a branch -> branch `updates` / root.
-#
-# Then trigger from the Actions tab (choose beta / stable / all), or it runs on a push to dev that
-# changes client/shim code.
+# Also: Settings -> Pages -> Deploy from a branch -> `updates` / root.
 
 on:
   workflow_dispatch:
@@ -35,7 +28,6 @@ on:
     paths:
       - 'packages/Client/**'
       - 'shims/**'
-      - 'packages/Core/**'
 
 permissions:
   contents: write   # force-push the `updates` branch
@@ -46,43 +38,46 @@ concurrency:
 
 jobs:
   publish:
-    runs-on: [self-hosted, windows]
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
           fetch-depth: 0
-          # Keep ignored files (the locally-staged game refs under packages/AssemblyReferences) so a
-          # clean checkout doesn't wipe them; we also re-stage them below as a safety net.
-          clean: false
 
-      - name: Stage game reference assemblies
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Fetch game reference assemblies
         shell: pwsh
+        env:
+          GAME_REFS_URL: ${{ secrets.GAME_REFS_URL }}
         run: |
-          $managed = $env:UBERSTRIKE_MANAGED
-          if (-not $managed -or -not (Test-Path $managed)) {
-            throw "UBERSTRIKE_MANAGED is not set or invalid on this runner. Point it at your UberStrike_Data\Managed folder so the mod can compile."
+          if (-not $env:GAME_REFS_URL) {
+            throw "Repo secret GAME_REFS_URL is not set. Point it at a private zip of Assembly-CSharp.dll, Assembly-CSharp-firstpass.dll, Photon3Unity3D.dll, UnityEngine.dll (see the comment at the top of this workflow). The mod cannot compile without the game refs."
           }
           $refDir = "packages/AssemblyReferences/4.7.1"
           New-Item -ItemType Directory -Force -Path $refDir | Out-Null
-          foreach ($dll in 'Assembly-CSharp.dll','Assembly-CSharp-firstpass.dll','Photon3Unity3D.dll','UnityEngine.dll') {
-            $src = Join-Path $managed $dll
-            if (Test-Path $src) { Copy-Item $src $refDir -Force; Write-Host "  + $dll" }
-            else { Write-Warning "  missing in Managed: $dll" }
+          Invoke-WebRequest -Uri $env:GAME_REFS_URL -OutFile refs.zip
+          Expand-Archive -Path refs.zip -DestinationPath $refDir -Force
+          # Flatten in case the zip has a top-level folder.
+          Get-ChildItem -Path $refDir -Recurse -Filter *.dll | Where-Object { $_.DirectoryName -ne (Resolve-Path $refDir).Path } | ForEach-Object { Move-Item $_.FullName $refDir -Force }
+          foreach ($d in 'Assembly-CSharp.dll','Photon3Unity3D.dll','UnityEngine.dll') {
+            if (-not (Test-Path (Join-Path $refDir $d))) { throw "Game ref $d missing from the GAME_REFS_URL zip." }
           }
-
-      - uses: oven-sh/setup-bun@v2
+          Get-ChildItem $refDir -Filter *.dll | ForEach-Object { Write-Host "  + $($_.Name)" }
 
       - name: Install workspace deps
         run: bun install
 
-      - name: Build + publish update channel + installer
+      - name: Build mod + publish update channel
         shell: pwsh
-        run: ./misc/publish-update.ps1 -Channel ${{ github.event.inputs.channel || 'all' }} -RefreshInstaller -Push
+        run: ./misc/publish-update.ps1 -Channel ${{ github.event.inputs.channel || 'all' }} -Push
 
       - name: Summary
         shell: pwsh
         run: |
           Write-Host "Published channel(s): ${{ github.event.inputs.channel || 'all' }}"
           Write-Host "Update catalog (GitHub Pages): https://<user>.github.io/<repo>/v2/<channel>/updates.yml"
-          Write-Host "Installer: https://<user>.github.io/<repo>/NekoNexusSetup.exe"
