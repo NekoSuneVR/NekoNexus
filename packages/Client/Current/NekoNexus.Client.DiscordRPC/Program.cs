@@ -13,6 +13,16 @@ namespace NekoNexus.Client.DiscordRPC {
 		static readonly Mutex mutex = new Mutex(true, "{7b37f0ce-4a3e-4735-a713-2bf27277ad74}");
 		static readonly string PresenceFile = Path.Combine(Path.GetTempPath(), "7b37f0ce-4a3e-4735-a713-2bf27277ad74");
 
+		// The helper runs hidden with no console, so failures used to be invisible. Mirror everything to
+		// a log file next to the temp presence file so Discord RPC problems can actually be diagnosed.
+		internal static readonly string LogFile = Path.Combine(Path.GetTempPath(), "NekoNexus.DiscordRPC.log");
+		internal static void Log(string message) {
+			try {
+				File.AppendAllText(LogFile, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {message}{Environment.NewLine}");
+			} catch { }
+			Console.WriteLine(message);
+		}
+
 		private static readonly object Lock = new object();
 
 
@@ -34,6 +44,7 @@ namespace NekoNexus.Client.DiscordRPC {
 			};
 
 			try {
+				Log("NekoNexus DiscordRPC helper starting.");
 				RichPresenceManager.Initialize();
 
 				var watcher = new FileSystemWatcher(Path.GetDirectoryName(PresenceFile), Path.GetFileName(PresenceFile)) {

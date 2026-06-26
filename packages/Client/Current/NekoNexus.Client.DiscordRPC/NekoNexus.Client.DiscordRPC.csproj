@@ -1,7 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net481</TargetFramework>
+    <!-- Target 4.8 (NOT 4.8.1): the installer guarantees .NET Framework 4.8, but 4.8.1 is a separate
+         optional update. An exe targeting 4.8.1 fails to launch on a 4.8-only machine - and since the
+         mod starts this helper hidden with no output, that failure was silent (Discord RPC just never
+         appeared). 4.8 runs the bundled net45 Discord library fine. -->
+    <TargetFramework>net48</TargetFramework>
     <OutputPath>..\..\..\..\.release\client\_pak\UberStrike_Data\Plugins</OutputPath>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateSupportedRuntime>False</GenerateSupportedRuntime>
