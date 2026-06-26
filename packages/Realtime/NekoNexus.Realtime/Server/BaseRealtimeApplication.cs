@@ -81,6 +81,34 @@ namespace NekoNexus.Realtime.Server {
 				Configuration.MasterHostname = masterHostOverride;
 			}
 
+			// Per-instance identity overrides (env vars / host flags) so each node can be configured
+			// WITHOUT a bespoke yml - this is what makes running multiple game-server nodes practical:
+			// give each Docker container its own NEKONEXUS_IDENTIFIER / NEKONEXUS_PHOTON_ID /
+			// NEKONEXUS_PASSPHRASE and they stop all colliding on the default 2222.../PhotonId 2.
+			// Applies to THIS process's app (Comm or Game). Unset values fall back to the yml.
+			var appSettings = ServerType == WebSocket.ServerType.Comm
+				? Configuration.CommApplicationSettings
+				: Configuration.GameApplicationSettings;
+			if (appSettings != null) {
+				var idOverride = Environment.GetEnvironmentVariable("NEKONEXUS_IDENTIFIER");
+				if (!string.IsNullOrWhiteSpace(idOverride) && Guid.TryParse(idOverride, out var guidOverride)) {
+					Log.Info($"Overriding {ServerType} ApplicationIdentifier -> {guidOverride} (NEKONEXUS_IDENTIFIER)");
+					appSettings.ApplicationIdentifier = guidOverride;
+				}
+
+				var photonOverride = Environment.GetEnvironmentVariable("NEKONEXUS_PHOTON_ID");
+				if (!string.IsNullOrWhiteSpace(photonOverride) && int.TryParse(photonOverride, out var photonIdOverride)) {
+					Log.Info($"Overriding {ServerType} PhotonId -> {photonIdOverride} (NEKONEXUS_PHOTON_ID)");
+					appSettings.PhotonId = photonIdOverride;
+				}
+
+				var passOverride = Environment.GetEnvironmentVariable("NEKONEXUS_PASSPHRASE");
+				if (!string.IsNullOrWhiteSpace(passOverride)) {
+					Log.Info($"Overriding {ServerType} EncryptionPassPhrase (NEKONEXUS_PASSPHRASE)");
+					appSettings.EncryptionPassPhrase = passOverride;
+				}
+			}
+
 			OnBeforeSetup();
 
 			PeerConfiguration = new PeerConfiguration(

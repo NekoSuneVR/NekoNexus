@@ -18,7 +18,7 @@ namespace NekoNexus.Realtime.Host {
 
 		private static int Main(string[] args) {
 			if (args.Length == 0 || args[0].StartsWith("-")) {
-				Console.Error.WriteLine("usage: NekoNexus.Realtime.Host <Comm|Game|app-name> [--max-peers N] [--port N] [--master-host <host>] [--config <file>] [--binary-path <dir>]");
+				Console.Error.WriteLine("usage: NekoNexus.Realtime.Host <Comm|Game|app-name> [--max-peers N] [--port N] [--master-host <host>] [--identifier <guid>] [--photon-id N] [--passphrase <pass>] [--config <file>] [--binary-path <dir>]");
 				return 2;
 			}
 
@@ -73,6 +73,13 @@ namespace NekoNexus.Realtime.Host {
 			}
 			var masterHost = Environment.GetEnvironmentVariable("PARADISE_MASTER_HOST");
 
+			// Per-node identity overrides (flags -> env vars the app reads). Lets you run many game
+			// nodes off ONE build/yml: give each its own --identifier / --photon-id / --passphrase
+			// (or the NEKONEXUS_IDENTIFIER / NEKONEXUS_PHOTON_ID / NEKONEXUS_PASSPHRASE env vars).
+			if (!string.IsNullOrWhiteSpace(opts.Identifier)) Environment.SetEnvironmentVariable("NEKONEXUS_IDENTIFIER", opts.Identifier);
+			if (!string.IsNullOrWhiteSpace(opts.PhotonId)) Environment.SetEnvironmentVariable("NEKONEXUS_PHOTON_ID", opts.PhotonId);
+			if (!string.IsNullOrWhiteSpace(opts.Passphrase)) Environment.SetEnvironmentVariable("NEKONEXUS_PASSPHRASE", opts.Passphrase);
+
 			Console.WriteLine($"[NekoNexus.Realtime.Host] {entry.Name} ({entry.Type})");
 			Console.WriteLine($"  UDP port : {hostOptions.Port}");
 			Console.WriteLine($"  Max slots: {hostOptions.MaxPeers}   (set with --max-peers; no Photon licence/CCU cap)");
@@ -108,6 +115,9 @@ namespace NekoNexus.Realtime.Host {
 			public string ConfigPath;
 			public string BinaryPath;
 			public string MasterHost;
+			public string Identifier;
+			public string PhotonId;
+			public string Passphrase;
 		}
 
 		private sealed class AppEntry {
@@ -128,6 +138,9 @@ namespace NekoNexus.Realtime.Host {
 					case "--config": o.ConfigPath = args[++i]; break;
 					case "--binary-path": o.BinaryPath = args[++i]; break;
 					case "--master-host": o.MasterHost = args[++i]; break;
+					case "--identifier": o.Identifier = args[++i]; break;
+					case "--photon-id": o.PhotonId = args[++i]; break;
+					case "--passphrase": o.Passphrase = args[++i]; break;
 				}
 			}
 			return o;
