@@ -1,5 +1,35 @@
 # Changelog
 
+## 4.7.4 — Multi-node servers, realtime-notify fix, crash hardening
+
+### Servers / multi-node
+- **Per-node identity via env vars / flags** (`NEKONEXUS_IDENTIFIER` / `NEKONEXUS_PHOTON_ID` /
+  `NEKONEXUS_PASSPHRASE`, or `--identifier` / `--photon-id` / `--passphrase`). Run many game nodes
+  off one image — each registers as its own server instead of all colliding on the default
+  `2222…`/PhotonId 2. The node's PhotonId must match its admin server-browser entry.
+- **Shared node passphrase** (`GAME_NODE_PASSPHRASE` / `COMM_NODE_PASSPHRASE`): a node whose GUID
+  isn't pre-registered in `ServerCredentials` is accepted if it presents the shared secret — add
+  nodes with env vars only, no web-service yml edit.
+- **Stale-session eviction on reconnect:** a realtime server reconnecting after a restart/blip is
+  accepted (the stale session is dropped) instead of being rejected as a duplicate; a genuine
+  duplicate-identifier misconfig is rejected with a clear message instead of thrashing.
+
+### Crash & stability hardening
+- **Web service no longer crashes on game-room sync.** A node with a mismatched PhotonId could make
+  the room cleanup miss, causing a duplicate-primary-key insert that took the whole service down in
+  a loop (which broke joins, matches and updates). Room sync now upserts, cleans up by the rooms'
+  own address, and is fully guarded.
+- **Realtime notifications actually send now.** The wallet / boost / mail / clan push packets were
+  missing from the socket encoder *and* decoder, so every realtime push silently no-op'd. Fixed on
+  both ends — live credits/coins, the global boost event, and instant inbox refresh now work.
+
+### Client
+- **Spectator-on-join fix:** a player joining a running match is routed to the proper Spectating
+  state instead of being spawned as a phantom "playing" actor (broken view + a ghost at the origin).
+- **Auto-update relay + faster checks:** the file server can relay `/updates` to GitHub Pages
+  (`UPDATE_RELAY_URL`) so the client keeps pointing at your domain while Pages is the source of
+  truth; the update-check throttle dropped from 1 hour to 20 s so new versions are picked up promptly.
+
 ## 4.7.3 — Live economy, realtime stability, updater + skin fixes, CI publisher
 
 ### Economy (updates live, no relog)
