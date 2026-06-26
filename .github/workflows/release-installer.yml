@@ -1,0 +1,85 @@
+name: Release installer (self-hosted, on tag)
+
+# Builds the one-click patcher installer (NekoNexusSetup.exe) + the self-contained client-patch zip
+# and attaches them to the GitHub Release for the version tag (v*). Also publishes that build to the
+# update channel so the tagged version is what players auto-update to.
+#
+# WHY SELF-HOSTED: NekoNexusSetup.exe bakes in the prebuilt mod DLLs, which only compile against the
+# proprietary UberStrike game assemblies - those can't live in the repo or on GitHub-hosted runners.
+# So this runs on the same self-hosted runner as publish-client.yml. (The hosted `release` job in
+# build.yml still attaches the server zips + the SDK-based client toolkit; this adds the ready-to-run
+# .exe installer on top of the same Release.)
+#
+# Requires the same one-time runner setup as publish-client.yml: .NET SDK, Bun, git, Inno Setup, and
+# the UBERSTRIKE_MANAGED env var pointing at your UberStrike_Data\Managed folder.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing tag to build + attach the installer to (e.g. v4.7.3)
+        required: true
+
+permissions:
+  contents: write   # create/append the GitHub Release + force-push the updates branch
+
+concurrency:
+  group: publish-client   # serialize with publish-client.yml so they don't both touch the updates branch
+  cancel-in-progress: false
+
+jobs:
+  installer:
+    runs-on: [self-hosted, windows]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+          # On workflow_dispatch, build the exact tag the user names; on a tag push, the ref is the tag.
+          ref: ${{ github.event.inputs.tag || github.ref }}
+          clean: false
+
+      - name: Stage game reference assemblies
+        shell: pwsh
+        run: |
+          $managed = $env:UBERSTRIKE_MANAGED
+          if (-not $managed -or -not (Test-Path $managed)) {
+            throw "UBERSTRIKE_MANAGED is not set or invalid on this runner. Point it at your UberStrike_Data\Managed folder so the mod can compile."
+          }
+          $refDir = "packages/AssemblyReferences/4.7.1"
+          New-Item -ItemType Directory -Force -Path $refDir | Out-Null
+          foreach ($dll in 'Assembly-CSharp.dll','Assembly-CSharp-firstpass.dll','Photon3Unity3D.dll','UnityEngine.dll') {
+            $src = Join-Path $managed $dll
+            if (Test-Path $src) { Copy-Item $src $refDir -Force; Write-Host "  + $dll" }
+            else { Write-Warning "  missing in Managed: $dll" }
+          }
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install workspace deps
+        run: bun install
+
+      # Builds mod + shim + bootstrap + RPC, stages both channels, regenerates manifests, rebuilds
+      # NekoNexusSetup.exe (-RefreshInstaller), and publishes the channel + installer to the
+      # `updates` branch (-Push) so the tagged build is the live auto-update too.
+      - name: Build installer + publish channel
+        shell: pwsh
+        run: ./misc/publish-update.ps1 -Channel all -RefreshInstaller -Push
+
+      - name: Verify installer built
+        shell: pwsh
+        run: |
+          $exe = ".release/installer/NekoNexusSetup.exe"
+          if (-not (Test-Path $exe)) { throw "NekoNexusSetup.exe not found at $exe - did Inno Setup build fail?" }
+          Write-Host "installer: $((Get-Item $exe).Length) bytes"
+
+      - name: Attach installer + client patch to the Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          fail_on_unmatched_files: true
+          files: |
+            .release/installer/NekoNexusSetup.exe
+            .release/client/NekoNexus-free-server-client.zip
