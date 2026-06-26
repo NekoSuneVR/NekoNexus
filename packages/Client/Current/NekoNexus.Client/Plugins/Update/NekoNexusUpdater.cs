@@ -111,7 +111,10 @@ namespace NekoNexus.Client {
 		private ProgressPopupDialog progressPopup;
 
 		public IEnumerator CheckForUpdatesIfNecessary(Action<UpdateCatalog> catalogDownloadedCallback, Action<string> errorCallback) {
-			if (Math.Abs((LastUpdateCheckTimeStamp - DateTime.Now).TotalHours) < 1) {
+			// Only throttle rapid re-entries (e.g. menu flicker), NOT real checks - we want a freshly
+			// published version to be picked up the next time the player hits the menu, not up to an
+			// hour later. 20s is enough to avoid spamming the server on quick navigation.
+			if (Math.Abs((LastUpdateCheckTimeStamp - DateTime.Now).TotalSeconds) < 20) {
 				yield break;
 			}
 

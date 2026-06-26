@@ -184,6 +184,10 @@ export default class NekoNexusService {
       this.SocketHost.on('DataReceived', async (e: WebSocketDataReceivedEventArgs) => {
         const { ActivePlayer, GameRoom, PhotonServer } = models;
 
+        // Belt-and-suspenders: a throw in this async handler is an unhandled rejection that crashes
+        // the whole web service (which is what an ER_DUP_ENTRY from a misconfigured node was doing).
+        // Never let monitoring/discord/db hiccups take the service down.
+        try {
         switch (e.Type) {
           case WebSocketPacketType.Monitoring:
             if (e.ServerType === ServerType.Comm) {
@@ -202,40 +206,55 @@ export default class NekoNexusService {
                 });
               }
             } else if (e.ServerType === ServerType.Game) {
-              // Full snapshot of this game server's rooms: clear its rooms, then re-add the
-              // current ones (avoids the duplicates that periodic publishing would otherwise
-              // create).
-              const gameServer = await PhotonServer.findByPk(e.Socket.Info.PhotonId);
-              if (gameServer) await GameRoom.destroy({ where: { ServerIp: gameServer.IP, ServerPort: gameServer.Port } });
-              for (const room of e.Data.Rooms) {
-                const [channelId, webhookUrl] = (await this.discordClient?.CreateGameRoom(room.MetaData)) || [
-                  null,
-                  null,
-                ];
+              // Full snapshot of this game server's rooms. UPSERT (never raw create) so a duplicate
+              // room Number can't crash the service, and clean up stale rooms by the rooms' OWN
+              // reported address (the PhotonServer registry IP/Port can mismatch a node misconfigured
+              // with the wrong PhotonId, which is exactly what caused the ER_DUP_ENTRY crash). Wrapped
+              // so one bad room can never take the web service down.
+              try {
+                const rooms = (e.Data.Rooms ?? []) as any[];
+                const serverIps = [...new Set(rooms.map((r) => this.intToIPv4(r.MetaData.Server.Ipv4)))];
+                const currentNumbers = rooms.map((r) => r.MetaData.Number);
 
-                await GameRoom.create({
-                  ...room.MetaData,
-                  ServerIp: this.intToIPv4(room.MetaData.Server.Ipv4),
-                  ServerPort: room.MetaData.Server.Port,
-                  ChannelId: channelId,
-                  WebhookUrl: webhookUrl,
-                });
+                for (const ip of serverIps) {
+                  await GameRoom.destroy({
+                    where: { ServerIp: ip, Number: { [Op.notIn]: currentNumbers.length ? currentNumbers : [-1] } },
+                  });
+                }
 
-                await ActivePlayer.update(
-                  {
-                    GameServerId: (
-                      await PhotonServer.findOne({
-                        where: { IP: room.MetaData.Server.IpAddress, Port: room.MetaData.Server.Port },
-                      })
-                    )?.PhotonId,
-                    GameRoomId: room.RoomId,
-                  },
-                  {
-                    where: {
-                      Cmid: room.Peers,
+                for (const room of rooms) {
+                  const [channelId, webhookUrl] = (await this.discordClient?.CreateGameRoom(room.MetaData)) || [
+                    null,
+                    null,
+                  ];
+
+                  await GameRoom.upsert({
+                    ...room.MetaData,
+                    ServerIp: this.intToIPv4(room.MetaData.Server.Ipv4),
+                    ServerPort: room.MetaData.Server.Port,
+                    ChannelId: channelId,
+                    WebhookUrl: webhookUrl,
+                  });
+
+                  await ActivePlayer.update(
+                    {
+                      GameServerId: (
+                        await PhotonServer.findOne({
+                          where: { IP: room.MetaData.Server.IpAddress, Port: room.MetaData.Server.Port },
+                        })
+                      )?.PhotonId,
+                      GameRoomId: room.RoomId,
                     },
-                  },
-                );
+                    {
+                      where: {
+                        Cmid: room.Peers,
+                      },
+                    },
+                  );
+                }
+              } catch (error) {
+                Log.error('Failed to sync game rooms (continuing).');
+                Log.error(error);
               }
             }
             break;
@@ -351,6 +370,10 @@ export default class NekoNexusService {
           }
           default:
             break;
+        }
+        } catch (error) {
+          Log.error('Error handling realtime socket message (continuing).');
+          Log.error(error);
         }
       });
     }
