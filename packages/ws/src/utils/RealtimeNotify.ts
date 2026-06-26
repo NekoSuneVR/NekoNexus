@@ -76,6 +76,23 @@ export const RealtimeNotify = {
     }
   },
 
+  /**
+   * A message typed on the website -> broadcast it into the in-game global lobby chat. The Comm
+   * server decodes this exactly like a peer's chat (SocketChatMessage) and relays it to every lobby
+   * peer via SendLobbyChatMessage, so website and in-game share one chat stream.
+   */
+  async lobbyChat(cmid: number, name: string, message: string): Promise<void> {
+    try {
+      await NekoNexusService.Instance.SocketHost.SendToCommServer(WebSocketPacketType.ChatMessage, {
+        Cmid: Math.trunc(cmid),
+        Name: name,
+        Message: message,
+      });
+    } catch {
+      /* realtime is best-effort */
+    }
+  },
+
   /** TargetCmid's stats changed (admin edit) -> push new xp/points so level/xp/points update live. */
   async stats(targetCmid: number, xp: number, points: number): Promise<void> {
     try {

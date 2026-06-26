@@ -16,7 +16,7 @@
  */
 
 import NekoNexusService from '@/NekoNexusService';
-import { BoostManager, Log } from '@/utils';
+import { BoostManager, ChatBuffer, Log } from '@/utils';
 import { RealtimeNotify } from '@/utils/RealtimeNotify';
 import bodyParser from 'body-parser';
 import bodyParserXml from 'body-parser-xml';
@@ -170,6 +170,39 @@ export default class WebServiceHost {
       })().catch(() => {});
 
       res.json({ ok: true, count: entries.length });
+    });
+
+    // Internal web-chat bridge (admin <-> ws). The website shares one chat stream with the in-game
+    // global lobby: GET returns recent lobby chat the ws has buffered (in-game -> web); POST takes a
+    // message a logged-in website user sent and broadcasts it into the lobby (web -> in-game) while
+    // also buffering it so other website users see it. Same shared-secret gate.
+    this.expressApp.get('/internal/chat', (req, res): void => {
+      const key = process.env.INTERNAL_API_KEY;
+      if (!key || req.get('X-Internal-Key') !== key) {
+        res.status(403).json({ error: 'forbidden' });
+        return;
+      }
+      const since = Number(req.query?.since) || 0;
+      res.json({ ok: true, lastId: ChatBuffer.lastId, messages: ChatBuffer.recent(since) });
+    });
+
+    this.expressApp.post('/internal/chat', express.json(), (req, res): void => {
+      const key = process.env.INTERNAL_API_KEY;
+      if (!key || req.get('X-Internal-Key') !== key) {
+        res.status(403).json({ error: 'forbidden' });
+        return;
+      }
+      const cmid = Number(req.body?.cmid);
+      const name = String(req.body?.name ?? '').trim();
+      const text = String(req.body?.text ?? '').trim().slice(0, 200);
+      if (!Number.isFinite(cmid) || !name || !text) {
+        res.status(400).json({ error: 'invalid message' });
+        return;
+      }
+      // Buffer first (so the sender sees it immediately even if the lobby is empty), then broadcast.
+      ChatBuffer.push(cmid, name, text);
+      void RealtimeNotify.lobbyChat(cmid, name, text).catch(() => {});
+      res.json({ ok: true, lastId: ChatBuffer.lastId });
     });
 
     this.expressApp.use(Routes);

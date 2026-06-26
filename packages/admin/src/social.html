@@ -37,6 +37,7 @@
       <div class="flex gap-2 mb-5 text-sm">
         <button data-tab="friends" class="tabbtn px-4 py-2 rounded bg-brand-600 text-white">Friends</button>
         <button data-tab="mail" class="tabbtn px-4 py-2 rounded bg-neutral-800">Mail <span id="unread" class="ml-1 text-xs"></span></button>
+        <button data-tab="chat" class="tabbtn px-4 py-2 rounded bg-neutral-800">Chat</button>
       </div>
 
       <!-- FRIENDS -->
@@ -74,6 +75,24 @@
           <div id="mailRead" class="text-sm text-neutral-400">Select a message to read it.</div>
         </div>
       </section>
+
+      <!-- CHAT -->
+      <section data-view="chat" class="hidden">
+        <div class="glass rounded-xl p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="font-semibold">Global lobby chat</h2>
+            <span id="chatStatus" class="text-xs text-neutral-500">This is the same chat as the in-game lobby.</span>
+          </div>
+          <div id="chatLog" class="h-80 overflow-y-auto space-y-1 text-sm bg-neutral-900/60 rounded-lg p-3 border border-neutral-800">
+            <p class="text-neutral-600">Loading chat…</p>
+          </div>
+          <form id="chatForm" class="flex gap-2 mt-3">
+            <input id="chatInput" type="text" maxlength="200" autocomplete="off" placeholder="Message the lobby…" class="flex-1 px-3 py-2 rounded bg-neutral-900 border border-neutral-700 outline-none focus:border-brand-500 text-sm" />
+            <button id="chatSend" type="submit" class="px-4 py-2 rounded bg-brand-600 hover:bg-brand-500 text-white text-sm disabled:opacity-40">Send</button>
+          </form>
+          <p id="chatErr" class="text-xs text-red-400 mt-1 h-4"></p>
+        </div>
+      </section>
     </div>
   </main>
 
@@ -99,6 +118,7 @@
       initTabs();
       loadFriends();
       loadMail();
+      initChat();
       wireSearch('friendSearch', 'friendResults', (p) => addFriend(p.Cmid));
       wireSearch('mailTo', 'mailToResults', pickRecipient);
       document.getElementById('mailSend').addEventListener('click', sendMail);
@@ -175,6 +195,53 @@
         msg.className = 'text-sm text-brand-400 ml-2'; msg.textContent = 'Sent!';
         document.getElementById('mailText').value = '';
       } catch (e) { msg.className = 'text-sm text-red-400 ml-2'; msg.textContent = e.message; }
+    }
+
+    // ---- chat (shared with the in-game lobby) ----
+    let chatLastId = 0;
+    const chatSeen = [];
+    function renderChat(msgs) {
+      const log = document.getElementById('chatLog');
+      if (!chatSeen.length && !msgs.length) { log.innerHTML = '<p class="text-neutral-600">No messages yet — say hi!</p>'; return; }
+      const atBottom = log.scrollHeight - log.scrollTop - log.clientHeight < 40;
+      if (!log.querySelector('.chatline')) log.innerHTML = ''; // clear the "Loading…"/"No messages" placeholder
+      for (const m of msgs) {
+        chatSeen.push(m);
+        const mine = me && m.cmid === me.cmid;
+        const time = new Date(m.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const row = document.createElement('div');
+        row.className = 'chatline';
+        row.innerHTML = `<span class="text-neutral-600 text-xs mr-1">${time}</span><a href="/profile/${m.cmid}" class="${mine ? 'text-brand-400' : 'text-neutral-300'} font-medium hover:underline">${esc(m.name)}</a><span class="text-neutral-500">:</span> <span class="text-neutral-300">${esc(m.text)}</span>`;
+        log.appendChild(row);
+      }
+      while (chatSeen.length > 120 && log.firstChild) { chatSeen.shift(); log.removeChild(log.firstChild); }
+      if (atBottom) log.scrollTop = log.scrollHeight;
+    }
+    async function pollChat() {
+      try {
+        const d = await api('/api/me/chat?since=' + chatLastId);
+        if (Array.isArray(d.messages) && d.messages.length) { renderChat(d.messages); }
+        else if (chatLastId === 0 && !chatSeen.length) { renderChat([]); }
+        if (typeof d.lastId === 'number' && d.lastId >= chatLastId) chatLastId = d.lastId;
+        document.getElementById('chatStatus').textContent = d.disabled || d.offline ? 'Chat bridge offline — messages may be delayed.' : 'Same chat as the in-game lobby.';
+      } catch (e) { /* keep trying */ }
+    }
+    function initChat() {
+      const form = document.getElementById('chatForm');
+      const input = document.getElementById('chatInput');
+      const err = document.getElementById('chatErr');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+        input.value = ''; err.textContent = '';
+        document.getElementById('chatSend').disabled = true;
+        try { await api('/api/me/chat', { method: 'POST', body: JSON.stringify({ text }) }); await pollChat(); }
+        catch (ex) { err.textContent = ex.message; input.value = text; }
+        finally { document.getElementById('chatSend').disabled = false; input.focus(); }
+      });
+      pollChat();
+      setInterval(pollChat, 3000);
     }
 
     // ---- shared player search ----

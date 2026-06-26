@@ -35,7 +35,7 @@ import {
   type WebSocketDisconnectedEventArgs,
   type WebSocketPacketReceivedEventArgs,
 } from './ServiceHosts/WebSocket';
-import { BoostManager, GameSessionManager, Log, XpPointsUtil } from './utils';
+import { BoostManager, ChatBuffer, GameSessionManager, Log, XpPointsUtil } from './utils';
 
 export default class NekoNexusService {
   private static instance: NekoNexusService;
@@ -279,6 +279,12 @@ export default class NekoNexusService {
             break;
           case WebSocketPacketType.ChatMessage:
             await this.discordClient?.SendLobbyChatMessage(e.Data);
+            // Mirror in-game lobby chat into the buffer so the website shows the same chat.
+            try {
+              ChatBuffer.push(e.Data?.Cmid, e.Data?.Name, e.Data?.Message);
+            } catch {
+              /* non-fatal */
+            }
             break;
           case WebSocketPacketType.RoomChatMessage: {
             const [message, roomInfo] = e.Data;

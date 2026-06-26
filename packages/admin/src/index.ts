@@ -705,6 +705,43 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
     return json({ ok: true });
   }
 
+  // ============================ Web social: chat (shared with in-game lobby) ============================
+  // The website and the in-game global lobby share one chat stream. Reads/posts proxy to the ws,
+  // which buffers in-game chat and broadcasts web posts into the lobby. Inert if the bridge is off.
+  if (pathname === '/api/me/chat' && method === 'GET') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in first.' }, 401);
+    const since = Number(url.searchParams.get('since')) || 0;
+    if (!cfg.internalApiKey) return json({ ok: true, lastId: since, messages: [], disabled: true });
+    try {
+      const r = await fetch(`${cfg.wsInternalUrl}/internal/chat?since=${since}`, {
+        headers: { 'X-Internal-Key': cfg.internalApiKey },
+      });
+      return json(await r.json().catch(() => ({ ok: true, lastId: since, messages: [] })));
+    } catch {
+      return json({ ok: true, lastId: since, messages: [], offline: true });
+    }
+  }
+
+  if (pathname === '/api/me/chat' && method === 'POST') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in first.' }, 401);
+    if (!cfg.internalApiKey) return json({ error: 'Chat is currently unavailable.' }, 503);
+    const b = await req.json().catch(() => ({}));
+    const text = String(b.text ?? '').trim().slice(0, 200);
+    if (!text) return json({ error: 'Message is required' }, 400);
+    try {
+      const r = await fetch(`${cfg.wsInternalUrl}/internal/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Internal-Key': cfg.internalApiKey },
+        body: JSON.stringify({ cmid: user.cmid, name: user.name ?? `Player ${user.cmid}`, text }),
+      });
+      return json(await r.json().catch(() => ({ ok: true })));
+    } catch {
+      return json({ error: 'Chat is offline.' }, 502);
+    }
+  }
+
   // ---- a signed-in user's own payment / transaction history ----
   if (pathname === '/api/me/payments' && method === 'GET') {
     const user = requireUser(req);
