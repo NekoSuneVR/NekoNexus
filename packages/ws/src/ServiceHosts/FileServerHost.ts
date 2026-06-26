@@ -46,6 +46,36 @@ export default class FileServerHost {
       return next();
     });
 
+    // Relay /updates to GitHub Pages (the channel CI publishes), so the in-game auto-updater can
+    // keep pointing at THIS domain while Pages stays the single source of truth - no need to host
+    // the update payload on this box. Set UPDATE_RELAY_URL to override the Pages base, or to '' to
+    // disable the relay and serve updates from local wwwroot/updates instead. If the relay is
+    // unreachable or the file isn't on Pages, it falls through to any local copy (next()).
+    const relayBase = (process.env.UPDATE_RELAY_URL ?? 'https://nekosunevr.github.io/NekoNexus').replace(/\/+$/, '');
+    if (relayBase) {
+      this.expressApp.use('/updates', async (req, res, next) => {
+        if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+
+        const target = `${relayBase}${req.url}`; // req.url is the path after /updates, e.g. /v2/stable/updates.yml
+        try {
+          const upstream = await fetch(target, { redirect: 'follow' });
+          if (!upstream.ok) return next(); // not on Pages -> try local
+
+          res.status(upstream.status);
+          const ct = upstream.headers.get('content-type');
+          if (ct) res.set('content-type', ct);
+          if (req.method === 'HEAD') return res.end();
+
+          const buf = Buffer.from(await upstream.arrayBuffer());
+          res.set('content-length', String(buf.length));
+          return res.send(buf);
+        } catch (e) {
+          Log.warn(`[updates] relay to ${target} failed; falling back to local. ${e}`);
+          return next(); // relay down -> serve local copy if present
+        }
+      });
+    }
+
     this.expressApp.use('/', express.static(path.join(process.cwd(), 'wwwroot')));
     this.expressApp.use(
       '/UberStrike/Images/MapIcons/',
