@@ -9,6 +9,7 @@ import leaderboardHtml from './leaderboard.html' with { type: 'text' };
 import profileHtml from './profile.html' with { type: 'text' };
 import streamsHtml from './streams.html' with { type: 'text' };
 import socialHtml from './social.html' with { type: 'text' };
+import shopHtml from './shop.html' with { type: 'text' };
 import loginHtml from './login.html' with { type: 'text' };
 import { bearer, signToken, verifyToken } from './auth';
 import { loadConfig } from './config';
@@ -38,6 +39,7 @@ const NAV_JS = `(function () {
     + '<div id="navUserMenu" class="hidden absolute right-0 mt-2 w-44 rounded-lg bg-neutral-900 border border-neutral-700 shadow-xl py-1 text-sm z-50">'
     + '<a href="/profile/' + me.cmid + '" class="block px-3 py-2 hover:bg-neutral-800 text-neutral-200">My profile</a>'
     + '<a href="/social" class="block px-3 py-2 hover:bg-neutral-800 text-neutral-200">Friends &amp; Mail</a>'
+    + '<a href="/shop" class="block px-3 py-2 hover:bg-neutral-800 text-neutral-200">Shop</a>'
     + '<a href="/login" class="block px-3 py-2 hover:bg-neutral-800 text-neutral-200">Settings</a>'
     + '<button id="navSignOut" class="block w-full text-left px-3 py-2 hover:bg-neutral-800 text-red-400">Sign out</button>'
     + '</div></div>';
@@ -158,6 +160,97 @@ async function notifyFriendRequests(cmid: number): Promise<void> {
 }
 
 const newMsgId = () => Math.floor(Math.random() * 2147483647) + 1;
+
+// ---------------------------------------------------------------------------
+// Web item shop: lets signed-in users browse the in-game catalogue, buy items
+// (mirroring the in-game BuyItem: same tables, same currency/level checks) and
+// equip them. Buying writes the same PlayerInventoryItem / ItemTransaction the
+// game does, so purchases show up in-game; equipping writes PlayerLoadout, which
+// the client reads on its next loadout fetch.
+// ---------------------------------------------------------------------------
+const SHOP_ITEM_TYPES: Record<string, { type: number; model: string }> = {
+  weapon: { type: 1, model: 'ShopWeaponItem' },
+  gear: { type: 3, model: 'ShopGearItem' },
+  quick: { type: 4, model: 'ShopQuickItem' },
+  functional: { type: 5, model: 'ShopFunctionalItem' },
+};
+const DURATION_DAYS: Record<number, number> = { 1: 1, 2: 7, 3: 30, 4: 90, 5: 0 }; // 5 = Permanent
+const DURATION_LABEL: Record<number, string> = { 1: '1 day', 2: '7 days', 3: '30 days', 4: '90 days', 5: 'Permanent' };
+const CURRENCY_LABEL: Record<number, string> = { 1: 'Credits', 2: 'Points' };
+const LOADOUT_SLOTS = [
+  'MeleeWeapon', 'Weapon1', 'Weapon2', 'Weapon3', 'Head', 'Face', 'Gloves', 'UpperBody',
+  'LowerBody', 'Boots', 'Backpack', 'QuickItem1', 'QuickItem2', 'QuickItem3',
+  'FunctionalItem1', 'FunctionalItem2', 'FunctionalItem3',
+];
+
+// Map an item's UberstrikeItemClass to the PlayerLoadout slot it goes in. Multi-slot families
+// (weapons / quick / functional) take a 1-3 hint; gear classes are single fixed slots.
+function loadoutSlotFor(itemClass: number, hint = 1): string | null {
+  const n = Math.min(Math.max(Number(hint) || 1, 1), 3);
+  if (itemClass === 1) return 'MeleeWeapon'; // WeaponMelee
+  if (itemClass >= 2 && itemClass <= 8) return 'Weapon' + n; // handgun..launcher
+  switch (itemClass) {
+    case 12: return 'Boots';
+    case 13: return 'Head';
+    case 14: return 'Face';
+    case 15: return 'UpperBody';
+    case 16: return 'LowerBody';
+    case 17: return 'Gloves';
+    case 23: return 'Backpack'; // GearHolo
+    case 18: case 19: case 20: return 'QuickItem' + n;
+    case 21: case 22: return 'FunctionalItem' + n;
+    default: return null;
+  }
+}
+
+// Find a shop item by ID across all four catalogue tables (with its Prices). null if absent.
+async function findShopItem(itemId: number): Promise<{ key: string; type: number; item: any } | null> {
+  for (const [key, meta] of Object.entries(SHOP_ITEM_TYPES)) {
+    const item: any = await (models as any)[meta.model]
+      .findOne({ where: { ID: itemId }, include: [{ model: models.ShopItemPrice, as: 'Prices', required: false }] })
+      .catch(() => null);
+    if (item) return { key, type: meta.type, item };
+  }
+  return null;
+}
+
+// Highest level whose XP threshold the player has reached (inverse of the XP curve table).
+async function levelForXp(xp: number): Promise<number> {
+  const t = await readXpTable();
+  let lvl = 1;
+  for (const [k, v] of Object.entries(t)) {
+    const lv = Number(k);
+    const need = Number(v);
+    if (Number.isFinite(lv) && Number.isFinite(need) && xp >= need && lv > lvl) lvl = lv;
+  }
+  return lvl;
+}
+
+// Public shape for a catalogue item: the real purchasable price rows + a conventional icon URL.
+function shopItemView(key: string, type: number, item: any): any {
+  const prices = (item.Prices ?? [])
+    .map((p: any) => ({
+      currency: p.Currency,
+      currencyName: CURRENCY_LABEL[p.Currency] ?? '?',
+      duration: p.Duration,
+      durationName: DURATION_LABEL[p.Duration] ?? '?',
+      price: p.Price,
+      discount: p.Discount ?? 0,
+    }))
+    .sort((a: any, b: any) => a.currency - b.currency || a.duration - b.duration);
+  return {
+    id: item.ID,
+    name: item.Name,
+    description: item.Description ?? '',
+    type,
+    typeName: key,
+    itemClass: item.ItemClass,
+    levelLock: item.LevelLock ?? 0,
+    tier: item.Tier ?? null,
+    image: `/images/items/${item.ID}.png`,
+    prices,
+  };
+}
 
 // The global boost lives in its own single-row table the admin owns (created lazily on first use),
 // mirroring how wallet writes work: persist here, then best-effort nudge the ws to broadcast it live.
@@ -740,6 +833,183 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
     } catch {
       return json({ error: 'Chat is offline.' }, 502);
     }
+  }
+
+  // ============================ Web shop: browse / buy / equip ============================
+  // A signed-in user's wallet balance (for the shop header).
+  if (pathname === '/api/me/wallet' && method === 'GET') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in first.' }, 401);
+    const w: any = await models.MemberWallet.findByPk(user.cmid, { raw: true }).catch(() => null);
+    return json({ credits: Number(w?.Credits) || 0, points: Number(w?.Points) || 0 });
+  }
+
+  // Browse the catalogue (public; marks owned items when signed in).
+  if (pathname === '/api/shop/catalogue' && method === 'GET') {
+    const typeKey = (url.searchParams.get('type') ?? 'weapon').toLowerCase();
+    const meta = SHOP_ITEM_TYPES[typeKey];
+    if (!meta) return json({ error: 'Unknown item type' }, 400);
+    const q = (url.searchParams.get('q') ?? '').trim();
+    const limit = Math.min(Math.max(Number(url.searchParams.get('limit')) || 60, 1), 200);
+    const where: any = {};
+    if (q) where.Name = { [Op.like]: `%${q}%` };
+    const rows: any[] = await (models as any)[meta.model]
+      .findAll({
+        where,
+        include: [{ model: models.ShopItemPrice, as: 'Prices', required: true }], // required => only sellable
+        limit,
+        order: [['Name', 'ASC']],
+        subQuery: false,
+      })
+      .catch(() => []);
+    // De-dup (the include can repeat parents) and mark owned items for a signed-in user.
+    const byId = new Map<number, any>();
+    for (const r of rows) if (!byId.has(r.ID)) byId.set(r.ID, r);
+    let owned = new Set<number>();
+    const user = requireUser(req);
+    if (user) {
+      const inv: any[] = await models.PlayerInventoryItem.findAll({ where: { Cmid: user.cmid }, attributes: ['ItemId'], raw: true }).catch(() => []);
+      owned = new Set(inv.map((i) => i.ItemId));
+    }
+    return json([...byId.values()].map((r) => ({ ...shopItemView(typeKey, meta.type, r), owned: owned.has(r.ID) })));
+  }
+
+  // Buy an item — same checks the in-game BuyItem does (owned / for-sale / level / balance).
+  if (pathname === '/api/shop/buy' && method === 'POST') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in first.' }, 401);
+    const b = await req.json().catch(() => ({}));
+    const itemId = Number(b.itemId);
+    const currency = Number(b.currency); // 1 = Credits, 2 = Points
+    const duration = Number(b.duration); // 1..5
+    if (!Number.isInteger(itemId) || ![1, 2].includes(currency) || ![1, 2, 3, 4, 5].includes(duration))
+      return json({ error: 'Invalid purchase.' }, 400);
+
+    const found = await findShopItem(itemId);
+    if (!found) return json({ error: 'Item not found.' }, 404);
+    const item = found.item;
+
+    const existing = await models.PlayerInventoryItem.findOne({
+      where: { Cmid: user.cmid, ItemId: itemId, ExpirationDate: { [Op.or]: [null, { [Op.gt]: new Date() }] } },
+    }).catch(() => null);
+    if (existing) return json({ error: 'You already own this item.' }, 409);
+
+    const prices = item.Prices ?? [];
+    const price = prices.find((p: any) => p.Currency === currency && p.Duration === duration) || prices.find((p: any) => p.Currency === currency);
+    if (!price) return json({ error: `This item isn't sold for ${(CURRENCY_LABEL[currency] ?? '').toLowerCase()}.` }, 400);
+
+    const [srows]: any = await sequelize.query('SELECT Xp FROM PlayerStatistics WHERE Cmid = ?', { replacements: [user.cmid] });
+    const xp = Number(srows?.[0]?.Xp) || 0;
+    if ((await levelForXp(xp)) < (item.LevelLock ?? 0)) return json({ error: `You must be level ${item.LevelLock} to buy this.` }, 403);
+
+    const wallet: any = await models.MemberWallet.findByPk(user.cmid);
+    if (!wallet) return json({ error: 'Wallet not found.' }, 404);
+    const field = currency === 1 ? 'Credits' : 'Points';
+    const bal = Number(wallet[field]) || 0;
+    if (bal < price.Price) return json({ error: `Not enough ${(CURRENCY_LABEL[currency] ?? '').toLowerCase()}.` }, 402);
+
+    await wallet.update({ [field]: bal - price.Price });
+    await models.ItemTransaction.create({
+      Cmid: user.cmid,
+      Duration: duration,
+      ItemId: itemId,
+      Credits: currency === 1 ? price.Price : 0,
+      Points: currency === 2 ? price.Price : 0,
+      WithdrawalDate: new Date(),
+      WithdrawalId: newMsgId(),
+      IsAdminAction: false,
+    } as any).catch(() => {});
+    const days = DURATION_DAYS[duration];
+    await models.PlayerInventoryItem.create({
+      Cmid: user.cmid,
+      ItemId: itemId,
+      AmountRemaining: -1,
+      ExpirationDate: days > 0 ? new Date(Date.now() + days * 86400_000) : null,
+    } as any);
+    await pushWallet(user.cmid); // live-refresh in-game credits/coins if online
+    return json({ ok: true, name: item.Name, spent: price.Price, currency, balance: bal - price.Price });
+  }
+
+  // A signed-in user's owned items (non-expired), with an "equipped" flag.
+  if (pathname === '/api/shop/inventory' && method === 'GET') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in first.' }, 401);
+    const inv: any[] = await models.PlayerInventoryItem.findAll({ where: { Cmid: user.cmid }, raw: true }).catch(() => []);
+    const loadout: any = await models.PlayerLoadout.findByPk(user.cmid, { raw: true }).catch(() => null);
+    const equipped = new Set<number>();
+    if (loadout) for (const s of LOADOUT_SLOTS) { const v = Number(loadout[s]) || 0; if (v > 0) equipped.add(v); }
+    const out: any[] = [];
+    for (const it of inv) {
+      const expired = it.ExpirationDate && new Date(it.ExpirationDate) < new Date();
+      if (expired) continue;
+      const found = await findShopItem(it.ItemId);
+      out.push({
+        id: it.ItemId,
+        name: found?.item?.Name ?? `Item ${it.ItemId}`,
+        type: found?.key ?? 'unknown',
+        itemClass: found?.item?.ItemClass ?? 0,
+        canEquip: found ? loadoutSlotFor(found.item.ItemClass, 1) !== null : false,
+        image: `/images/items/${it.ItemId}.png`,
+        expires: it.ExpirationDate ?? null,
+        equipped: equipped.has(it.ItemId),
+      });
+    }
+    return json(out);
+  }
+
+  // The user's current equipped loadout (resolved to names + icons).
+  if (pathname === '/api/shop/loadout' && method === 'GET') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in first.' }, 401);
+    const loadout: any = await models.PlayerLoadout.findByPk(user.cmid, { raw: true }).catch(() => null);
+    const out: any = {};
+    for (const s of LOADOUT_SLOTS) {
+      const id = loadout ? Number(loadout[s]) || 0 : 0;
+      if (id > 0) {
+        const found = await findShopItem(id);
+        out[s] = { id, name: found?.item?.Name ?? `Item ${id}`, image: `/images/items/${id}.png` };
+      } else out[s] = null;
+    }
+    return json(out);
+  }
+
+  // Equip an owned item into its loadout slot (weapons/quick/functional take an optional slot 1-3).
+  if (pathname === '/api/shop/equip' && method === 'POST') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in first.' }, 401);
+    const b = await req.json().catch(() => ({}));
+    const itemId = Number(b.itemId);
+    if (!Number.isInteger(itemId)) return json({ error: 'Invalid item.' }, 400);
+    const owns = await models.PlayerInventoryItem.findOne({
+      where: { Cmid: user.cmid, ItemId: itemId, ExpirationDate: { [Op.or]: [null, { [Op.gt]: new Date() }] } },
+    }).catch(() => null);
+    if (!owns) return json({ error: 'You do not own this item.' }, 403);
+    const found = await findShopItem(itemId);
+    if (!found) return json({ error: 'Item not found.' }, 404);
+    const slot = loadoutSlotFor(found.item.ItemClass, Number(b.slot) || 1);
+    if (!slot) return json({ error: 'This item cannot be equipped.' }, 400);
+
+    let loadout: any = await models.PlayerLoadout.findByPk(user.cmid);
+    if (!loadout) {
+      const zero: any = { Cmid: user.cmid, LoadoutId: user.cmid, Type: 1, SkinColor: '' };
+      for (const s of LOADOUT_SLOTS) zero[s] = 0;
+      loadout = await models.PlayerLoadout.create(zero).catch(() => null);
+      if (!loadout) return json({ error: 'Open the loadout screen in-game once, then try again.' }, 500);
+    }
+    await loadout.update({ [slot]: itemId } as any);
+    return json({ ok: true, slot });
+  }
+
+  // Clear a loadout slot.
+  if (pathname === '/api/shop/unequip' && method === 'POST') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in first.' }, 401);
+    const b = await req.json().catch(() => ({}));
+    const slot = String(b.slot ?? '');
+    if (!LOADOUT_SLOTS.includes(slot)) return json({ error: 'Invalid slot.' }, 400);
+    const loadout = await models.PlayerLoadout.findByPk(user.cmid);
+    if (loadout) await loadout.update({ [slot]: 0 } as any);
+    return json({ ok: true });
   }
 
   // ---- a signed-in user's own payment / transaction history ----
@@ -1424,6 +1694,7 @@ Bun.serve({
     // Public site pages.
     if (url.pathname === '/leaderboard') return page(leaderboardHtml);
     if (url.pathname === '/social') return page(socialHtml);
+    if (url.pathname === '/shop') return page(shopHtml);
     if (url.pathname === '/streams') return page(streamsHtml);
     if (url.pathname === '/login') return page(loginHtml);
     if (url.pathname === '/profile' || url.pathname.startsWith('/profile/')) return page(profileHtml);
