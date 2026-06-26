@@ -1,5 +1,47 @@
 # Changelog
 
+## 4.7.3 — Live economy, realtime stability, updater + skin fixes, CI publisher
+
+### Economy (updates live, no relog)
+- **Live wallet push.** Credits/coins now update on screen instantly when granted — admin gift,
+  store purchase, or match payout — instead of only after a relog. The web service pushes the new
+  balance over a new Comm `NotifyWallet` → `SendUpdateWallet` lobby event (mod-only opcode 100),
+  and a client `WalletUpdateHook` writes `PlayerDataManager` so the HUD ribbon refreshes.
+- **Admin "Gifts & Events" page.** Gift credits and/or coins to one or many players at once
+  (amounts are added), with a live refresh for anyone online (`POST /api/players/gift`).
+- **Global 2×/5× coin boost event.** Set a coin (and optional XP) multiplier with an optional
+  duration in admin; it's pushed to every game server over the master socket and applied to the
+  next match — no restart. Persisted so it survives ws/game restarts (`/api/config/boost`).
+
+### Realtime stability (random crashes / "won't read data" / ghost-walking)
+- Room peer/player lists are now iterated as locked snapshots; the per-room loop tick is
+  exception-isolated so one bad room can't freeze every room on its scheduler thread.
+- Match-end persistence (points/stats web calls) moved off the loop thread; the end-of-match
+  state transition runs on the loop thread (the state machine isn't thread-safe).
+- The master-socket handler and the network poll loop are guarded so a stray exception can't take
+  networking offline.
+
+### Client / fixes
+- **Match countdown** no longer stays stuck at full time — added a server-time sync handshake to
+  the transport shim (the client was timing against its own clock, not the server's).
+- **Inbox** now auto-refreshes incoming **friend requests** in realtime (previously only after a
+  manual refresh).
+- **Invisible skins** — a gear/weapon whose prefab fails to load now falls back to a default mesh
+  instead of rendering nothing.
+- Fixed the killed-spectator hook (disposed timer + 0 ms delay) that flipped dead players to
+  noclip/free-spectator at the wrong time.
+- **Auto-updater** "Failed to download" is handled cleanly (transport-failure guard + per-file
+  timeout); the root cause (update channel published without its payload DLLs) is fixed by the new
+  CI publisher below.
+
+### CI / updates
+- `misc/publish-update.ps1` builds the mod, stages **both** channels, refreshes the installer, and
+  can publish the channel + installer to an `updates` branch (GitHub Pages) via
+  `misc/publish-update-branch.ps1`.
+- `.github/workflows/publish-client.yml` (self-hosted runner) builds and publishes client updates
+  globally; the server Docker images keep building on hosted runners. See
+  `docs/client-updates-and-ci.md`.
+
 ## 4.7.2 — Connectivity, friends/mail, in-game store, one-click installer
 
 Fixes that get players actually online + talking, an antivirus-friendly one-click installer,
