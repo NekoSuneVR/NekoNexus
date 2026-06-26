@@ -1,0 +1,1 @@
+NekoNexus client update channel. Catalog: /v2/<beta|stable>/updates.yml

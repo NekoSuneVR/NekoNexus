@@ -1,0 +1,77 @@
+version: 2.1.2.1
+build: 4.7.1-260626-1552
+channel: stable
+platforms:
+  win:
+    platform: win
+    files:
+      - filename: NekoNexus.Client.DiscordRPC.exe
+        description: ""
+        localPath: UberStrike_Data/Plugins
+        remotePath: stable/win/UberStrike_Data/Plugins
+        filesize: 808448
+        md5sum: bfd16f0eab8d888740705602f111924f
+        sha256: eeaa04189becd9cef51470ad7ac45bfc6237250e5eba17ef08fbe2c87536ad95
+        sha512: 2fb205b3f9431aa52b6f7640bc25265b271ac0e30a803a7213932bfc86b7e33452403c9667459507848f2349c6902e0df45414b19aaabe68a85d0604fea7f007
+        optional: true
+    removedFiles: []
+  universal:
+    platform: universal
+    files:
+      - filename: 0Harmony.dll
+        description: ""
+        localPath: UberStrike_Data/Managed
+        remotePath: stable/universal/UberStrike_Data/Managed
+        filesize: 909824
+        md5sum: e682ab1d299a331652aab4c307675829
+        sha256: 9611251f080e4855cd9d5fa54b5e56034df25b70b374c49ba09550b08a1bf875
+        sha512: e21428bf412255767ac0293ecda7c9441a7c2ade02fb4c3a7beb8d58d7d871f95c2415ae66bae47295d6f1a94aefaee8f2c3e45f4ac5c5e9b2e9701c5744d7fa
+        optional: false
+      - filename: NekoNexus.Client.Bootstrap.dll
+        description: ""
+        localPath: UberStrike_Data/Managed
+        remotePath: stable/universal/UberStrike_Data/Managed
+        filesize: 5632
+        md5sum: 3d8a9a5a9492cde3933a0d3d05bdb68f
+        sha256: 666e1ab9e9b593e6794fc52ca82dc04d22854a1834823f58aafc20cf8756ba1d
+        sha512: 0ce3ff205f5944b8cbe822036d066c3add8194779b6822cc2bf5dc18d6c41801832f9f7e11306ea5019a431f7dd0026663bc553f69fc7eb721be446562d0af88
+        optional: false
+      - filename: NekoNexus.Client.dll
+        description: ""
+        localPath: UberStrike_Data/Managed
+        remotePath: stable/universal/UberStrike_Data/Managed
+        filesize: 252416
+        md5sum: 561ab8e9765173fd9b1c4ae09509ddf1
+        sha256: ed1dd174c93476e28ea2cbd632ae7f6f4e247f00444d068be2344124c3d8719c
+        sha512: 61c90017e27940acf55692eae328e7b00221111716cb719af9df17300323ab97c7f6744b983fa3075c079020d9e1b86029b4b307e6d9bd02ed88ca3046a74984
+        optional: false
+      - filename: Photon3Unity3D.dll
+        description: ""
+        localPath: UberStrike_Data/Managed
+        remotePath: stable/universal/UberStrike_Data/Managed
+        filesize: 108544
+        md5sum: a9407fd74cb3cc84bcfdc780b5b5579f
+        sha256: 31f0bc64ea534a85fba70e54869bbbab22cc57259b7c54268d00cc01ca4db089
+        sha512: 034eccfd3d99574a15f34b14d92f64e825b6d058c78d898cd6446588b2f6addb757576d9783a30867bc302f31eacfff8a0cc92ee7cffe6acecd52a690a11f4f3
+        optional: false
+      - filename: YamlDotNet.dll
+        description: ""
+        localPath: UberStrike_Data/Managed
+        remotePath: stable/universal/UberStrike_Data/Managed
+        filesize: 273408
+        md5sum: 5d53415d4c7702f55ad13582be52f14f
+        sha256: d0ada0a770cf701216bca1cdda552d79590b0bf11ab3c49bdb1d436b76bfa2f8
+        sha512: 771978a21c134f3f2d29243eb09b468ca03dcda371fce5b5b3f6b462f979c97edf2c200db30283735a4f240e751c98b9ea4c26938ac180682d50944eafc6e01e
+        optional: false
+      - filename: log4net.dll
+        description: ""
+        localPath: UberStrike_Data/Managed
+        remotePath: stable/universal/UberStrike_Data/Managed
+        filesize: 270336
+        md5sum: d9cb27fd346db599ce73975bfcfaf88b
+        sha256: 5dced0fd11003372e839a5a646ddc9daf6f647e3173800dc206fc03fafd6641c
+        sha512: 49cf570988e855af38d0c24b44e0b5658f357ae1e02d95d28f7775ff07dc4db73231c63c8a7cf9eb1cd3c7869971143fe8232dad4fcbccc5730aee18f513f4c6
+        optional: false
+    removedFiles:
+      - filename: uberbeat.dll
+        localPath: UberStrike_Data/Plugins
