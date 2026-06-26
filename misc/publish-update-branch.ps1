@@ -32,7 +32,7 @@ try {
   Push-Location $Repo
 
   # Does the branch already exist on the remote?
-  $remoteHas = (git ls-remote --heads origin $Branch) -ne $null -and (git ls-remote --heads origin $Branch).Length -gt 0
+  $remoteHas = -not [string]::IsNullOrWhiteSpace((git ls-remote --heads origin $Branch | Out-String))
 
   Step "Preparing worktree for '$Branch'"
   if ($remoteHas) {
@@ -64,8 +64,23 @@ try {
   # A .nojekyll file so GitHub Pages serves files/dirs starting with _ or . verbatim and doesn't
   # run Jekyll over the binary tree.
   New-Item -ItemType File -Force -Path (Join-Path $work '.nojekyll') | Out-Null
-  # Small index so the Pages root isn't a 404.
-  "NekoNexus client update channel. Catalog: /v2/<beta|stable>/updates.yml" | Out-File -Encoding utf8 (Join-Path $work 'index.txt')
+  # The Pages root has no real homepage (the channel lives under /v2/...), so redirect visitors to
+  # the main site. The update catalog (/v2/<channel>/updates.yml) and the installer
+  # (/NekoNexusSetup.exe) are direct paths and are unaffected by this root redirect.
+  $redirect = @'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="refresh" content="0; url=https://paradise.nekosunevr.co.uk/">
+<link rel="canonical" href="https://paradise.nekosunevr.co.uk/">
+<title>NekoNexus</title>
+<script>location.replace("https://paradise.nekosunevr.co.uk/");</script>
+</head>
+<body>Redirecting to <a href="https://paradise.nekosunevr.co.uk/">paradise.nekosunevr.co.uk</a>…</body>
+</html>
+'@
+  [System.IO.File]::WriteAllText((Join-Path $work 'index.html'), $redirect)
 
   Step 'Committing + pushing'
   Push-Location $work

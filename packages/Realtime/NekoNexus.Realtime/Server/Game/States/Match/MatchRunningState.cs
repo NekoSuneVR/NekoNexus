@@ -66,6 +66,17 @@ namespace NekoNexus.Realtime.Server.Game {
 			}
 
 			Room.PreparePlayer(args.Player, args.Player.Actor.ActorInfo.IsSpectator);
+
+			// A spectator (joined mid-round in Elimination, or staff JoinAsSpectator) has NO spawned
+			// body - SpawnPlayer no-ops for them. Don't then broadcast a fake respawn or force their
+			// state to Playing: that left the joiner's client controlling a non-existent actor (broken
+			// spectator view) and showed everyone else a ghost at the origin. Route them to the
+			// Spectating state, which sends match-start + score + JoinedAsSpectator on its own.
+			if (args.Player.Actor.ActorInfo.IsSpectator) {
+				args.Player.State.SetState(PlayerStateId.Spectating);
+				return;
+			}
+
 			Room.SpawnPlayer(args.Player, true);
 
 			args.Player.GameEventSender.SendMatchStart(Room.RoundNumber, Room.RoundEndTime);
