@@ -296,52 +296,74 @@ namespace NekoNexus.Client {
 
 			var totalFiles = (universalUpdates?.Files.Count ?? 0) + (platformUpdates?.Files.Count ?? 0);
 
-			new Thread(new ThreadStart(() => {
-				progressPopup.Text = "Checking files for updates...";
+			// CRITICAL: file checking AND all popup / callback work must run on the MAIN (Unity)
+			// thread. This previously ran inside `new Thread(...)`, which touched PopupSystem and
+			// progressPopup (Unity UI) and invoked the callbacks from a background thread. Unity API
+			// calls off the main thread silently fail on Mono, so the "Update available" popup never
+			// appeared and the game slipped straight into the menu without offering the update. Run
+			// it inline on the coroutine (the main thread) and yield between the hash passes so the
+			// progress popup stays responsive.
+			progressPopup.Text = "Checking files for updates...";
 
-				if (universalUpdates == null) {
-					Log.Error("Update catalog does not contain universal platform.");
-				} else {
-					if (universalUpdates.Files != null) {
-						CheckUpdatedFiles(universalUpdates, 0, totalFiles, errorCallback);
-					}
+			var checkFailed = false;
+			Action<string> wrappedError = (msg) => {
+				checkFailed = true;
+				errorCallback?.Invoke(msg);
+			};
 
-					if (universalUpdates.RemovedFiles != null) {
-						CheckRemovedFiles(universalUpdates);
-					}
+			if (universalUpdates == null) {
+				Log.Error("Update catalog does not contain universal platform.");
+			} else {
+				if (universalUpdates.Files != null) {
+					CheckUpdatedFiles(universalUpdates, 0, totalFiles, wrappedError);
 				}
 
-				if (platformUpdates == null) {
-					Log.Error($"Update catalog does not contain platform \"{UpdatePlatform}\".");
-				} else {
-					if (platformUpdates.Files != null) {
-						CheckUpdatedFiles(platformUpdates, universalUpdates?.Files.Count ?? 0, totalFiles, errorCallback);
-					}
+				if (universalUpdates.RemovedFiles != null) {
+					CheckRemovedFiles(universalUpdates);
+				}
+			}
 
-					if (platformUpdates.RemovedFiles != null) {
-						CheckRemovedFiles(platformUpdates);
-					}
+			// Let the UI paint the progress between the two (potentially slow) hash passes.
+			yield return null;
+
+			if (checkFailed) {
+				yield break;
+			}
+
+			if (platformUpdates == null) {
+				Log.Error($"Update catalog does not contain platform \"{UpdatePlatform}\".");
+			} else {
+				if (platformUpdates.Files != null) {
+					CheckUpdatedFiles(platformUpdates, universalUpdates?.Files.Count ?? 0, totalFiles, wrappedError);
 				}
 
-				if (FilesToUpdate.Count > 0) {
-					PopupSystem.HideMessage(progressPopup);
-					Log.Info($"Update available: {CachedUpdates.Version} (Build {CachedUpdates.Build}), files to update: {FilesToUpdate.Count}; files to remove: {FilesToRemove.Count}");
-					updateAvailableCallback?.Invoke(CachedUpdates);
-				} else {
-					Log.Info("No update available - all files match. Up to date.");
-
-					// All hashes match: briefly show an "up to date" confirmation, then continue.
-					progressPopup.Text = "NekoNexus is up to date!";
-					Thread.Sleep(900);
-					PopupSystem.HideMessage(progressPopup);
-
-					if (FilesToRemove.Count > 0) {
-						DeleteRemovedFiles();
-					}
-
-					updateAvailableCallback?.Invoke(null);
+				if (platformUpdates.RemovedFiles != null) {
+					CheckRemovedFiles(platformUpdates);
 				}
-			})).Start();
+			}
+
+			if (checkFailed) {
+				yield break;
+			}
+
+			if (FilesToUpdate.Count > 0) {
+				PopupSystem.HideMessage(progressPopup);
+				Log.Info($"Update available: {CachedUpdates.Version} (Build {CachedUpdates.Build}), files to update: {FilesToUpdate.Count}; files to remove: {FilesToRemove.Count}");
+				updateAvailableCallback?.Invoke(CachedUpdates);
+			} else {
+				Log.Info("No update available - all files match. Up to date.");
+
+				// All hashes match: briefly show an "up to date" confirmation, then continue.
+				progressPopup.Text = "NekoNexus is up to date!";
+				yield return new WaitForSeconds(0.9f);
+				PopupSystem.HideMessage(progressPopup);
+
+				if (FilesToRemove.Count > 0) {
+					DeleteRemovedFiles();
+				}
+
+				updateAvailableCallback?.Invoke(null);
+			}
 
 			yield break;
 		}
