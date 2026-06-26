@@ -139,9 +139,31 @@ export default class WebSocketHost extends EventEmitter {
                   socketClient.Info = clientInfo;
                   socketClient.Info.IsClient = true;
 
-                  const passphrase = NekoNexusService.Instance.ServiceSettings.ServerCredentials.find(
+                  let passphrase = NekoNexusService.Instance.ServiceSettings.ServerCredentials.find(
                     (_) => _.Id.toLowerCase() === socketClient.Identifier.toLowerCase(),
                   )?.Passphrase.trim();
+
+                  // Plug-and-play multi-node: if a node's GUID isn't pre-registered in
+                  // ServerCredentials, accept it when it presents the shared node passphrase
+                  // (GAME_NODE_PASSPHRASE / COMM_NODE_PASSPHRASE env). This lets you spin up extra
+                  // game nodes with just env vars (a unique NEKONEXUS_IDENTIFIER + the shared
+                  // passphrase) - no web-service yml edit per node. Unset = behave as before
+                  // (only pre-registered servers allowed).
+                  if (!passphrase || !passphrase.length) {
+                    const sharedPass = (
+                      clientInfo.Type === ServerType.Game
+                        ? process.env.GAME_NODE_PASSPHRASE
+                        : clientInfo.Type === ServerType.Comm
+                          ? process.env.COMM_NODE_PASSPHRASE
+                          : undefined
+                    )?.trim();
+                    if (sharedPass && sharedPass.length) {
+                      Log.info(
+                        `[Socket] ${ServerType[clientInfo.Type]}Server(${socketClient.Identifier}) not in ServerCredentials; accepting via shared node passphrase.`,
+                      );
+                      passphrase = sharedPass;
+                    }
+                  }
 
                   if (!passphrase || !passphrase.length) {
                     socketClient.DisconnectReason = 'Unknown server';
