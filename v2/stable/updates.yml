@@ -1,5 +1,5 @@
 version: 2.1.2.1
-build: 4.7.1-260626-1728
+build: 4.7.1-260626-1826
 channel: stable
 platforms:
   win:
@@ -41,18 +41,18 @@ platforms:
         localPath: UberStrike_Data/Managed
         remotePath: stable/universal/UberStrike_Data/Managed
         filesize: 252416
-        md5sum: 561ab8e9765173fd9b1c4ae09509ddf1
-        sha256: ed1dd174c93476e28ea2cbd632ae7f6f4e247f00444d068be2344124c3d8719c
-        sha512: 61c90017e27940acf55692eae328e7b00221111716cb719af9df17300323ab97c7f6744b983fa3075c079020d9e1b86029b4b307e6d9bd02ed88ca3046a74984
+        md5sum: 6a74d47527057e09815429fba35fb528
+        sha256: d24d41f531a8a4e92f63498f7c7188905f084263c87d1fff92fb452541dc19a1
+        sha512: efb1e7bd934c344e38b5278637ad34aa5fd347567ee64db05f63b188f5ebc7e0607471520d2e203bc6a63da6b2e770daa427960ed4853192d4c0d80295ec158b
         optional: false
       - filename: Photon3Unity3D.dll
         description: ""
         localPath: UberStrike_Data/Managed
         remotePath: stable/universal/UberStrike_Data/Managed
         filesize: 108544
-        md5sum: f140013f45d2bc557c3f40f0cac70d93
-        sha256: dc31ac97a962648d5c1a46b0aa2c6095c2a154f78ea765faf6215016d387e0ab
-        sha512: 3c9b32dd7ef2786ae49828e1bee9bfa706580b5b12c0e3d3dc3ccf0f5eece3eec2f6f192e4bac86c13b1ab8ee1c82cb59aca640b10adb91778706296dcaa4d3f
+        md5sum: 49c7ed0e3d82b87daa3119f02315c880
+        sha256: 7543cf99327ae62925fbf241ef12c6f32c1419aca628884d53ff0e2962f06bf7
+        sha512: b9e7779f9a3a5fac8f2dc4de89383a413dae3390cbfea6a0e11cd51ab94ab64ff8712a2b9110a7b9b06ba810e1225b875a2a8876de1e814cde2f4f79e40dfc8e
         optional: false
       - filename: YamlDotNet.dll
         description: ""
