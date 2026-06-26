@@ -1,5 +1,5 @@
-version: 2.1.2.1
-build: 4.7.1-260626-2227
+version: 2.1.2.2
+build: 4.7.1-260626-2235
 channel: beta
 platforms:
   win:
@@ -50,9 +50,9 @@ platforms:
         localPath: UberStrike_Data/Managed
         remotePath: beta/universal/UberStrike_Data/Managed
         filesize: 108544
-        md5sum: 984d59e3b67c7dab0d1c8487a7725c6d
-        sha256: e4460559cbd24d40695af56cbb74368a74dd9363855067d6f887d41b5fb5e040
-        sha512: 0c3923836e02597b2ed2f91b31f45aacb7a806856e02f66bb1d6965e39e3f4fcfc18b64cf875a5f1f0bc30dcc2ea999f7d7176e5490fcf058d8ff89b70115939
+        md5sum: 2208740118b21733f49d585c8c9b140a
+        sha256: be9316fec55aae390658b6e54e2f408f92a24eb71bdfdde288c7c4fe4664f490
+        sha512: ac8aaf0df29767b1791eb29a4461537f463574da3a3a0a26f192bc77db8d7f10ff666b3b5c8464889a96d9185308fe7b72b339183e9517ccb7163a7227b6a186
         optional: false
       - filename: YamlDotNet.dll
         description: ""
@@ -71,6 +71,33 @@ platforms:
         md5sum: d9cb27fd346db599ce73975bfcfaf88b
         sha256: 5dced0fd11003372e839a5a646ddc9daf6f647e3173800dc206fc03fafd6641c
         sha512: 49cf570988e855af38d0c24b44e0b5658f357ae1e02d95d28f7775ff07dc4db73231c63c8a7cf9eb1cd3c7869971143fe8232dad4fcbccc5730aee18f513f4c6
+        optional: false
+      - filename: SpaceCity.unity3d
+        description: ""
+        localPath: UberStrike_Data/Maps
+        remotePath: beta/universal/UberStrike_Data/Maps
+        filesize: 2705867
+        md5sum: dd0710328ab79117d1a06d6acbd77b1a
+        sha256: ad4ca2aedd6c25174b17ba06c26d919f914d34fab8054f24df4859bec87fec79
+        sha512: 9bc12138ef751ee1c2bb25f9dbb68f28f52208ac56b1eb68969ed7a2e65cf31c421339c75f04adcd0862e172a7d80bb9bcb165e1f9fbde1d3e2e242022e9a2cb
+        optional: false
+      - filename: SpacePortAlpha.unity3d
+        description: ""
+        localPath: UberStrike_Data/Maps
+        remotePath: beta/universal/UberStrike_Data/Maps
+        filesize: 3169799
+        md5sum: f87ecd5d8a01d09b5b195beae2dd889c
+        sha256: 0e262dd6db9a47b870d5b1a97e08022fa82fca97b92a9f7d21eb0bc0d40070a5
+        sha512: d86b8865a2217a6447b1e1645728b3701d97c23b290c3073eca8850f362823916aaf8de0056077e0538a08306755e211734c47001fd649d24fbe10b1475243cb
+        optional: false
+      - filename: UberZone.unity3d
+        description: ""
+        localPath: UberStrike_Data/Maps
+        remotePath: beta/universal/UberStrike_Data/Maps
+        filesize: 1738147
+        md5sum: 499e0055108932e6c801433a93c2c635
+        sha256: 448f560771f04e50ec3d4d6f0dacb8fd9385f34b0929171ca6d504f00b4cdd3f
+        sha512: 5a997e9fc274a142e2856eb1ace8551f49b7a097925dba499698dcc6a6b3576c1a09c9dc430036e7ccf6ad65d0ea84e83619e1aec9c96ff48da8231cc13f32ca
         optional: false
     removedFiles:
       - filename: uberbeat.dll
