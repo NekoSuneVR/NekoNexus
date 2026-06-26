@@ -1,5 +1,28 @@
 # Changelog
 
+## 4.7.6 — Auto-updater works over HTTPS, maps auto-deliver, missing maps restored
+
+### Client / auto-updates
+- **Auto-updater fixed ("Failed to download update catalog").** The updater used Unity's WWW
+  with an overly-strict response-header check that rejected a perfectly good download against
+  the relay/CDN in front of the update host (and an HttpWebRequest attempt hit old Mono's TLS
+  wall). Now it uses WWW (the transport the game's own web service already uses successfully over
+  HTTPS) and treats "no error + content" as success — updates download and install again.
+- **Update detection runs on the main thread** so the "Update available" / download-progress /
+  "please restart" popups actually appear (they were silently failing on a background thread).
+- **The `build:` field now reflects the product version** (e.g. `4.7.6-…`) instead of the fixed
+  `4.7.1`, and the channel `version:` auto-increments on every publish.
+
+### Maps
+- **The three download-on-demand maps are back:** Space City, Spaceport Alpha and UberZone. Their
+  `.unity3d` bundles are shipped via the update channel (committed to the repo, staged by the
+  publish pipeline) and auto-installed into `UberStrike_Data/Maps/` on launch — then they appear
+  in the Create-Game map list.
+
+### Discord
+- Discord Rich Presence helper retargeted to .NET 4.8 (was 4.8.1, which wouldn't launch on a
+  4.8-only machine), with a log file + an overridable application id (`discord-app-id.txt`).
+
 ## 4.7.5 — Web social & shop, multi-channel chat, updater fix, Open API docs
 
 ### Website

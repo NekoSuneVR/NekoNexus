@@ -24,6 +24,11 @@ const FILE_NAME = 'updates';
 const FILE_SUFFIX = 'yml';
 const VERSION = '2.1.2.1';
 
+// Product version, shown in the update prompt's `build` field (e.g. "4.7.6-260626-2235"). Bump this
+// in lockstep with the installer AppVer / git tag each release. NOT the protocol version (the client
+// still authenticates as "4.7.1" - that must never change); this is purely the human-facing build.
+const PRODUCT_VERSION = '4.7.6';
+
 const CHANNELS = ['stable', 'beta'];
 const PLATFORMS: string[] = ['win', 'darwin', 'universal'];
 
@@ -124,7 +129,7 @@ export class UpdateGenerator {
     process.chdir(outputDir);
 
     const buildDate = moment().format('YYMMDD-HHmm');
-    const build = `4.7.1-${buildDate}`;
+    const build = `${PRODUCT_VERSION}-${buildDate}`;
 
     for (const channel of CHANNELS) {
       if (fs.existsSync(channel)) {
@@ -201,7 +206,7 @@ export class FallbackUpdateGenerator extends UpdateGenerator {
     process.chdir(outputDir);
 
     const buildDate = moment().format('YYMMDD-HHmm');
-    const build = `4.7.1-${buildDate}`;
+    const build = `${PRODUCT_VERSION}-${buildDate}`;
 
     for (const channel of CHANNELS) {
       if (fs.existsSync(path.join(process.cwd(), 'v2', channel))) {
