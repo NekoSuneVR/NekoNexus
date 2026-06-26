@@ -344,6 +344,38 @@ async function buildLeaderboard(sort: string, limit: number): Promise<any[]> {
   return rows;
 }
 
+// UberStrike GameModeType -> label (EliminationMode is shown as "Team Elimination" in-game).
+const GAME_MODE_NAMES: Record<number, string> = { 1: 'Death Match', 2: 'Team Death Match', 4: 'Team Elimination' };
+
+// A player's recent matches (map name + mode + K/D + result).
+async function buildMatchHistory(cmid: number, limit: number): Promise<any[]> {
+  if (!Number.isFinite(cmid)) return [];
+  const matches = (await models.MatchRecord.findAll({
+    where: { Cmid: cmid },
+    order: [['createdAt', 'DESC']],
+    limit,
+    raw: true,
+  }).catch(() => [])) as any[];
+  if (!matches.length) return [];
+  const mapIds = [...new Set(matches.map((m) => m.MapId))];
+  const maps = (await models.Map.findAll({ where: { MapId: { [Op.in]: mapIds } }, attributes: ['MapId', 'DisplayName'], raw: true }).catch(() => [])) as any[];
+  const mapName = new Map(maps.map((m) => [m.MapId, m.DisplayName]));
+  return matches.map((m) => ({
+    Date: m.createdAt,
+    MapId: m.MapId,
+    Map: mapName.get(m.MapId) || `Map ${m.MapId}`,
+    GameMode: m.GameMode,
+    Mode: GAME_MODE_NAMES[m.GameMode] || `Mode ${m.GameMode}`,
+    Kills: m.Kills,
+    Deaths: m.Deaths,
+    KDR: m.Deaths > 0 ? Math.round((m.Kills / m.Deaths) * 100) / 100 : m.Kills,
+    Won: !!m.Won,
+    Result: m.Won ? 'Victory' : 'Defeat',
+    Xp: m.Xp,
+    Points: m.Points,
+  }));
+}
+
 async function handleApi(req: Request, url: URL): Promise<Response> {
   const { pathname } = url;
   const method = req.method;
@@ -419,6 +451,7 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
         endpoints: [
           'GET /api/v1/players?q=<name|cmid>&limit=<1-100>',
           'GET /api/v1/players/:cmid',
+          'GET /api/v1/players/:cmid/matches?limit=<1-50>',
           'GET /api/v1/clans?limit=<1-100>',
           'GET /api/v1/clans/:groupId',
           'GET /api/v1/leaderboard?sort=xp|level|points|splats&limit=<1-100>',
@@ -449,6 +482,12 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
       return p ? apiJson(p) : apiJson({ error: 'Not found' }, 404);
     }
 
+    const v1Matches = pathname.match(/^\/api\/v1\/players\/(\d+)\/matches$/);
+    if (v1Matches && method === 'GET') {
+      const limit = Math.min(Math.max(Number(url.searchParams.get('limit')) || 20, 1), 50);
+      return apiJson(await buildMatchHistory(Number(v1Matches[1]), limit));
+    }
+
     if (pathname === '/api/v1/clans' && method === 'GET') {
       return apiJson(await buildClanList(Math.min(Math.max(Number(url.searchParams.get('limit')) || 50, 1), 100)));
     }
@@ -466,6 +505,13 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
     }
 
     return apiJson({ error: 'Unknown endpoint. See GET /api/v1' }, 404);
+  }
+
+  // ---- a signed-in user's own match history ----
+  if (pathname === '/api/me/matches' && method === 'GET') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in first.' }, 401);
+    return json(await buildMatchHistory(user.cmid, 25));
   }
 
   // ---- a signed-in user's own payment / transaction history ----

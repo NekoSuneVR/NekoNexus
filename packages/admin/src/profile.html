@@ -31,6 +31,18 @@
       <p class="text-neutral-500">Loading…</p>
     </div>
 
+    <section id="matchHistory" class="glass rounded-xl p-6 mt-6 hidden">
+      <h2 class="text-lg font-bold mb-3">Recent matches</h2>
+      <div class="overflow-x-auto"><table class="w-full text-sm">
+        <thead class="text-neutral-500 text-left"><tr>
+          <th class="py-1">Result</th><th class="py-1">Map</th><th class="py-1">Mode</th>
+          <th class="py-1 text-right">Kills</th><th class="py-1 text-right">Deaths</th><th class="py-1 text-right">K/D</th>
+          <th class="py-1 text-right">XP</th><th class="py-1 text-right">When</th>
+        </tr></thead>
+        <tbody id="matchRows"></tbody>
+      </table></div>
+    </section>
+
     <section id="reportBox" class="glass rounded-xl p-6 mt-6 hidden">
       <h2 class="font-semibold mb-3">Report this player</h2>
       <p id="reportHint" class="text-sm text-neutral-400 mb-3"></p>
@@ -93,6 +105,21 @@
             </table>
           </div>`;
         })()}`;
+
+      // Recent matches (match history).
+      fetch('/api/v1/players/' + cmid + '/matches?limit=20').then((r) => (r.ok ? r.json() : [])).then((list) => {
+        if (!list || !list.length) return;
+        document.getElementById('matchHistory').classList.remove('hidden');
+        document.getElementById('matchRows').innerHTML = list.map((mm) => `<tr class="border-t border-neutral-800">
+          <td class="py-1.5"><span class="px-2 py-0.5 rounded text-xs ${mm.Won ? 'bg-brand-600/20 text-brand-400' : 'bg-red-600/20 text-red-400'}">${esc(mm.Result)}</span></td>
+          <td class="py-1.5">${esc(mm.Map)}</td>
+          <td class="py-1.5 text-neutral-400">${esc(mm.Mode)}</td>
+          <td class="py-1.5 text-right">${mm.Kills}</td>
+          <td class="py-1.5 text-right">${mm.Deaths}</td>
+          <td class="py-1.5 text-right">${mm.KDR}</td>
+          <td class="py-1.5 text-right text-neutral-400">+${(mm.Xp || 0).toLocaleString()}</td>
+          <td class="py-1.5 text-right text-neutral-500">${new Date(mm.Date).toLocaleDateString()}</td></tr>`).join('');
+      }).catch(() => {});
 
       // Report box: requires a signed-in (Steam) user.
       const box = document.getElementById('reportBox');

@@ -118,6 +118,7 @@ namespace NekoNexus {
 							break;
 						case PacketType.Monitoring:
 						case PacketType.BanPlayer:
+						case PacketType.MatchResult:
 							payloadObj.IsEncrypted = true;
 
 							DictionaryProxy<string, object>.Serialize(bytes, (Dictionary<string, object>)data, StringProxy.Serialize, (stream, instance) => {
@@ -269,6 +270,7 @@ namespace NekoNexus {
 						case PacketType.NotifyClanChat:
 						case PacketType.NotifyWallet:
 						case PacketType.SetBoost:
+						case PacketType.MatchResult:
 							result = DictionaryProxy<string, object>.Deserialize(bytes, StringProxy.Deserialize, (stream) => {
 								return JsonConvert.DeserializeObject<object>(StringProxy.Deserialize(stream));
 							});

@@ -45,7 +45,12 @@
 			// Web service -> Game server(s) (broadcast): set/clear the global coin+xp boost event.
 			// { PointsMultiplier, XpMultiplier, EndsAt } -> stored in GameServerApplication.Boost and
 			// applied at match-end scoring. EndsAt is unix ms (0 = no expiry).
-			SetBoost
+			SetBoost,
+
+			// Game server -> web service: one player's result for a finished match (saved as a
+			// MatchRecord for match history). { Cmid, MatchGuid, MapId, GameMode, Kills, Deaths, Won,
+			// Xp, Points }.
+			MatchResult
 		}
 	}
 }

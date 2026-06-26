@@ -258,6 +258,22 @@ export default class NekoNexusService {
               }
             }
             break;
+          case WebSocketPacketType.MatchResult: {
+            // A game server reported one player's finished-match result -> save it to match history.
+            const d = e.Data as any;
+            await models.MatchRecord.create({
+              Cmid: Number(d.Cmid),
+              MatchGuid: String(d.MatchGuid ?? ''),
+              MapId: Number(d.MapId) || 0,
+              GameMode: Number(d.GameMode) || 0,
+              Kills: Number(d.Kills) || 0,
+              Deaths: Number(d.Deaths) || 0,
+              Won: !!d.Won,
+              Xp: Number(d.Xp) || 0,
+              Points: Number(d.Points) || 0,
+            });
+            break;
+          }
           case WebSocketPacketType.Error:
             await this.discordClient?.LogError(e.Data);
             break;

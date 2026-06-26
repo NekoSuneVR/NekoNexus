@@ -54,6 +54,8 @@ enum WebSocketPacketType {
   NotifyWallet = (1 << 10) + 18,
   // Web service -> Game servers (broadcast): set/clear the global coin+xp boost event.
   SetBoost = (1 << 10) + 19,
+  // Game server -> web service: a player's finished-match result (for match history).
+  MatchResult = (1 << 10) + 20,
 }
 
 export default WebSocketPacketType;

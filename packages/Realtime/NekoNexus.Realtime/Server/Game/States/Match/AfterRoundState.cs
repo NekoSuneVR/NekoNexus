@@ -62,6 +62,18 @@ namespace NekoNexus.Realtime.Server.Game {
 					var authToken = player.AuthToken;
 					var cmid = player.Actor.Cmid;
 					var pointDepositId = r.Next(1, int.MaxValue);
+					// Match-history fields captured on the loop thread, persisted off it.
+					var matchRecord = new Dictionary<string, object> {
+						["Cmid"] = cmid,
+						["MatchGuid"] = capturedData.MatchGuid ?? string.Empty,
+						["MapId"] = Room.MetaData.MapID,
+						["GameMode"] = (int)Room.MetaData.GameMode,
+						["Kills"] = (int)capturedData.PlayerStatsTotal.GetKills(),
+						["Deaths"] = (int)capturedData.PlayerStatsTotal.Deaths,
+						["Won"] = capturedData.HasWonMatch,
+						["Xp"] = capturedData.PlayerStatsTotal.Xp,
+						["Points"] = capturedData.PlayerStatsTotal.Points,
+					};
 					System.Threading.Tasks.Task.Run(() => {
 						try {
 							UserWebServiceClient.Instance.DepositPoints(new PointDepositView {
@@ -73,6 +85,9 @@ namespace NekoNexus.Realtime.Server.Game {
 							}, authToken);
 
 							Room.StatisticsManager.SaveStatistics(capturedPlayer, capturedData);
+
+							// Record the match in the player's history (best-effort; saved by the ws).
+							GameServerApplication.Instance.SocketClient?.SendSync(WebSocket.PacketType.MatchResult, matchRecord);
 						} catch (Exception ex) {
 							Log.Error($"Failed to persist match results for cmid {cmid}", ex);
 						}

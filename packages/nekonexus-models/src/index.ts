@@ -30,6 +30,7 @@ import GroupInvitation from './GroupInvitation';
 import ItemTransaction from './ItemTransaction';
 import Map from './Map';
 import MapSettings from './MapSettings';
+import MatchRecord from './MatchRecord';
 import MemberWallet from './MemberWallet';
 import ModerationAction from './ModerationAction';
 import PhotonServer from './PhotonServer';
@@ -67,6 +68,7 @@ export { default as GroupInvitation } from './GroupInvitation';
 export { default as ItemTransaction } from './ItemTransaction';
 export { default as Map } from './Map';
 export { default as MapSettings } from './MapSettings';
+export { default as MatchRecord } from './MatchRecord';
 export { default as MemberWallet } from './MemberWallet';
 export { default as ModerationAction } from './ModerationAction';
 export { default as PhotonServer } from './PhotonServer';
@@ -105,6 +107,7 @@ export default {
   ItemTransaction,
   Map,
   MapSettings,
+  MatchRecord,
   MemberWallet,
   ModerationAction,
   PhotonServer,
