@@ -3,15 +3,10 @@ name: Publish client update (cloud)
 # Builds the NekoNexus client mod and publishes the in-game auto-update channel to the `updates`
 # branch (served by GitHub Pages). Runs on GitHub-hosted runners.
 #
-# THE ONE SECRET YOU MUST SET: the mod only compiles against the real UberStrike game assemblies
-# (Assembly-CSharp.dll etc.), which are proprietary and must NOT live in the repo. Instead, host a
-# zip of them somewhere private and put its direct-download URL in the repo secret GAME_REFS_URL:
-#   Settings -> Secrets and variables -> Actions -> New repository secret
-#     Name:  GAME_REFS_URL
-#     Value: https://<your-private-host>/uberstrike-refs.zip
-#   The zip must contain (from your UberStrike_Data\Managed):
-#     Assembly-CSharp.dll, Assembly-CSharp-firstpass.dll, Photon3Unity3D.dll, UnityEngine.dll
-#   (Put it behind an unguessable URL / token on your own server, a private release asset, etc.)
+# GAME REFS: the mod only compiles against the real UberStrike game assemblies (Assembly-CSharp.dll
+# etc.), which are proprietary and must NOT live in this public repo. They're kept in the PRIVATE
+# repo NekoSuneVR/uberstrike-refs and pulled here via a read-only deploy key (secret
+# GAME_REFS_DEPLOY_KEY). To update them: push new DLLs to uberstrike-refs - no change here needed.
 #
 # Also: Settings -> Pages -> Deploy from a branch -> `updates` / root.
 
@@ -50,22 +45,23 @@ jobs:
           dotnet-version: '9.0.x'
       - uses: oven-sh/setup-bun@v2
 
-      - name: Fetch game reference assemblies
+      # Pull the proprietary game refs from the PRIVATE companion repo via a read-only deploy key
+      # (secret GAME_REFS_DEPLOY_KEY). They never live in this public repo.
+      - name: Fetch game reference assemblies (private)
+        uses: actions/checkout@v4
+        with:
+          repository: NekoSuneVR/uberstrike-refs
+          ssh-key: ${{ secrets.GAME_REFS_DEPLOY_KEY }}
+          path: .game-refs
+
+      - name: Stage game reference assemblies
         shell: pwsh
-        env:
-          GAME_REFS_URL: ${{ secrets.GAME_REFS_URL }}
         run: |
-          if (-not $env:GAME_REFS_URL) {
-            throw "Repo secret GAME_REFS_URL is not set. Point it at a private zip of Assembly-CSharp.dll, Assembly-CSharp-firstpass.dll, Photon3Unity3D.dll, UnityEngine.dll (see the comment at the top of this workflow). The mod cannot compile without the game refs."
-          }
           $refDir = "packages/AssemblyReferences/4.7.1"
           New-Item -ItemType Directory -Force -Path $refDir | Out-Null
-          Invoke-WebRequest -Uri $env:GAME_REFS_URL -OutFile refs.zip
-          Expand-Archive -Path refs.zip -DestinationPath $refDir -Force
-          # Flatten in case the zip has a top-level folder.
-          Get-ChildItem -Path $refDir -Recurse -Filter *.dll | Where-Object { $_.DirectoryName -ne (Resolve-Path $refDir).Path } | ForEach-Object { Move-Item $_.FullName $refDir -Force }
-          foreach ($d in 'Assembly-CSharp.dll','Photon3Unity3D.dll','UnityEngine.dll') {
-            if (-not (Test-Path (Join-Path $refDir $d))) { throw "Game ref $d missing from the GAME_REFS_URL zip." }
+          Copy-Item ".game-refs/*.dll" $refDir -Force
+          foreach ($d in 'Assembly-CSharp.dll','Assembly-CSharp-firstpass.dll','Photon3Unity3D.dll','UnityEngine.dll') {
+            if (-not (Test-Path (Join-Path $refDir $d))) { throw "Game ref $d missing from the uberstrike-refs repo." }
           }
           Get-ChildItem $refDir -Filter *.dll | ForEach-Object { Write-Host "  + $($_.Name)" }
 

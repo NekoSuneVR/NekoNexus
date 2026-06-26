@@ -4,9 +4,9 @@ name: Release installer (cloud, on tag)
 # on a GitHub-hosted runner and attaches them to the GitHub Release for the version tag (v*). Also
 # publishes that build to the update channel so the tagged version is what players auto-update to.
 #
-# Needs the GAME_REFS_URL repo secret (a private zip of the UberStrike game DLLs) - same as
-# publish-client.yml; see the comment at the top of that workflow. Everything else (Inno Setup,
-# patcher, .NET, Bun) is installed on the runner below.
+# Game refs come from the PRIVATE repo NekoSuneVR/uberstrike-refs via the GAME_REFS_DEPLOY_KEY deploy
+# key - same as publish-client.yml. Everything else (Inno Setup, patcher, .NET, Bun) is installed on
+# the runner below.
 
 on:
   push:
@@ -44,21 +44,22 @@ jobs:
       - name: Install Inno Setup
         run: choco install innosetup -y --no-progress
 
-      - name: Fetch game reference assemblies
+      # Pull the proprietary game refs from the PRIVATE companion repo via a read-only deploy key.
+      - name: Fetch game reference assemblies (private)
+        uses: actions/checkout@v4
+        with:
+          repository: NekoSuneVR/uberstrike-refs
+          ssh-key: ${{ secrets.GAME_REFS_DEPLOY_KEY }}
+          path: .game-refs
+
+      - name: Stage game reference assemblies
         shell: pwsh
-        env:
-          GAME_REFS_URL: ${{ secrets.GAME_REFS_URL }}
         run: |
-          if (-not $env:GAME_REFS_URL) {
-            throw "Repo secret GAME_REFS_URL is not set. Point it at a private zip of Assembly-CSharp.dll, Assembly-CSharp-firstpass.dll, Photon3Unity3D.dll, UnityEngine.dll. The mod cannot compile without the game refs."
-          }
           $refDir = "packages/AssemblyReferences/4.7.1"
           New-Item -ItemType Directory -Force -Path $refDir | Out-Null
-          Invoke-WebRequest -Uri $env:GAME_REFS_URL -OutFile refs.zip
-          Expand-Archive -Path refs.zip -DestinationPath $refDir -Force
-          Get-ChildItem -Path $refDir -Recurse -Filter *.dll | Where-Object { $_.DirectoryName -ne (Resolve-Path $refDir).Path } | ForEach-Object { Move-Item $_.FullName $refDir -Force }
-          foreach ($d in 'Assembly-CSharp.dll','Photon3Unity3D.dll','UnityEngine.dll') {
-            if (-not (Test-Path (Join-Path $refDir $d))) { throw "Game ref $d missing from the GAME_REFS_URL zip." }
+          Copy-Item ".game-refs/*.dll" $refDir -Force
+          foreach ($d in 'Assembly-CSharp.dll','Assembly-CSharp-firstpass.dll','Photon3Unity3D.dll','UnityEngine.dll') {
+            if (-not (Test-Path (Join-Path $refDir $d))) { throw "Game ref $d missing from the uberstrike-refs repo." }
           }
           Get-ChildItem $refDir -Filter *.dll | ForEach-Object { Write-Host "  + $($_.Name)" }
 
