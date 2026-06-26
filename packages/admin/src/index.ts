@@ -492,7 +492,8 @@ async function buildClanDetail(groupId: number): Promise<any | null> {
   };
 }
 
-// Top players, excluding staff (AccessLevel >= 4), the system account and unnamed rows.
+// Top players. Everyone is ranked (staff included); only the System Staff account (Cmid 0) and
+// unnamed rows are excluded.
 async function buildLeaderboard(sort: string, limit: number): Promise<any[]> {
   const sortCol = sort === 'level' ? 'Level' : sort === 'points' ? 'Points' : sort === 'splats' ? 'Splats' : 'Xp';
   const stats = (await models.PlayerStatistics.findAll({ order: [[sortCol, 'DESC']], limit: limit * 3, raw: true })) as any[];
@@ -504,7 +505,7 @@ async function buildLeaderboard(sort: string, limit: number): Promise<any[]> {
   const rows: any[] = [];
   for (const s of stats) {
     const p: any = profBy.get(s.Cmid);
-    if (!p || p.Cmid === 0 || !p.Name || (p.AccessLevel ?? 0) >= 4) continue;
+    if (!p || p.Cmid === 0 || !p.Name) continue;
     rows.push({ Rank: rows.length + 1, Cmid: s.Cmid, Name: p.Name, Level: s.Level ?? 0, Xp: s.Xp ?? 0, Points: s.Points ?? 0, Splats: s.Splats ?? 0 });
     if (rows.length >= limit) break;
   }
@@ -582,10 +583,9 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
       url.searchParams.get('sort') ?? 'xp'
     ] ?? 'Xp';
     const limit = Math.min(Number(url.searchParams.get('limit') ?? 25) || 25, 100);
-    const staff = await models.PublicProfile.findAll({ where: { [Op.or]: [{ AccessLevel: { [Op.gte]: 4 } }, { Cmid: 0 }] }, attributes: ['Cmid'], raw: true });
-    const hidden = (staff as any[]).map((s) => s.Cmid);
+    // Everyone is ranked (staff included); only System Staff (Cmid 0) is excluded.
     const top = await models.PlayerStatistics.findAll({
-      where: hidden.length ? { Cmid: { [Op.notIn]: hidden } } : {},
+      where: { Cmid: { [Op.ne]: 0 } },
       order: [[sortField, 'DESC']],
       limit: limit + 35,
       raw: true,
@@ -1724,15 +1724,12 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
     return json({ ok: true });
   }
 
-  // ---- leaderboard (staff: Moderator+ are hidden) ----
+  // ---- leaderboard (everyone ranked, including staff; only System Staff Cmid 0 excluded) ----
   if (pathname === '/api/leaderboard' && method === 'GET') {
     const sortMap: Record<string, string> = { xp: 'Xp', level: 'Level', points: 'Points', splats: 'Splats' };
     const sort = sortMap[url.searchParams.get('sort') ?? 'xp'] ?? 'Xp';
-    // Hide staff accounts (AccessLevel >= Moderator = 4) and the root account from the board.
-    const staff = await models.PublicProfile.findAll({ where: { [Op.or]: [{ AccessLevel: { [Op.gte]: 4 } }, { Cmid: 0 }] }, attributes: ['Cmid'], raw: true });
-    const hidden = staff.map((s: any) => s.Cmid);
     const top = await models.PlayerStatistics.findAll({
-      where: hidden.length ? { Cmid: { [Op.notIn]: hidden } } : {},
+      where: { Cmid: { [Op.ne]: 0 } },
       order: [[sort, 'DESC']],
       limit: 100,
       raw: true,
