@@ -87,6 +87,48 @@ async function ensureBoostTable(): Promise<void> {
   boostTableReady = true;
 }
 
+// Post an in-game mail from "System Staff" (Cmid 0) to the given players, and nudge any who are
+// online so it lands instantly. Used for gift/boost announcements. Best-effort: never throws.
+async function postSystemMail(cmids: number[], text: string): Promise<void> {
+  const targets = [...new Set(cmids.map((c) => Number(c)).filter((c) => Number.isInteger(c) && c > 0))];
+  if (!targets.length || !text.trim()) return;
+  const now = new Date();
+  const rows = targets.map((cmid) => ({
+    PrivateMessageId: Math.floor(Math.random() * 2147483647) + 1,
+    FromCmid: 0,
+    FromName: 'System Staff',
+    ToCmid: cmid,
+    DateSent: now,
+    ContentText: text,
+    IsRead: false,
+    IsDeletedBySender: false,
+    IsDeletedByReceiver: false,
+  }));
+  try {
+    await models.PrivateMessage.bulkCreate(rows as any[]);
+  } catch {
+    return;
+  }
+  if (!cfg.internalApiKey) return;
+  try {
+    const online = new Set(
+      ((await models.ActivePlayer.findAll({ attributes: ['Cmid'], raw: true }).catch(() => [])) as any[]).map(
+        (p) => p.Cmid,
+      ),
+    );
+    const entries = rows.filter((r) => online.has(r.ToCmid)).map((r) => ({ cmid: r.ToCmid, messageId: r.PrivateMessageId }));
+    if (entries.length) {
+      await fetch(`${cfg.wsInternalUrl}/internal/notify-inbox`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Internal-Key': cfg.internalApiKey },
+        body: JSON.stringify({ entries }),
+      }).catch(() => {});
+    }
+  } catch {
+    /* realtime is best-effort */
+  }
+}
+
 const ONLINE_WINDOW_MS = 60_000; // a server is "online" if it pinged within the last minute
 
 function json(data: unknown, status = 200): Response {
@@ -622,7 +664,12 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
         results.push({ cmid, ok: false });
       }
     }
-    return json({ ok: true, granted: results.filter((r) => r.ok).length, credits, points, results });
+    // Tell each recipient who gifted them what, in their in-game mailbox.
+    const granted = results.filter((r) => r.ok).map((r) => r.cmid);
+    const parts = [credits ? `${credits.toLocaleString()} Credits` : '', points ? `${points.toLocaleString()} Coins` : ''].filter(Boolean);
+    await postSystemMail(granted, `${auth.name} (Staff) gifted you ${parts.join(' and ')}. Enjoy!`);
+
+    return json({ ok: true, granted: granted.length, credits, points, results });
   }
 
   // ---- global coin/xp boost event (2x/5x weekend) ----
@@ -668,6 +715,24 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
         /* realtime is best-effort */
       }
     }
+
+    // Announce the event (or its end) to every player's in-game mailbox.
+    try {
+      const all = (await models.PublicProfile.findAll({ where: { Cmid: { [Op.ne]: 0 } }, attributes: ['Cmid'], raw: true })) as any[];
+      const cmids = all.map((p) => p.Cmid);
+      if (pointsMultiplier > 1) {
+        const when = durationMinutes > 0
+          ? `for the next ${durationMinutes >= 60 ? `${Math.round(durationMinutes / 60)} hour(s)` : `${durationMinutes} min`}`
+          : 'until further notice';
+        const xpNote = xpMultiplier > 1 ? ` (and ${xpMultiplier}x XP)` : '';
+        await postSystemMail(cmids, `🔥 BOOST EVENT: Earn ${pointsMultiplier}x Coins${xpNote} every match ${when}! Jump in and rack up the rewards.`);
+      } else {
+        await postSystemMail(cmids, `The coin boost event has ended. Thanks for playing!`);
+      }
+    } catch {
+      /* mail is best-effort */
+    }
+
     return json({ ok: true, pointsMultiplier, xpMultiplier, endsAt, live });
   }
 

@@ -79,7 +79,7 @@ export class BanCommand extends NekoNexusCommand {
     await ModerationAction.create({
       ModerationFlag: ModerationFlag.Banned,
       SourceCmid: 0,
-      SourceName: 'root',
+      SourceName: 'System Staff',
       TargetCmid: publicProfile.Cmid,
       TargetName: publicProfile.Name,
       ActionDate: new Date(),

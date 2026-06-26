@@ -52,7 +52,8 @@
   <script>
     const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
     const cmid = Number(location.pathname.split('/').filter(Boolean).pop());
-    const fmtTime = (ms) => { const h = Math.floor((ms || 0) / 3600000); return h >= 1 ? h + ' h' : Math.floor((ms || 0) / 60000) + ' min'; };
+    // TimeSpentInGame is stored in SECONDS (the server accumulates per-match seconds), not ms.
+    const fmtTime = (s) => { const h = Math.floor((s || 0) / 3600); return h >= 1 ? h + ' h ' + Math.floor(((s || 0) % 3600) / 60) + ' min' : Math.floor((s || 0) / 60) + ' min'; };
 
     async function load() {
       const p = await fetch('/api/public/profile/' + cmid).then((r) => r.ok ? r.json() : null).catch(() => null);
