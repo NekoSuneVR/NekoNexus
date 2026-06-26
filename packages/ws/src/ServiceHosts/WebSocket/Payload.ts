@@ -136,6 +136,16 @@ export default class WebSocketPayload {
         break;
       case WebSocketPacketType.Monitoring:
       case WebSocketPacketType.BanPlayer:
+      // Realtime notifications (ws -> Comm/Game server): all carry a simple { key: value } dict,
+      // encoded the same way as BanPlayer. These were missing from the switch, so every realtime
+      // push (mail/clan refresh, live wallet, boost) silently fell through to "Unknown type" and
+      // never sent. Encode them here.
+      case WebSocketPacketType.NotifyInboxMessage:
+      case WebSocketPacketType.NotifyInboxRequests:
+      case WebSocketPacketType.NotifyClanMembers:
+      case WebSocketPacketType.NotifyClanChat:
+      case WebSocketPacketType.NotifyWallet:
+      case WebSocketPacketType.SetBoost:
         payloadObj.IsEncrypted = true;
 
         DictionaryProxy.Serialize<string, object>(bytes, data, StringProxy.Serialize, (stream, instance) => {
@@ -258,6 +268,12 @@ export default class WebSocketPayload {
         break;
       case WebSocketPacketType.Monitoring:
       case WebSocketPacketType.BanPlayer:
+      case WebSocketPacketType.NotifyInboxMessage:
+      case WebSocketPacketType.NotifyInboxRequests:
+      case WebSocketPacketType.NotifyClanMembers:
+      case WebSocketPacketType.NotifyClanChat:
+      case WebSocketPacketType.NotifyWallet:
+      case WebSocketPacketType.SetBoost:
         result = DictionaryProxy.Deserialize<string, object>(bytes, StringProxy.Deserialize, (stream) =>
           JSON.parse(StringProxy.Deserialize(stream)),
         );

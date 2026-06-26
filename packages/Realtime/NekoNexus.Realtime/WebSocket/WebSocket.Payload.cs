@@ -259,6 +259,16 @@ namespace NekoNexus {
 							break;
 						case PacketType.Monitoring:
 						case PacketType.BanPlayer:
+						// Realtime notifications pushed from the web service (mail/clan refresh, live
+						// wallet, boost) - all simple { key: value } dicts, decoded like BanPlayer. These
+						// were missing here, so the packets the ws sent never decoded and the handlers
+						// (which cast e.Data to Dictionary<string,object>) silently failed.
+						case PacketType.NotifyInboxMessage:
+						case PacketType.NotifyInboxRequests:
+						case PacketType.NotifyClanMembers:
+						case PacketType.NotifyClanChat:
+						case PacketType.NotifyWallet:
+						case PacketType.SetBoost:
 							result = DictionaryProxy<string, object>.Deserialize(bytes, StringProxy.Deserialize, (stream) => {
 								return JsonConvert.DeserializeObject<object>(StringProxy.Deserialize(stream));
 							});

@@ -44,6 +44,12 @@ export default class WebSocketHost extends EventEmitter {
   private CommServer?: WebSocketConnection;
   private GameServers: WebSocketConnection[] = [];
 
+  // Last time we evicted a session for a given identifier. If the same identifier is evicted again
+  // within EVICT_COOLDOWN_MS it's flapping - i.e. TWO different servers using the SAME identifier
+  // (misconfiguration), not a clean reconnect - so we reject the duplicate instead of thrashing.
+  private lastEvictAt: { [identifier: string]: number } = {};
+  private static readonly EVICT_COOLDOWN_MS = 10_000;
+
   private ConnectedSockets: { [key: string]: WebSocketConnection } = {};
   private CryptoProviders: { [key: string]: RijndaelCryptoProvider } = {};
 
@@ -217,7 +223,41 @@ export default class WebSocketHost extends EventEmitter {
                       // DIFFERENT identifiers, so this only ever evicts the SAME identity.)
                       const stale = this.GameServers.find((_) => _.Identifier === socketClient.Identifier);
                       if (stale) {
+                        const now = Date.now();
+                        if (now - (this.lastEvictAt[socketClient.Identifier] ?? 0) < WebSocketHost.EVICT_COOLDOWN_MS) {
+                          // Flapping: two different game servers are using the SAME identifier. Reject
+                          // the duplicate instead of evicting (which would spin in a tight loop).
+                          Log.warn(
+                            `[Socket] GameServer(${socketClient.Identifier}) is connecting from multiple sources with the SAME identifier - give each game server a UNIQUE ApplicationIdentifier + ServerCredentials entry. Rejecting the duplicate.`,
+                          );
+                          socketClient.DisconnectReason =
+                            'Duplicate server identifier - use a unique ApplicationIdentifier per game server';
+
+                          this.emit(
+                            'ConnectionRejected',
+                            new WebSocketConnectionRejectedEventArgs({
+                              Info: clientInfo,
+                              Socket: socketClient,
+                              Reason: socketClient.DisconnectReason,
+                            }),
+                          );
+
+                          await socketClient.Send(
+                            PacketType.ConnectionStatus,
+                            new WebSocketConnectionStatus({
+                              Connected: false,
+                              Rejected: true,
+                              DisconnectReason: socketClient.DisconnectReason,
+                            }),
+                            true,
+                            payloadObj.ConversationId,
+                          );
+
+                          return;
+                        }
+
                         Log.warn(`[Socket] GameServer(${socketClient.Identifier}) reconnecting; dropping stale session.`);
+                        this.lastEvictAt[socketClient.Identifier] = now;
                         this.GameServers = this.GameServers.filter((_) => _ !== stale);
                         try {
                           stale.Socket.close();
