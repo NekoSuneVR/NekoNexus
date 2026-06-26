@@ -20,6 +20,10 @@ import { applyTheme } from './theme';
 import { beginSteamLogin, verifySteamReturn } from './steam';
 import { getUberStrikeStreams } from './twitch';
 
+// MemberAccessLevel.Admin — the minimum in-game access level that may open the admin dashboard
+// straight from a signed-in site session (re-checked against the DB before any admin token is issued).
+const ADMIN_ACCESS_LEVEL = 10;
+
 // Shared auth-aware nav for the public pages. Each page puts <span id="authnav">…Sign in…</span> in
 // its header and loads /assets/nav.js; when a user token is present this swaps the "Sign in" link for
 // a profile dropdown (My profile / Settings / Sign out). Plain ES5 so it runs everywhere.
@@ -41,6 +45,7 @@ const NAV_JS = `(function () {
     + '<a href="/profile/' + me.cmid + '" class="block px-3 py-2 hover:bg-neutral-800 text-neutral-200">My profile</a>'
     + '<a href="/social" class="block px-3 py-2 hover:bg-neutral-800 text-neutral-200">Friends &amp; Mail</a>'
     + '<a href="/shop" class="block px-3 py-2 hover:bg-neutral-800 text-neutral-200">Shop</a>'
+    + ((me.accessLevel || 0) >= ${ADMIN_ACCESS_LEVEL} ? '<a href="/admin" class="block px-3 py-2 hover:bg-neutral-800 text-brand-400 font-medium">Admin panel</a>' : '')
     + '<a href="/login" class="block px-3 py-2 hover:bg-neutral-800 text-neutral-200">Settings</a>'
     + '<button id="navSignOut" class="block w-full text-left px-3 py-2 hover:bg-neutral-800 text-red-400">Sign out</button>'
     + '</div></div>';
@@ -562,6 +567,24 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
       username: user.Username,
       // Still on the factory admin/admin? The UI forces a change-credentials prompt.
       mustChangeCredentials: username === 'admin' && password === 'admin',
+    });
+  }
+
+  // Exchange a signed-in player's (Steam) user token for an admin token, IF their in-game account is
+  // an Admin. This is what lets staff open the dashboard straight from the site with no separate
+  // username/password login. AccessLevel is re-checked against the DB here (authoritative), so a
+  // stale/forged token can't grant admin. Non-admins get 403 and the normal login is shown instead.
+  if (pathname === '/api/auth/admin-from-user' && method === 'POST') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Not signed in.' }, 401);
+    const profile: any = await models.PublicProfile.findByPk(user.cmid, { raw: true }).catch(() => null);
+    if (!profile || (Number(profile.AccessLevel) || 0) < ADMIN_ACCESS_LEVEL) {
+      return json({ error: 'Your account is not an administrator.' }, 403);
+    }
+    return json({
+      token: signToken({ sub: `u${user.cmid}`, name: profile.Name || user.name || `Player ${user.cmid}`, cmid: user.cmid }, cfg.jwtSecret),
+      username: profile.Name || `Player ${user.cmid}`,
+      mustChangeCredentials: false,
     });
   }
 
@@ -1249,7 +1272,12 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
       return Response.redirect(`${cfg.publicBaseUrl}/login?error=No%20NekoNexus%20account%20for%20this%20Steam%20user%20-%20play%20once%20first`, 302);
     }
     const profile: any = await models.PublicProfile.findByPk(member.Cmid, { raw: true }).catch(() => null);
-    const token = signToken({ kind: 'user', cmid: member.Cmid, name: profile?.Name ?? '', steamId }, cfg.jwtSecret);
+    // accessLevel lets the nav show an Admin link to staff; the real admin grant is re-checked
+    // server-side against the DB when exchanging for an admin token (see /api/auth/admin-from-user).
+    const token = signToken(
+      { kind: 'user', cmid: member.Cmid, name: profile?.Name ?? '', steamId, accessLevel: Number(profile?.AccessLevel) || 0 },
+      cfg.jwtSecret,
+    );
     return Response.redirect(`${cfg.publicBaseUrl}/login?token=${encodeURIComponent(token)}`, 302);
   }
 

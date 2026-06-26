@@ -636,10 +636,33 @@
       msg.classList.remove('hidden');
     };
 
+    // If the visitor is signed into the site as a staff player (Admin access level), exchange that
+    // session for an admin token so they go straight into the dashboard with no separate login.
+    async function tryStaffSession() {
+      const userToken = localStorage.getItem('nekonexus_user_token');
+      if (!userToken) return false;
+      try {
+        const res = await fetch('/api/auth/admin-from-user', { method: 'POST', headers: { authorization: 'Bearer ' + userToken } });
+        if (!res.ok) return false;
+        const d = await res.json().catch(() => ({}));
+        if (!d.token) return false;
+        localStorage.setItem('nekonexus_admin_token', d.token);
+        $('#aUser').value = d.username || '';
+        enter();
+        return true;
+      } catch (e) { return false; }
+    }
+
     // boot
-    if (localStorage.getItem('nekonexus_admin_token')) {
-      api('/api/me').then(d => { $('#aUser').value = d.username; enter(); }).catch(logout);
-    } else show('login');
+    async function boot() {
+      if (localStorage.getItem('nekonexus_admin_token')) {
+        try { const d = await api('/api/me'); $('#aUser').value = d.username; enter(); return; }
+        catch (e) { localStorage.removeItem('nekonexus_admin_token'); }
+      }
+      if (await tryStaffSession()) return;
+      show('login');
+    }
+    boot();
   </script>
 </body>
 </html>
