@@ -128,10 +128,9 @@ namespace NekoNexus.Client {
 					}
 				}
 
-				UnityRuntime.StartRoutine(AutoMonoBehaviour<NekoNexusUpdater>.Instance.CheckForUpdatesIfNecessary(
-					NekoNexusUpdater.HandleUpdateAvailable,
-					NekoNexusUpdater.HandleUpdateError
-				));
+				// NOTE: update check intentionally NOT run here. Updates are only checked once at
+				// launch (GlobalSceneLoaderHook -> StartWithCheckingUpdates) so the "Update available"
+				// popup can't keep reappearing every time the player returns to the Home menu in-game.
 			}
 
 			return true;
