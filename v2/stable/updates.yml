@@ -1,5 +1,5 @@
 version: 2.1.2.1
-build: 4.7.1-260626-2048
+build: 4.7.1-260626-2155
 channel: stable
 platforms:
   win:
@@ -9,10 +9,10 @@ platforms:
         description: ""
         localPath: UberStrike_Data/Plugins
         remotePath: stable/win/UberStrike_Data/Plugins
-        filesize: 808448
-        md5sum: bfd16f0eab8d888740705602f111924f
-        sha256: eeaa04189becd9cef51470ad7ac45bfc6237250e5eba17ef08fbe2c87536ad95
-        sha512: 2fb205b3f9431aa52b6f7640bc25265b271ac0e30a803a7213932bfc86b7e33452403c9667459507848f2349c6902e0df45414b19aaabe68a85d0604fea7f007
+        filesize: 808960
+        md5sum: bf249b46b0527a13082e7bccf2c8ace1
+        sha256: e9e08b5705b25340ee85b12a0f3849fa6e55593ab6ddfbc8d9333b2eeb8b3234
+        sha512: 0668ec80dc6159da835b10f3a9fb631d29b4556ced49f10e91f237095fd18b96647589c8ed83da87777fd773d8504dd67560520bc8940f76055d888c30d1f9b0
         optional: true
     removedFiles: []
   universal:
@@ -50,9 +50,9 @@ platforms:
         localPath: UberStrike_Data/Managed
         remotePath: stable/universal/UberStrike_Data/Managed
         filesize: 108544
-        md5sum: 00b9f9e22a3d886bfd3a137ae26b15f3
-        sha256: 55e2a8eebd98531954e2ef9f683794f8d2a899acd3052abc9b1f34615c7293a8
-        sha512: a1bf10fb4d250724c08fac0d4b6967bc324e0703f89de2db292ff2ceebc2880eac8953106d887514b0be3a6fe252ea7b44543da4de0e6e426c232fc4afcd7a93
+        md5sum: 20c5629b78dfca39ae71f0ce545d5518
+        sha256: cdbe87ad056c7bf2372ccf9c6c2a8de1a4b9d0d988bb9b118f0eb5a6e346b5b5
+        sha512: ce827f76238bde0878f41ad2a548e401dd83eb3851a5cf5c02601c7a702ff97becd2e9680dedf75222617cc961e8f1b8bad9fe481a7f223f3a842c8f80e561ec
         optional: false
       - filename: YamlDotNet.dll
         description: ""
