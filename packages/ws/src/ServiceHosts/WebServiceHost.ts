@@ -130,6 +130,30 @@ export default class WebServiceHost {
       res.json({ ok: true });
     });
 
+    // Internal stats-push endpoint (admin -> ws). Admin edits a player's level/xp/points straight
+    // in the DB, then calls this to update their in-game level/xp/points live. Same shared-secret gate.
+    this.expressApp.post('/internal/notify-stats', express.json(), (req, res): void => {
+      const key = process.env.INTERNAL_API_KEY;
+      if (!key || req.get('X-Internal-Key') !== key) {
+        res.status(403).json({ error: 'forbidden' });
+        return;
+      }
+
+      const entries = Array.isArray(req.body?.entries) ? req.body.entries : [];
+      void (async () => {
+        for (const entry of entries) {
+          const cmid = Number(entry?.cmid);
+          const xp = Number(entry?.xp);
+          const points = Number(entry?.points);
+          if (Number.isFinite(cmid) && Number.isFinite(xp) && Number.isFinite(points)) {
+            await RealtimeNotify.stats(cmid, xp, points);
+          }
+        }
+      })().catch(() => {});
+
+      res.json({ ok: true, count: entries.length });
+    });
+
     this.expressApp.use(Routes);
 
     this.expressApp.use((req, res, next) => {

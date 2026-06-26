@@ -56,6 +56,8 @@ enum WebSocketPacketType {
   SetBoost = (1 << 10) + 19,
   // Game server -> web service: a player's finished-match result (for match history).
   MatchResult = (1 << 10) + 20,
+  // Web service -> Comm server: a player's stats changed -> push new xp/points to their lobby client.
+  NotifyStats = (1 << 10) + 21,
 }
 
 export default WebSocketPacketType;

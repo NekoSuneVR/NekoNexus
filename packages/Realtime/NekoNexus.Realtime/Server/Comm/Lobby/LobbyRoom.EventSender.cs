@@ -196,6 +196,20 @@ namespace NekoNexus.Realtime.Server.Comm {
 					SendEvent(UpdateWalletOpCode, bytes);
 				}
 			}
+
+			// NekoNexus mod-only event (opcode 101): push a player's new xp/points so their level/xp/
+			// points display updates live after an admin edit, without a relog. Handled by the client
+			// mod's StatsUpdateHook (stock client ignores the opcode).
+			private const byte UpdateStatsOpCode = 101;
+
+			public void SendUpdateStats(int xp, int points) {
+				using (var bytes = new MemoryStream()) {
+					Int32Proxy.Serialize(bytes, xp);
+					Int32Proxy.Serialize(bytes, points);
+
+					SendEvent(UpdateStatsOpCode, bytes);
+				}
+			}
 			#endregion
 		}
 	}

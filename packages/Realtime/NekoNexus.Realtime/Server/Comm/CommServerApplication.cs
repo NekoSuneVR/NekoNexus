@@ -147,6 +147,19 @@ namespace NekoNexus.Realtime.Server.Comm {
 						} catch (Exception ex) { Log.Error("NotifyWallet failed", ex); }
 						break;
 					}
+					case PacketType.NotifyStats: {
+						// A player's stats changed (admin edit). Push the new xp/points to their lobby
+						// client so level/xp/points update live without relogging.
+						try {
+							var data = (Dictionary<string, object>)e.Data;
+							var targetCmid = Convert.ToInt64(data["TargetCmid"]);
+							var xp = Convert.ToInt32(data["Xp"]);
+							var points = Convert.ToInt32(data["Points"]);
+							LobbyManager.Instance.Peers.FirstOrDefault(_ => _.Actor.Cmid == targetCmid)
+								?.LobbyEventSender.SendUpdateStats(xp, points);
+						} catch (Exception ex) { Log.Error("NotifyStats failed", ex); }
+						break;
+					}
 					case PacketType.NotifyClanChat: {
 						// Push a clan chat line (e.g. a "X joined the clan" system message) to an
 						// online clan member.

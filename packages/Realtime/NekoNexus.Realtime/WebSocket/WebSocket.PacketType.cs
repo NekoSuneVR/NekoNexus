@@ -50,7 +50,11 @@
 			// Game server -> web service: one player's result for a finished match (saved as a
 			// MatchRecord for match history). { Cmid, MatchGuid, MapId, GameMode, Kills, Deaths, Won,
 			// Xp, Points }.
-			MatchResult
+			MatchResult,
+
+			// Web service -> Comm server: a player's stats changed (admin edit) -> push new xp/points
+			// to the online lobby peer so level/xp/points update live. { TargetCmid, Xp, Points }.
+			NotifyStats
 		}
 	}
 }

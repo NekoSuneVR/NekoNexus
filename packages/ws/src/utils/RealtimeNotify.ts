@@ -75,6 +75,19 @@ export const RealtimeNotify = {
       /* realtime is best-effort */
     }
   },
+
+  /** TargetCmid's stats changed (admin edit) -> push new xp/points so level/xp/points update live. */
+  async stats(targetCmid: number, xp: number, points: number): Promise<void> {
+    try {
+      await NekoNexusService.Instance.SocketHost.SendToCommServer(WebSocketPacketType.NotifyStats, {
+        TargetCmid: targetCmid,
+        Xp: Math.trunc(xp),
+        Points: Math.trunc(points),
+      });
+    } catch {
+      /* realtime is best-effort */
+    }
+  },
 };
 
 export default RealtimeNotify;

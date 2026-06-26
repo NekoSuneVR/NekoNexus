@@ -105,6 +105,26 @@ async function pushWallet(cmid: number): Promise<void> {
   }
 }
 
+// Best-effort realtime stats push: after an admin edits level/xp/points, tell the online player's
+// lobby client to update its level/xp/points live (no relog).
+async function pushStats(cmid: number): Promise<void> {
+  if (!cfg.internalApiKey) return;
+  try {
+    const online = await models.ActivePlayer.findOne({ where: { Cmid: cmid }, raw: true }).catch(() => null);
+    if (!online) return;
+    const [rows]: any = await sequelize.query('SELECT Xp, Points FROM PlayerStatistics WHERE Cmid = ?', { replacements: [cmid] });
+    const s = rows?.[0];
+    if (!s) return;
+    await fetch(`${cfg.wsInternalUrl}/internal/notify-stats`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Internal-Key': cfg.internalApiKey },
+      body: JSON.stringify({ entries: [{ cmid, xp: Number(s.Xp) || 0, points: Number(s.Points) || 0 }] }),
+    }).catch(() => {});
+  } catch {
+    /* realtime is best-effort */
+  }
+}
+
 // The global boost lives in its own single-row table the admin owns (created lazily on first use),
 // mirroring how wallet writes work: persist here, then best-effort nudge the ws to broadcast it live.
 let boostTableReady = false;
@@ -911,6 +931,7 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
       if (b.Xp !== undefined && Number.isFinite(Number(b.Xp))) { sets.push('Xp = ?'); repl.push(Number(b.Xp)); }
       if (b.Points !== undefined) { sets.push('Points = ?'); repl.push(Number(b.Points)); }
       if (sets.length) { repl.push(cmid); await sequelize.query(`UPDATE PlayerStatistics SET ${sets.join(', ')} WHERE Cmid = ?`, { replacements: repl }); }
+      await pushStats(cmid); // live-refresh level/xp/points if online
       return json({ ok: true });
     }
     if (action === 'wallet') {

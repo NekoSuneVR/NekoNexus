@@ -269,6 +269,7 @@ namespace NekoNexus {
 						case PacketType.NotifyClanMembers:
 						case PacketType.NotifyClanChat:
 						case PacketType.NotifyWallet:
+						case PacketType.NotifyStats:
 						case PacketType.SetBoost:
 						case PacketType.MatchResult:
 							result = DictionaryProxy<string, object>.Deserialize(bytes, StringProxy.Deserialize, (stream) => {
