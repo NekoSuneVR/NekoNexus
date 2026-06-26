@@ -225,58 +225,70 @@ namespace NekoNexus.Client {
 		private IEnumerator DownloadUpdateCatalog(string updateUri, Action<UpdateCatalog> successCallback, Action<HttpResponse> errorCallback) {
 			Log.Info($"Attempting to download update catalog from {updateUri}");
 
-			// HttpWebRequest (not WWW) so the accept-all cert callback applies and modern-CA HTTPS works.
-			var download = new ThreadedDownload();
-			download.Start(updateUri);
+			// Use Unity's WWW (NOT System.Net): WWW has a working HTTPS path to this host - the game's
+			// SoapClient talks to the same https host via WWW successfully - whereas the old Mono
+			// System.Net TLS stack can't even complete the handshake ("authentication or decryption
+			// has failed").
+			using (WWW loader = new WWW(updateUri)) {
+				// Hard timeout: a hung request must never lock the game on "Checking for updates".
+				float elapsed = 0f;
+				while (!loader.isDone) {
+					elapsed += Time.deltaTime;
+					if (elapsed > 25f) {
+						Log.Error("Update catalog download timed out.");
+						errorCallback?.Invoke(new HttpResponse { StatusCode = HttpStatusCode.RequestTimeout, StatusText = "Update check timed out" });
+						yield break;
+					}
+					yield return null;
+				}
 
-			// Hard timeout: a hung request (TLS stall, unreachable host) must never lock the game on
-			// "Checking for updates" forever.
-			float elapsed = 0f;
-			while (!download.IsDone) {
-				elapsed += Time.deltaTime;
-				if (elapsed > 25f) {
-					Log.Error("Update catalog download timed out.");
-					errorCallback?.Invoke(new HttpResponse { StatusCode = HttpStatusCode.RequestTimeout, StatusText = "Update check timed out" });
+				// Success = no transport error and we actually got content. Do NOT require a "STATUS"
+				// response header: the update host is fronted by a relay/CDN whose response doesn't
+				// expose one to Unity's WWW, and the previous check rejected a perfectly good download
+				// as "Update download failed" (empty error). This mirrors how SoapClient validates a
+				// WWW response - error + content only.
+				if (!string.IsNullOrEmpty(loader.error)) {
+					Log.Error($"Update catalog download failed: {loader.error}");
+					errorCallback?.Invoke(new HttpResponse { StatusCode = HttpStatusCode.ServiceUnavailable, StatusText = loader.error });
 					yield break;
 				}
-				yield return null;
-			}
 
-			if (!string.IsNullOrEmpty(download.Error) || download.Data == null) {
-				Log.Error($"Update catalog download failed: {download.Error}");
-				errorCallback?.Invoke(new HttpResponse { StatusCode = HttpStatusCode.ServiceUnavailable, StatusText = string.IsNullOrEmpty(download.Error) ? "Update download failed" : download.Error });
-				yield break;
-			}
+				if (string.IsNullOrEmpty(loader.text)) {
+					Log.Error("Update catalog download returned no content.");
+					errorCallback?.Invoke(new HttpResponse { StatusCode = HttpStatusCode.ServiceUnavailable, StatusText = "Update download failed (empty response)" });
+					yield break;
+				}
 
-			progressPopup.Progress = 0.3f;
-			Log.Info("Successfully downloaded update catalog");
+				progressPopup.Progress = 0.3f;
+				Log.Info("Successfully downloaded update catalog");
 
-			yield return new WaitForSeconds(0.5f);
+				yield return new WaitForSeconds(0.5f);
 
-			UpdateCatalog updateCatalog = null;
-			try {
-				var deserializer = new DeserializerBuilder()
-					.WithNamingConvention(CamelCaseNamingConvention.Instance)
-					.Build();
+				UpdateCatalog updateCatalog = null;
+				try {
+					var deserializer = new DeserializerBuilder()
+						.WithNamingConvention(CamelCaseNamingConvention.Instance)
+						.Build();
 
-				updateCatalog = deserializer.Deserialize<UpdateCatalog>(Encoding.UTF8.GetString(download.Data));
+					updateCatalog = deserializer.Deserialize<UpdateCatalog>(loader.text);
 
-				Log.Info("Successfully parsed update catalog");
-				progressPopup.Progress = 0.6f;
-			} catch (Exception e) {
-				Log.Error($"An error occured while checking for updates:\n{e.Message}");
-				Log.Debug(e);
+					Log.Info("Successfully parsed update catalog");
+					progressPopup.Progress = 0.6f;
+				} catch (Exception e) {
+					Log.Error($"An error occured while checking for updates:\n{e.Message}");
+					Log.Debug(e);
 
-				// Never silently yield break here - that is what hung the game on
-				// "Checking for updates". Notify the caller so it continues into the menu.
-				errorCallback?.Invoke(new HttpResponse { StatusCode = HttpStatusCode.UnsupportedMediaType, StatusText = "Update manifest could not be parsed" });
-				yield break;
-			}
+					// Never silently yield break here - that is what hung the game on
+					// "Checking for updates". Notify the caller so it continues into the menu.
+					errorCallback?.Invoke(new HttpResponse { StatusCode = HttpStatusCode.UnsupportedMediaType, StatusText = "Update manifest could not be parsed" });
+					yield break;
+				}
 
-			// Invoke the success path OUTSIDE the try so an exception thrown by downstream
-			// update handling can't be swallowed into the parse-error branch above.
-			if (updateCatalog != null) {
-				successCallback?.Invoke(updateCatalog);
+				// Invoke the success path OUTSIDE the try so an exception thrown by downstream
+				// update handling can't be swallowed into the parse-error branch above.
+				if (updateCatalog != null) {
+					successCallback?.Invoke(updateCatalog);
+				}
 			}
 
 			yield break;
@@ -501,17 +513,13 @@ namespace NekoNexus.Client {
 				progressPopup = PopupSystem.ShowProgress($"Downloading updates... ({FilesToUpdate.IndexOf(file) + 1}/{FilesToUpdate.Count})", $"{file.FileName} ({NekoNexusGUITools.FormatSize(file.FileSize)})");
 
 				var fileUri = NormalizeUri(string.Join("/", new string[] { file.RemoteURL ?? UpdateCatalogUrl, file.RemotePath, file.FileName }));
-				{
-					// HttpWebRequest (not WWW) so the accept-all cert callback applies and HTTPS works.
-					var download = new ThreadedDownload();
-					download.Start(fileUri);
+				using (WWW loader = new WWW(fileUri)) {
 					Log.Info($"Downloading remote file: {fileUri}");
 
-					// Hard timeout so a hung/stalled download (TLS stall, dead host) can't freeze the
-					// install on the progress popup forever.
+					// Hard timeout so a hung/stalled download can't freeze the install forever.
 					float elapsed = 0f;
-					while (!download.IsDone) {
-						progressPopup.Progress = download.Progress;
+					while (!loader.isDone) {
+						progressPopup.Progress = loader.progress;
 						elapsed += Time.deltaTime;
 						if (elapsed > 120f) {
 							PopupSystem.HideMessage(progressPopup);
@@ -524,13 +532,15 @@ namespace NekoNexus.Client {
 
 					PopupSystem.HideMessage(progressPopup);
 
-					if (!string.IsNullOrEmpty(download.Error) || download.Data == null) {
-						Log.Error($"Failed to download {file.FileName}: {download.Error}");
-						errorCallback?.Invoke($"Failed to download {file.FileName}:\n{(string.IsNullOrEmpty(download.Error) ? "connection failed" : download.Error)}");
+					// Success = no transport error and we got bytes. No "STATUS" header check (see the
+					// catalog download): the relay/CDN doesn't always expose it to WWW.
+					if (!string.IsNullOrEmpty(loader.error) || loader.bytes == null || loader.bytes.Length == 0) {
+						Log.Error($"Failed to download {file.FileName}: {loader.error}");
+						errorCallback?.Invoke($"Failed to download {file.FileName}:\n{(string.IsNullOrEmpty(loader.error) ? "connection failed" : loader.error)}");
 						yield break;
 					}
 
-					var fileBytes = download.Data;
+					var fileBytes = loader.bytes;
 
 					try {
 						if (!Directory.Exists($"{Application.dataPath}\\Updates")) {
@@ -630,13 +640,10 @@ namespace NekoNexus.Client {
 			updateCompleteCallback?.Invoke();
 		}
 
-		// UberStrike's ancient Mono runtime predates modern certificate authorities (the update server's
-		// cert is issued by Google Trust Services), so it can't validate today's TLS certs and every
-		// HTTPS download via WWW fails with an empty error ("Update download failed") even though the
-		// catalog is perfectly reachable. The game installs its own accept-all policy later (around
-		// login - which is why the web service works) but the update check runs BEFORE that, so we set
-		// an accept-all certificate callback here first. The server still accepts TLS 1.0, so no
-		// SecurityProtocol change is needed (and Tls12 doesn't exist in net35 anyway).
+		// Set an accept-all TLS certificate callback before any download, in case anything goes through
+		// System.Net (whose Mono TLS stack lacks roots for the host's modern CA). The actual update
+		// downloads use Unity's WWW, which has its own working HTTPS path to this host (the game's
+		// SoapClient uses WWW over the same HTTPS host successfully), so this is just belt-and-braces.
 		private static bool _httpsTrustReady;
 		private static void EnsureHttpsTrust() {
 			if (_httpsTrustReady) return;
@@ -646,64 +653,6 @@ namespace NekoNexus.Client {
 				ServicePointManager.ServerCertificateValidationCallback = (sender, cert, chain, errors) => true;
 			} catch (Exception e) {
 				Log.Warn("Could not relax certificate validation for updates: " + e.Message);
-			}
-		}
-
-		// Downloads a URL on a background thread via HttpWebRequest. This REPLACES Unity's WWW for
-		// updates: WWW uses Unity's own native HTTP stack which ignores ServicePointManager, so it
-		// could not validate the update host's modern (Google Trust Services) TLS cert and every
-		// download failed with an empty error. HttpWebRequest honours the accept-all cert callback set
-		// in EnsureHttpsTrust, so HTTPS works. The coroutine polls IsDone/Progress on the main thread.
-		private class ThreadedDownload {
-			public volatile bool IsDone;
-			public volatile string Error;
-			public byte[] Data;
-			public volatile int Received;
-			public volatile int Total;
-
-			public float Progress {
-				get { return Total > 0 ? (float)Received / Total : 0f; }
-			}
-
-			public void Start(string url) {
-				var thread = new Thread(() => {
-					try {
-						ServicePointManager.ServerCertificateValidationCallback = (a, b, c, d) => true;
-						var req = (HttpWebRequest)WebRequest.Create(url);
-						req.Method = "GET";
-						req.Timeout = 30000;
-						req.ReadWriteTimeout = 60000;
-						req.UserAgent = "NekoNexusUpdater";
-						req.KeepAlive = false;
-
-						using (var resp = (HttpWebResponse)req.GetResponse()) {
-							if (resp.StatusCode != HttpStatusCode.OK) {
-								Error = "HTTP " + (int)resp.StatusCode + " " + resp.StatusDescription;
-								return;
-							}
-
-							Total = (int)resp.ContentLength;
-
-							using (var stream = resp.GetResponseStream())
-							using (var ms = new MemoryStream()) {
-								var buffer = new byte[81920];
-								int read;
-								while ((read = stream.Read(buffer, 0, buffer.Length)) > 0) {
-									ms.Write(buffer, 0, read);
-									Received += read;
-								}
-								Data = ms.ToArray();
-							}
-						}
-					} catch (Exception e) {
-						Error = e.Message;
-					} finally {
-						IsDone = true;
-					}
-				});
-
-				thread.IsBackground = true;
-				thread.Start();
 			}
 		}
 
