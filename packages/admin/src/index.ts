@@ -17,6 +17,36 @@ import { applyTheme } from './theme';
 import { beginSteamLogin, verifySteamReturn } from './steam';
 import { getUberStrikeStreams } from './twitch';
 
+// Shared auth-aware nav for the public pages. Each page puts <span id="authnav">…Sign in…</span> in
+// its header and loads /assets/nav.js; when a user token is present this swaps the "Sign in" link for
+// a profile dropdown (My profile / Settings / Sign out). Plain ES5 so it runs everywhere.
+const NAV_JS = `(function () {
+  var el = document.getElementById('authnav');
+  if (!el) return;
+  var token = localStorage.getItem('nekonexus_user_token');
+  var me = null;
+  if (token) { try { me = JSON.parse(atob(token.split('.')[0].replace(/-/g, '+').replace(/_/g, '/'))); } catch (e) {} }
+  if (!me || !me.cmid) return;
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  var name = me.name || ('Player ' + me.cmid);
+  el.innerHTML =
+    '<div style="position:relative">'
+    + '<button id="navUserBtn" class="flex items-center gap-2 hover:text-white">'
+    + '<span class="inline-grid place-items-center w-7 h-7 rounded-full bg-brand-600/30 border border-brand-600 text-brand-400 text-xs font-bold">' + esc(name.charAt(0).toUpperCase()) + '</span>'
+    + '<span>' + esc(name) + '</span><span class="text-xs opacity-70">&#9662;</span></button>'
+    + '<div id="navUserMenu" class="hidden absolute right-0 mt-2 w-44 rounded-lg bg-neutral-900 border border-neutral-700 shadow-xl py-1 text-sm z-50">'
+    + '<a href="/profile/' + me.cmid + '" class="block px-3 py-2 hover:bg-neutral-800 text-neutral-200">My profile</a>'
+    + '<a href="/login" class="block px-3 py-2 hover:bg-neutral-800 text-neutral-200">Settings</a>'
+    + '<button id="navSignOut" class="block w-full text-left px-3 py-2 hover:bg-neutral-800 text-red-400">Sign out</button>'
+    + '</div></div>';
+  var btn = document.getElementById('navUserBtn'), menu = document.getElementById('navUserMenu');
+  btn.addEventListener('click', function (e) { e.stopPropagation(); menu.classList.toggle('hidden'); });
+  document.addEventListener('click', function () { menu.classList.add('hidden'); });
+  document.getElementById('navSignOut').addEventListener('click', function () {
+    localStorage.removeItem('nekonexus_user_token'); location.href = '/';
+  });
+})();`;
+
 const cfg = loadConfig();
 const nekopay = loadNekoPay();
 await initDatabase(cfg);
@@ -1104,6 +1134,13 @@ Bun.serve({
     // Serve an HTML page with the active event theme injected (none = unchanged).
     const page = (body: string) =>
       new Response(applyTheme(body, cfg.siteTheme), { headers: { 'content-type': 'text/html; charset=utf-8' } });
+
+    // Shared auth-aware nav script (profile dropdown when signed in).
+    if (url.pathname === '/assets/nav.js') {
+      return new Response(NAV_JS, {
+        headers: { 'content-type': 'application/javascript; charset=utf-8', 'cache-control': 'public, max-age=300' },
+      });
+    }
 
     // Public web store (opened by the in-game "Get Credits" button).
     if (url.pathname === '/store') {

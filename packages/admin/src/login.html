@@ -54,12 +54,33 @@
       if (me && (!me.exp || me.exp > Date.now() / 1000)) {
         document.getElementById('content').innerHTML =
           `<p class="text-brand-400 text-lg mb-1">Signed in${me.name ? ' as ' + esc(me.name) : ''} ✓</p>
-           <p class="text-neutral-400 text-sm mb-5">You can now report players from their profile pages.</p>
-           <div class="flex gap-3 justify-center">
-             <a href="/leaderboard" class="px-4 py-2 rounded bg-brand-600 hover:bg-brand-500 text-white text-sm">Browse players</a>
-             <button id="logout" class="px-4 py-2 rounded bg-neutral-800 text-sm">Sign out</button>
-           </div>`;
+           <p class="text-neutral-400 text-sm mb-5">Manage your account, view your stats, and report players.</p>
+           <div class="flex flex-wrap gap-3 justify-center mb-6">
+             <a href="/profile/${me.cmid}" class="px-4 py-2 rounded bg-brand-600 hover:bg-brand-500 text-white text-sm">My profile</a>
+             <a href="/leaderboard" class="px-4 py-2 rounded bg-neutral-800 hover:bg-neutral-700 text-sm">Leaderboard</a>
+             <button id="logout" class="px-4 py-2 rounded bg-neutral-800 hover:bg-neutral-700 text-sm">Sign out</button>
+           </div>
+           <div id="payments" class="text-left"></div>`;
         document.getElementById('logout').addEventListener('click', () => { localStorage.removeItem('nekonexus_user_token'); location.reload(); });
+        fetch('/api/me/payments', { headers: { Authorization: 'Bearer ' + token } })
+          .then((r) => (r.ok ? r.json() : []))
+          .then((list) => {
+            if (!list || !list.length) return;
+            document.getElementById('payments').innerHTML =
+              `<h2 class="text-sm font-semibold text-neutral-300 mb-2">Recent purchases</h2>
+               <div class="rounded-lg border border-neutral-800 overflow-hidden text-xs">
+                 <table class="w-full"><thead class="text-neutral-500 text-left"><tr>
+                   <th class="px-3 py-2">Date</th><th class="px-3 py-2">Credits</th><th class="px-3 py-2">Amount</th><th class="px-3 py-2">Status</th><th class="px-3 py-2">Tx</th>
+                 </tr></thead><tbody>` +
+              list.map((o) => `<tr class="border-t border-neutral-800">
+                   <td class="px-3 py-2">${new Date(o.Date).toLocaleDateString()}</td>
+                   <td class="px-3 py-2">${(o.Credits || 0).toLocaleString()}</td>
+                   <td class="px-3 py-2">${(Number(o.Amount) || 0).toFixed(2)} ${esc(o.Currency || '')}</td>
+                   <td class="px-3 py-2"><span class="${o.Status === 'completed' ? 'text-brand-400' : 'text-neutral-400'}">${esc(o.Status || '')}</span></td>
+                   <td class="px-3 py-2 font-mono text-neutral-500" title="${esc(o.TxId || '')}">${esc((o.TxId || '').slice(0, 12))}</td></tr>`).join('') +
+              `</tbody></table></div>`;
+          })
+          .catch(() => {});
       } else {
         document.getElementById('content').innerHTML =
           `<p class="text-neutral-400 text-sm mb-5">Sign in with the Steam account you play UberStrike on. We only use this to verify it's you (for reporting players and your profile).</p>

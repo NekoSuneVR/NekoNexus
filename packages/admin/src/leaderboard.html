@@ -21,7 +21,7 @@
         <a href="/" class="hover:text-brand-400">Home</a>
         <a href="/leaderboard" class="text-brand-400">Leaderboard</a>
         <a href="/streams" class="hover:text-brand-400">Streams</a>
-        <a href="/login" class="hover:text-brand-400">Sign in</a>
+        <span id="authnav"><a href="/login" class="hover:text-brand-400">Sign in</a></span>
         <a href="/admin" class="hover:text-brand-400">Admin</a>
       </nav>
     </div>
@@ -31,10 +31,11 @@
     <h1 class="text-3xl font-bold mb-1">Leaderboard</h1>
     <p class="text-neutral-400 mb-6">The best of NekoNexus. Click a player to view their profile.</p>
 
-    <div class="flex gap-2 mb-4 text-sm">
+    <div class="flex flex-wrap gap-2 mb-4 text-sm items-center">
       <button data-sort="xp" class="sortbtn px-3 py-1 rounded bg-brand-600 text-white">XP</button>
       <button data-sort="level" class="sortbtn px-3 py-1 rounded bg-neutral-800">Level</button>
       <button data-sort="splats" class="sortbtn px-3 py-1 rounded bg-neutral-800">Kills</button>
+      <input id="search" type="search" placeholder="Search player name…" class="ml-auto px-3 py-1.5 rounded bg-neutral-900 border border-neutral-700 outline-none focus:border-brand-500 text-sm w-56" />
     </div>
 
     <div class="grid md:grid-cols-3 gap-6">
@@ -62,17 +63,24 @@
 
   <script>
     const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-    async function loadPlayers(sort) {
-      const r = await fetch('/api/public/leaderboard?sort=' + sort + '&limit=50').then((x) => x.json()).catch(() => []);
-      document.getElementById('players').innerHTML = r.length
-        ? r.map((p) => `<tr class="border-t border-neutral-800">
+    let allPlayers = [];
+    function renderPlayers() {
+      const q = (document.getElementById('search').value || '').trim().toLowerCase();
+      const rows = q ? allPlayers.filter((p) => (p.Name || '').toLowerCase().includes(q)) : allPlayers;
+      document.getElementById('players').innerHTML = rows.length
+        ? rows.map((p) => `<tr class="border-t border-neutral-800">
             <td class="py-1.5 text-neutral-500">${p.rank}</td>
             <td><a class="hover:text-brand-400" href="/profile/${p.Cmid}">${esc(p.Name)}</a></td>
             <td class="text-right">${p.Level ?? 0}</td>
             <td class="text-right">${(p.Xp ?? 0).toLocaleString()}</td>
             <td class="text-right">${(p.Splats ?? 0).toLocaleString()}</td></tr>`).join('')
-        : '<tr><td colspan="5" class="py-4 text-neutral-500">No players yet.</td></tr>';
+        : `<tr><td colspan="5" class="py-4 text-neutral-500">${q ? 'No players match “' + esc(q) + '”.' : 'No players yet.'}</td></tr>`;
     }
+    async function loadPlayers(sort) {
+      allPlayers = await fetch('/api/public/leaderboard?sort=' + sort + '&limit=100').then((x) => x.json()).catch(() => []);
+      renderPlayers();
+    }
+    document.getElementById('search').addEventListener('input', renderPlayers);
     async function loadClans() {
       const r = await fetch('/api/public/clans?limit=25').then((x) => x.json()).catch(() => []);
       document.getElementById('clans').innerHTML = r.length
@@ -92,5 +100,6 @@
     }));
     loadPlayers(sort); loadClans();
   </script>
+  <script src="/assets/nav.js"></script>
 </body>
 </html>

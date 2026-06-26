@@ -26,7 +26,7 @@
       <a href="/leaderboard" class="hover:text-white">Leaderboard</a>
       <a href="/streams" class="hover:text-white">Streams</a>
       <a href="#about" class="hover:text-white">About</a>
-      <a href="/login" class="hover:text-white">Sign in</a>
+      <span id="authnav"><a href="/login" class="hover:text-white">Sign in</a></span>
       <a href="/admin" class="rounded-lg border border-neutral-700 px-3 py-1.5 hover:border-brand-500 hover:text-white">Admin</a>
     </nav>
   </header>
@@ -100,20 +100,6 @@
     </div>
   </section>
 
-  <!-- leaderboard -->
-  <section id="leaderboard" class="max-w-6xl mx-auto px-5 py-10">
-    <h2 class="text-2xl font-bold mb-1">Leaderboard</h2>
-    <p class="text-neutral-400 text-sm mb-5">Top players by XP. Staff are hidden.</p>
-    <div class="glass rounded-2xl border border-neutral-800 overflow-hidden">
-      <table class="w-full text-sm">
-        <thead class="text-neutral-400 text-xs uppercase border-b border-neutral-800">
-          <tr><th class="text-left px-5 py-3 w-16">#</th><th class="text-left px-5 py-3">Player</th><th class="text-right px-5 py-3">Level</th><th class="text-right px-5 py-3">XP</th><th class="text-right px-5 py-3">Splats</th></tr>
-        </thead>
-        <tbody id="lbBody"><tr><td colspan="5" class="px-5 py-6 text-neutral-500">Loading…</td></tr></tbody>
-      </table>
-    </div>
-  </section>
-
   <!-- about -->
   <section id="about" class="max-w-6xl mx-auto px-5 py-10 grid md:grid-cols-2 gap-8">
     <div>
@@ -159,22 +145,10 @@
              <span class="text-xs px-2 py-1 rounded-full ${x.Online?'bg-brand-900/40 text-brand-400':'bg-red-900/30 text-red-400'}">${x.Online?'Online':'Offline'}</span>
            </div>`).join('') || '<div class="text-neutral-500 text-sm">No servers configured.</div>';
       } catch (e) { $('#statusText').textContent = 'Status unavailable'; }
-
-      try {
-        const lb = await (await fetch('/api/public/leaderboard')).json();
-        const body = $('#lbBody');
-        body.innerHTML = (lb||[]).length ? lb.map(p =>
-          `<tr class="border-b border-neutral-800/60">
-             <td class="px-5 py-3 text-neutral-500">${p.rank}</td>
-             <td class="px-5 py-3 font-medium">${(p.Name||'').replace(/[<>]/g,'')}</td>
-             <td class="px-5 py-3 text-right">${p.Level ?? 0}</td>
-             <td class="px-5 py-3 text-right">${(p.Xp ?? 0).toLocaleString()}</td>
-             <td class="px-5 py-3 text-right">${(p.Splats ?? 0).toLocaleString()}</td>
-           </tr>`).join('') : '<tr><td colspan="5" class="px-5 py-6 text-neutral-500">No ranked players yet — go play!</td></tr>';
-      } catch (e) {}
     }
     load();
     setInterval(load, 30000);
   </script>
+  <script src="/assets/nav.js"></script>
 </body>
 </html>
