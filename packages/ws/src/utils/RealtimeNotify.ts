@@ -58,6 +58,23 @@ export const RealtimeNotify = {
       /* realtime is best-effort */
     }
   },
+
+  /**
+   * TargetCmid's wallet changed (admin gift, store purchase, match payout) -> push the new balance
+   * to their lobby client so credits/coins update live without relogging. The Comm server looks the
+   * player up and fires SendUpdateWallet; offline target = no-op.
+   */
+  async wallet(targetCmid: number, credits: number, points: number): Promise<void> {
+    try {
+      await NekoNexusService.Instance.SocketHost.SendToCommServer(WebSocketPacketType.NotifyWallet, {
+        TargetCmid: targetCmid,
+        Credits: Math.trunc(credits),
+        Points: Math.trunc(points),
+      });
+    } catch {
+      /* realtime is best-effort */
+    }
+  },
 };
 
 export default RealtimeNotify;

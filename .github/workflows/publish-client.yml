@@ -1,0 +1,88 @@
+name: Publish client update (self-hosted)
+
+# Builds the NekoNexus client mod and publishes the in-game auto-update channel + the one-click
+# installer to the `updates` branch (served globally by GitHub Pages).
+#
+# WHY SELF-HOSTED: the mod only compiles against the real UberStrike game assemblies
+# (Assembly-CSharp.dll etc.), which are proprietary and must NOT live in the repo or on
+# GitHub-hosted runners. So this job runs on a self-hosted runner on a machine that has UberStrike
+# installed. The server-side images (realtime/ws/admin) keep building on GitHub-hosted runners in
+# build.yml - they don't need the game refs.
+#
+# ONE-TIME RUNNER SETUP (on your UberStrike PC):
+#   1. Repo Settings -> Actions -> Runners -> New self-hosted runner (Windows). Give it the labels
+#      `self-hosted` and `windows` (default) - this workflow targets those.
+#   2. Install on the runner (once): .NET SDK, Bun, git, and Inno Setup 6
+#      (winget install JRSoftware.InnoSetup).
+#   3. Point the runner at your game DLLs: set an environment variable UBERSTRIKE_MANAGED to your
+#      `...\UberStrike\UberStrike_Data\Managed` folder (in the runner's .env or machine env). This
+#      job copies the needed reference assemblies from there each run.
+#   4. Repo Settings -> Pages -> Source: Deploy from a branch -> branch `updates` / root.
+#
+# Then trigger from the Actions tab (choose beta / stable / all), or it runs on a push to dev that
+# changes client/shim code.
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: Channel to publish
+        type: choice
+        options: [all, beta, stable]
+        default: all
+  push:
+    branches: [dev]
+    paths:
+      - 'packages/Client/**'
+      - 'shims/**'
+      - 'packages/Core/**'
+
+permissions:
+  contents: write   # force-push the `updates` branch
+
+concurrency:
+  group: publish-client
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: [self-hosted, windows]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+          # Keep ignored files (the locally-staged game refs under packages/AssemblyReferences) so a
+          # clean checkout doesn't wipe them; we also re-stage them below as a safety net.
+          clean: false
+
+      - name: Stage game reference assemblies
+        shell: pwsh
+        run: |
+          $managed = $env:UBERSTRIKE_MANAGED
+          if (-not $managed -or -not (Test-Path $managed)) {
+            throw "UBERSTRIKE_MANAGED is not set or invalid on this runner. Point it at your UberStrike_Data\Managed folder so the mod can compile."
+          }
+          $refDir = "packages/AssemblyReferences/4.7.1"
+          New-Item -ItemType Directory -Force -Path $refDir | Out-Null
+          foreach ($dll in 'Assembly-CSharp.dll','Assembly-CSharp-firstpass.dll','Photon3Unity3D.dll','UnityEngine.dll') {
+            $src = Join-Path $managed $dll
+            if (Test-Path $src) { Copy-Item $src $refDir -Force; Write-Host "  + $dll" }
+            else { Write-Warning "  missing in Managed: $dll" }
+          }
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install workspace deps
+        run: bun install
+
+      - name: Build + publish update channel + installer
+        shell: pwsh
+        run: ./misc/publish-update.ps1 -Channel ${{ github.event.inputs.channel || 'all' }} -RefreshInstaller -Push
+
+      - name: Summary
+        shell: pwsh
+        run: |
+          Write-Host "Published channel(s): ${{ github.event.inputs.channel || 'all' }}"
+          Write-Host "Update catalog (GitHub Pages): https://<user>.github.io/<repo>/v2/<channel>/updates.yml"
+          Write-Host "Installer: https://<user>.github.io/<repo>/NekoNexusSetup.exe"

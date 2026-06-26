@@ -49,6 +49,11 @@ enum WebSocketPacketType {
   NotifyInboxRequests = (1 << 10) + 15,
   NotifyClanMembers = (1 << 10) + 16,
   NotifyClanChat = (1 << 10) + 17,
+
+  // Web service -> Comm server: wallet changed -> push new balance to the online lobby peer.
+  NotifyWallet = (1 << 10) + 18,
+  // Web service -> Game servers (broadcast): set/clear the global coin+xp boost event.
+  SetBoost = (1 << 10) + 19,
 }
 
 export default WebSocketPacketType;

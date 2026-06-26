@@ -133,6 +133,20 @@ namespace NekoNexus.Realtime.Server.Comm {
 						} catch (Exception ex) { Log.Error("NotifyClanMembers failed", ex); }
 						break;
 					}
+					case PacketType.NotifyWallet: {
+						// A player's wallet changed (admin gift, store purchase, or match payout). Push
+						// the new balance to their lobby client so credits/coins update live instead of
+						// only on next login. Offline target = harmless no-op.
+						try {
+							var data = (Dictionary<string, object>)e.Data;
+							var targetCmid = Convert.ToInt64(data["TargetCmid"]);
+							var credits = Convert.ToInt32(data["Credits"]);
+							var points = Convert.ToInt32(data["Points"]);
+							LobbyManager.Instance.Peers.FirstOrDefault(_ => _.Actor.Cmid == targetCmid)
+								?.LobbyEventSender.SendUpdateWallet(credits, points);
+						} catch (Exception ex) { Log.Error("NotifyWallet failed", ex); }
+						break;
+					}
 					case PacketType.NotifyClanChat: {
 						// Push a clan chat line (e.g. a "X joined the clan" system message) to an
 						// online clan member.

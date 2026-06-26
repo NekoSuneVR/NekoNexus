@@ -35,7 +35,7 @@ import {
   type WebSocketDisconnectedEventArgs,
   type WebSocketPacketReceivedEventArgs,
 } from './ServiceHosts/WebSocket';
-import { GameSessionManager, Log, XpPointsUtil } from './utils';
+import { BoostManager, GameSessionManager, Log, XpPointsUtil } from './utils';
 
 export default class NekoNexusService {
   private static instance: NekoNexusService;
@@ -93,6 +93,10 @@ export default class NekoNexusService {
       await GameRoom.destroy({
         truncate: true,
       });
+
+      // Seed the in-memory global boost from its persisted value so a ws restart keeps an active
+      // 2x/5x event (re-pushed to Game servers as they connect).
+      await BoostManager.initialize();
     } catch (error) {
       Log.fatal('Failed to connect to database. Please check the log for errors and try again.');
       Log.error(error);
@@ -136,6 +140,12 @@ export default class NekoNexusService {
         Log.info(
           `[Socket] ${ServerType[e.Socket.Type]}Server(${e.Socket.Identifier}) connected from ${e.Socket.RemoteAddress}.`,
         );
+
+        // A Game server just (re)connected - hand it the current global boost so a server restart
+        // never silently drops an active 2x/5x event.
+        if (e.Socket.Type === ServerType.Game) {
+          BoostManager.pushTo(e.Socket.Identifier);
+        }
       });
 
       this.SocketHost.on('ClientDisconnected', (e: WebSocketDisconnectedEventArgs) => {

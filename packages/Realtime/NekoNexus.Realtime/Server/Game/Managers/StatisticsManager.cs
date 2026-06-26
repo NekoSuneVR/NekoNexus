@@ -46,7 +46,9 @@ namespace NekoNexus.Realtime.Server.Game {
 
 				int xpPerMinute = (!data.HasWonMatch) ? ApplicationConfiguration.XpPerMinuteLoser : ApplicationConfiguration.XpPerMinuteWinner;
 				gainedXp += (int)Math.Ceiling((float)(data.TimeInGameMinutes / 60 * xpPerMinute));
-				gainedXp += ((int)Math.Ceiling((float)(data.TimeInGameMinutes / 60 * xpPerMinute)) * 0 /* CalculateBoost */);
+
+				// Global boost event (e.g. 2x/5x weekend) - multiplies the whole match payout.
+				gainedXp *= GameServerApplication.Boost.EffectiveXpMultiplier;
 
 				data.PlayerStatsTotal.Xp = gainedXp;
 			}
@@ -62,7 +64,9 @@ namespace NekoNexus.Realtime.Server.Game {
 
 				int pointsPerMinute = (!data.HasWonMatch) ? ApplicationConfiguration.PointsPerMinuteLoser : ApplicationConfiguration.PointsPerMinuteWinner;
 				gainedPoints += (int)Math.Ceiling((float)(data.TimeInGameMinutes / 60 * pointsPerMinute));
-				gainedPoints += ((int)Math.Ceiling((float)(data.TimeInGameMinutes / 60 * pointsPerMinute)) * 0 /* CalculateBoost */);
+
+				// Global boost event (e.g. 2x/5x weekend) - multiplies the whole match coin payout.
+				gainedPoints *= GameServerApplication.Boost.EffectivePointsMultiplier;
 
 				data.PlayerStatsTotal.Points = gainedPoints;
 			}

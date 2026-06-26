@@ -56,6 +56,7 @@
         <button data-page="leaderboard" class="nav w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800/70 flex items-center gap-2">🏆 Leaderboard</button>
         <button data-page="reports" class="nav w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800/70 flex items-center gap-2">🚩 Reports</button>
         <button data-page="store" class="nav w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800/70 flex items-center gap-2">🛒 Store</button>
+        <button data-page="events" class="nav w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800/70 flex items-center gap-2">🎁 Gifts &amp; Events</button>
         <button data-page="mail" class="nav w-full text-left px-3 py-2 rounded-lg hover:bg-slate-800/70 flex items-center gap-2">✉ System Mail</button>
       </nav>
       <div class="mt-8 border-t border-slate-800 pt-4">
@@ -143,6 +144,61 @@
           <div id="accMsg" class="text-sm hidden"></div>
           <button class="rounded-lg bg-brand-600 hover:bg-brand-500 text-slate-900 font-semibold px-4 py-2 transition">Save changes</button>
         </form>
+      </section>
+
+      <!-- GIFTS & EVENTS -->
+      <section data-view="events" class="hidden max-w-3xl">
+        <h1 class="text-2xl font-bold mb-1">Gifts &amp; Events</h1>
+        <p class="text-slate-400 text-sm mb-6">Gift free credits / coins to one or many players (added live — no game restart), and run a global 2× / 5× coin boost event.</p>
+
+        <!-- Gift credits / coins -->
+        <div class="glass rounded-xl border border-slate-800 p-6 mb-8">
+          <h2 class="text-lg font-bold mb-1">🎁 Gift credits &amp; coins</h2>
+          <p class="text-slate-400 text-xs mb-4">Search and add players, set an amount, and gift. Amounts are <b>added</b> to each selected player's balance. Online players see it instantly.</p>
+          <div class="relative mb-3">
+            <input id="giftSearch" placeholder="Search players by name or CMID to add…" autocomplete="off" class="w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-sm outline-none focus:border-brand-500">
+            <div id="giftResults" class="hidden absolute z-10 left-0 right-0 mt-1 max-h-56 overflow-auto rounded-lg bg-slate-900 border border-slate-700 shadow-xl"></div>
+          </div>
+          <div id="giftSelected" class="flex flex-wrap gap-2 mb-4 min-h-[1.5rem]"><span class="text-xs text-slate-500">No players selected yet.</span></div>
+          <div class="grid grid-cols-2 gap-3 mb-4">
+            <div><label class="text-xs text-slate-400">Credits to add</label><input id="giftCredits" type="number" min="0" value="0" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-sm outline-none focus:border-brand-500"></div>
+            <div><label class="text-xs text-slate-400">Coins (game points) to add</label><input id="giftPoints" type="number" min="0" value="0" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-sm outline-none focus:border-brand-500"></div>
+          </div>
+          <div id="giftMsg" class="text-sm hidden mb-3"></div>
+          <button id="giftSend" class="rounded-lg bg-brand-600 hover:bg-brand-500 text-slate-900 font-semibold px-4 py-2 transition disabled:opacity-40" disabled>Gift to selected players</button>
+        </div>
+
+        <!-- Global boost -->
+        <div class="glass rounded-xl border border-slate-800 p-6">
+          <h2 class="text-lg font-bold mb-1">⚡ Global coin boost</h2>
+          <p class="text-slate-400 text-xs mb-4">Multiply the coins (and XP) every player earns per match. Applies to the next match on every game server — no restart. Set the multiplier to 1× to turn it off.</p>
+          <div id="boostStatus" class="mb-4 text-sm text-slate-400">Loading…</div>
+          <div class="grid sm:grid-cols-3 gap-3 mb-4">
+            <div>
+              <label class="text-xs text-slate-400">Coin multiplier</label>
+              <select id="boostMult" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-sm outline-none focus:border-brand-500">
+                <option value="1">1× (off)</option><option value="2">2×</option><option value="3">3×</option><option value="5">5×</option><option value="10">10×</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-400">Also boost XP?</label>
+              <select id="boostXp" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-sm outline-none focus:border-brand-500">
+                <option value="match">Match coin multiplier</option><option value="1">No (1×)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-400">Duration</label>
+              <select id="boostDur" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-sm outline-none focus:border-brand-500">
+                <option value="0">Until I turn it off</option><option value="60">1 hour</option><option value="180">3 hours</option><option value="720">12 hours</option><option value="1440">1 day</option><option value="2880">2 days</option><option value="4320">3 days (weekend)</option>
+              </select>
+            </div>
+          </div>
+          <div id="boostMsg" class="text-sm hidden mb-3"></div>
+          <div class="flex gap-2">
+            <button id="boostSave" class="rounded-lg bg-brand-600 hover:bg-brand-500 text-slate-900 font-semibold px-4 py-2 transition">Apply boost</button>
+            <button id="boostClear" class="rounded-lg bg-slate-700 hover:bg-slate-600 px-4 py-2 transition text-sm">Turn off</button>
+          </div>
+        </div>
       </section>
 
       <!-- SYSTEM MAIL -->
@@ -275,6 +331,7 @@
       if (page === 'leaderboard') loadLeaderboard();
       if (page === 'reports') loadReports();
       if (page === 'store') loadStore();
+      if (page === 'events') loadEvents();
     }
 
     async function enter() { show('app'); nav('dashboard'); }
@@ -285,6 +342,79 @@
       const card = (label, val, accent) => `<div class="glass rounded-xl border border-slate-800 p-5"><div class="text-slate-400 text-xs">${label}</div><div class="text-3xl font-bold mt-1 ${accent||''}">${val}</div></div>`;
       $('#stats').innerHTML = card('Total players', s.totalPlayers) + card('Active now', s.activePlayers, 'text-brand-400') + card('Servers', s.servers) + card('Online', s.serversOnline + ' / ' + s.servers, s.serversOnline ? 'text-brand-400' : 'text-red-400');
     }
+
+    // ---- gifts & events ----
+    const giftPicks = new Map(); // cmid -> name
+    function renderGiftPicks() {
+      const box = $('#giftSelected');
+      if (!giftPicks.size) { box.innerHTML = '<span class="text-xs text-slate-500">No players selected yet.</span>'; $('#giftSend').disabled = true; return; }
+      $('#giftSend').disabled = false;
+      box.innerHTML = [...giftPicks.entries()].map(([cmid, name]) =>
+        `<span class="inline-flex items-center gap-1 bg-slate-800 border border-slate-700 rounded-full px-2.5 py-1 text-xs">${name||'(no name)'} <span class="text-slate-500">#${cmid}</span> <button data-rm="${cmid}" class="text-slate-400 hover:text-red-400 ml-0.5">✕</button></span>`).join('');
+      box.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { giftPicks.delete(Number(b.dataset.rm)); renderGiftPicks(); });
+    }
+    function loadEvents() {
+      giftPicks.clear(); renderGiftPicks();
+      $('#giftSearch').value=''; $('#giftResults').classList.add('hidden');
+      $('#giftCredits').value = 0; $('#giftPoints').value = 0; $('#giftMsg').classList.add('hidden');
+      loadBoost();
+    }
+    let giftTimer;
+    $('#giftSearch').oninput = (e) => {
+      clearTimeout(giftTimer);
+      const q = e.target.value.trim();
+      const res = $('#giftResults');
+      if (!q) { res.classList.add('hidden'); return; }
+      giftTimer = setTimeout(async () => {
+        const list = await api('/api/players?q=' + encodeURIComponent(q));
+        res.innerHTML = list.map(p => `<button data-cmid="${p.Cmid}" data-name="${(p.Name||'').replace(/"/g,'&quot;')}" class="block w-full text-left px-3 py-2 text-sm hover:bg-slate-800">${p.Name||'(no name)'} <span class="text-slate-500">#${p.Cmid}</span></button>`).join('') || '<div class="px-3 py-2 text-sm text-slate-500">No players found.</div>';
+        res.classList.remove('hidden');
+        res.querySelectorAll('[data-cmid]').forEach(b => b.onclick = () => { giftPicks.set(Number(b.dataset.cmid), b.dataset.name); renderGiftPicks(); $('#giftSearch').value=''; res.classList.add('hidden'); });
+      }, 250);
+    };
+    $('#giftSend').onclick = async () => {
+      const msg = $('#giftMsg');
+      const credits = +$('#giftCredits').value || 0, points = +$('#giftPoints').value || 0;
+      if (!giftPicks.size) return;
+      if (!credits && !points) { msg.className='text-sm text-red-400 mb-3'; msg.textContent='Enter a credit or coin amount.'; msg.classList.remove('hidden'); return; }
+      $('#giftSend').disabled = true;
+      try {
+        const r = await api('/api/players/gift', { method:'POST', body: JSON.stringify({ cmids:[...giftPicks.keys()], credits, points }) });
+        msg.className='text-sm text-brand-400 mb-3';
+        msg.textContent = `Gifted ${credits?credits+' credits':''}${credits&&points?' + ':''}${points?points+' coins':''} to ${r.granted} player(s).`;
+        msg.classList.remove('hidden');
+        giftPicks.clear(); renderGiftPicks();
+      } catch (err) { msg.className='text-sm text-red-400 mb-3'; msg.textContent=err.message; msg.classList.remove('hidden'); }
+      finally { $('#giftSend').disabled = false; }
+    };
+    async function loadBoost() {
+      const st = $('#boostStatus');
+      try {
+        const b = await api('/api/config/boost');
+        $('#boostMult').value = String(b.pointsMultiplier || 1);
+        if (b.active) {
+          const when = b.endsAt ? ('until ' + new Date(b.endsAt).toLocaleString()) : '(no expiry — until turned off)';
+          st.innerHTML = `<span class="inline-flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full bg-brand-500 animate-pulse"></span> <b class="text-brand-400">${b.pointsMultiplier}× coins / ${b.xpMultiplier}× XP active</b> ${when}</span>`;
+        } else {
+          st.innerHTML = '<span class="inline-flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full bg-slate-600"></span> No boost active.</span>';
+        }
+      } catch (err) { st.textContent = 'Could not load boost: ' + err.message; }
+    }
+    async function applyBoost(mult) {
+      const msg = $('#boostMsg');
+      const xpSel = $('#boostXp').value;
+      const xpMultiplier = xpSel === '1' ? 1 : mult;
+      const durationMinutes = +$('#boostDur').value || 0;
+      try {
+        const r = await api('/api/config/boost', { method:'POST', body: JSON.stringify({ pointsMultiplier: mult, xpMultiplier, durationMinutes }) });
+        msg.className='text-sm text-brand-400 mb-3';
+        msg.textContent = mult > 1 ? `${mult}× boost applied${r.live?' and pushed live to game servers':' (saved; game servers pick it up on connect)'}.` : 'Boost turned off.';
+        msg.classList.remove('hidden');
+        loadBoost();
+      } catch (err) { msg.className='text-sm text-red-400 mb-3'; msg.textContent=err.message; msg.classList.remove('hidden'); }
+    }
+    $('#boostSave').onclick = () => applyBoost(+$('#boostMult').value || 1);
+    $('#boostClear').onclick = () => { $('#boostMult').value='1'; applyBoost(1); };
 
     // ---- servers ----
     async function loadServers() {

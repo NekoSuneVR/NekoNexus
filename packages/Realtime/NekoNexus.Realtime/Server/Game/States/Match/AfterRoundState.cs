@@ -52,21 +52,31 @@ namespace NekoNexus.Realtime.Server.Game {
 					Room.StatisticsManager.CalculateXp(playerMatchData);
 					Room.StatisticsManager.CalculatePoints(playerMatchData);
 
-					// Persist progression (points + stats/XP). Inner try so a web-service hiccup
-					// still lets the player see the match-end screen.
-					try {
-						UserWebServiceClient.Instance.DepositPoints(new PointDepositView {
-							Cmid = player.Actor.Cmid,
-							DepositDate = DateTime.UtcNow,
-							DepositType = PointsDepositType.Game,
-							PointDepositId = r.Next(1, int.MaxValue),
-							Points = playerMatchData.PlayerStatsTotal.Points,
-						}, player.AuthToken);
+					// Persist progression (points + stats/XP) OFF the loop thread. DepositPoints and
+					// SaveStatistics are SYNCHRONOUS web-service round-trips; running them inline (once
+					// per player) blocked the shared scheduler thread for the whole call, freezing every
+					// other room it drives ("ghost walking"). Capture everything we need first, then
+					// fire-and-forget. The match-end screen is sent immediately below, regardless.
+					var capturedPlayer = player;
+					var capturedData = playerMatchData;
+					var authToken = player.AuthToken;
+					var cmid = player.Actor.Cmid;
+					var pointDepositId = r.Next(1, int.MaxValue);
+					System.Threading.Tasks.Task.Run(() => {
+						try {
+							UserWebServiceClient.Instance.DepositPoints(new PointDepositView {
+								Cmid = cmid,
+								DepositDate = DateTime.UtcNow,
+								DepositType = PointsDepositType.Game,
+								PointDepositId = pointDepositId,
+								Points = capturedData.PlayerStatsTotal.Points,
+							}, authToken);
 
-						Room.StatisticsManager.SaveStatistics(player, playerMatchData);
-					} catch (Exception ex) {
-						Log.Error($"Failed to persist match results for cmid {player.Actor.Cmid}", ex);
-					}
+							Room.StatisticsManager.SaveStatistics(capturedPlayer, capturedData);
+						} catch (Exception ex) {
+							Log.Error($"Failed to persist match results for cmid {cmid}", ex);
+						}
+					});
 
 					player.GameEventSender.SendMatchEnd(playerMatchData);
 					player.State.SetState(PlayerStateId.Overview);

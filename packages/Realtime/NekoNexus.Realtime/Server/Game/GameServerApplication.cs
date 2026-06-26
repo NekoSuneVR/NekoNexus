@@ -16,6 +16,12 @@ namespace NekoNexus.Realtime.Server.Game {
 		public override ServerType ServerType => ServerType.Game;
 		public GameRoomManager RoomManager { get; private set; } = new GameRoomManager();
 
+		// Global coin/xp boost event, set from admin and pushed over the master socket (SetBoost).
+		// Read at match-end scoring (StatisticsManager). Volatile reference so the socket thread's
+		// swap is visible to match threads immediately.
+		private static volatile BoostState boost = new BoostState();
+		public static BoostState Boost => boost;
+
 		private static readonly ProfanityFilter.ProfanityFilter ProfanityFilter = new ProfanityFilter.ProfanityFilter();
 
 		// Periodically pushes the live room/player list to the master so the in-game server
@@ -83,12 +89,13 @@ namespace NekoNexus.Realtime.Server.Game {
 			};
 
 			SocketClient.DataReceived += (sender, e) => {
+				try {
 				switch (e.Type) {
 					case PacketType.ChatMessage:
 						var message = (SocketChatMessage)e.Data;
 
 						if (RoomManager.TryGetRoom(message.RoomNumber, out var room) && room != null) {
-							var senderPeer = room.Peers.FirstOrDefault(_ => _.Actor.Cmid == message.Cmid);
+							var senderPeer = room.Peers.FirstOrDefault(_ => _.Actor != null && _.Actor.Cmid == message.Cmid);
 
 							if (senderPeer != null) {
 								var censored = ProfanityFilter.CensorString(message.Message);
@@ -105,6 +112,27 @@ namespace NekoNexus.Realtime.Server.Game {
 						}
 
 						break;
+					case PacketType.SetBoost: {
+						// Global coin/xp boost event set in admin and broadcast to all Game servers. Swap
+						// the whole state atomically so an in-flight match-end never reads a half-updated
+						// boost. Also re-sent to this server right after it (re)connects, so a restart
+						// can't drop an active event.
+						try {
+							var data = (Dictionary<string, object>)e.Data;
+							boost = new BoostState {
+								PointsMultiplier = Convert.ToInt32(data["PointsMultiplier"]),
+								XpMultiplier = Convert.ToInt32(data["XpMultiplier"]),
+								EndsAt = Convert.ToInt64(data["EndsAt"]),
+							};
+							Log.Info($"Boost updated: {boost.PointsMultiplier}x coins / {boost.XpMultiplier}x xp (active={boost.IsActive}, endsAt={boost.EndsAt}).");
+						} catch (Exception ex) { Log.Error("SetBoost failed", ex); }
+						break;
+					}
+				}
+				} catch (Exception ex) {
+					// A throw here would bubble into the websocket OnMessage callback and tear down the
+					// master-socket connection (chat/boost/monitoring stop). Contain it.
+					Log.Error("Game master-socket DataReceived handler failed", ex);
 				}
 			};
 

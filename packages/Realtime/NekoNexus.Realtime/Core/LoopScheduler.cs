@@ -136,8 +136,23 @@ namespace NekoNexus.Realtime.Core {
 					pauseHandle.Wait();
 					stopwatch.Start();
 
-					for (var i = 0; i < loops.Count; i++) {
-						loops[i].Tick();
+					// Snapshot under lock: Schedule/Unschedule mutate `loops` from the network thread
+					// (room create/remove), which would otherwise corrupt this index walk.
+					ILoop[] snapshot;
+					lock (loops) {
+						snapshot = loops.ToArray();
+					}
+
+					for (var i = 0; i < snapshot.Length; i++) {
+						// Isolate every room's tick. A single throwing room must NOT kill this thread -
+						// this thread drives MANY rooms, so its death froze all of them ("ghost walking").
+						try {
+							snapshot[i].Tick();
+						} catch (ThreadAbortException) {
+							throw;
+						} catch (Exception e) {
+							System.Diagnostics.Debug.WriteLine("LoopScheduler tick error: " + e);
+						}
 					}
 
 					loadTick++;

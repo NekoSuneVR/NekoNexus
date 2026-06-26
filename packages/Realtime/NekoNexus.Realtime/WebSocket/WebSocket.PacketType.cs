@@ -35,7 +35,17 @@
 			NotifyInboxMessage,   // { TargetCmid, MessageId } -> SendUpdateInboxMessages
 			NotifyInboxRequests,  // { TargetCmid }            -> SendUpdateInboxRequests (clan/contact invite)
 			NotifyClanMembers,    // { TargetCmid }            -> SendUpdateClanMembers (roster changed)
-			NotifyClanChat        // { TargetCmid, Cmid, Name, Message } -> SendClanChatMessage
+			NotifyClanChat,       // { TargetCmid, Cmid, Name, Message } -> SendClanChatMessage
+
+			// Web service -> Comm server: a player's wallet changed (admin gift / store purchase /
+			// match payout) -> push the new balance to the online lobby peer so credits/coins update
+			// live without relogging. { TargetCmid, Credits, Points } -> SendUpdateWallet
+			NotifyWallet,
+
+			// Web service -> Game server(s) (broadcast): set/clear the global coin+xp boost event.
+			// { PointsMultiplier, XpMultiplier, EndsAt } -> stored in GameServerApplication.Boost and
+			// applied at match-end scoring. EndsAt is unix ms (0 = no expiry).
+			SetBoost
 		}
 	}
 }

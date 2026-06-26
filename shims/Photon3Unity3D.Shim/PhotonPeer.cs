@@ -15,6 +15,13 @@ namespace ExitGames.Client.Photon {
 		private NetPeer _server;
 		private PeerStateValue _state = PeerStateValue.Disconnected;
 		private int _serverTimeOffsetMs;        // localTick + offset ≈ server time
+		private int _timeSyncSentTick;          // local TickCount when the last time-sync went out
+		private bool _timeSyncPending;
+
+		// Reserved transport-only operation code for clock sync. The game never sends this (its real
+		// operation codes are small enum values), so it can't collide; the request/response are
+		// handled entirely inside the shims and never surface to the game.
+		private const byte TimeSyncOpCode = 254;
 
 		public ConnectionProtocol UsedProtocol { get; private set; }
 		public DebugLevel DebugOut { get; set; } = DebugLevel.ERROR;
@@ -43,7 +50,11 @@ namespace ExitGames.Client.Photon {
 		public long BytesIn => _net.Statistics.BytesReceived;
 		public long BytesOut => _net.Statistics.BytesSent;
 
-		// Server clock estimate used by the game for timing. Synced from the first/each event.
+		// Server clock estimate used by the game for match timing. The offset is computed from a
+		// round-trip time-sync (see SendTimeSync) so this reproduces the SERVER's Environment.TickCount
+		// domain - the same clock the server stamps RoundEndTime in - which is what the match countdown
+		// subtracts against. Without this the value would be the client's own uptime (a different
+		// epoch) and the round clock would never count down.
 		public int ServerTimeInMilliSeconds => Environment.TickCount + _serverTimeOffsetMs;
 
 		public bool Connect(string serverAddress, string applicationName) {
@@ -82,13 +93,22 @@ namespace ExitGames.Client.Photon {
 
 		public bool DispatchIncomingCommands() { _net.PollEvents(); return true; }
 
-		// Photon uses this to (re)sync the server clock. LiteNetLib already tracks RTT and
-		// keeps time via its own ping; we refresh our offset estimate from the live ping so
-		// ServerTimeInMilliSeconds stays sensible. Safe to call any time.
-		public void FetchServerTimestamp() {
-			if (_server != null && _server.ConnectionState == ConnectionState.Connected) {
-				// Bias the local clock by the one-way latency so client/server timestamps line up.
-				_serverTimeOffsetMs = -(_server.Ping);
+		// Photon uses this to (re)sync the server clock; the game calls it on connect and at match
+		// start. We issue a round-trip time-sync so ServerTimeInMilliSeconds tracks the server's
+		// Environment.TickCount (the clock RoundEndTime is expressed in). Safe to call any time.
+		public void FetchServerTimestamp() => SendTimeSync();
+
+		// Sends a transport-only time-sync request. The server replies (TimeSyncOpCode) with its
+		// current Environment.TickCount; the response handler then computes the offset.
+		private void SendTimeSync() {
+			if (_server == null || _server.ConnectionState != ConnectionState.Connected) return;
+			try {
+				_timeSyncSentTick = Environment.TickCount;
+				_timeSyncPending = true;
+				var wire = WireMessage.Operation(TimeSyncOpCode, new Dictionary<byte, object> { { 0, _timeSyncSentTick } });
+				_server.Send(WireCodec.Encode(wire), 0, DeliveryMethod.ReliableOrdered);
+			} catch (Exception ex) {
+				_listener.DebugReturn(DebugLevel.WARNING, "[LNL] time-sync send failed: " + ex.Message);
 			}
 		}
 
@@ -123,6 +143,8 @@ namespace ExitGames.Client.Photon {
 			_server = peer;
 			_state = PeerStateValue.Connected;
 			_listener.DebugReturn(DebugLevel.INFO, "[LNL] connected to " + ServerAddress);
+			// Sync the server clock immediately so the match countdown is correct from the first match.
+			SendTimeSync();
 			_listener.OnStatusChanged(StatusCode.Connect);
 		}
 
@@ -145,6 +167,20 @@ namespace ExitGames.Client.Photon {
 					_listener.OnEvent(new EventData { Code = msg.Code, Parameters = msg.Parameters });
 					break;
 				case WireMessageType.OperationResponse:
+					// Transport-only clock sync: compute the server-time offset and swallow the reply
+					// so the game never sees this internal operation.
+					if (msg.Code == TimeSyncOpCode) {
+						if (_timeSyncPending && msg.Parameters.TryGetValue(0, out var st) && st is int serverTick) {
+							int now = Environment.TickCount;
+							// Estimate the server's tick "now" as serverTick + half the round-trip, so the
+							// offset maps our local clock onto the server's: offset = serverTick - (T0+T1)/2.
+							int midpoint = _timeSyncSentTick + ((now - _timeSyncSentTick) / 2);
+							_serverTimeOffsetMs = serverTick - midpoint;
+							_timeSyncPending = false;
+							_listener.DebugReturn(DebugLevel.INFO, $"[LNL] server clock synced (offset {_serverTimeOffsetMs}ms).");
+						}
+						break;
+					}
 					_listener.OnOperationResponse(new OperationResponse {
 						OperationCode = msg.Code,
 						ReturnCode = msg.ReturnCode,

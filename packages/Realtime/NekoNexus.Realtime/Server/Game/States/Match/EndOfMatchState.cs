@@ -35,18 +35,24 @@ namespace NekoNexus.Realtime.Server.Game {
 			Task t = Task.Run(async () => {
 				await Task.Delay(GameServerApplication.Instance.Configuration.GameplaySettings.MatchEndTimeout * 1000);
 
-				if (Room.MetaData.GameMode == GameModeType.EliminationMode) {
-					Room.GetCurrentScore(out _, out short blueTeamScore, out short redTeamScore);
+				// Run the actual transition ON the room's loop thread - the StateMachine stack is not
+				// thread-safe, and setting state straight from this thread-pool thread raced the tick
+				// (corrupting the state stack -> match wedged / never advancing). Enqueue is processed
+				// at the top of the next tick.
+				Room.Loop.Enqueue(() => {
+					if (Room.MetaData.GameMode == GameModeType.EliminationMode) {
+						Room.GetCurrentScore(out _, out short blueTeamScore, out short redTeamScore);
 
-					// Game should end if RoundNumber >= KillLimit (aka "Max Rounds")
-					if (Math.Max(blueTeamScore, redTeamScore) >= Room.MetaData.KillLimit || !Room.CanStartMatch) {
-						Room.State.SetState(GameStateId.AfterRound);
+						// Game should end if RoundNumber >= KillLimit (aka "Max Rounds")
+						if (Math.Max(blueTeamScore, redTeamScore) >= Room.MetaData.KillLimit || !Room.CanStartMatch) {
+							Room.State.SetState(GameStateId.AfterRound);
+						} else {
+							Room.State.SetState(GameStateId.WaitingForPlayers);
+						}
 					} else {
-						Room.State.SetState(GameStateId.WaitingForPlayers);
+						Room.State.SetState(GameStateId.AfterRound);
 					}
-				} else {
-					Room.State.SetState(GameStateId.AfterRound);
-				}
+				});
 			});
 		}
 

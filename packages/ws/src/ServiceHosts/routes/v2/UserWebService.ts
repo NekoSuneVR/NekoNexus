@@ -18,6 +18,7 @@
 import NekoNexusService from '@/NekoNexusService';
 import { ProfanityFilter } from '@/ProfanityFilter';
 import { LoadoutFilter } from '@/utils';
+import { RealtimeNotify } from '@/utils/RealtimeNotify';
 import { ApiVersion, UberstrikeInventoryItem } from '@/utils/enums';
 import {
   CurrencyDeposit,
@@ -168,6 +169,9 @@ export default class UserWebService extends BaseWebService {
                 Credits: memberWallet.Credits + depositTransaction.Credits,
               });
 
+              // Refresh the player's in-game credits live if they're in the lobby (best-effort).
+              void RealtimeNotify.wallet(steamMember.Cmid, memberWallet.Credits, memberWallet.Points);
+
               BooleanProxy.Serialize(outputStream, true);
             } else {
               BooleanProxy.Serialize(outputStream, false);
@@ -212,6 +216,9 @@ export default class UserWebService extends BaseWebService {
               await memberWallet.update({
                 Points: memberWallet.Points + depositTransaction.Points,
               });
+
+              // Refresh the player's in-game coins live if they're in the lobby (best-effort).
+              void RealtimeNotify.wallet(steamMember.Cmid, memberWallet.Credits, memberWallet.Points);
 
               BooleanProxy.Serialize(outputStream, true);
             } else {

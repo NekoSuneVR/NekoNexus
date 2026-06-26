@@ -6,6 +6,10 @@ namespace NekoNexus.Realtime.Core {
 	internal class BalancingLoopScheduler : ILoopScheduler, IDisposable {
 		private readonly Dictionary<ILoop, LoopScheduler> loops = new Dictionary<ILoop, LoopScheduler>();
 		private readonly List<LoopScheduler> schedulers = new List<LoopScheduler>(new LoopScheduler[Environment.ProcessorCount * 2]);
+		// Rooms are created/removed from the network thread; without this lock two concurrent
+		// Schedule/Unschedule calls corrupt the `loops` dictionary (random InvalidOperationException
+		// and leaked/never-unscheduled rooms).
+		private readonly object sync = new object();
 		private bool isDisposed;
 
 		public float TickRate { get; private set; }
@@ -41,29 +45,33 @@ namespace NekoNexus.Realtime.Core {
 		}
 
 		public void Schedule(ILoop loop) {
-			var scheduler = GetLeastLoadScheduler();
-			System.Diagnostics.Debug.Assert(scheduler != null);
-			scheduler.Schedule(loop);
-			loops.Add(loop, scheduler);
+			lock (sync) {
+				var scheduler = GetLeastLoadScheduler();
+				System.Diagnostics.Debug.Assert(scheduler != null);
+				scheduler.Schedule(loop);
+				loops.Add(loop, scheduler);
 
-			if (scheduler.IsPaused) {
-				scheduler.Resume();
+				if (scheduler.IsPaused) {
+					scheduler.Resume();
+				}
 			}
 		}
 
 		public bool Unschedule(ILoop loop) {
-			if (!loops.TryGetValue(loop, out var scheduler)) {
-				return false;
+			lock (sync) {
+				if (!loops.TryGetValue(loop, out var scheduler)) {
+					return false;
+				}
+
+				System.Diagnostics.Debug.Assert(!scheduler.IsPaused);
+				var result = scheduler.Unschedule(loop) & loops.Remove(loop);
+
+				if (scheduler.Loops.Count == 0) {
+					scheduler.Pause();
+				}
+
+				return result;
 			}
-
-			System.Diagnostics.Debug.Assert(!scheduler.IsPaused);
-			var result = scheduler.Unschedule(loop) & loops.Remove(loop);
-
-			if (scheduler.Loops.Count == 0) {
-				scheduler.Pause();
-			}
-
-			return result;
 		}
 
 		public float GetLoad() {

@@ -16,7 +16,7 @@
  */
 
 import NekoNexusService from '@/NekoNexusService';
-import { Log } from '@/utils';
+import { BoostManager, Log } from '@/utils';
 import { RealtimeNotify } from '@/utils/RealtimeNotify';
 import bodyParser from 'body-parser';
 import bodyParserXml from 'body-parser-xml';
@@ -81,6 +81,53 @@ export default class WebServiceHost {
       })().catch(() => {});
 
       res.json({ ok: true, count: entries.length });
+    });
+
+    // Internal wallet-push endpoint (admin service -> ws). The admin writes the wallet straight to
+    // the DB (gift credits/coins) but has no Comm-server bridge, so it calls this to make the online
+    // player's credits/coins display update live. Same shared-secret gate as notify-inbox.
+    this.expressApp.post('/internal/notify-wallet', express.json(), (req, res): void => {
+      const key = process.env.INTERNAL_API_KEY;
+      if (!key || req.get('X-Internal-Key') !== key) {
+        res.status(403).json({ error: 'forbidden' });
+        return;
+      }
+
+      const entries = Array.isArray(req.body?.entries) ? req.body.entries : [];
+      void (async () => {
+        for (const entry of entries) {
+          const cmid = Number(entry?.cmid);
+          const credits = Number(entry?.credits);
+          const points = Number(entry?.points);
+          if (Number.isFinite(cmid) && Number.isFinite(credits) && Number.isFinite(points)) {
+            await RealtimeNotify.wallet(cmid, credits, points);
+          }
+        }
+      })().catch(() => {});
+
+      res.json({ ok: true, count: entries.length });
+    });
+
+    // Internal boost endpoint (admin service -> ws). The admin persists the global 2x/5x event to
+    // the DB then calls this so the ws caches it and broadcasts it to every connected Game server
+    // immediately (no realtime restart). Same shared-secret gate.
+    this.expressApp.post('/internal/set-boost', express.json(), (req, res): void => {
+      const key = process.env.INTERNAL_API_KEY;
+      if (!key || req.get('X-Internal-Key') !== key) {
+        res.status(403).json({ error: 'forbidden' });
+        return;
+      }
+
+      const points = Number(req.body?.pointsMultiplier);
+      const xp = Number(req.body?.xpMultiplier);
+      const endsAt = Number(req.body?.endsAt);
+      if (!Number.isFinite(points) || !Number.isFinite(xp)) {
+        res.status(400).json({ error: 'invalid multipliers' });
+        return;
+      }
+
+      BoostManager.applyAndBroadcast(points, xp, Number.isFinite(endsAt) ? endsAt : 0);
+      res.json({ ok: true });
     });
 
     this.expressApp.use(Routes);

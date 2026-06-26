@@ -17,6 +17,7 @@
 
 import NekoNexusService from '@/NekoNexusService';
 import { ApiVersion } from '@/utils/enums';
+import { RealtimeNotify } from '@/utils/RealtimeNotify';
 import { ContactRequest, PublicProfile } from '@festivaldev/nekonexus-models';
 import {
   ContactGroupView,
@@ -339,6 +340,10 @@ export default class RelationshipWebService extends BaseWebService {
               SentDate: new Date(),
             });
           }
+
+          // Nudge the receiver's client to refresh its requests list NOW (clan invites already do
+          // this) - without it an incoming friend request only appeared after a manual refresh/relog.
+          await RealtimeNotify.inboxRequests(receiverCmid);
         }
       }
 

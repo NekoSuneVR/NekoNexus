@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -51,13 +52,24 @@ namespace Photon.SocketServer {
 
 			_running = true;
 			while (_running) {
-				_net.PollEvents();
+				// Never let a single bad packet/callback kill the networking thread - that takes the
+				// whole server offline ("won't read data"). Log and keep pumping.
+				try {
+					_net.PollEvents();
+				} catch (Exception ex) {
+					NetDebug.WriteError("[RealtimeHost] PollEvents threw: " + ex);
+				}
 				Thread.Sleep(_opts.PollIntervalMs);
 			}
 			_net.Stop();
 		}
 
 		public void Stop() => _running = false;
+
+		// Reserved transport-only operation code for clock sync (mirrors the client shim). Answered
+		// directly here with this server's Environment.TickCount so the client can map its clock onto
+		// the server's - the domain RoundEndTime is expressed in - and run the match countdown.
+		private const byte TimeSyncOpCode = 254;
 
 		internal static bool TraceEnabled =
 			System.Environment.GetEnvironmentVariable("PARADISE_TRACE") == "1";
@@ -155,6 +167,17 @@ namespace Photon.SocketServer {
 			Trace($"RX {data.Length}b from peer {peer.Id} -> {msg.Type} code {msg.Code} ({msg.Parameters.Count} params)");
 
 			if (msg.Type != WireMessageType.Operation) return;   // client only sends operations
+
+			// Transport-only clock sync: reply with our tick count and don't dispatch to the app.
+			if (msg.Code == TimeSyncOpCode) {
+				try {
+					var resp = WireMessage.Response(TimeSyncOpCode, 0, null, new Dictionary<byte, object> { { 0, Environment.TickCount } });
+					peer.Send(WireCodec.Encode(resp), 0, DeliveryMethod.ReliableOrdered);
+				} catch (Exception ex) {
+					Trace("time-sync reply failed: " + ex.Message);
+				}
+				return;
+			}
 
 			var request = new OperationRequest(msg.Code, msg.Parameters);
 			var sp = new SendParameters { Unreliable = deliveryMethod != DeliveryMethod.ReliableOrdered };

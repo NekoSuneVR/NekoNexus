@@ -480,12 +480,32 @@ namespace NekoNexus.Client {
 				using (WWW loader = new WWW(fileUri)) {
 					Log.Info($"Downloading remote file: {loader.url}");
 
+					// Hard timeout so a hung/stalled download (TLS stall on old Mono, dead host) can't
+					// freeze the install on the progress popup forever.
+					float elapsed = 0f;
 					while (!loader.isDone) {
 						progressPopup.Progress = loader.progress;
+						elapsed += Time.deltaTime;
+						if (elapsed > 60f) {
+							PopupSystem.HideMessage(progressPopup);
+							Log.Error($"Download of {file.FileName} timed out.");
+							errorCallback?.Invoke($"Failed to download {file.FileName}:\nDownload timed out. Check your connection and the update server.");
+							yield break;
+						}
 						yield return null;
 					}
 
 					PopupSystem.HideMessage(progressPopup);
+
+					// A transport-level failure (TLS validation, DNS, refused connection) leaves no
+					// response headers - guard before indexing "STATUS". The catalog download already
+					// does this; the install path didn't, so an unreachable file server threw an
+					// uncaught KeyNotFound/NRE inside the coroutine and left the update half-applied.
+					if (!string.IsNullOrEmpty(loader.error) || loader.responseHeaders == null || !loader.responseHeaders.ContainsKey("STATUS")) {
+						Log.Error($"Failed to download {file.FileName}: {loader.error}");
+						errorCallback?.Invoke($"Failed to download {file.FileName}:\n{(string.IsNullOrEmpty(loader.error) ? "connection failed" : loader.error)}");
+						yield break;
+					}
 
 					var responseHeader = HTTPStatusParser.ParseHeader(loader.responseHeaders["STATUS"]);
 

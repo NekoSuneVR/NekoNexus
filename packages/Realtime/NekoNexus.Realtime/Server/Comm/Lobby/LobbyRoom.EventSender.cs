@@ -179,6 +179,23 @@ namespace NekoNexus.Realtime.Server.Comm {
 					SendEvent((byte)ILobbyRoomEventsType.ModerationKickGame, bytes);
 				}
 			}
+
+			// NekoNexus: push a player's new wallet balance to their lobby client so the credits/coins
+			// display updates live (admin gift / store purchase / match payout) without a relog. Handled
+			// only by the client mod's WalletUpdateHook (stock client ignores the opcode). Uses the raw
+			// opcode 100 (a mod-only event above the stock ILobbyRoomEventsType range 5-23) rather than
+			// an enum member, so we don't have to patch the upstream UberStrike.Realtime.Client submodule
+			// - the client mod matches the same literal 100.
+			private const byte UpdateWalletOpCode = 100;
+
+			public void SendUpdateWallet(int credits, int points) {
+				using (var bytes = new MemoryStream()) {
+					Int32Proxy.Serialize(bytes, credits);
+					Int32Proxy.Serialize(bytes, points);
+
+					SendEvent(UpdateWalletOpCode, bytes);
+				}
+			}
 			#endregion
 		}
 	}

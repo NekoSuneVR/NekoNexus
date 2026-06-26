@@ -49,10 +49,14 @@ namespace NekoNexus.Realtime.Server.Game {
 		}
 
 		private readonly List<GamePeer> peers = new List<GamePeer>();
-		public IReadOnlyList<GamePeer> Peers => peers.AsReadOnly();
+		// Return a point-in-time SNAPSHOT (copy under lock), not a live AsReadOnly() wrapper. The list
+		// is mutated from the network thread (Join/Leave on connect/disconnect) while the loop thread
+		// and master-socket thread iterate it every frame; a live wrapper threw "collection was
+		// modified" and froze rooms ("ghost walking"). A copy is immune to concurrent mutation.
+		public IReadOnlyList<GamePeer> Peers { get { lock (peers) { return peers.ToArray(); } } }
 
 		private readonly List<GamePeer> players = new List<GamePeer>();
-		public IReadOnlyList<GamePeer> Players => players.AsReadOnly();
+		public IReadOnlyList<GamePeer> Players { get { lock (players) { return players.ToArray(); } } }
 
 		public int RoundNumber;
 		public int RoundStartTime;
@@ -266,7 +270,14 @@ namespace NekoNexus.Realtime.Server.Game {
 			var positions = new List<PlayerMovement>();
 			var deltas = new List<GameActorInfoDelta>();
 
-			foreach (var peer in Peers) {
+			// Snapshot once per tick (under lock) so concurrent Join/Leave can't mutate the list
+			// mid-iteration, and so Players.Contains below doesn't allocate a fresh snapshot per peer.
+			GamePeer[] peerList;
+			HashSet<GamePeer> playerSet;
+			lock (peers) { peerList = peers.ToArray(); }
+			lock (players) { playerSet = new HashSet<GamePeer>(players); }
+
+			foreach (var peer in peerList) {
 				if (peer.HasError) {
 					peer.Disconnect();
 
@@ -277,8 +288,13 @@ namespace NekoNexus.Realtime.Server.Game {
 				peer.State.Update();
 
 				var actor = peer.Actor;
+				// Actor is nulled by Leave() on the network thread; a peer can be in this snapshot
+				// after that happens. Skip it rather than NRE (which would abort the whole tick).
+				if (actor == null) {
+					continue;
+				}
 
-				if (Players.Contains(peer)) {
+				if (playerSet.Contains(peer)) {
 					var delta = actor.Delta;
 
 					if (delta.Changes.Count > 0) {
@@ -298,7 +314,7 @@ namespace NekoNexus.Realtime.Server.Game {
 			}
 
 			if (deltas.Count > 0) {
-				foreach (var peer in Peers) {
+				foreach (var peer in peerList) {
 					peer.GameEventSender.SendAllPlayerDeltas(deltas);
 				}
 
@@ -310,7 +326,7 @@ namespace NekoNexus.Realtime.Server.Game {
 			}
 
 			if (positions.Count > 0 && updatePositions) {
-				foreach (var peer in Peers) {
+				foreach (var peer in peerList) {
 					peer.GameEventSender.SendAllPlayerPositions(positions, gameFrame);
 				}
 

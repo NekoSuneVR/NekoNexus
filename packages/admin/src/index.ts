@@ -49,6 +49,42 @@ async function fulfilOrder(order: any) {
   const wallet = await models.MemberWallet.findByPk(order.Cmid);
   if (wallet) await wallet.increment('Credits', { by: order.Credits });
   await order.update({ Fulfilled: true });
+  // Live-refresh the buyer's in-game credits if they're online.
+  await pushWallet(order.Cmid);
+}
+
+// Best-effort realtime wallet push: if the player is online and the ws bridge is configured, tell
+// their lobby client to refresh credits/coins live (no relog). The DB is always the source of truth;
+// this only changes *when* the new balance shows. Safe no-op when offline or the bridge is off.
+async function pushWallet(cmid: number): Promise<void> {
+  if (!cfg.internalApiKey) return;
+  try {
+    const online = await models.ActivePlayer.findOne({ where: { Cmid: cmid }, raw: true }).catch(() => null);
+    if (!online) return;
+    const wallet: any = await models.MemberWallet.findByPk(cmid, { raw: true }).catch(() => null);
+    if (!wallet) return;
+    await fetch(`${cfg.wsInternalUrl}/internal/notify-wallet`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Internal-Key': cfg.internalApiKey },
+      body: JSON.stringify({
+        entries: [{ cmid, credits: Number(wallet.Credits) || 0, points: Number(wallet.Points) || 0 }],
+      }),
+    }).catch(() => {});
+  } catch {
+    /* realtime is best-effort */
+  }
+}
+
+// The global boost lives in its own single-row table the admin owns (created lazily on first use),
+// mirroring how wallet writes work: persist here, then best-effort nudge the ws to broadcast it live.
+let boostTableReady = false;
+async function ensureBoostTable(): Promise<void> {
+  if (boostTableReady) return;
+  await sequelize.query(
+    'CREATE TABLE IF NOT EXISTS GlobalBoost (Id INT PRIMARY KEY, PointsMultiplier INT NOT NULL DEFAULT 1, XpMultiplier INT NOT NULL DEFAULT 1, EndsAt BIGINT NOT NULL DEFAULT 0)',
+  );
+  await sequelize.query('INSERT IGNORE INTO GlobalBoost (Id, PointsMultiplier, XpMultiplier, EndsAt) VALUES (1, 1, 1, 0)');
+  boostTableReady = true;
 }
 
 const ONLINE_WINDOW_MS = 60_000; // a server is "online" if it pinged within the last minute
@@ -543,6 +579,7 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
       if (b.Credits !== undefined) { sets.push('Credits = ?'); repl.push(Number(b.Credits)); }
       if (b.Points !== undefined) { sets.push('Points = ?'); repl.push(Number(b.Points)); }
       if (sets.length) { repl.push(cmid); await sequelize.query(`UPDATE MemberWallets SET ${sets.join(', ')} WHERE Cmid = ?`, { replacements: repl }); }
+      await pushWallet(cmid); // live-refresh if online
       return json({ ok: true });
     }
     if (action === 'access') {
@@ -559,6 +596,79 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
       } as any);
       return json({ ok: true });
     }
+  }
+
+  // ---- gift credits/coins to one or many players at once (additive; live if online) ----
+  // Body: { cmids: number[], credits?: number, points?: number }. Amounts are ADDED to each
+  // player's current balance ("gift 500 to these 3"), the wallet row is created if missing, and
+  // every online recipient gets a live refresh so they don't have to restart the game.
+  if (pathname === '/api/players/gift' && method === 'POST') {
+    const b = await req.json().catch(() => ({}));
+    const cmids = Array.isArray(b.cmids) ? [...new Set(b.cmids.map((c: any) => Number(c)).filter((c: number) => Number.isInteger(c) && c > 0))] : [];
+    const credits = Math.trunc(Number(b.credits) || 0);
+    const points = Math.trunc(Number(b.points) || 0);
+    if (!cmids.length) return json({ error: 'Select at least one player' }, 400);
+    if (!credits && !points) return json({ error: 'Enter a credit or coin amount' }, 400);
+
+    const results: { cmid: number; ok: boolean }[] = [];
+    for (const cmid of cmids as number[]) {
+      try {
+        const [wallet] = await models.MemberWallet.findOrCreate({ where: { Cmid: cmid }, defaults: { Cmid: cmid, Credits: 0, Points: 0 } as any });
+        if (credits) await wallet.increment('Credits', { by: credits });
+        if (points) await wallet.increment('Points', { by: points });
+        await pushWallet(cmid); // live-refresh if online
+        results.push({ cmid, ok: true });
+      } catch {
+        results.push({ cmid, ok: false });
+      }
+    }
+    return json({ ok: true, granted: results.filter((r) => r.ok).length, credits, points, results });
+  }
+
+  // ---- global coin/xp boost event (2x/5x weekend) ----
+  if (pathname === '/api/config/boost' && method === 'GET') {
+    await ensureBoostTable();
+    const [rows]: any = await sequelize.query('SELECT PointsMultiplier, XpMultiplier, EndsAt FROM GlobalBoost WHERE Id = 1');
+    const r = rows?.[0] ?? {};
+    const endsAt = Number(r.EndsAt) || 0;
+    const active = (Number(r.PointsMultiplier) > 1 || Number(r.XpMultiplier) > 1) && (endsAt === 0 || Date.now() < endsAt);
+    return json({
+      pointsMultiplier: Number(r.PointsMultiplier) || 1,
+      xpMultiplier: Number(r.XpMultiplier) || 1,
+      endsAt,
+      active,
+    });
+  }
+
+  if (pathname === '/api/config/boost' && method === 'POST') {
+    await ensureBoostTable();
+    const b = await req.json().catch(() => ({}));
+    const pointsMultiplier = Math.max(1, Math.min(100, Math.trunc(Number(b.pointsMultiplier) || 1)));
+    // Default the XP boost to mirror the coin boost unless one is given explicitly.
+    const xpMultiplier = Math.max(1, Math.min(100, Math.trunc(Number(b.xpMultiplier ?? b.pointsMultiplier) || 1)));
+    const durationMinutes = Math.max(0, Math.trunc(Number(b.durationMinutes) || 0)); // 0 = until cleared
+    const endsAt = durationMinutes > 0 ? Date.now() + durationMinutes * 60_000 : 0;
+
+    await sequelize.query('UPDATE GlobalBoost SET PointsMultiplier = ?, XpMultiplier = ?, EndsAt = ? WHERE Id = 1', {
+      replacements: [pointsMultiplier, xpMultiplier, endsAt],
+    });
+
+    // Push live to every Game server so the new multiplier applies to the very next match (no
+    // realtime restart). Persisted above, so it still applies even if this nudge can't be delivered.
+    let live = false;
+    if (cfg.internalApiKey) {
+      try {
+        const resp = await fetch(`${cfg.wsInternalUrl}/internal/set-boost`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Internal-Key': cfg.internalApiKey },
+          body: JSON.stringify({ pointsMultiplier, xpMultiplier, endsAt }),
+        }).catch(() => null);
+        live = !!resp?.ok;
+      } catch {
+        /* realtime is best-effort */
+      }
+    }
+    return json({ ok: true, pointsMultiplier, xpMultiplier, endsAt, live });
   }
 
   // ---- items (searchable list for "give item": weapons, gear, quick, functional) ----
