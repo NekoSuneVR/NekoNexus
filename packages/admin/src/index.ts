@@ -8,6 +8,7 @@ import homepageHtml from './homepage.html' with { type: 'text' };
 import leaderboardHtml from './leaderboard.html' with { type: 'text' };
 import profileHtml from './profile.html' with { type: 'text' };
 import streamsHtml from './streams.html' with { type: 'text' };
+import socialHtml from './social.html' with { type: 'text' };
 import loginHtml from './login.html' with { type: 'text' };
 import { bearer, signToken, verifyToken } from './auth';
 import { loadConfig } from './config';
@@ -36,6 +37,7 @@ const NAV_JS = `(function () {
     + '<span>' + esc(name) + '</span><span class="text-xs opacity-70">&#9662;</span></button>'
     + '<div id="navUserMenu" class="hidden absolute right-0 mt-2 w-44 rounded-lg bg-neutral-900 border border-neutral-700 shadow-xl py-1 text-sm z-50">'
     + '<a href="/profile/' + me.cmid + '" class="block px-3 py-2 hover:bg-neutral-800 text-neutral-200">My profile</a>'
+    + '<a href="/social" class="block px-3 py-2 hover:bg-neutral-800 text-neutral-200">Friends &amp; Mail</a>'
     + '<a href="/login" class="block px-3 py-2 hover:bg-neutral-800 text-neutral-200">Settings</a>'
     + '<button id="navSignOut" class="block w-full text-left px-3 py-2 hover:bg-neutral-800 text-red-400">Sign out</button>'
     + '</div></div>';
@@ -124,6 +126,38 @@ async function pushStats(cmid: number): Promise<void> {
     /* realtime is best-effort */
   }
 }
+
+// Nudge an online recipient's in-game inbox to pull a new mail immediately (web -> in-game sync).
+async function notifyInboxMsg(cmid: number, messageId: number): Promise<void> {
+  if (!cfg.internalApiKey) return;
+  try {
+    const online = await models.ActivePlayer.findOne({ where: { Cmid: cmid }, raw: true }).catch(() => null);
+    if (!online) return;
+    await fetch(`${cfg.wsInternalUrl}/internal/notify-inbox`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Internal-Key': cfg.internalApiKey },
+      body: JSON.stringify({ entries: [{ cmid, messageId }] }),
+    }).catch(() => {});
+  } catch {
+    /* realtime is best-effort */
+  }
+}
+
+// Nudge a player's in-game friend-requests list to refresh (web friend request/accept).
+async function notifyFriendRequests(cmid: number): Promise<void> {
+  if (!cfg.internalApiKey) return;
+  try {
+    await fetch(`${cfg.wsInternalUrl}/internal/notify-requests`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Internal-Key': cfg.internalApiKey },
+      body: JSON.stringify({ cmids: [cmid] }),
+    }).catch(() => {});
+  } catch {
+    /* realtime is best-effort */
+  }
+}
+
+const newMsgId = () => Math.floor(Math.random() * 2147483647) + 1;
 
 // The global boost lives in its own single-row table the admin owns (created lazily on first use),
 // mirroring how wallet writes work: persist here, then best-effort nudge the ws to broadcast it live.
@@ -532,6 +566,143 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
     const user = requireUser(req);
     if (!user) return json({ error: 'Please sign in first.' }, 401);
     return json(await buildMatchHistory(user.cmid, 25));
+  }
+
+  // ============================ Web social: friends ============================
+  if (pathname === '/api/me/friends' && method === 'GET') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in first.' }, 401);
+    const cmid = user.cmid;
+    const all = (await models.ContactRequest.findAll({
+      where: { [Op.or]: [{ InitiatorCmid: cmid }, { ReceiverCmid: cmid }] },
+      raw: true,
+    }).catch(() => [])) as any[];
+    const friendCmids = new Set<number>();
+    for (const r of all) if (r.Status === 1) friendCmids.add(r.InitiatorCmid === cmid ? r.ReceiverCmid : r.InitiatorCmid);
+    const incoming = all.filter((r) => r.Status === 0 && r.ReceiverCmid === cmid);
+    const outgoing = all.filter((r) => r.Status === 0 && r.InitiatorCmid === cmid);
+    const ids = [...friendCmids, ...incoming.map((r) => r.InitiatorCmid), ...outgoing.map((r) => r.ReceiverCmid)];
+    const profiles = ids.length
+      ? ((await models.PublicProfile.findAll({ where: { Cmid: { [Op.in]: ids } }, attributes: ['Cmid', 'Name'], raw: true })) as any[])
+      : [];
+    const nameBy = new Map(profiles.map((p) => [p.Cmid, p.Name]));
+    const online = new Set(
+      ((await models.ActivePlayer.findAll({ attributes: ['Cmid'], raw: true }).catch(() => [])) as any[]).map((p) => p.Cmid),
+    );
+    return json({
+      friends: [...friendCmids].map((c) => ({ Cmid: c, Name: nameBy.get(c) ?? `Player ${c}`, Online: online.has(c) })),
+      incoming: incoming.map((r) => ({ RequestId: r.RequestId, Cmid: r.InitiatorCmid, Name: nameBy.get(r.InitiatorCmid) ?? r.InitiatorName, Message: r.InitiatorMessage })),
+      outgoing: outgoing.map((r) => ({ RequestId: r.RequestId, Cmid: r.ReceiverCmid, Name: nameBy.get(r.ReceiverCmid) ?? `Player ${r.ReceiverCmid}` })),
+    });
+  }
+
+  if (pathname === '/api/me/friends/add' && method === 'POST') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in first.' }, 401);
+    const b = await req.json().catch(() => ({}));
+    const target = Number(b.cmid);
+    if (!Number.isInteger(target) || target <= 0 || target === user.cmid) return json({ error: 'Invalid player' }, 400);
+    const tp: any = await models.PublicProfile.findByPk(target, { raw: true });
+    if (!tp || tp.Cmid === 0) return json({ error: 'Player not found' }, 404);
+    const existing: any = await models.ContactRequest.findOne({
+      where: { [Op.or]: [{ InitiatorCmid: user.cmid, ReceiverCmid: target }, { InitiatorCmid: target, ReceiverCmid: user.cmid }] },
+    });
+    if (existing && existing.Status === 1) return json({ error: 'Already friends' }, 409);
+    if (existing && existing.Status === 0) {
+      if (existing.ReceiverCmid === user.cmid) {
+        await existing.update({ Status: 1 }); // they already asked us -> accept
+        await notifyFriendRequests(existing.InitiatorCmid);
+        return json({ ok: true, accepted: true });
+      }
+      return json({ error: 'Request already sent' }, 409);
+    }
+    await models.ContactRequest.create({
+      RequestId: newMsgId(),
+      InitiatorCmid: user.cmid,
+      InitiatorName: user.name ?? `Player ${user.cmid}`,
+      InitiatorMessage: String(b.message ?? '').slice(0, 200),
+      ReceiverCmid: target,
+      Status: 0,
+      SentDate: new Date(),
+    } as any);
+    await notifyFriendRequests(target);
+    return json({ ok: true });
+  }
+
+  if ((pathname === '/api/me/friends/accept' || pathname === '/api/me/friends/decline') && method === 'POST') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in first.' }, 401);
+    const b = await req.json().catch(() => ({}));
+    const r: any = await models.ContactRequest.findOne({ where: { RequestId: Number(b.requestId), ReceiverCmid: user.cmid, Status: 0 } });
+    if (!r) return json({ error: 'Request not found' }, 404);
+    if (pathname.endsWith('accept')) {
+      await r.update({ Status: 1 });
+      await notifyFriendRequests(r.InitiatorCmid);
+    } else {
+      await r.update({ Status: 2 });
+    }
+    return json({ ok: true });
+  }
+
+  if (pathname === '/api/me/friends/remove' && method === 'POST') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in first.' }, 401);
+    const b = await req.json().catch(() => ({}));
+    const target = Number(b.cmid);
+    await models.ContactRequest.destroy({
+      where: { Status: 1, [Op.or]: [{ InitiatorCmid: user.cmid, ReceiverCmid: target }, { InitiatorCmid: target, ReceiverCmid: user.cmid }] },
+    });
+    return json({ ok: true });
+  }
+
+  // ============================ Web social: mail ============================
+  if (pathname === '/api/me/mail' && method === 'GET') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in first.' }, 401);
+    const msgs = (await models.PrivateMessage.findAll({
+      where: { ToCmid: user.cmid, IsDeletedByReceiver: false },
+      order: [['DateSent', 'DESC']],
+      limit: 100,
+      raw: true,
+    }).catch(() => [])) as any[];
+    return json(
+      msgs.map((m) => ({ Id: m.PrivateMessageId, FromCmid: m.FromCmid, FromName: m.FromName, Text: m.ContentText, Date: m.DateSent, IsRead: !!m.IsRead })),
+    );
+  }
+
+  if (pathname === '/api/me/mail/send' && method === 'POST') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in first.' }, 401);
+    const b = await req.json().catch(() => ({}));
+    const to = Number(b.toCmid);
+    const text = String(b.text ?? '').trim().slice(0, 1000);
+    if (!Number.isInteger(to) || to <= 0 || to === user.cmid) return json({ error: 'Invalid recipient' }, 400);
+    if (!text) return json({ error: 'Message is required' }, 400);
+    const tp: any = await models.PublicProfile.findByPk(to, { raw: true });
+    if (!tp || tp.Cmid === 0) return json({ error: 'Recipient not found' }, 404);
+    const id = newMsgId();
+    await models.PrivateMessage.create({
+      PrivateMessageId: id,
+      FromCmid: user.cmid,
+      FromName: user.name ?? `Player ${user.cmid}`,
+      ToCmid: to,
+      DateSent: new Date(),
+      ContentText: text,
+      IsRead: false,
+      IsDeletedBySender: false,
+      IsDeletedByReceiver: false,
+    } as any);
+    await notifyInboxMsg(to, id);
+    return json({ ok: true });
+  }
+
+  if ((pathname === '/api/me/mail/read' || pathname === '/api/me/mail/delete') && method === 'POST') {
+    const user = requireUser(req);
+    if (!user) return json({ error: 'Please sign in first.' }, 401);
+    const b = await req.json().catch(() => ({}));
+    const patch = pathname.endsWith('read') ? { IsRead: true } : { IsDeletedByReceiver: true };
+    await models.PrivateMessage.update(patch as any, { where: { PrivateMessageId: Number(b.id), ToCmid: user.cmid } });
+    return json({ ok: true });
   }
 
   // ---- a signed-in user's own payment / transaction history ----
@@ -1215,6 +1386,7 @@ Bun.serve({
     }
     // Public site pages.
     if (url.pathname === '/leaderboard') return page(leaderboardHtml);
+    if (url.pathname === '/social') return page(socialHtml);
     if (url.pathname === '/streams') return page(streamsHtml);
     if (url.pathname === '/login') return page(loginHtml);
     if (url.pathname === '/profile' || url.pathname.startsWith('/profile/')) return page(profileHtml);

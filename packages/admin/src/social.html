@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Friends &amp; Mail — NekoNexus</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { brand: { 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857' } } } } };
+  </script>
+  <style>
+    body { background: radial-gradient(1200px 600px at 50% -10%, rgba(16, 185, 129, .14), transparent 60%), #0a0a0a; }
+    .glass { background: rgba(23, 23, 23, .7); backdrop-filter: blur(8px); }
+  </style>
+</head>
+<body class="text-neutral-200 min-h-screen">
+  <header class="border-b border-neutral-800">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="/" class="text-xl font-bold text-brand-400">NekoNexus</a>
+      <nav class="flex gap-5 text-sm text-neutral-400 items-center">
+        <a href="/" class="hover:text-brand-400">Home</a>
+        <a href="/leaderboard" class="hover:text-brand-400">Leaderboard</a>
+        <a href="/social" class="text-brand-400">Friends &amp; Mail</a>
+        <span id="authnav"><a href="/login" class="hover:text-brand-400">Sign in</a></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-8">
+    <div id="needLogin" class="hidden glass rounded-xl p-8 text-center">
+      <h1 class="text-2xl font-bold mb-2">Friends &amp; Mail</h1>
+      <p class="text-neutral-400 mb-5">Sign in with Steam to manage your friends and messages — they're synced with the game.</p>
+      <a href="/login" class="inline-block px-5 py-2.5 rounded bg-brand-600 hover:bg-brand-500 text-white">Sign in</a>
+    </div>
+
+    <div id="app" class="hidden">
+      <div class="flex gap-2 mb-5 text-sm">
+        <button data-tab="friends" class="tabbtn px-4 py-2 rounded bg-brand-600 text-white">Friends</button>
+        <button data-tab="mail" class="tabbtn px-4 py-2 rounded bg-neutral-800">Mail <span id="unread" class="ml-1 text-xs"></span></button>
+      </div>
+
+      <!-- FRIENDS -->
+      <section data-view="friends" class="grid md:grid-cols-2 gap-6">
+        <div class="glass rounded-xl p-5">
+          <h2 class="font-semibold mb-3">Add a friend</h2>
+          <input id="friendSearch" type="search" placeholder="Search player name…" class="w-full px-3 py-2 rounded bg-neutral-900 border border-neutral-700 outline-none focus:border-brand-500 text-sm mb-2" />
+          <div id="friendResults" class="space-y-1"></div>
+
+          <h2 class="font-semibold mb-2 mt-6">Requests</h2>
+          <div id="incoming" class="space-y-2 text-sm"></div>
+        </div>
+        <div class="glass rounded-xl p-5">
+          <h2 class="font-semibold mb-3">Your friends <span id="friendCount" class="text-neutral-500 text-sm"></span></h2>
+          <div id="friendList" class="space-y-2 text-sm"></div>
+        </div>
+      </section>
+
+      <!-- MAIL -->
+      <section data-view="mail" class="hidden grid md:grid-cols-2 gap-6">
+        <div class="glass rounded-xl p-5">
+          <h2 class="font-semibold mb-3">Inbox</h2>
+          <div id="mailList" class="space-y-2 text-sm"></div>
+        </div>
+        <div class="glass rounded-xl p-5">
+          <h2 class="font-semibold mb-3">Compose</h2>
+          <input id="mailTo" type="search" placeholder="To: search player name…" class="w-full px-3 py-2 rounded bg-neutral-900 border border-neutral-700 outline-none focus:border-brand-500 text-sm mb-1" />
+          <div id="mailToResults" class="space-y-1 mb-2"></div>
+          <div id="mailToPick" class="text-xs text-brand-400 mb-2 hidden"></div>
+          <textarea id="mailText" rows="5" maxlength="1000" placeholder="Your message…" class="w-full px-3 py-2 rounded bg-neutral-900 border border-neutral-700 outline-none focus:border-brand-500 text-sm"></textarea>
+          <button id="mailSend" class="mt-2 px-4 py-2 rounded bg-brand-600 hover:bg-brand-500 text-white text-sm disabled:opacity-40" disabled>Send</button>
+          <span id="mailMsg" class="text-sm ml-2"></span>
+
+          <h2 class="font-semibold mb-2 mt-6">Read</h2>
+          <div id="mailRead" class="text-sm text-neutral-400">Select a message to read it.</div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const token = localStorage.getItem('nekonexus_user_token');
+    let me = null;
+    try { me = token ? JSON.parse(atob(token.split('.')[0].replace(/-/g, '+').replace(/_/g, '/'))) : null; } catch (e) {}
+    const authed = me && me.cmid && (!me.exp || me.exp > Date.now() / 1000);
+
+    async function api(path, opts) {
+      const o = Object.assign({ headers: {} }, opts || {});
+      o.headers = Object.assign({ Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }, o.headers);
+      const r = await fetch(path, o);
+      if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || ('HTTP ' + r.status));
+      return r.json();
+    }
+
+    if (!authed) {
+      document.getElementById('needLogin').classList.remove('hidden');
+    } else {
+      document.getElementById('app').classList.remove('hidden');
+      initTabs();
+      loadFriends();
+      loadMail();
+      wireSearch('friendSearch', 'friendResults', (p) => addFriend(p.Cmid));
+      wireSearch('mailTo', 'mailToResults', pickRecipient);
+      document.getElementById('mailSend').addEventListener('click', sendMail);
+    }
+
+    function initTabs() {
+      document.querySelectorAll('.tabbtn').forEach((b) => b.addEventListener('click', () => {
+        document.querySelectorAll('.tabbtn').forEach((x) => x.className = 'tabbtn px-4 py-2 rounded bg-neutral-800');
+        b.className = 'tabbtn px-4 py-2 rounded bg-brand-600 text-white';
+        document.querySelectorAll('[data-view]').forEach((v) => v.classList.toggle('hidden', v.dataset.view !== b.dataset.tab));
+      }));
+    }
+
+    // ---- friends ----
+    async function loadFriends() {
+      const d = await api('/api/me/friends').catch(() => ({ friends: [], incoming: [], outgoing: [] }));
+      document.getElementById('friendCount').textContent = '(' + d.friends.length + ')';
+      document.getElementById('friendList').innerHTML = d.friends.length ? d.friends.map((f) => `
+        <div class="flex items-center justify-between border-b border-neutral-800 pb-2">
+          <a href="/profile/${f.Cmid}" class="hover:text-brand-400">${f.Online ? '<span class="inline-block w-2 h-2 rounded-full bg-brand-500 mr-1"></span>' : '<span class="inline-block w-2 h-2 rounded-full bg-neutral-600 mr-1"></span>'}${esc(f.Name)}</a>
+          <span class="space-x-2"><button data-mailto="${f.Cmid}" data-name="${esc(f.Name)}" class="text-brand-400 text-xs">Message</button><button data-unfriend="${f.Cmid}" class="text-red-400 text-xs">Remove</button></span>
+        </div>`).join('') : '<p class="text-neutral-500">No friends yet — add some!</p>';
+      document.getElementById('incoming').innerHTML = d.incoming.length ? d.incoming.map((r) => `
+        <div class="flex items-center justify-between">
+          <span><a href="/profile/${r.Cmid}" class="hover:text-brand-400">${esc(r.Name)}</a> wants to be friends</span>
+          <span class="space-x-2"><button data-accept="${r.RequestId}" class="px-2 py-1 rounded bg-brand-600 text-white text-xs">Accept</button><button data-decline="${r.RequestId}" class="px-2 py-1 rounded bg-neutral-800 text-xs">Decline</button></span>
+        </div>`).join('') : '<p class="text-neutral-500">No pending requests.</p>';
+      document.getElementById('friendList').querySelectorAll('[data-unfriend]').forEach((b) => b.onclick = async () => { await api('/api/me/friends/remove', { method: 'POST', body: JSON.stringify({ cmid: +b.dataset.unfriend }) }).catch(() => {}); loadFriends(); });
+      document.getElementById('friendList').querySelectorAll('[data-mailto]').forEach((b) => b.onclick = () => { document.querySelector('[data-tab="mail"]').click(); pickRecipient({ Cmid: +b.dataset.mailto, Name: b.dataset.name }); });
+      document.getElementById('incoming').querySelectorAll('[data-accept]').forEach((b) => b.onclick = async () => { await api('/api/me/friends/accept', { method: 'POST', body: JSON.stringify({ requestId: +b.dataset.accept }) }).catch(() => {}); loadFriends(); });
+      document.getElementById('incoming').querySelectorAll('[data-decline]').forEach((b) => b.onclick = async () => { await api('/api/me/friends/decline', { method: 'POST', body: JSON.stringify({ requestId: +b.dataset.decline }) }).catch(() => {}); loadFriends(); });
+    }
+    async function addFriend(cmid) {
+      try { await api('/api/me/friends/add', { method: 'POST', body: JSON.stringify({ cmid }) }); } catch (e) { alert(e.message); }
+      document.getElementById('friendSearch').value = ''; document.getElementById('friendResults').innerHTML = '';
+      loadFriends();
+    }
+
+    // ---- mail ----
+    let mailTo = null;
+    function pickRecipient(p) {
+      mailTo = p.Cmid;
+      const el = document.getElementById('mailToPick');
+      el.classList.remove('hidden'); el.textContent = 'To: ' + p.Name + ' (#' + p.Cmid + ')';
+      document.getElementById('mailTo').value = ''; document.getElementById('mailToResults').innerHTML = '';
+      document.getElementById('mailSend').disabled = false;
+    }
+    async function loadMail() {
+      const list = await api('/api/me/mail').catch(() => []);
+      const unread = list.filter((m) => !m.IsRead).length;
+      document.getElementById('unread').textContent = unread ? '(' + unread + ')' : '';
+      document.getElementById('mailList').innerHTML = list.length ? list.map((m) => `
+        <div class="flex items-center justify-between border-b border-neutral-800 pb-2">
+          <button data-read="${m.Id}" class="text-left flex-1 ${m.IsRead ? 'text-neutral-400' : 'font-medium'}">
+            ${m.IsRead ? '' : '<span class="inline-block w-2 h-2 rounded-full bg-brand-500 mr-1"></span>'}${esc(m.FromName || ('Player ' + m.FromCmid))}
+            <span class="text-neutral-600 text-xs ml-1">${new Date(m.Date).toLocaleDateString()}</span>
+          </button>
+          <button data-del="${m.Id}" class="text-red-400 text-xs ml-2">Delete</button>
+        </div>`).join('') : '<p class="text-neutral-500">Inbox empty.</p>';
+      const byId = Object.fromEntries(list.map((m) => [m.Id, m]));
+      document.getElementById('mailList').querySelectorAll('[data-read]').forEach((b) => b.onclick = async () => {
+        const m = byId[b.dataset.read];
+        document.getElementById('mailRead').innerHTML = `<div class="text-neutral-300"><div class="mb-1 text-xs text-neutral-500">From <a class="text-brand-400" href="/profile/${m.FromCmid}">${esc(m.FromName || ('Player ' + m.FromCmid))}</a> · ${new Date(m.Date).toLocaleString()}</div><div class="whitespace-pre-wrap">${esc(m.Text)}</div></div>`;
+        if (!m.IsRead) { await api('/api/me/mail/read', { method: 'POST', body: JSON.stringify({ id: m.Id }) }).catch(() => {}); loadMail(); }
+      });
+      document.getElementById('mailList').querySelectorAll('[data-del]').forEach((b) => b.onclick = async () => { await api('/api/me/mail/delete', { method: 'POST', body: JSON.stringify({ id: +b.dataset.del }) }).catch(() => {}); loadMail(); });
+    }
+    async function sendMail() {
+      const text = document.getElementById('mailText').value.trim();
+      const msg = document.getElementById('mailMsg');
+      if (!mailTo || !text) { msg.className = 'text-sm text-red-400 ml-2'; msg.textContent = 'Pick a recipient and write a message.'; return; }
+      try {
+        await api('/api/me/mail/send', { method: 'POST', body: JSON.stringify({ toCmid: mailTo, text }) });
+        msg.className = 'text-sm text-brand-400 ml-2'; msg.textContent = 'Sent!';
+        document.getElementById('mailText').value = '';
+      } catch (e) { msg.className = 'text-sm text-red-400 ml-2'; msg.textContent = e.message; }
+    }
+
+    // ---- shared player search ----
+    function wireSearch(inputId, resultsId, onPick) {
+      let t;
+      document.getElementById(inputId).addEventListener('input', (e) => {
+        clearTimeout(t);
+        const q = e.target.value.trim();
+        const res = document.getElementById(resultsId);
+        if (!q) { res.innerHTML = ''; return; }
+        t = setTimeout(async () => {
+          const list = await fetch('/api/v1/players?q=' + encodeURIComponent(q) + '&limit=8').then((r) => r.json()).catch(() => []);
+          res.innerHTML = list.filter((p) => !me || p.Cmid !== me.cmid).map((p) => `<button data-cmid="${p.Cmid}" data-name="${esc(p.Name)}" class="block w-full text-left px-2 py-1 rounded hover:bg-neutral-800 text-sm">${esc(p.Name)} <span class="text-neutral-600">#${p.Cmid}</span></button>`).join('') || '<p class="text-neutral-600 text-xs px-2">No players found.</p>';
+          res.querySelectorAll('[data-cmid]').forEach((b) => b.onclick = () => onPick({ Cmid: +b.dataset.cmid, Name: b.dataset.name }));
+        }, 250);
+      });
+    }
+  </script>
+  <script src="/assets/nav.js"></script>
+</body>
+</html>

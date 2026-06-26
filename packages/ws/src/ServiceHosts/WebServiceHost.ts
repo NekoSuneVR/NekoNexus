@@ -83,6 +83,24 @@ export default class WebServiceHost {
       res.json({ ok: true, count: entries.length });
     });
 
+    // Internal friend-requests push (admin -> ws). After a web friend request/accept, refresh the
+    // target's in-game requests list. Same shared-secret gate.
+    this.expressApp.post('/internal/notify-requests', express.json(), (req, res): void => {
+      const key = process.env.INTERNAL_API_KEY;
+      if (!key || req.get('X-Internal-Key') !== key) {
+        res.status(403).json({ error: 'forbidden' });
+        return;
+      }
+      const cmids = Array.isArray(req.body?.cmids) ? req.body.cmids : [];
+      void (async () => {
+        for (const c of cmids) {
+          const cmid = Number(c);
+          if (Number.isFinite(cmid)) await RealtimeNotify.inboxRequests(cmid);
+        }
+      })().catch(() => {});
+      res.json({ ok: true, count: cmids.length });
+    });
+
     // Internal wallet-push endpoint (admin service -> ws). The admin writes the wallet straight to
     // the DB (gift credits/coins) but has no Comm-server bridge, so it calls this to make the online
     // player's credits/coins display update live. Same shared-secret gate as notify-inbox.
