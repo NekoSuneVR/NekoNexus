@@ -120,6 +120,12 @@ namespace NekoNexus.Client {
 
 			LastUpdateCheckTimeStamp = DateTime.Now;
 
+			// Make HTTPS downloads work this early in startup (see EnsureHttpsTrust): the update check
+			// runs before the game installs its own accept-all cert policy, so without this the WWW
+			// download of the catalog fails cert validation ("Update download failed") against modern
+			// CAs the ancient Mono runtime doesn't trust.
+			EnsureHttpsTrust();
+
 			if (!NekoNexusClient.Settings.AutoUpdates) {
 				Log.Info("Automatic updates disabled");
 
@@ -635,6 +641,25 @@ namespace NekoNexus.Client {
 			}
 
 			updateCompleteCallback?.Invoke();
+		}
+
+		// UberStrike's ancient Mono runtime predates modern certificate authorities (the update server's
+		// cert is issued by Google Trust Services), so it can't validate today's TLS certs and every
+		// HTTPS download via WWW fails with an empty error ("Update download failed") even though the
+		// catalog is perfectly reachable. The game installs its own accept-all policy later (around
+		// login - which is why the web service works) but the update check runs BEFORE that, so we set
+		// an accept-all certificate callback here first. The server still accepts TLS 1.0, so no
+		// SecurityProtocol change is needed (and Tls12 doesn't exist in net35 anyway).
+		private static bool _httpsTrustReady;
+		private static void EnsureHttpsTrust() {
+			if (_httpsTrustReady) return;
+			_httpsTrustReady = true;
+
+			try {
+				ServicePointManager.ServerCertificateValidationCallback = (sender, cert, chain, errors) => true;
+			} catch (Exception e) {
+				Log.Warn("Could not relax certificate validation for updates: " + e.Message);
+			}
 		}
 
 		private static string NormalizeUri(string uri) {
