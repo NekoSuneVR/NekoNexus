@@ -89,6 +89,30 @@ foreach ($ch in $channels) {
   }
 }
 
+# 2b) Stage the bundled maps (Space City / Spaceport Alpha / UberZone) into every channel so the
+#     in-game auto-updater delivers them, and seed each channel's PREVIOUS version from the live
+#     manifest so gen-updates can bump it. CI checks out a clean tree (server-data is gitignored), so
+#     without these two steps every publish would drop the maps and reset the version to the base.
+$MapSrc = Join-Path $Repo 'client-assets\Maps'
+foreach ($ch in $channels) {
+  $chDir = Join-Path $Base "updates\v2\$ch"
+  New-Item -ItemType Directory -Force -Path $chDir | Out-Null
+
+  # Seed the prior version (raw branch = updated immediately on push, unlike Pages). gen-updates reads
+  # this existing updates.yml, bumps its last segment, then overwrites it.
+  try {
+    Invoke-WebRequest "https://raw.githubusercontent.com/NekoSuneVR/NekoNexus/updates/v2/$ch/updates.yml" -OutFile (Join-Path $chDir 'updates.yml') -UseBasicParsing -TimeoutSec 20 | Out-Null
+    Write-Host "    seeded prior version for $ch"
+  } catch { Write-Host "    (no prior $ch manifest to seed - first publish)" }
+
+  if (Test-Path $MapSrc) {
+    $MapDest = Join-Path $Base "updates\v2\$ch\universal\UberStrike_Data\Maps"
+    New-Item -ItemType Directory -Force -Path $MapDest | Out-Null
+    Copy-Item (Join-Path $MapSrc '*.unity3d') $MapDest -Force
+    Get-ChildItem $MapDest -Filter *.unity3d | ForEach-Object { Write-Host "    + map $($_.Name)" }
+  }
+}
+
 # 3) Regenerate the manifest (hashes every file in every channel that exists under server-data).
 Step 'Generating update manifest'
 Push-Location (Join-Path $Repo 'packages\ws')
