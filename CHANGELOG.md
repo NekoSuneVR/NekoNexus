@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.7.8 — Web clan chat + Friends DM fixes
+
+### Website
+- **Clan chat now finds your clan.** It reported "You're not in a clan" for actual members —
+  the ClanMember model hides GroupId by default, so the lookup missed it. Fixed (also restores the
+  clan shown on web profiles).
+- **Friends DM lets you pick a friend.** The DM tab only listed existing conversations, so "Select
+  a friend to chat" was a dead end — it now lists all your friends (with online status) to start a
+  DM with anyone.
+
 ## 4.7.7 — Launch-only update check, admin event themes + New Year countdown
 
 ### Client
