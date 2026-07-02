@@ -291,8 +291,11 @@ export default class NekoNexusService {
             // so the website's clan channel mirrors in-game clan chat.
             try {
               const fromCmid = Number(e.Data?.Cmid) || 0;
+              // .unscoped(): the ClanMember model's defaultScope excludes GroupId (hidden from the
+              // client view), so a plain findByPk returns GroupId=undefined and the message would
+              // never get buffered under a clan. Unscoped so we get the real GroupId.
               const member: any = fromCmid
-                ? await models.ClanMember.findByPk(fromCmid, { raw: true }).catch(() => null)
+                ? await models.ClanMember.unscoped().findByPk(fromCmid, { raw: true }).catch(() => null)
                 : null;
               if (member?.GroupId) {
                 ChatBuffer.pushClan(Number(member.GroupId), fromCmid, e.Data?.Name, e.Data?.Message);
