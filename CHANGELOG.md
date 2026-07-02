@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.7.9 — In-game ↔ web clan chat bridge fix
+
+### Servers
+- **In-game clan chat now reaches the web clan channel.** The ws buffered forwarded clan messages
+  under `GroupId: undefined` (the ClanMember model hides GroupId by default), so nothing landed in
+  the website's clan channel. Fixed with an unscoped lookup — the in-game↔web clan bridge now
+  mirrors both ways. (Requires the Realtime, ws and admin images all redeployed.)
+
 ## 4.7.8 — Web clan chat + Friends DM fixes
 
 ### Website
