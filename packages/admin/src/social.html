@@ -306,12 +306,31 @@
     let dmWith = null, dmWithName = '';
     async function loadDmThreads() {
       const el = document.getElementById('dmThreads');
-      const threads = await api('/api/me/dm/threads').catch((e) => { if (/UberStrike/i.test(e.message)) showGate(e.message); return []; });
-      el.innerHTML = threads.length ? threads.map((t) => `
-        <button data-dm="${t.cmid}" data-name="${esc(t.name)}" class="w-full text-left px-2 py-1.5 rounded hover:bg-neutral-800 flex justify-between items-center">
-          <span>${t.unread ? '<span class="inline-block w-2 h-2 rounded-full bg-brand-500 mr-1"></span>' : ''}${esc(t.name)}</span>
-          <span class="text-neutral-600 text-xs truncate max-w-[8rem]">${esc(t.last || '')}</span>
-        </button>`).join('') : '<p class="text-neutral-500 text-xs">No conversations yet. Open a friend\'s profile or use the Friends tab to start one.</p>';
+      // Show existing conversations AND all friends (so you can start a DM with any friend, even
+      // with no prior messages — "select a friend to chat").
+      const [threads, fd] = await Promise.all([
+        api('/api/me/dm/threads').catch((e) => { if (/UberStrike/i.test(e.message)) showGate(e.message); return []; }),
+        api('/api/me/friends').catch(() => ({ friends: [] })),
+      ]);
+      const withThread = new Set(threads.map((t) => t.cmid));
+      let html = '';
+      if (threads.length) {
+        html += '<div class="text-neutral-500 text-xs uppercase tracking-wide mb-1">Conversations</div>';
+        html += threads.map((t) => `
+          <button data-dm="${t.cmid}" data-name="${esc(t.name)}" class="w-full text-left px-2 py-1.5 rounded hover:bg-neutral-800 flex justify-between items-center">
+            <span>${t.unread ? '<span class="inline-block w-2 h-2 rounded-full bg-brand-500 mr-1"></span>' : ''}${esc(t.name)}</span>
+            <span class="text-neutral-600 text-xs truncate max-w-[8rem]">${esc(t.last || '')}</span>
+          </button>`).join('');
+      }
+      const friends = (fd.friends || []).filter((f) => !withThread.has(f.Cmid));
+      if (friends.length) {
+        html += '<div class="text-neutral-500 text-xs uppercase tracking-wide mt-3 mb-1">Friends</div>';
+        html += friends.map((f) => `
+          <button data-dm="${f.Cmid}" data-name="${esc(f.Name)}" class="w-full text-left px-2 py-1.5 rounded hover:bg-neutral-800">
+            ${f.Online ? '<span class="inline-block w-2 h-2 rounded-full bg-brand-500 mr-1"></span>' : '<span class="inline-block w-2 h-2 rounded-full bg-neutral-600 mr-1"></span>'}${esc(f.Name)}
+          </button>`).join('');
+      }
+      el.innerHTML = html || '<p class="text-neutral-500 text-xs">No friends yet — add friends on the Friends tab, then message them here.</p>';
       el.querySelectorAll('[data-dm]').forEach((b) => b.onclick = () => openDm(+b.dataset.dm, b.dataset.name));
     }
     let dmTimer = null;

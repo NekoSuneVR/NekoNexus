@@ -414,7 +414,9 @@ async function chatIdentity(cmid: number): Promise<string | null> {
 
 // The clan (GroupId + tag/name + member CMIDs) a player belongs to, or null if they're not in one.
 async function playerClan(cmid: number): Promise<{ groupId: number; name: string; members: number[] } | null> {
-  const member: any = await models.ClanMember.findByPk(cmid, { raw: true }).catch(() => null);
+  // .unscoped(): the ClanMember model's defaultScope excludes GroupId (it's hidden from the client
+  // view), but we need it here to find the player's clan — without unscoped, GroupId is undefined.
+  const member: any = await models.ClanMember.unscoped().findByPk(cmid, { raw: true }).catch(() => null);
   if (!member?.GroupId) return null;
   const clan: any = await models.Clan.findByPk(member.GroupId, { raw: true }).catch(() => null);
   const roster: any[] = await models.ClanMember.findAll({ where: { GroupId: member.GroupId }, attributes: ['Cmid'], raw: true }).catch(() => []);
@@ -432,7 +434,9 @@ async function buildPlayerProfile(cmid: number): Promise<any | null> {
   const profile: any = await models.PublicProfile.findByPk(cmid, { raw: true });
   if (!profile || profile.Cmid === 0) return null;
   const stats: any = (await models.PlayerStatistics.findByPk(cmid, { raw: true })) ?? {};
-  const member: any = await models.ClanMember.findByPk(cmid, { raw: true }).catch(() => null);
+  // .unscoped(): the ClanMember model's defaultScope excludes GroupId (it's hidden from the client
+  // view), but we need it here to find the player's clan — without unscoped, GroupId is undefined.
+  const member: any = await models.ClanMember.unscoped().findByPk(cmid, { raw: true }).catch(() => null);
   let clan: any = null;
   if (member) {
     const c: any = await models.Clan.findByPk(member.GroupId, { raw: true }).catch(() => null);
