@@ -1,5 +1,21 @@
 # Changelog
 
+## 4.7.7 — Launch-only update check, admin event themes + New Year countdown
+
+### Client
+- **Update check runs only at launch**, not on every Home-menu load — the "Update available"
+  popup no longer keeps reappearing while you're in the menus.
+
+### Website / admin
+- **Site event themes are now set in the admin panel** (Gifts & Events → Site event theme) and
+  stored in the DB, so they change with no redeploy — and Pride no longer stays stuck on after
+  June. Modes: auto | none | pride | halloween | xmas | newyears | easter. **Auto** picks by date
+  (Pride June, Halloween October, Christmas Dec 1–30, New Year Dec 31 / Jan 1, Easter approx) and
+  returns to the default brand off-season.
+- **New Year theme shows a live countdown** to midnight in a **configurable IANA timezone**
+  (default Europe/London = UK), computed per-region client-side; shows "Happy New Year!" for 24h
+  after. New `GET/POST /api/config/theme` + a `SiteConfig` table.
+
 ## 4.7.6 — Auto-updater works over HTTPS, maps auto-deliver, missing maps restored
 
 ### Client / auto-updates
