@@ -199,6 +199,34 @@
             <button id="boostClear" class="rounded-lg bg-slate-700 hover:bg-slate-600 px-4 py-2 transition text-sm">Turn off</button>
           </div>
         </div>
+
+        <!-- Site event theme -->
+        <div class="glass rounded-xl border border-slate-800 p-6 mt-6">
+          <h2 class="text-lg font-bold mb-1">🎨 Site event theme</h2>
+          <p class="text-slate-400 text-sm mb-4">Reskins the public website for events. <b>Auto</b> picks by date (Pride in June, Halloween in October, Christmas in December, New Year on Dec 31 / Jan 1) and returns to the default look off-season. New Year shows a live countdown to midnight in the timezone below.</p>
+          <div id="themeStatus" class="mb-4 text-sm text-slate-400">Loading…</div>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs text-slate-400">Theme</label>
+              <select id="themeMode" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-sm outline-none focus:border-brand-500">
+                <option value="auto">Auto (by date)</option>
+                <option value="none">None (default brand)</option>
+                <option value="pride">Pride</option>
+                <option value="halloween">Halloween</option>
+                <option value="xmas">Christmas</option>
+                <option value="newyears">New Year (countdown)</option>
+                <option value="easter">Easter</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-400">New Year countdown timezone (IANA)</label>
+              <input id="themeTz" placeholder="Europe/London" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-sm outline-none focus:border-brand-500" />
+              <p class="text-[11px] text-slate-500 mt-1">e.g. Europe/London (UK), America/New_York, Asia/Tokyo</p>
+            </div>
+          </div>
+          <div id="themeMsg" class="text-sm hidden my-3"></div>
+          <button id="themeSave" class="mt-3 rounded-lg bg-brand-600 hover:bg-brand-500 text-slate-900 font-semibold px-4 py-2 transition">Save theme</button>
+        </div>
       </section>
 
       <!-- SYSTEM MAIL -->
@@ -358,6 +386,7 @@
       $('#giftSearch').value=''; $('#giftResults').classList.add('hidden');
       $('#giftCredits').value = 0; $('#giftPoints').value = 0; $('#giftMsg').classList.add('hidden');
       loadBoost();
+      loadTheme();
     }
     let giftTimer;
     $('#giftSearch').oninput = (e) => {
@@ -415,6 +444,27 @@
     }
     $('#boostSave').onclick = () => applyBoost(+$('#boostMult').value || 1);
     $('#boostClear').onclick = () => { $('#boostMult').value='1'; applyBoost(1); };
+
+    // ---- site event theme ----
+    async function loadTheme() {
+      const st = $('#themeStatus');
+      try {
+        const t = await api('/api/config/theme');
+        $('#themeMode').value = t.mode || 'auto';
+        $('#themeTz').value = t.timezone || 'Europe/London';
+        const active = t.resolved === 'none' ? 'default (no event)' : t.resolved;
+        st.innerHTML = `Active now: <b class="text-brand-400">${active}</b>${t.mode === 'auto' ? ' · auto by date' : ''}`;
+      } catch (err) { st.textContent = 'Could not load theme: ' + err.message; }
+    }
+    $('#themeSave').onclick = async () => {
+      const msg = $('#themeMsg');
+      try {
+        const t = await api('/api/config/theme', { method:'POST', body: JSON.stringify({ mode: $('#themeMode').value, timezone: $('#themeTz').value || 'Europe/London' }) });
+        msg.className = 'text-sm text-brand-400 my-3';
+        msg.textContent = `Saved — active theme is now "${t.resolved === 'none' ? 'default' : t.resolved}". Reload the public site to see it.`;
+        msg.classList.remove('hidden'); loadTheme();
+      } catch (err) { msg.className = 'text-sm text-red-400 my-3'; msg.textContent = err.message; msg.classList.remove('hidden'); }
+    };
 
     // ---- servers ----
     async function loadServers() {

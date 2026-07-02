@@ -16,7 +16,7 @@ import { bearer, signToken, verifyToken } from './auth';
 import { loadConfig } from './config';
 import { initDatabase, sequelize } from './db';
 import { createCheckout, loadNekoPay, parseWebhook } from './nekopay';
-import { applyTheme } from './theme';
+import { applyTheme, resolveTheme, sanitizeTz } from './theme';
 import { beginSteamLogin, verifySteamReturn } from './steam';
 import { getUberStrikeStreams } from './twitch';
 
@@ -269,6 +269,31 @@ async function ensureBoostTable(): Promise<void> {
   await sequelize.query('INSERT IGNORE INTO GlobalBoost (Id, PointsMultiplier, XpMultiplier, EndsAt) VALUES (1, 1, 1, 0)');
   boostTableReady = true;
 }
+
+// Site event theme is admin-configurable + DB-backed (so it changes with no redeploy) and cached in
+// memory so applyTheme() stays synchronous per served page. Mode: auto|none|pride|halloween|xmas|
+// newyears|easter; NewYearsTimezone drives the New Year countdown (default UK / Europe/London).
+let themeState = { mode: 'auto', tz: 'Europe/London' };
+let siteConfigReady = false;
+async function ensureSiteConfigTable(): Promise<void> {
+  if (siteConfigReady) return;
+  await sequelize.query(
+    "CREATE TABLE IF NOT EXISTS SiteConfig (Id INT PRIMARY KEY, EventThemeMode VARCHAR(20) NOT NULL DEFAULT 'auto', NewYearsTimezone VARCHAR(64) NOT NULL DEFAULT 'Europe/London')",
+  );
+  await sequelize.query("INSERT IGNORE INTO SiteConfig (Id, EventThemeMode, NewYearsTimezone) VALUES (1, 'auto', 'Europe/London')");
+  siteConfigReady = true;
+}
+async function loadThemeState(): Promise<void> {
+  try {
+    await ensureSiteConfigTable();
+    const [rows]: any = await sequelize.query('SELECT EventThemeMode, NewYearsTimezone FROM SiteConfig WHERE Id = 1');
+    const r = rows?.[0];
+    if (r) themeState = { mode: String(r.EventThemeMode || 'auto'), tz: sanitizeTz(r.NewYearsTimezone) };
+  } catch {
+    /* keep defaults if the table isn't reachable yet */
+  }
+}
+await loadThemeState(); // seed the in-memory theme cache at startup
 
 // Post an in-game mail from "System Staff" (Cmid 0) to the given players, and nudge any who are
 // online so it lands instantly. Used for gift/boost announcements. Best-effort: never throws.
@@ -1701,6 +1726,26 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
     return json({ ok: true, pointsMultiplier, xpMultiplier, endsAt, live });
   }
 
+  // ---- site event theme (auto | none | pride | halloween | xmas | newyears | easter) ----
+  // Stored in the DB + cached in memory (themeState), so changes apply to every served page with no
+  // redeploy. `auto` picks by date and falls back to none (default brand) off-season. New Year shows
+  // a live countdown to midnight in the configured timezone (default UK).
+  if (pathname === '/api/config/theme' && method === 'GET') {
+    await loadThemeState();
+    return json({ mode: themeState.mode, timezone: themeState.tz, resolved: resolveTheme(themeState.mode) });
+  }
+
+  if (pathname === '/api/config/theme' && method === 'POST') {
+    await ensureSiteConfigTable();
+    const b = await req.json().catch(() => ({}));
+    const VALID = ['auto', 'none', 'pride', 'halloween', 'xmas', 'newyears', 'easter'];
+    const mode = VALID.includes(String(b.mode)) ? String(b.mode) : 'auto';
+    const tz = sanitizeTz(b.timezone);
+    await sequelize.query('UPDATE SiteConfig SET EventThemeMode = ?, NewYearsTimezone = ? WHERE Id = 1', { replacements: [mode, tz] });
+    themeState = { mode, tz }; // refresh cache so the change is live immediately
+    return json({ ok: true, mode, timezone: tz, resolved: resolveTheme(mode) });
+  }
+
   // ---- items (searchable list for "give item": weapons, gear, quick, functional) ----
   if (pathname === '/api/items' && method === 'GET') {
     const q = (url.searchParams.get('q') ?? '').trim().toLowerCase();
@@ -1843,7 +1888,7 @@ Bun.serve({
     }
     // Serve an HTML page with the active event theme injected (none = unchanged).
     const page = (body: string) =>
-      new Response(applyTheme(body, cfg.siteTheme), { headers: { 'content-type': 'text/html; charset=utf-8' } });
+      new Response(applyTheme(body, themeState.mode, themeState.tz), { headers: { 'content-type': 'text/html; charset=utf-8' } });
 
     // Shared auth-aware nav script (profile dropdown when signed in).
     if (url.pathname === '/assets/nav.js') {
