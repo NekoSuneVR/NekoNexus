@@ -49,8 +49,5 @@ GameplaySettings:
   AllowFriendlyFire: false
   MatchEndTimeout: 3
 
-  # AI fill bots (see BotFillTarget): rooms are topped up with bots until humans + bots
-  # reach this number, so solo/low-pop players still have someone to play against.
-  BotsEnabled: true
-  BotFillTarget: 6
-  MaxBots: 5
+  # AI fill bots (BETA) are no longer configured here - they're admin-controlled (off by
+  # default) from the admin dashboard's "Gifts & Events" page, pushed live to Game servers.

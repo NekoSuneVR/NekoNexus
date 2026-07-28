@@ -270,6 +270,18 @@ async function ensureBoostTable(): Promise<void> {
   boostTableReady = true;
 }
 
+// AI fill bots (BETA) toggle - same single-row-table pattern as GlobalBoost. Defaults OFF: bots'
+// movement/combat behavior is still being tuned, so this is opt-in until an admin turns it on.
+let botsConfigTableReady = false;
+async function ensureBotsConfigTable(): Promise<void> {
+  if (botsConfigTableReady) return;
+  await sequelize.query(
+    'CREATE TABLE IF NOT EXISTS BotsConfig (Id INT PRIMARY KEY, Enabled TINYINT NOT NULL DEFAULT 0, FillTarget INT NOT NULL DEFAULT 6, MaxBots INT NOT NULL DEFAULT 5)',
+  );
+  await sequelize.query('INSERT IGNORE INTO BotsConfig (Id, Enabled, FillTarget, MaxBots) VALUES (1, 0, 6, 5)');
+  botsConfigTableReady = true;
+}
+
 // Site event theme is admin-configurable + DB-backed (so it changes with no redeploy) and cached in
 // memory so applyTheme() stays synchronous per served page. Mode: auto|none|pride|halloween|xmas|
 // newyears|easter; NewYearsTimezone drives the New Year countdown (default UK / Europe/London).
@@ -1728,6 +1740,48 @@ async function handleApi(req: Request, url: URL): Promise<Response> {
     }
 
     return json({ ok: true, pointsMultiplier, xpMultiplier, endsAt, live });
+  }
+
+  // ---- AI fill bots (BETA, off by default) ----
+  if (pathname === '/api/config/bots' && method === 'GET') {
+    await ensureBotsConfigTable();
+    const [rows]: any = await sequelize.query('SELECT Enabled, FillTarget, MaxBots FROM BotsConfig WHERE Id = 1');
+    const r = rows?.[0] ?? {};
+    return json({
+      enabled: !!Number(r.Enabled),
+      fillTarget: Number(r.FillTarget) || 6,
+      maxBots: Number(r.MaxBots) || 5,
+    });
+  }
+
+  if (pathname === '/api/config/bots' && method === 'POST') {
+    await ensureBotsConfigTable();
+    const b = await req.json().catch(() => ({}));
+    const enabled = !!b.enabled;
+    const fillTarget = Math.max(0, Math.min(32, Math.trunc(Number(b.fillTarget) || 0)));
+    const maxBots = Math.max(0, Math.min(32, Math.trunc(Number(b.maxBots) || 0)));
+
+    await sequelize.query('UPDATE BotsConfig SET Enabled = ?, FillTarget = ?, MaxBots = ? WHERE Id = 1', {
+      replacements: [enabled ? 1 : 0, fillTarget, maxBots],
+    });
+
+    // Push live to every Game server so the toggle applies to the very next room sync (no realtime
+    // restart). Persisted above, so it still applies even if this nudge can't be delivered.
+    let live = false;
+    if (cfg.internalApiKey) {
+      try {
+        const resp = await fetch(`${cfg.wsInternalUrl}/internal/set-bots-config`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Internal-Key': cfg.internalApiKey },
+          body: JSON.stringify({ enabled, fillTarget, maxBots }),
+        }).catch(() => null);
+        live = !!resp?.ok;
+      } catch {
+        /* realtime is best-effort */
+      }
+    }
+
+    return json({ ok: true, enabled, fillTarget, maxBots, live });
   }
 
   // ---- site event theme (auto | none | pride | halloween | xmas | newyears | easter) ----

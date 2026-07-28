@@ -200,6 +200,31 @@
           </div>
         </div>
 
+        <!-- AI fill bots (BETA) -->
+        <div class="glass rounded-xl border border-slate-800 p-6 mt-6">
+          <h2 class="text-lg font-bold mb-1">🤖 AI fill bots <span class="align-middle text-[10px] font-semibold uppercase tracking-wide bg-amber-500/20 text-amber-400 border border-amber-500/40 rounded-full px-2 py-0.5 ml-1">Beta</span></h2>
+          <p class="text-slate-400 text-xs mb-4">Top up solo/low-population rooms with AI bots so there's always someone to play against. Movement/combat behavior is still being tuned, so this is <b>off by default</b> - enable to opt in. Applies live to every game server, no restart needed.</p>
+          <div id="botsStatus" class="mb-4 text-sm text-slate-400">Loading…</div>
+          <div class="grid sm:grid-cols-3 gap-3 mb-4 items-end">
+            <div>
+              <label class="text-xs text-slate-400">Enabled</label>
+              <select id="botsEnabled" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-sm outline-none focus:border-brand-500">
+                <option value="0">Off (default)</option><option value="1">On</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-400">Fill target (humans + bots)</label>
+              <input id="botsFillTarget" type="number" min="0" max="32" value="6" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-sm outline-none focus:border-brand-500">
+            </div>
+            <div>
+              <label class="text-xs text-slate-400">Max bots per room</label>
+              <input id="botsMaxBots" type="number" min="0" max="32" value="5" class="mt-1 w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-sm outline-none focus:border-brand-500">
+            </div>
+          </div>
+          <div id="botsMsg" class="text-sm hidden mb-3"></div>
+          <button id="botsSave" class="rounded-lg bg-brand-600 hover:bg-brand-500 text-slate-900 font-semibold px-4 py-2 transition">Save bot settings</button>
+        </div>
+
         <!-- Site event theme -->
         <div class="glass rounded-xl border border-slate-800 p-6 mt-6">
           <h2 class="text-lg font-bold mb-1">🎨 Site event theme</h2>
@@ -386,6 +411,7 @@
       $('#giftSearch').value=''; $('#giftResults').classList.add('hidden');
       $('#giftCredits').value = 0; $('#giftPoints').value = 0; $('#giftMsg').classList.add('hidden');
       loadBoost();
+      loadBots();
       loadTheme();
     }
     let giftTimer;
@@ -444,6 +470,33 @@
     }
     $('#boostSave').onclick = () => applyBoost(+$('#boostMult').value || 1);
     $('#boostClear').onclick = () => { $('#boostMult').value='1'; applyBoost(1); };
+
+    // ---- AI fill bots (BETA) ----
+    async function loadBots() {
+      const st = $('#botsStatus');
+      try {
+        const b = await api('/api/config/bots');
+        $('#botsEnabled').value = b.enabled ? '1' : '0';
+        $('#botsFillTarget').value = String(b.fillTarget ?? 6);
+        $('#botsMaxBots').value = String(b.maxBots ?? 5);
+        st.innerHTML = b.enabled
+          ? '<span class="inline-flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full bg-brand-500 animate-pulse"></span> <b class="text-brand-400">Bots enabled</b> on all game servers.</span>'
+          : '<span class="inline-flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full bg-slate-600"></span> Bots disabled (default).</span>';
+      } catch (err) { st.textContent = 'Could not load bot settings: ' + err.message; }
+    }
+    $('#botsSave').onclick = async () => {
+      const msg = $('#botsMsg');
+      const enabled = $('#botsEnabled').value === '1';
+      const fillTarget = +$('#botsFillTarget').value || 0;
+      const maxBots = +$('#botsMaxBots').value || 0;
+      try {
+        const r = await api('/api/config/bots', { method:'POST', body: JSON.stringify({ enabled, fillTarget, maxBots }) });
+        msg.className='text-sm text-brand-400 mb-3';
+        msg.textContent = `Saved${r.live?' and pushed live to game servers':' (saved; game servers pick it up on connect)'}.`;
+        msg.classList.remove('hidden');
+        loadBots();
+      } catch (err) { msg.className='text-sm text-red-400 mb-3'; msg.textContent=err.message; msg.classList.remove('hidden'); }
+    };
 
     // ---- site event theme ----
     async function loadTheme() {

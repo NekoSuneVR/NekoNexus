@@ -64,6 +64,9 @@ enum WebSocketPacketType {
   // Web service -> Comm server: deliver a website friend DM as an in-game private (whisper) chat
   // message to the online target. { TargetCmid, Cmid, Name, Message }.
   NotifyPrivateChat = (1 << 10) + 23,
+  // Web service -> Game servers (broadcast): admin-controlled AI fill-bots toggle (BETA, off by
+  // default). { Enabled, FillTarget, MaxBots }.
+  SetBotsConfig = (1 << 10) + 24,
 }
 
 export default WebSocketPacketType;

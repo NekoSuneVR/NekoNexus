@@ -273,6 +273,7 @@ namespace NekoNexus {
 						case PacketType.NotifyStats:
 						case PacketType.NotifyPrivateChat:
 						case PacketType.SetBoost:
+						case PacketType.SetBotsConfig:
 						case PacketType.MatchResult:
 							result = DictionaryProxy<string, object>.Deserialize(bytes, StringProxy.Deserialize, (stream) => {
 								return JsonConvert.DeserializeObject<object>(StringProxy.Deserialize(stream));

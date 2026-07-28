@@ -35,7 +35,7 @@ import {
   type WebSocketDisconnectedEventArgs,
   type WebSocketPacketReceivedEventArgs,
 } from './ServiceHosts/WebSocket';
-import { BoostManager, ChatBuffer, GameSessionManager, Log, XpPointsUtil } from './utils';
+import { BoostManager, BotsConfigManager, ChatBuffer, GameSessionManager, Log, XpPointsUtil } from './utils';
 
 export default class NekoNexusService {
   private static instance: NekoNexusService;
@@ -97,6 +97,10 @@ export default class NekoNexusService {
       // Seed the in-memory global boost from its persisted value so a ws restart keeps an active
       // 2x/5x event (re-pushed to Game servers as they connect).
       await BoostManager.initialize();
+
+      // Seed the in-memory AI fill-bots config (BETA, off by default) the same way, so a ws
+      // restart doesn't silently re-enable/disable bots against the admin's last choice.
+      await BotsConfigManager.initialize();
     } catch (error) {
       Log.fatal('Failed to connect to database. Please check the log for errors and try again.');
       Log.error(error);
@@ -145,6 +149,7 @@ export default class NekoNexusService {
         // never silently drops an active 2x/5x event.
         if (e.Socket.Type === ServerType.Game) {
           BoostManager.pushTo(e.Socket.Identifier);
+          BotsConfigManager.pushTo(e.Socket.Identifier);
         }
       });
 

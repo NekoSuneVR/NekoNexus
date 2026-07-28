@@ -62,7 +62,13 @@
 
 			// Web service -> Comm server: deliver a website friend DM as an in-game private (whisper)
 			// chat message to the online target. { TargetCmid, Cmid, Name, Message } -> SendPrivateChatMessage.
-			NotifyPrivateChat
+			NotifyPrivateChat,
+
+			// Web service -> Game server(s) (broadcast): admin-controlled AI fill-bots toggle (BETA,
+			// off by default). { Enabled, FillTarget, MaxBots } -> stored in GameServerApplication.
+			// BotsConfig and read by BaseGameRoom.Bots.cs instead of a YAML setting, so admin can
+			// flip it live with no realtime restart.
+			SetBotsConfig
 		}
 	}
 }

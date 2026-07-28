@@ -29,13 +29,15 @@ namespace NekoNexus.Realtime.Server.Game {
 		public int BotCount { get { lock (peers) { return players.Count(p => p.IsBot); } } }
 
 		private int ComputeTargetBotCount(int humanCount) {
-			var settings = GameServerApplication.Instance.Configuration.GameplaySettings;
+			// Admin-controlled (BETA, off by default) instead of a YAML setting, so it can be flipped
+			// live with no realtime restart - see BotsConfigState/GameServerApplication.BotsConfig.
+			var settings = GameServerApplication.BotsConfig;
 
-			if (!settings.BotsEnabled || humanCount <= 0) {
+			if (!settings.Enabled || humanCount <= 0) {
 				return 0;
 			}
 
-			var target = settings.BotFillTarget - humanCount;
+			var target = settings.FillTarget - humanCount;
 			return Math.Max(0, Math.Min(settings.MaxBots, target));
 		}
 

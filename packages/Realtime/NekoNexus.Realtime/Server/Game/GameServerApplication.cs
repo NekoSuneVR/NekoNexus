@@ -22,6 +22,12 @@ namespace NekoNexus.Realtime.Server.Game {
 		private static volatile BoostState boost = new BoostState();
 		public static BoostState Boost => boost;
 
+		// Admin-controlled AI fill-bots toggle (BETA), set from admin and pushed over the master
+		// socket (SetBotsConfig). Read by BaseGameRoom.Bots.cs. Off by default until admin (or the
+		// pushed value from ws on connect) enables it.
+		private static volatile BotsConfigState botsConfig = new BotsConfigState();
+		public static BotsConfigState BotsConfig => botsConfig;
+
 		private static readonly ProfanityFilter.ProfanityFilter ProfanityFilter = new ProfanityFilter.ProfanityFilter();
 
 		// Periodically pushes the live room/player list to the master so the in-game server
@@ -126,6 +132,22 @@ namespace NekoNexus.Realtime.Server.Game {
 							};
 							Log.Info($"Boost updated: {boost.PointsMultiplier}x coins / {boost.XpMultiplier}x xp (active={boost.IsActive}, endsAt={boost.EndsAt}).");
 						} catch (Exception ex) { Log.Error("SetBoost failed", ex); }
+						break;
+					}
+					case PacketType.SetBotsConfig: {
+						// Admin-controlled AI fill-bots toggle (BETA), broadcast to all Game servers. Swap
+						// the whole state atomically, same reasoning as SetBoost. Also re-sent to this
+						// server right after it (re)connects, so a restart can't silently re-enable/
+						// disable bots against the admin's last choice.
+						try {
+							var data = (Dictionary<string, object>)e.Data;
+							botsConfig = new BotsConfigState {
+								Enabled = Convert.ToBoolean(data["Enabled"]),
+								FillTarget = Convert.ToInt32(data["FillTarget"]),
+								MaxBots = Convert.ToInt32(data["MaxBots"]),
+							};
+							Log.Info($"Bots config updated: enabled={botsConfig.Enabled}, fillTarget={botsConfig.FillTarget}, maxBots={botsConfig.MaxBots}.");
+						} catch (Exception ex) { Log.Error("SetBotsConfig failed", ex); }
 						break;
 					}
 				}

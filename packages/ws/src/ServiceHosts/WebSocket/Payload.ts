@@ -148,6 +148,7 @@ export default class WebSocketPayload {
       case WebSocketPacketType.NotifyStats:
       case WebSocketPacketType.NotifyPrivateChat:
       case WebSocketPacketType.SetBoost:
+      case WebSocketPacketType.SetBotsConfig:
       case WebSocketPacketType.MatchResult:
         payloadObj.IsEncrypted = true;
 
@@ -279,6 +280,7 @@ export default class WebSocketPayload {
       case WebSocketPacketType.NotifyStats:
       case WebSocketPacketType.ClanChatMessage:
       case WebSocketPacketType.SetBoost:
+      case WebSocketPacketType.SetBotsConfig:
       case WebSocketPacketType.MatchResult:
         result = DictionaryProxy.Deserialize<string, object>(bytes, StringProxy.Deserialize, (stream) =>
           JSON.parse(StringProxy.Deserialize(stream)),

@@ -16,6 +16,7 @@
  */
 
 export { default as BoostManager } from './BoostManager';
+export { default as BotsConfigManager } from './BotsConfigManager';
 export { default as ChatBuffer } from './ChatBuffer';
 export { default as getDividerText } from './DividerText';
 export { default as GameSessionManager } from './GameSessionManager';

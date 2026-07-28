@@ -16,7 +16,7 @@
  */
 
 import NekoNexusService from '@/NekoNexusService';
-import { BoostManager, ChatBuffer, Log } from '@/utils';
+import { BoostManager, BotsConfigManager, ChatBuffer, Log } from '@/utils';
 import { RealtimeNotify } from '@/utils/RealtimeNotify';
 import bodyParser from 'body-parser';
 import bodyParserXml from 'body-parser-xml';
@@ -145,6 +145,28 @@ export default class WebServiceHost {
       }
 
       BoostManager.applyAndBroadcast(points, xp, Number.isFinite(endsAt) ? endsAt : 0);
+      res.json({ ok: true });
+    });
+
+    // Internal bots-config endpoint (admin service -> ws). The admin persists the AI fill-bots
+    // toggle (BETA, off by default) to the DB then calls this so the ws caches it and broadcasts
+    // it to every connected Game server immediately (no realtime restart). Same shared-secret gate.
+    this.expressApp.post('/internal/set-bots-config', express.json(), (req, res): void => {
+      const key = process.env.INTERNAL_API_KEY;
+      if (!key || req.get('X-Internal-Key') !== key) {
+        res.status(403).json({ error: 'forbidden' });
+        return;
+      }
+
+      const enabled = !!req.body?.enabled;
+      const fillTarget = Number(req.body?.fillTarget);
+      const maxBots = Number(req.body?.maxBots);
+      if (!Number.isFinite(fillTarget) || !Number.isFinite(maxBots)) {
+        res.status(400).json({ error: 'invalid fillTarget/maxBots' });
+        return;
+      }
+
+      BotsConfigManager.applyAndBroadcast(enabled, fillTarget, maxBots);
       res.json({ ok: true });
     });
 
