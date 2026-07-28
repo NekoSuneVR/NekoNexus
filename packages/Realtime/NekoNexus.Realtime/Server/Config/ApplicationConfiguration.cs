@@ -137,5 +137,19 @@ namespace NekoNexus.Realtime.Server {
 
 		[YamlMember]
 		public int MatchEndTimeout = 5;
+
+		// AI fill bots: keep a match populated while few (or no) real players have joined, so
+		// there's always something to play against, then back off as real players show up.
+
+		[YamlMember]
+		public bool BotsEnabled = true;
+
+		// Rooms are topped up with bots until humans + bots reach this number (e.g. with the
+		// default of 6, 1 human -> 5 bots, 2 humans -> 4 bots, ... 6+ humans -> 0 bots).
+		[YamlMember]
+		public int BotFillTarget = 6;
+
+		[YamlMember]
+		public int MaxBots = 5;
 	}
 }

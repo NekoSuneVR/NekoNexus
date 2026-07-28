@@ -48,4 +48,47 @@ practice solo, without bots crowding out real matches once people show up.
   ratio, difficulty tuning — likely belongs in the server config alongside
   existing gameplay settings.
 
-**Status:** not started — needs design/estimation before implementation.
+**Status:** first implementation pass done on `dev` (not yet build-verified —
+this sandbox has no .NET/MSBuild toolchain, so it's only been checked by
+careful manual cross-referencing against the actual SDK/shim source, not by
+compiling). Needs a real build + an in-game playtest before it's trustworthy.
+
+Implementation summary:
+
+- `GamePeer.Bot.cs` (new): `GamePeer.CreateBot(name, xp)` factory - a bot is a
+  real `GamePeer` constructed with a synthetic `InitRequest` (no live socket,
+  so all network sends are safe no-ops) and a fake `Member`/`AuthToken`.
+  Required widening `Photon.SocketServer.Shim`'s `InitRequest` with a new
+  public constructor (`shims/Photon.SocketServer.Shim/SocketServer.cs`) since
+  the existing one is internal to that assembly.
+- `BaseGameRoom.Bots.cs` (new): bot population scaling (`SyncBotPopulation`,
+  `AddBot`/`RemoveBot`, mirroring the exact `JoinGame`/`Leave` list-mutate +
+  raise-event pattern so every per-state handler runs unchanged for bots) and
+  a nested `BotBrain` FSM (patrol via `SpawnPointManager` waypoints, engage
+  the nearest valid enemy with a distance-based hit-chance model, self-driven
+  respawn). Random per-bot loadout drawn from the room's real `ShopManager`
+  catalog (1-3 random ranged weapons + melee + gear).
+- `BaseGameRoom.cs`: hooked `SyncBotPopulation()` into `JoinGame`/`Leave` (the
+  "kick 1 bot per joining human" / "backfill on human leave" behavior),
+  `RemoveAllBots()` into `Reset()` (bots don't persist across rounds), and
+  `UpdateBots()` into the tick loop. `PreparePlayer` skips the real-webservice
+  loadout fetch for bots.
+- `AfterRoundState.cs`: bots are excluded from XP/points persistence and
+  match-history recording (no real account to write to), but still show up
+  in the in-room MVP/score display.
+- `ApplicationConfiguration.cs` + both `NekoNexus.Realtime.yml` configs: new
+  `GameplaySettings.BotsEnabled` / `BotFillTarget` (default 6) / `MaxBots`
+  (default 5) - `BotFillTarget - humanCount`, clamped to `[0, MaxBots]`,
+  reproduces the requested 1→5, 2→4, 3→3... curve exactly.
+
+Known gaps / follow-ups:
+
+- Not build-verified (see above) - run a real MSBuild/dotnet build before
+  trusting this, then playtest bot behavior in an actual match.
+- Bot movement doesn't set `PlayerMovement.MovementState` (animation state
+  bits are unknown without decompiling the client) - bots will slide rather
+  than visibly run/strafe.
+- No line-of-sight/cover check - bots can "see" and shoot through thin
+  geometry within engage range.
+- `EngageRange`/`MoveSpeed`/hit-chance constants in `BotBrain` are estimates,
+  not tuned against real weapon/map scale - expect a balance pass.

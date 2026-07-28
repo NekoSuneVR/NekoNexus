@@ -73,6 +73,14 @@ namespace Photon.SocketServer {
 		public int LocalPort { get; internal set; }
 
 		internal InitRequest() { }
+
+		// Public factory for peers that never go through the real host (e.g. server-side AI
+		// bots): there's no live connection to describe, just the ApplicationId check and
+		// UserData that BasePeer's constructor needs.
+		public InitRequest(string applicationId, object userData) {
+			ApplicationId = applicationId;
+			UserData = userData;
+		}
 	}
 
 	// ---- Peers -------------------------------------------------------------------

@@ -1,0 +1,400 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Cmune.DataCenter.Common.Entities;
+using UberStrike.Core.Models;
+using UberStrike.Core.Models.Views;
+using UberStrike.Core.Types;
+using UberStrike.DataCenter.Common.Entities;
+using UberStrike.Realtime.UnitySdk;
+using UnityEngine;
+
+namespace NekoNexus.Realtime.Server.Game {
+	// AI fill bots: keep a room populated so solo/low-population players still have someone to
+	// play against, then back off (one bot removed per human that joins) as real players show up.
+	//
+	// Bots are added/removed the exact same way a real player joining/leaving the match is
+	// (mutate peers/players, then raise PlayerJoined/PlayerLeft) so every existing per-state
+	// handler (PreparePlayer/SpawnPlayer/score updates/team balancing) runs unchanged for them.
+	public partial class BaseGameRoom {
+		private static readonly string[] BotNamePool = {
+			"Reaper", "Viper", "Ghost", "Nomad", "Raptor", "Havoc", "Widow", "Jinx",
+			"Cobra", "Rocket", "Blitz", "Echo", "Static", "Nitro", "Vortex", "Rogue",
+			"Fable", "Wraith", "Talon", "Ember", "Frost", "Glitch", "Hexbolt", "Zephyr",
+		};
+
+		private readonly Dictionary<GamePeer, BotBrain> botBrains = new Dictionary<GamePeer, BotBrain>();
+		private readonly Random botRandom = new Random((int)DateTime.UtcNow.Ticks);
+
+		public int BotCount { get { lock (peers) { return players.Count(p => p.IsBot); } } }
+
+		private int ComputeTargetBotCount(int humanCount) {
+			var settings = GameServerApplication.Instance.Configuration.GameplaySettings;
+
+			if (!settings.BotsEnabled || humanCount <= 0) {
+				return 0;
+			}
+
+			var target = settings.BotFillTarget - humanCount;
+			return Math.Max(0, Math.Min(settings.MaxBots, target));
+		}
+
+		// Reconciles the bot population against however many humans are actually in the match
+		// right now. Call this whenever that number could have changed (a human joins/leaves the
+		// match) - NOT from bot add/remove itself, or this would recurse.
+		private void SyncBotPopulation() {
+			if (IsDisposed)
+				return;
+
+			int humanCount;
+			List<GamePeer> currentBots;
+			lock (peers) {
+				humanCount = players.Count(p => !p.IsBot);
+				currentBots = players.Where(p => p.IsBot).ToList();
+			}
+
+			var targetBotCount = ComputeTargetBotCount(humanCount);
+
+			if (currentBots.Count > targetBotCount) {
+				foreach (var bot in currentBots.Take(currentBots.Count - targetBotCount)) {
+					RemoveBot(bot);
+				}
+			} else if (currentBots.Count < targetBotCount) {
+				for (var i = currentBots.Count; i < targetBotCount; i++) {
+					AddBot();
+				}
+			}
+		}
+
+		private void RemoveAllBots() {
+			List<GamePeer> currentBots;
+			lock (peers) {
+				currentBots = peers.Where(p => p.IsBot).ToList();
+			}
+
+			foreach (var bot in currentBots) {
+				RemoveBot(bot);
+			}
+		}
+
+		private void AddBot() {
+			var name = $"[BOT] {BotNamePool[botRandom.Next(BotNamePool.Length)]}";
+
+			var level = botRandom.Next(1, Math.Max(2, XpPointsUtil.MaxPlayerLevel + 1));
+			XpPointsUtil.GetXpRangeForLevel(level, out var minXp, out var maxXp);
+			var xp = botRandom.Next(minXp, Math.Max(minXp + 1, maxXp));
+
+			var bot = GamePeer.CreateBot(name, xp);
+			bot.Room = this;
+
+			var actorInfo = new GameActorInfo {
+				TeamID = TeamID.NONE,
+				Health = 100,
+				Level = XpPointsUtil.GetLevelForXp(xp),
+				Channel = ChannelType.Steam,
+				PlayerState = PlayerStates.None,
+				Ping = 0,
+				PlayerId = NextPlayerId++,
+
+				Cmid = bot.Member.CmuneMemberView.PublicProfile.Cmid,
+				ClanTag = string.Empty,
+				AccessLevel = bot.Member.CmuneMemberView.PublicProfile.AccessLevel,
+				PlayerName = bot.Member.CmuneMemberView.PublicProfile.Name,
+			};
+
+			bot.Actor = new GameActor(bot, actorInfo);
+
+			lock (peers) {
+				peers.Add(bot);
+			}
+
+			AssignRandomBotLoadout(bot);
+
+			var team = IsTeamGame ? PickBotTeam() : TeamID.NONE;
+
+			bot.Actor.Team = team;
+			bot.Actor.ActorInfo.Health = 100;
+			bot.Actor.ActorInfo.PlayerState = PlayerStates.None;
+			bot.Actor.ActorInfo.Kills = 0;
+			bot.Actor.ActorInfo.Deaths = 0;
+
+			if (!CanJoinMatch) {
+				bot.Actor.ActorInfo.PlayerState = PlayerStates.Spectator;
+			}
+
+			lock (peers) {
+				players.Add(bot);
+			}
+
+			// botBrains is read (as a snapshot) from the loop thread every tick (UpdateBots) while
+			// Join/Leave (network threads) add/remove entries here - guard it like peers/players.
+			lock (botBrains) {
+				botBrains[bot] = new BotBrain(this, bot, botRandom.Next());
+			}
+
+			Log.Info($"Added bot {bot.Actor.Name}({bot.Actor.Cmid}) to {this}({RoomId})");
+
+			OnPlayerJoined(new PlayerJoinedEventArgs { Player = bot, Team = team });
+		}
+
+		private void RemoveBot(GamePeer bot) {
+			lock (botBrains) {
+				botBrains.Remove(bot);
+			}
+
+			foreach (var otherPeer in Peers) {
+				otherPeer.GameEventSender.SendPlayerLeftGame(bot.Actor.Cmid);
+			}
+
+			lock (peers) {
+				peers.Remove(bot);
+				players.Remove(bot);
+			}
+
+			Log.Info($"Removed bot {bot.Actor.Name}({bot.Actor.Cmid}) from {this}({RoomId})");
+
+			bot.Actor = null;
+			bot.Room = null;
+
+			OnPlayerLeft(new PlayerLeftEventArgs { Player = bot });
+		}
+
+		private TeamID PickBotTeam() {
+			var snapshot = Players;
+			var blue = snapshot.Count(p => p.Actor.Team == TeamID.BLUE);
+			var red = snapshot.Count(p => p.Actor.Team == TeamID.RED);
+
+			return blue <= red ? TeamID.BLUE : TeamID.RED;
+		}
+
+		// Every "real weapon" item class a bot could plausibly wield - excludes weapon mods
+		// (scope/muzzle/attachment), which share the Weapon item type but aren't equippable guns.
+		private static readonly UberstrikeItemClass[] RangedWeaponClasses = {
+			UberstrikeItemClass.WeaponMachinegun,
+			UberstrikeItemClass.WeaponShotgun,
+			UberstrikeItemClass.WeaponSniperRifle,
+			UberstrikeItemClass.WeaponCannon,
+			UberstrikeItemClass.WeaponSplattergun,
+			UberstrikeItemClass.WeaponLauncher,
+		};
+
+		private void AssignRandomBotLoadout(GamePeer bot) {
+			int PickRandom(IEnumerable<UberStrikeItemWeaponView> source) {
+				var list = source.ToList();
+				return list.Count == 0 ? 0 : list[botRandom.Next(list.Count)].ID;
+			}
+
+			int PickRandomGear(UberstrikeItemClass itemClass) {
+				var list = ShopManager.GearItems.Values.Where(g => g.ItemClass == itemClass).ToList();
+				return list.Count == 0 ? 0 : list[botRandom.Next(list.Count)].ID;
+			}
+
+			var melee = PickRandom(ShopManager.WeaponItems.Values.Where(w => w.ItemClass == UberstrikeItemClass.WeaponMelee));
+
+			// Give each bot a "loadout personality": 1-3 distinct ranged weapons, since the game
+			// has no formal class system to pick from (see TODO.md).
+			var rangedPool = ShopManager.WeaponItems.Values.Where(w => RangedWeaponClasses.Contains(w.ItemClass)).ToList();
+			var weaponCount = Math.Min(rangedPool.Count, botRandom.Next(1, 4));
+			var chosenWeapons = rangedPool.OrderBy(_ => botRandom.Next()).Take(weaponCount).Select(w => w.ID).ToList();
+
+			bot.Loadout = new LoadoutView {
+				Cmid = bot.Actor.Cmid,
+				MeleeWeapon = melee,
+				Weapon1 = chosenWeapons.Count > 0 ? chosenWeapons[0] : 0,
+				Weapon2 = chosenWeapons.Count > 1 ? chosenWeapons[1] : 0,
+				Weapon3 = chosenWeapons.Count > 2 ? chosenWeapons[2] : 0,
+				Head = PickRandomGear(UberstrikeItemClass.GearHead),
+				Face = PickRandomGear(UberstrikeItemClass.GearFace),
+				Gloves = PickRandomGear(UberstrikeItemClass.GearGloves),
+				UpperBody = PickRandomGear(UberstrikeItemClass.GearUpperBody),
+				LowerBody = PickRandomGear(UberstrikeItemClass.GearLowerBody),
+				Boots = PickRandomGear(UberstrikeItemClass.GearBoots),
+				Webbing = PickRandomGear(UberstrikeItemClass.GearHolo),
+			};
+		}
+
+		private void UpdateBots() {
+			BotBrain[] brains;
+			lock (botBrains) {
+				if (botBrains.Count == 0)
+					return;
+
+				brains = botBrains.Values.ToArray();
+			}
+
+			foreach (var brain in brains) {
+				try {
+					brain.Tick();
+				} catch (Exception ex) {
+					Log.Error("Bot AI tick failed", ex);
+				}
+			}
+		}
+
+		// A deliberately simple FSM: patrol toward a random spawn point when no target is in
+		// range, engage (face + shoot, closing distance for melee) the nearest valid enemy
+		// otherwise, and self-trigger a respawn after death (a real client would send
+		// RespawnRequest; bots have none, so they drive PlayerRespawned themselves).
+		private class BotBrain {
+			private const float EngageRange = 32f;
+			private const float MeleeRange = 2.5f;
+			private const float RangedStandoff = 6f;
+			private const float MoveSpeed = 4.5f; // world units/sec, approximate human run speed
+
+			private readonly BaseGameRoom Room;
+			private readonly GamePeer Bot;
+			private readonly Random Rand;
+
+			private Vector3 waypoint;
+			private bool hasWaypoint;
+			private DateTime nextWaypointTime = DateTime.MinValue;
+			private DateTime nextFireTime = DateTime.MinValue;
+
+			public BotBrain(BaseGameRoom room, GamePeer bot, int seed) {
+				Room = room;
+				Bot = bot;
+				Rand = new Random(seed);
+			}
+
+			public void Tick() {
+				var actor = Bot.Actor;
+				if (actor == null)
+					return;
+
+				// A real client sends an initial SwitchWeapon op right after spawning; bots have no
+				// client to do that, so drive it here once a slot/loadout has been assigned.
+				if (actor.CurrentWeapon == null) {
+					Room.SwitchWeapon(Bot, actor.ActorInfo.CurrentWeaponSlot);
+				}
+
+				if (Room.State.CurrentStateId != GameStateId.MatchRunning) {
+					return;
+				}
+
+				if (actor.ActorInfo.IsSpectator) {
+					return;
+				}
+
+				if (!actor.ActorInfo.IsAlive) {
+					TickRespawn(actor);
+					return;
+				}
+
+				var target = AcquireTarget(actor);
+				if (target != null) {
+					Engage(actor, target);
+				} else {
+					Patrol(actor);
+				}
+			}
+
+			private void TickRespawn(GameActor actor) {
+				if (actor.NextRespawnTime > DateTime.UtcNow)
+					return;
+
+				Room.OnPlayerRespawned(new PlayerRespawnedEventArgs { Player = Bot });
+			}
+
+			private GamePeer AcquireTarget(GameActor actor) {
+				GamePeer best = null;
+				var bestDistance = float.MaxValue;
+				Vector3 myPosition = actor.Movement.Position;
+
+				foreach (var other in Room.Players) {
+					if (other == Bot || other.Actor == null)
+						continue;
+					if (!other.Actor.ActorInfo.IsAlive || other.Actor.ActorInfo.IsSpectator)
+						continue;
+					if (Room.IsTeamGame && other.Actor.Team != TeamID.NONE && other.Actor.Team == actor.Team)
+						continue;
+
+					var distance = Vector3.Distance(myPosition, other.Actor.Movement.Position);
+					if (distance < EngageRange && distance < bestDistance) {
+						bestDistance = distance;
+						best = other;
+					}
+				}
+
+				return best;
+			}
+
+			private void Engage(GameActor actor, GamePeer target) {
+				var myPosition = (Vector3)actor.Movement.Position;
+				var targetPosition = (Vector3)target.Actor.Movement.Position;
+				var toTarget = targetPosition - myPosition;
+				var distance = toTarget.magnitude;
+
+				FaceDirection(actor, toTarget);
+
+				var weapon = actor.CurrentWeapon;
+				var isMelee = weapon != null && weapon.ItemClass == UberstrikeItemClass.WeaponMelee;
+				var desiredRange = isMelee ? MeleeRange * 0.5f : RangedStandoff;
+
+				if (distance > desiredRange + 0.5f) {
+					MoveToward(actor, targetPosition, distance - desiredRange);
+				}
+
+				if (weapon == null || DateTime.UtcNow < nextFireTime)
+					return;
+
+				var canHit = isMelee ? distance <= MeleeRange : true;
+				if (!canHit)
+					return;
+
+				nextFireTime = DateTime.UtcNow.AddMilliseconds(Math.Max(150, weapon.RateOfFire));
+
+				Room.SingleBulletFire(Bot);
+
+				// Simple accuracy model: closer shots land more often; there's always some chance
+				// to miss so bots aren't hitscan-perfect.
+				var hitChance = Math.Max(0.15, 0.9 - (distance / EngageRange) * 0.6);
+				if (Rand.NextDouble() > hitChance)
+					return;
+
+				var bodyPart = Rand.NextDouble() < 0.12 ? BodyPart.Head : BodyPart.Body;
+				Room.DirectHitDamage(Bot, target.Actor.Cmid, (byte)bodyPart, 1);
+			}
+
+			private void Patrol(GameActor actor) {
+				var myPosition = (Vector3)actor.Movement.Position;
+
+				if (!hasWaypoint || DateTime.UtcNow >= nextWaypointTime || Vector3.Distance(myPosition, waypoint) < 1.5f) {
+					if (Room.SpawnPointManager.TryGet(actor.Team, out var spawn)) {
+						waypoint = spawn.Position;
+						hasWaypoint = true;
+					}
+
+					nextWaypointTime = DateTime.UtcNow.AddSeconds(Rand.Next(4, 9));
+				}
+
+				if (hasWaypoint) {
+					MoveToward(actor, waypoint, MoveSpeed / BaseGameRoom.TICK_TRATE);
+				}
+			}
+
+			private void MoveToward(GameActor actor, Vector3 destination, float maxDistanceDelta) {
+				var current = (Vector3)actor.Movement.Position;
+				var step = Math.Max(0, Math.Min(maxDistanceDelta, MoveSpeed / BaseGameRoom.TICK_TRATE));
+				var next = Vector3.MoveTowards(current, destination, step);
+
+				var direction = next - current;
+				if (direction.sqrMagnitude > 0.0001f) {
+					FaceDirection(actor, direction);
+				}
+
+				actor.Movement.Position = next;
+				actor.UpdatePosition = true;
+			}
+
+			private void FaceDirection(GameActor actor, Vector3 direction) {
+				var back = new Vector3(0, 0, -1);
+				var angle = Vector3.Angle(direction, back);
+				if (direction.x < 0)
+					angle = 360 - angle;
+
+				actor.Movement.HorizontalRotation = Conversion.Angle2Byte(angle);
+				actor.UpdatePosition = true;
+			}
+		}
+	}
+}

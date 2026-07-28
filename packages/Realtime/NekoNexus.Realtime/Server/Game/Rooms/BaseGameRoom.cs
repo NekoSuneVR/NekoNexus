@@ -173,6 +173,11 @@ namespace NekoNexus.Realtime.Server.Game {
 
 			players.Clear();
 
+			// Bots don't persist across rounds like real connections do - drop them all here;
+			// SyncBotPopulation() (called from JoinGame) rebuilds the right count once humans
+			// have re-joined the new round.
+			RemoveAllBots();
+
 			State.ResetState();
 			State.SetState(GameStateId.WaitingForPlayers);
 		}
@@ -254,6 +259,10 @@ namespace NekoNexus.Realtime.Server.Game {
 			OnPlayerLeft(new PlayerLeftEventArgs {
 				Player = peer
 			});
+
+			// A human leaving changes the humans-vs-bots balance: backfill if others remain, or
+			// drain every bot if that was the last human (so the room can be cleaned up).
+			SyncBotPopulation();
 		}
 
 		public abstract bool CanJoinMatch { get; }
@@ -266,6 +275,7 @@ namespace NekoNexus.Realtime.Server.Game {
 				gameFrame++;
 
 			State.Update();
+			UpdateBots();
 
 			var positions = new List<PlayerMovement>();
 			var deltas = new List<GameActorInfoDelta>();
@@ -369,6 +379,9 @@ namespace NekoNexus.Realtime.Server.Game {
 
 				peers.Clear();
 				players.Clear();
+				lock (botBrains) {
+					botBrains.Clear();
+				}
 			}
 
 			IsDisposed = true;
@@ -387,7 +400,10 @@ namespace NekoNexus.Realtime.Server.Game {
 			player.Actor.ActorInfo.Kills = 0;
 			player.Actor.ActorInfo.Deaths = 0;
 
-			player.Loadout = UserWebServiceClient.Instance.GetLoadout(player.AuthToken);
+			// Bots have no real account to fetch a loadout for - AddBot() already assigned one.
+			if (!player.IsBot) {
+				player.Loadout = UserWebServiceClient.Instance.GetLoadout(player.AuthToken);
+			}
 
 			player.Actor.ActorInfo.Gear[0] = (int)player.Loadout.Webbing; // Holo
 			player.Actor.ActorInfo.Gear[1] = player.Loadout.Head;
@@ -551,6 +567,9 @@ namespace NekoNexus.Realtime.Server.Game {
 				Player = peer,
 				Team = peer.Actor.Team
 			});
+
+			// A human just started playing - kick one fill bot per joining human (gradual handoff).
+			SyncBotPopulation();
 		}
 
 		private void JoinAsSpectator(GamePeer peer) {

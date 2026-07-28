@@ -48,3 +48,9 @@ GameplaySettings:
   PlayerRespawnTime: 5
   AllowFriendlyFire: false
   MatchEndTimeout: 3
+
+  # AI fill bots (see BotFillTarget): rooms are topped up with bots until humans + bots
+  # reach this number, so solo/low-pop players still have someone to play against.
+  BotsEnabled: true
+  BotFillTarget: 6
+  MaxBots: 5

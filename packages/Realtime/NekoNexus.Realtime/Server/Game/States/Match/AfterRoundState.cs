@@ -57,41 +57,45 @@ namespace NekoNexus.Realtime.Server.Game {
 					// per player) blocked the shared scheduler thread for the whole call, freezing every
 					// other room it drives ("ghost walking"). Capture everything we need first, then
 					// fire-and-forget. The match-end screen is sent immediately below, regardless.
-					var capturedPlayer = player;
-					var capturedData = playerMatchData;
-					var authToken = player.AuthToken;
-					var cmid = player.Actor.Cmid;
-					var pointDepositId = r.Next(1, int.MaxValue);
-					// Match-history fields captured on the loop thread, persisted off it.
-					var matchRecord = new Dictionary<string, object> {
-						["Cmid"] = cmid,
-						["MatchGuid"] = capturedData.MatchGuid ?? string.Empty,
-						["MapId"] = Room.MetaData.MapID,
-						["GameMode"] = (int)Room.MetaData.GameMode,
-						["Kills"] = (int)capturedData.PlayerStatsTotal.GetKills(),
-						["Deaths"] = (int)capturedData.PlayerStatsTotal.Deaths,
-						["Won"] = capturedData.HasWonMatch,
-						["Xp"] = capturedData.PlayerStatsTotal.Xp,
-						["Points"] = capturedData.PlayerStatsTotal.Points,
-					};
-					System.Threading.Tasks.Task.Run(() => {
-						try {
-							UserWebServiceClient.Instance.DepositPoints(new PointDepositView {
-								Cmid = cmid,
-								DepositDate = DateTime.UtcNow,
-								DepositType = PointsDepositType.Game,
-								PointDepositId = pointDepositId,
-								Points = capturedData.PlayerStatsTotal.Points,
-							}, authToken);
+					// Bots have no real account/auth token - none of this progression is real, so
+					// don't deposit points, save statistics, or record match history for them.
+					if (!player.IsBot) {
+						var capturedPlayer = player;
+						var capturedData = playerMatchData;
+						var authToken = player.AuthToken;
+						var cmid = player.Actor.Cmid;
+						var pointDepositId = r.Next(1, int.MaxValue);
+						// Match-history fields captured on the loop thread, persisted off it.
+						var matchRecord = new Dictionary<string, object> {
+							["Cmid"] = cmid,
+							["MatchGuid"] = capturedData.MatchGuid ?? string.Empty,
+							["MapId"] = Room.MetaData.MapID,
+							["GameMode"] = (int)Room.MetaData.GameMode,
+							["Kills"] = (int)capturedData.PlayerStatsTotal.GetKills(),
+							["Deaths"] = (int)capturedData.PlayerStatsTotal.Deaths,
+							["Won"] = capturedData.HasWonMatch,
+							["Xp"] = capturedData.PlayerStatsTotal.Xp,
+							["Points"] = capturedData.PlayerStatsTotal.Points,
+						};
+						System.Threading.Tasks.Task.Run(() => {
+							try {
+								UserWebServiceClient.Instance.DepositPoints(new PointDepositView {
+									Cmid = cmid,
+									DepositDate = DateTime.UtcNow,
+									DepositType = PointsDepositType.Game,
+									PointDepositId = pointDepositId,
+									Points = capturedData.PlayerStatsTotal.Points,
+								}, authToken);
 
-							Room.StatisticsManager.SaveStatistics(capturedPlayer, capturedData);
+								Room.StatisticsManager.SaveStatistics(capturedPlayer, capturedData);
 
-							// Record the match in the player's history (best-effort; saved by the ws).
-							GameServerApplication.Instance.SocketClient?.SendSync(WebSocket.PacketType.MatchResult, matchRecord);
-						} catch (Exception ex) {
-							Log.Error($"Failed to persist match results for cmid {cmid}", ex);
-						}
-					});
+								// Record the match in the player's history (best-effort; saved by the ws).
+								GameServerApplication.Instance.SocketClient?.SendSync(WebSocket.PacketType.MatchResult, matchRecord);
+							} catch (Exception ex) {
+								Log.Error($"Failed to persist match results for cmid {cmid}", ex);
+							}
+						});
+					}
 
 					player.GameEventSender.SendMatchEnd(playerMatchData);
 					player.State.SetState(PlayerStateId.Overview);
