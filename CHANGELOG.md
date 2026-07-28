@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.7.10 — AI fill bots
+
+### Servers
+- **AI fill bots keep low-population rooms playable.** Solo/low-pop matches are now topped up
+  with AI bots (random loadouts drawn from the server's own shop catalog, a patrol/engage/respawn
+  FSM) so there's always someone to level up against. Bots scale down automatically as real
+  players join — one bot is kicked per joining human and backfilled if a human leaves — and are
+  excluded from XP/points persistence and match history. Configurable via `GameplaySettings.
+  BotsEnabled` / `BotFillTarget` / `MaxBots` in the Realtime config. (Requires the Realtime image
+  redeployed.)
+
 ## 4.7.9 — In-game ↔ web clan chat bridge fix
 
 ### Servers
