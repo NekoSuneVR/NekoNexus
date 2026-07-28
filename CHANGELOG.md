@@ -1,5 +1,22 @@
 # Changelog
 
+## 4.7.13 — AI fill bots are now BETA, admin-controlled, off by default
+
+### Admin
+- **New "AI fill bots" toggle on the Gifts & Events page.** Enable/disable bots, set the room
+  fill target and max-bots-per-room, right from the admin dashboard - no config file editing or
+  redeploy needed. Marked **Beta** (movement/combat behavior is still being tuned per the
+  4.7.11/4.7.12 fixes) and **off by default**.
+
+### Servers
+- AI fill bots are no longer a YAML setting. `GameplaySettings.BotsEnabled/BotFillTarget/MaxBots`
+  are removed from the Realtime config; the toggle now lives in a DB-backed admin setting (new
+  `BotsConfig` table, same pattern as the global coin-boost event) and is pushed live to every Game
+  server the moment an admin saves it (new `SetBotsConfig` master-socket packet) - no realtime
+  restart required, and a reconnecting Game server gets the current value re-pushed automatically so
+  a restart can't silently flip it back. Defaults to disabled until an admin opts in.
+  (Requires the Realtime, ws, and admin images all redeployed.)
+
 ## 4.7.12 — AI fill bots play a real walk animation
 
 ### Servers
