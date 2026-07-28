@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.7.11 — AI fill bot movement & combat fixes
+
+### Servers
+- **Bots no longer fly/float around the map.** Movement now steps horizontal and vertical
+  position separately, each capped to a walking-speed rate, instead of interpolating straight
+  through the air toward an elevated waypoint or enemy position.
+- **Bot combat range now matches the weapon they're holding.** Engagement/hit range used to be one
+  flat 32-unit bubble for every ranged weapon, so a shotgun or splattergun bot could land hits from
+  sniper distance. Range is now keyed per weapon archetype (shotgun/splattergun close, machinegun/
+  cannon/launcher medium, sniper rifle long), so bots only fire within their own weapon's effective
+  range. (Requires the Realtime image redeployed.)
+
 ## 4.7.10 — AI fill bots
 
 ### Servers
