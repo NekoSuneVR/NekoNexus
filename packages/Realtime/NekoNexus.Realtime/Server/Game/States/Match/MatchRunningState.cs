@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UberStrike.Core.Models;
 using UberStrike.Core.Types;
 using static NekoNexus.Realtime.Server.Game.BaseGameRoom;
@@ -103,6 +104,9 @@ namespace NekoNexus.Realtime.Server.Game {
 
 		private void OnPlayerLeft(object sender, PlayerLeftEventArgs args) {
 			if (!Room.CanStartMatch) {
+				Log.Info($"{args.Player.Actor?.Name}({args.Player.Actor?.Cmid}) leaving mid-match dropped CanStartMatch to false " +
+					$"(blue={Room.Players.Count(p => p.Actor.Team == TeamID.BLUE)}, red={Room.Players.Count(p => p.Actor.Team == TeamID.RED)}, " +
+					$"total={Room.Players.Count}) - ending round early.");
 				Room.HasRoundEnded = true;
 			}
 		}

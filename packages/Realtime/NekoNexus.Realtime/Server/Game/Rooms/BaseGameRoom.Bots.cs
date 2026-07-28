@@ -132,7 +132,7 @@ namespace NekoNexus.Realtime.Server.Game {
 				botBrains[bot] = new BotBrain(this, bot, botRandom.Next());
 			}
 
-			Log.Info($"Added bot {bot.Actor.Name}({bot.Actor.Cmid}) to {this}({RoomId})");
+			Log.Info($"Added bot {bot.Actor.Name}({bot.Actor.Cmid}) to {this}({RoomId}), team={team}");
 
 			OnPlayerJoined(new PlayerJoinedEventArgs { Player = bot, Team = team });
 		}
@@ -294,6 +294,19 @@ namespace NekoNexus.Realtime.Server.Game {
 					return;
 				}
 
+				// Reset to "standing still" every tick before Engage/Patrol decide otherwise. The
+				// client's AvatarAnimationController drives the walk/run/idle blend tree entirely off
+				// Movement.Velocity/KeyState (see AvatarAnimationController.Update: WalkingSpeed comes
+				// from Velocity magnitude, IsWalking from KeyState) - bots never set either, so no
+				// matter how Position moved, clients rendered them sliding through a static idle pose
+				// instead of playing a walk animation. Setting these every tick (MoveToward overwrites
+				// them below when the bot actually moves) fixes that, and Grounded keeps the "falling/
+				// airborne" animation from kicking in since bots have no real ground/gravity simulation.
+				actor.Movement.Velocity = Vector3.zero;
+				actor.Movement.KeyState = (byte)KeyState.Still;
+				actor.Movement.MovementState = (byte)MoveStates.Grounded;
+				actor.UpdatePosition = true;
+
 				var target = AcquireTarget(actor);
 				if (target != null) {
 					Engage(actor, target);
@@ -421,6 +434,11 @@ namespace NekoNexus.Realtime.Server.Game {
 				var direction = next - current;
 				if (direction.sqrMagnitude > 0.0001f) {
 					FaceDirection(actor, direction);
+
+					// Velocity/KeyState drive the client's walk animation (see the comment in Tick) -
+					// without this the bot's position updates but its model plays an idle/floating pose.
+					actor.Movement.Velocity = direction * BaseGameRoom.TICK_TRATE;
+					actor.Movement.KeyState = (byte)KeyState.Forward;
 				}
 
 				actor.Movement.Position = next;
