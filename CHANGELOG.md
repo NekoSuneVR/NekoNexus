@@ -1,5 +1,20 @@
 # Changelog
 
+## 4.7.12 — AI fill bots play a real walk animation
+
+### Servers
+- **Bots no longer glide/float while moving.** The client's avatar animator drives walk/run/idle
+  entirely off the position update's velocity and key-state bytes; bots never set either, so no
+  matter how far they actually moved each tick, other clients rendered them in a static floating
+  pose sliding across the ground instead of playing a walk animation. Bots now report a real
+  velocity and forward/still key state each tick, and mark themselves grounded, matching how a
+  real client's movement packet looks. (Requires the Realtime image redeployed.)
+- Added diagnostics for the reported stuck-timer/bots-not-engaging behavior in Team Deathmatch:
+  logs now record team counts and cause whenever CanStartMatch drops mid-round or during the
+  pre-match countdown, and each bot's assigned team is logged when it's added. Investigated
+  extensively but couldn't reproduce a concrete root cause without a live server log - these logs
+  will pinpoint it from the next report.
+
 ## 4.7.11 — AI fill bot movement & combat fixes
 
 ### Servers
