@@ -236,10 +236,24 @@ namespace NekoNexus.Realtime.Server.Game {
 		// otherwise, and self-trigger a respawn after death (a real client would send
 		// RespawnRequest; bots have none, so they drive PlayerRespawned themselves).
 		private class BotBrain {
-			private const float EngageRange = 32f;
 			private const float MeleeRange = 2.5f;
-			private const float RangedStandoff = 6f;
+			private const float DefaultRangedRange = 16f;
 			private const float MoveSpeed = 4.5f; // world units/sec, approximate human run speed
+			private const float MaxVerticalSpeed = 6f; // caps climb/fall rate so bots don't fly straight at an elevated point
+
+			// Per-weapon-class effective engagement range. UberStrikeItemWeaponView.CombatRange is
+			// NOT usable for this - in the shop data it's just an alias of SplashRadius (only ever
+			// set on splash weapons, 1 on every hitscan weapon), so range is keyed off the actual
+			// weapon archetype instead: shotgun/splattergun are close range, sniper is long range,
+			// everything else medium. Without this a shotgun bot could "hit" from sniper distance.
+			private static readonly Dictionary<UberstrikeItemClass, float> WeaponRangeByClass = new Dictionary<UberstrikeItemClass, float> {
+				{ UberstrikeItemClass.WeaponShotgun, 9f },
+				{ UberstrikeItemClass.WeaponSplattergun, 10f },
+				{ UberstrikeItemClass.WeaponCannon, 14f },
+				{ UberstrikeItemClass.WeaponMachinegun, 22f },
+				{ UberstrikeItemClass.WeaponLauncher, 18f },
+				{ UberstrikeItemClass.WeaponSniperRifle, 45f },
+			};
 
 			private readonly BaseGameRoom Room;
 			private readonly GamePeer Bot;
@@ -295,10 +309,20 @@ namespace NekoNexus.Realtime.Server.Game {
 				Room.OnPlayerRespawned(new PlayerRespawnedEventArgs { Player = Bot });
 			}
 
+			private float GetWeaponRange(UberStrikeItemWeaponView weapon) {
+				if (weapon == null)
+					return DefaultRangedRange;
+				if (weapon.ItemClass == UberstrikeItemClass.WeaponMelee)
+					return MeleeRange;
+
+				return WeaponRangeByClass.TryGetValue(weapon.ItemClass, out var range) ? range : DefaultRangedRange;
+			}
+
 			private GamePeer AcquireTarget(GameActor actor) {
 				GamePeer best = null;
 				var bestDistance = float.MaxValue;
 				Vector3 myPosition = actor.Movement.Position;
+				var engageRange = GetWeaponRange(actor.CurrentWeapon);
 
 				foreach (var other in Room.Players) {
 					if (other == Bot || other.Actor == null)
@@ -309,7 +333,7 @@ namespace NekoNexus.Realtime.Server.Game {
 						continue;
 
 					var distance = Vector3.Distance(myPosition, other.Actor.Movement.Position);
-					if (distance < EngageRange && distance < bestDistance) {
+					if (distance < engageRange && distance < bestDistance) {
 						bestDistance = distance;
 						best = other;
 					}
@@ -328,7 +352,8 @@ namespace NekoNexus.Realtime.Server.Game {
 
 				var weapon = actor.CurrentWeapon;
 				var isMelee = weapon != null && weapon.ItemClass == UberstrikeItemClass.WeaponMelee;
-				var desiredRange = isMelee ? MeleeRange * 0.5f : RangedStandoff;
+				var range = GetWeaponRange(weapon);
+				var desiredRange = isMelee ? range * 0.5f : range * 0.65f;
 
 				if (distance > desiredRange + 0.5f) {
 					MoveToward(actor, targetPosition, distance - desiredRange);
@@ -337,8 +362,10 @@ namespace NekoNexus.Realtime.Server.Game {
 				if (weapon == null || DateTime.UtcNow < nextFireTime)
 					return;
 
-				var canHit = isMelee ? distance <= MeleeRange : true;
-				if (!canHit)
+				// Hard range cutoff per weapon archetype - a shotgun/splattergun bot can no longer
+				// "hit" from sniper distance just because a target wandered into the shared 32-unit
+				// search radius; each weapon only ever fires within its own effective range.
+				if (distance > range)
 					return;
 
 				nextFireTime = DateTime.UtcNow.AddMilliseconds(Math.Max(150, weapon.RateOfFire));
@@ -347,7 +374,7 @@ namespace NekoNexus.Realtime.Server.Game {
 
 				// Simple accuracy model: closer shots land more often; there's always some chance
 				// to miss so bots aren't hitscan-perfect.
-				var hitChance = Math.Max(0.15, 0.9 - (distance / EngageRange) * 0.6);
+				var hitChance = Math.Max(0.15, 0.9 - (distance / range) * 0.6);
 				if (Rand.NextDouble() > hitChance)
 					return;
 
@@ -374,8 +401,22 @@ namespace NekoNexus.Realtime.Server.Game {
 
 			private void MoveToward(GameActor actor, Vector3 destination, float maxDistanceDelta) {
 				var current = (Vector3)actor.Movement.Position;
-				var step = Math.Max(0, Math.Min(maxDistanceDelta, MoveSpeed / BaseGameRoom.TICK_TRATE));
-				var next = Vector3.MoveTowards(current, destination, step);
+
+				// Horizontal and vertical movement are stepped separately, each capped to a
+				// walking-speed rate. A straight Vector3.MoveTowards over all 3 axes at once
+				// would fly the bot in a dead-straight diagonal line toward any elevated point
+				// (a platform, a hill, across a gap) - capping the vertical rate keeps the bot's
+				// climb/descent looking like it's on the ground instead of airborne.
+				var horizontalStep = Math.Max(0, Math.Min(maxDistanceDelta, MoveSpeed / BaseGameRoom.TICK_TRATE));
+				var currentXZ = new Vector3(current.x, 0, current.z);
+				var destinationXZ = new Vector3(destination.x, 0, destination.z);
+				var nextXZ = Vector3.MoveTowards(currentXZ, destinationXZ, horizontalStep);
+
+				var verticalDelta = destination.y - current.y;
+				var verticalStep = MaxVerticalSpeed / BaseGameRoom.TICK_TRATE;
+				var nextY = Math.Abs(verticalDelta) <= verticalStep ? destination.y : current.y + Math.Sign(verticalDelta) * verticalStep;
+
+				var next = new Vector3(nextXZ.x, nextY, nextXZ.z);
 
 				var direction = next - current;
 				if (direction.sqrMagnitude > 0.0001f) {
