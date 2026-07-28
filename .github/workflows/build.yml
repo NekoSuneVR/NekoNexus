@@ -3,7 +3,7 @@ name: Build NekoNexus (server exes, client patch, docker images)
 on:
   workflow_dispatch:
   push:
-    branches: [dev, main, master]
+    # branches: [dev, main, master]
     tags: ['v*']
 
 permissions:
