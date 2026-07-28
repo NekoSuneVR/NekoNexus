@@ -24,7 +24,7 @@ namespace NekoNexus.Realtime.Server.Game {
 		};
 
 		private readonly Dictionary<GamePeer, BotBrain> botBrains = new Dictionary<GamePeer, BotBrain>();
-		private readonly Random botRandom = new Random((int)DateTime.UtcNow.Ticks);
+		private readonly System.Random botRandom = new System.Random((int)DateTime.UtcNow.Ticks);
 
 		public int BotCount { get { lock (peers) { return players.Count(p => p.IsBot); } } }
 
@@ -243,7 +243,7 @@ namespace NekoNexus.Realtime.Server.Game {
 
 			private readonly BaseGameRoom Room;
 			private readonly GamePeer Bot;
-			private readonly Random Rand;
+			private readonly System.Random Rand;
 
 			private Vector3 waypoint;
 			private bool hasWaypoint;
@@ -253,7 +253,7 @@ namespace NekoNexus.Realtime.Server.Game {
 			public BotBrain(BaseGameRoom room, GamePeer bot, int seed) {
 				Room = room;
 				Bot = bot;
-				Rand = new Random(seed);
+				Rand = new System.Random(seed);
 			}
 
 			public void Tick() {
